@@ -21,15 +21,30 @@ async function makeRequest(endpoint, options = {}) {
     if (token) {
       headers.Authorization = `Bearer ${token}`;
     }
+console.log(headers.Authorization );
+    const fullUrl = `${API_URL}${endpoint}`;
+    console.log('🌐 Making request:', {
+      url: fullUrl,
+      method: options.method || 'GET',
+      headers: { ...headers, Authorization: headers.Authorization ? 'Bearer [TOKEN]' : undefined },
+      body: options.body ? JSON.parse(options.body) : undefined
+    });
 
-    const response = await fetch(`${API_URL}${endpoint}`, {
+    const response = await fetch(fullUrl, {
       ...options,
       headers,
     });
 
     const data = await response.json();
 
+    console.log('📡 Response received:', {
+      status: response.status,
+      ok: response.ok,
+      data: data
+    });
+
     if (!response.ok) {
+      console.error('❌ Request failed:', data);
       throw data || { message: 'Errore nella richiesta' };
     }
 
@@ -219,6 +234,11 @@ export const ordersAPI = {
     return makeRequest(`/orders/${id}/accept`, { method: 'PUT' });
   },
   updateOrderStatus: async (id, status) => {
+    console.log('🚀 API Call: updateOrderStatus', {
+      url: `/orders/${id}/status`,
+      method: 'PUT',
+      body: { status }
+    });
     return makeRequest(`/orders/${id}/status`, {
       method: 'PUT',
       body: JSON.stringify({ status }),

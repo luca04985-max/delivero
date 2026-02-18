@@ -26,7 +26,7 @@ export default function RiderHomeScreen({ navigation }) {
       await ordersAPI.acceptOrder(orderId);
       Alert.alert("Successo", "Ordine accettato! Vai alla sezione 'Attivi' per gestirlo.");
       fetchAvailable();
-      navigation.navigate('RiderActive');
+      navigation.navigate('Active');
     } catch (e) {
       Alert.alert("Errore", "L'ordine potrebbe essere già stato preso da un altro rider.");
     }
