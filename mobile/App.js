@@ -65,15 +65,9 @@ function CustomerTabs({ onLogout }) {
         headerShown: true,
         tabBarActiveTintColor: '#FF6B00',
         tabBarInactiveTintColor: '#000',
-        headerBackground: () => (
-
-          <LinearGradient
-            colors={['#FF6B00', '#FF8C00']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{ flex: 1 }}
-          />
-        ),
+        headerStyle: {
+          backgroundColor: '#FF6B00',
+        },
         headerTintColor: '#fff',
         headerTitleStyle: {
           fontWeight: 'bold',
@@ -163,14 +157,9 @@ function CustomerStack({ onLogout }) {
         component={RestaurantDetailScreen}
         options={{
           title: '🍽️ Menu',
-          headerBackground: () => (
-            <LinearGradient
-              colors={['#FF6B00', '#FF8C00']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={{ flex: 1 }}
-            />
-          ),
+          headerStyle: {
+            backgroundColor: '#FF6B00',
+          },
           headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
@@ -182,14 +171,9 @@ function CustomerStack({ onLogout }) {
         component={CustomerOrderTrackingScreen}
         options={{
           title: '📍 Tracciamento Ordine',
-          headerBackground: () => (
-            <LinearGradient
-              colors={['#FF6B00', '#FF8C00']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={{ flex: 1 }}
-            />
-          ),
+          headerStyle: {
+            backgroundColor: '#FF6B00',
+          },
           headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
@@ -201,14 +185,9 @@ function CustomerStack({ onLogout }) {
         component={OrderTrackingLiveScreen}
         options={{
           title: '🗺️ Tracking Live',
-          headerBackground: () => (
-            <LinearGradient
-              colors={['#FF6B00', '#FF8C00']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={{ flex: 1 }}
-            />
-          ),
+          headerStyle: {
+            backgroundColor: '#FF6B00',
+          },
           headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
@@ -269,14 +248,9 @@ function ManagerStack({ token, user, onLogout }) {
     <Stack.Navigator
       screenOptions={{
         headerShown: true,
-        headerBackground: () => (
-          <LinearGradient
-            colors={['#FF6B00', '#FF8C00']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{ flex: 1 }}
-          />
-        ),
+        headerStyle: {
+          backgroundColor: '#FF6B00',
+        },
         headerTintColor: '#fff',
         headerTitleStyle: {
           fontWeight: 'bold',
@@ -378,6 +352,31 @@ export default function App() {
     let lastToken = null;
     let lastUser = null;
 
+    const checkStorageChanges = async () => {
+      try {
+        const currentToken = await AsyncStorage.getItem('token');
+        const currentUser = await AsyncStorage.getItem('user');
+
+        if (currentToken !== lastToken || currentUser !== lastUser) {
+          lastToken = currentToken;
+          lastUser = currentUser;
+
+          if (currentToken && currentUser) {
+            const user = JSON.parse(currentUser);
+            console.log('🔄 Token/user changed, updating app state');
+            dispatch({ type: 'SIGN_IN', token: currentToken, user });
+          } else if (!currentToken) {
+            console.log('🔄 Token removed, signing out');
+            dispatch({ type: 'SIGN_OUT' });
+          }
+        }
+      } catch (e) {
+        console.error('Error checking storage changes:', e);
+      }
+    };
+
+    const interval = setInterval(checkStorageChanges, 500); // Check every 500ms
+
     // Try to register push token for logged in user
     const registerPush = async () => {
       try {
@@ -416,6 +415,7 @@ export default function App() {
 
     registerPush();
 
+    return () => clearInterval(interval);
   }, []);
 
   if (state.isLoading) {
