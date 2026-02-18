@@ -447,6 +447,11 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: '#fff',
   },
+  editActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
   saveButton: {
     backgroundColor: '#28a745',
     padding: 12,
