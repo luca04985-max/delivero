@@ -9,8 +9,7 @@
     "sdkVersion": "52.0.0",
     "platforms": [
       "ios",
-      "android",
-      "web"
+      "android"
     ],
     "splash": {
       "image": "./assets/splash.png",
@@ -18,7 +17,7 @@
       "backgroundColor": "#FF6B00"
     },
     "android": {
-      "package": "com.anonymous.deliveromobile",
+      "package": "com.romano98.deliveromobile",
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
@@ -37,7 +36,7 @@
       }
     },
     "ios": {
-      "bundleIdentifier": "com.anonymous.deliveromobile",
+      "bundleIdentifier": "com.romano98.deliveromobile",
       "supportsTablet": true,
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Delivero ha bisogno della tua posizione per mostrare i ristoranti vicini e tracciare le consegne.",
