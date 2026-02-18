@@ -4,6 +4,7 @@ import {
   createOrder,
   getOrderById,
   updateOrderStatus,
+  updateRiderOrderStatus,
   getAvailableOrders,
   acceptOrder,
   getActiveRiderOrders,
@@ -35,6 +36,7 @@ router.post('/', authenticateToken, createOrder);
 router.get('/:id/track', authenticateToken, trackOrder);
 router.get('/:id/track-history', authenticateToken, getTrackHistory);
 router.post('/:id/location', authenticateToken, updateRiderLocation);
+router.put('/:id/rider-status', authenticateToken, updateRiderOrderStatus);
 
 // Generic order endpoints (these come AFTER specific ones)
 router.get('/:id', authenticateToken, getOrderById);

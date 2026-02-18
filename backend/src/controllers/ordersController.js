@@ -1,5 +1,6 @@
 import db from '../config/db.js';
 import { emitOrderUpdate, broadcastRiderLocation, broadcastOrderStatusChange } from '../services/socket.js';
+import wsBridge from '../websocket-server.js';
 
 export const getOrders = async (req, res) => {
   try {
@@ -217,6 +218,59 @@ export const completeDelivery = async (req, res) => {
     res.status(200).json({ message: 'Consegna completata', order: result.rows[0] });
   } catch (error) {
     res.status(500).json({ message: 'Errore nel completamento consegna', error: error.message });
+  }
+};
+
+// Update order status for riders
+export const updateRiderOrderStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    const riderId = req.user.userId;
+
+    console.log(`🔄 Rider ${riderId} updating order ${id} to status: ${status}`);
+
+    if (!status) {
+      return res.status(400).json({ message: 'Status is required' });
+    }
+
+    // Validate status transitions for riders
+    const validStatuses = ['accepted', 'pickup', 'in_transit', 'delivered'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ message: 'Invalid status for rider' });
+    }
+
+    const result = await db.query(
+      `UPDATE orders 
+       SET status = $1, updated_at = NOW() 
+       WHERE id = $2 AND rider_id = $3 
+       RETURNING *`,
+      [status, id, riderId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Order not found or not assigned to this rider' });
+    }
+
+    const updatedOrder = result.rows[0];
+    console.log(`✅ Order updated successfully:`, updatedOrder);
+
+    // Emit real-time update via WebSocket
+    broadcastOrderStatusChange(id, updatedOrder.user_id, status);
+
+    // Also broadcast to WebSocket bridge clients
+    try {
+      wsBridge.broadcastOrderUpdate(id, updatedOrder);
+      console.log(`📡 WebSocket bridge broadcast sent for order ${id}`);
+    } catch (error) {
+      console.warn('WebSocket bridge broadcast failed:', error.message);
+    }
+
+    console.log(`🎉 Status update completed for order ${id}`);
+    res.status(200).json({ message: 'Order status updated', order: updatedOrder });
+  } catch (error) {
+    console.error(`❌ Error updating order status:`, error);
+    res.status(500).json({ message: 'Error updating order status', error: error.message });
   }
 };
 

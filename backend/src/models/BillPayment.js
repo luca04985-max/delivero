@@ -168,3 +168,80 @@ export const getBillPaymentStats = async (startDate = null, endDate = null) => {
     throw error;
   }
 };
+
+// Update bill payment with photo information
+export const updateBillPaymentPhoto = async (paymentId, photoUrl, cameraPermissionGranted, photoTimestamp) => {
+  try {
+    const result = await db.query(
+      `UPDATE bill_payments
+       SET bill_photo_url = $1, 
+           camera_permission_granted = $2, 
+           photo_capture_timestamp = $3,
+           updated_at = CURRENT_TIMESTAMP
+       WHERE id = $4
+       RETURNING *`,
+      [photoUrl, cameraPermissionGranted, photoTimestamp, paymentId]
+    );
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Update bill payment with order ID
+export const updateBillPaymentOrderId = async (paymentId, orderId) => {
+  try {
+    const result = await db.query(
+      `UPDATE bill_payments
+       SET order_id = $1, updated_at = CURRENT_TIMESTAMP
+       WHERE id = $2
+       RETURNING *`,
+      [orderId, paymentId]
+    );
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Get bill payment with order details
+export const getBillPaymentWithOrder = async (paymentId) => {
+  try {
+    const result = await db.query(
+      `SELECT bp.*, 
+              b.type as bill_type, b.due_date, b.description as bill_description,
+              u.name as customer_name, u.phone, u.email,
+              o.id as order_id, o.status as order_status, o.delivery_address,
+              o.created_at as order_created_at
+       FROM bill_payments bp
+       JOIN bills b ON bp.bill_id = b.id
+       JOIN users u ON bp.user_id = u.id
+       LEFT JOIN orders o ON bp.order_id = o.id
+       WHERE bp.id = $1`,
+      [paymentId]
+    );
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Get bill payments with photos for a user
+export const getUserBillPaymentsWithPhotos = async (userId) => {
+  try {
+    const result = await db.query(
+      `SELECT bp.*, 
+              b.type as bill_type, b.due_date, b.description as bill_description,
+              o.id as order_id, o.status as order_status
+       FROM bill_payments bp
+       JOIN bills b ON bp.bill_id = b.id
+       LEFT JOIN orders o ON bp.order_id = o.id
+       WHERE bp.user_id = $1 AND bp.bill_photo_url IS NOT NULL
+       ORDER BY bp.created_at DESC`,
+      [userId]
+    );
+    return result.rows;
+  } catch (error) {
+    throw error;
+  }
+};

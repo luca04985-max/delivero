@@ -19,7 +19,7 @@ router.get('/rider/pending', authenticateToken, billPaymentsController.getPendin
 router.get('/:billPaymentId', authenticateToken, billPaymentsController.getBillPayment);
 
 // Upload barcode/QR code images
-router.post('/:billPaymentId/upload-images', 
+router.post('/:billPaymentId/upload-images',
   authenticateToken,
   upload.fields([{ name: 'barcode', maxCount: 1 }, { name: 'qrCode', maxCount: 1 }]),
   billPaymentsController.uploadBillPaymentImages
@@ -36,5 +36,12 @@ router.post('/:billPaymentId/notes', authenticateToken, billPaymentsController.a
 
 // Get statistics (admin only)
 router.get('/admin/stats', authenticateToken, billPaymentsController.getStats);
+
+// Create order with bill photo (mobile version - multipart form)
+router.post('/create-with-photo-mobile',
+  authenticateToken,
+  upload.single('billPhoto'),
+  billPaymentsController.createOrderWithBillPhotoMobile
+);
 
 export default router;
