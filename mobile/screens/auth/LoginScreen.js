@@ -123,9 +123,9 @@ export default function LoginScreen({ navigation }) {
         {/* Info */}
         <View style={styles.info}>
           <Text style={styles.infoTitle}>💡 Demo Account</Text>
-          <Text style={styles.infoText}>👤 Customer: user@example.com / password</Text>
-          <Text style={styles.infoText}>🚗 Rider: rider@example.com / password</Text>
-          <Text style={styles.infoText}>👨‍💼 Manager: manager@example.com / password</Text>
+          <Text style={styles.infoText}>👤 Customer: demo.customer@delivero.local / 123456</Text>
+          <Text style={styles.infoText}>🚗 Rider: demo.rider@delivero.local / 123456</Text>
+          <Text style={styles.infoText}>👨‍💼 Manager: demo.manager@delivero.local / 123456</Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
