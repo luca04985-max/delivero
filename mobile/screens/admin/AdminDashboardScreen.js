@@ -23,7 +23,7 @@ export default function AdminDashboardScreen({ navigation }) {
   const [users, setUsers] = useState([]);
   const [tickets, setTickets] = useState([]);
   const [trackingOrders] = useState([]);
-  const [expandedStates, setExpandedStates] = useState(new Set());
+  const [expandedStates, setExpandedStates] = useState(new Set(['IN_TRANSIT']));
 
   // Edit States
   const [editingUser, setEditingUser] = useState(null);
