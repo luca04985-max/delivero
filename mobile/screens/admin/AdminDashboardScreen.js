@@ -30,6 +30,7 @@ export default function AdminDashboardScreen({ navigation }) {
   const [newRole, setNewRole] = useState("");
   const [editName, setEditName] = useState("");
   const [editEmail, setEditEmail] = useState("");
+  const [selectedTicket, setSelectedTicket] = useState(null);
 
   useEffect(() => {
     if (!editingUser) return;
@@ -228,7 +229,11 @@ export default function AdminDashboardScreen({ navigation }) {
                   </View>
                 );
               }
-              if (activeTab === 'tickets') return <TicketItem item={item} />;
+              if (activeTab === 'tickets') return <TicketItem item={item} onPress={() => {
+                console.log('Ticket cliccato:', item);
+                setSelectedTicket(item);
+                console.log('selectedTicket impostato:', item);
+              }} />;
               return null;
             }}
           />
@@ -305,6 +310,107 @@ export default function AdminDashboardScreen({ navigation }) {
             </View>
           </View>
         </Modal>
+
+        {/* Modal per dettagli ticket */}
+        <Modal
+          visible={!!selectedTicket}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setSelectedTicket(null)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalCard}>
+              <View style={styles.ticketHeader}>
+                <Text style={styles.ticketId}>#{selectedTicket?.id}</Text>
+                <Text style={styles.modalTitle}>Dettagli Ticket</Text>
+              </View>
+
+              {!selectedTicket ? (
+                <View style={styles.editField}>
+                  <Text style={styles.textInput}>Nessun ticket selezionato</Text>
+                </View>
+              ) : (
+                <ScrollView style={{ maxHeight: 400 }}>
+                  <View style={styles.infoSection}>
+                    <Text style={styles.sectionTitle}>Informazioni Generali</Text>
+
+                    <View style={styles.fieldRow}>
+                      <Text style={styles.fieldLabel}>Titolo:</Text>
+                      <Text style={styles.fieldValue}>{selectedTicket?.title || '—'}</Text>
+                    </View>
+
+                    <View style={styles.fieldRow}>
+                      <Text style={styles.fieldLabel}>Descrizione:</Text>
+                      <Text style={styles.fieldValue}>{selectedTicket?.description || '—'}</Text>
+                    </View>
+
+                    <View style={styles.fieldRow}>
+                      <Text style={styles.fieldLabel}>Tipo:</Text>
+                      <View style={[styles.priorityBadge, { backgroundColor: selectedTicket?.type === 'bug' ? '#dc3545' : selectedTicket?.type === 'complaint' ? '#ffc107' : '#17a2b8' }]}>
+                        <Text style={styles.priorityText}>{selectedTicket?.type?.toUpperCase() || '—'}</Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  <View style={styles.infoSection}>
+                    <Text style={styles.sectionTitle}>Stato e Priorità</Text>
+
+                    <View style={styles.fieldRow}>
+                      <Text style={styles.fieldLabel}>Stato:</Text>
+                      <View style={[styles.priorityBadge, { backgroundColor: selectedTicket?.status === 'open' ? '#28a745' : selectedTicket?.status === 'resolved' ? '#17a2b8' : '#ffc107' }]}>
+                        <Text style={styles.priorityText}>{selectedTicket?.status?.toUpperCase() || '—'}</Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.fieldRow}>
+                      <Text style={styles.fieldLabel}>Priorità:</Text>
+                      <View style={[styles.priorityBadge, { backgroundColor: selectedTicket?.priority === 'high' ? '#dc3545' : selectedTicket?.priority === 'medium' ? '#ffc107' : '#6c757d' }]}>
+                        <Text style={styles.priorityText}>{selectedTicket?.priority?.toUpperCase() || '—'}</Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  <View style={styles.infoSection}>
+                    <Text style={styles.sectionTitle}>Informazioni Utente</Text>
+
+                    <View style={styles.fieldRow}>
+                      <Text style={styles.fieldLabel}>Utente:</Text>
+                      <Text style={styles.fieldValue}>{selectedTicket?.user_name || '—'}</Text>
+                    </View>
+
+                    <View style={styles.fieldRow}>
+                      <Text style={styles.fieldLabel}>Email:</Text>
+                      <Text style={styles.fieldValue}>{selectedTicket?.user_email || '—'}</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.infoSection}>
+                    <Text style={styles.sectionTitle}>Date</Text>
+
+                    <View style={styles.fieldRow}>
+                      <Text style={styles.fieldLabel}>Creato:</Text>
+                      <Text style={styles.fieldValue}>{selectedTicket?.created_at ? new Date(selectedTicket.created_at).toLocaleString() : '—'}</Text>
+                    </View>
+
+                    <View style={styles.fieldRow}>
+                      <Text style={styles.fieldLabel}>Aggiornato:</Text>
+                      <Text style={styles.fieldValue}>{selectedTicket?.updated_at ? new Date(selectedTicket.updated_at).toLocaleString() : '—'}</Text>
+                    </View>
+                  </View>
+                </ScrollView>
+              )}
+
+              <View style={styles.editActions}>
+                <TouchableOpacity
+                  style={styles.cancelButton}
+                  onPress={() => setSelectedTicket(null)}
+                >
+                  <Text style={styles.btnCancelText}>Chiudi</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     </View>
   );
@@ -367,12 +473,21 @@ const OrderItem = ({ item, navigation }) => {
   );
 };
 
-const TicketItem = ({ item }) => (
-  <View style={styles.card}>
-    <Text style={styles.userName}>{item.title}</Text>
-    <Text style={styles.userEmail}>{item.description}</Text>
-  </View>
-);
+const TicketItem = ({ item, onPress }) => {
+  const handlePress = () => {
+    console.log('Ticket cliccato:', item);
+    if (onPress) {
+      onPress(item);
+    }
+  };
+
+  return (
+    <TouchableOpacity style={styles.card} onPress={handlePress}>
+      <Text style={styles.userName}>{item.title}</Text>
+      <Text style={styles.userEmail}>{item.description}</Text>
+    </TouchableOpacity>
+  );
+};
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f8f9fa' },
@@ -499,6 +614,65 @@ const styles = StyleSheet.create({
   },
   deliveredStatus: {
     color: '#28a745',
+  },
+  ticketHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e9ecef',
+  },
+  ticketId: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FF6B00',
+    backgroundColor: '#fff3cd',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#FF6B00',
+  },
+  infoSection: {
+    marginBottom: 20,
+    backgroundColor: '#f8f9fa',
+    borderRadius: 8,
+    padding: 15,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1a1a2e',
+    marginBottom: 15,
+    borderBottomWidth: 2,
+    borderBottomColor: '#FF6B00',
+    paddingBottom: 5,
+  },
+  fieldRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  fieldValue: {
+    fontSize: 14,
+    color: '#333',
+    flex: 1,
+    textAlign: 'right',
+  },
+  priorityBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    minWidth: 80,
+    alignItems: 'center',
+  },
+  priorityText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   statusSeparator: {
     backgroundColor: '#2c3e50',
