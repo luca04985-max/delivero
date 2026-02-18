@@ -5,7 +5,6 @@ import {
 } from 'react-native';
 import { adminAPI, ordersAPI } from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import ManagerRealTimeMapScreen from './ManagerRealTimeMapScreen';
 import { Picker } from '@react-native-picker/picker';
 
 export default function AdminDashboardScreen({ navigation }) {
@@ -23,8 +22,7 @@ export default function AdminDashboardScreen({ navigation }) {
   const [orders, setOrders] = useState([]);
   const [users, setUsers] = useState([]);
   const [tickets, setTickets] = useState([]);
-  const [trackingOrders, setTrackingOrders] = useState([]);
-  const [expandedStates, setExpandedStates] = useState(new Set());
+  const [trackingOrders] = useState([]);
 
   // Edit States
   const [editingUser, setEditingUser] = useState(null);
@@ -73,9 +71,6 @@ export default function AdminDashboardScreen({ navigation }) {
       } else if (activeTab === 'metrics') {
         const data = await adminAPI.getServiceMetrics();
         setMetrics(data);
-      } else if (activeTab === 'tracking') {
-        const data = await ordersAPI.getActiveOrdersTracking();
-        setTrackingOrders(Array.isArray(data) ? data : data.data || []);
       }
     } catch (err) {
       setError("Errore nel caricamento dati: " + err.message);
@@ -92,7 +87,7 @@ export default function AdminDashboardScreen({ navigation }) {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.tabBarContent}
       >
-        {['stats', 'users', 'orders', 'tickets', 'finance', 'metrics', 'tracking', 'map'].map((tab) => (
+        {['stats', 'users', 'orders', 'tickets', 'finance', 'metrics'].map((tab) => (
           <TouchableOpacity
             key={tab}
             style={[styles.tab, activeTab === tab && styles.activeTab]}
@@ -142,15 +137,6 @@ export default function AdminDashboardScreen({ navigation }) {
     ]);
   };
 
-  if (activeTab === 'map') {
-    return (
-      <View style={{ flex: 1 }}>
-        {renderHeader()}
-        <ManagerRealTimeMapScreen route={{ params: { user: currentUser } }} />
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
       {renderHeader()}
@@ -195,13 +181,6 @@ export default function AdminDashboardScreen({ navigation }) {
                     <StatCard label="Bills" value={metrics.bills?.total_bills || 0} />
                   </View>
                 ) : null}
-
-                {activeTab === 'tracking' ? (
-                  <View>
-                    <Text style={styles.welcome}>🗺️ Tracciamento Ordini</Text>
-                    <Text style={styles.helperText}>Ordini attivi: {trackingOrders?.length || 0}</Text>
-                  </View>
-                ) : null}
               </View>
             )}
             renderItem={({ item, index }) => {
@@ -224,7 +203,6 @@ export default function AdminDashboardScreen({ navigation }) {
                 );
               }
               if (activeTab === 'tickets') return <TicketItem item={item} />;
-              if (activeTab === 'tracking') return <TrackingOrderItem item={item} onOpen={(orderId) => navigation.navigate('OrderTracking', { orderId })} />;
               return null;
             }}
           />
@@ -367,21 +345,6 @@ const TicketItem = ({ item }) => (
   <View style={styles.card}>
     <Text style={styles.userName}>{item.title}</Text>
     <Text style={styles.userEmail}>{item.description}</Text>
-  </View>
-);
-
-const TrackingOrderItem = ({ item, onOpen }) => (
-  <View style={styles.card}>
-    <Text style={styles.orderId}>Ordine #{item.id}</Text>
-    <Text style={styles.userEmail}>Cliente: {item.customer_name || '—'}</Text>
-    <Text style={styles.userEmail}>Rider: {item.rider_name || '—'}</Text>
-    <Text style={styles.userEmail}>Indirizzo: {item.delivery_address || '—'}</Text>
-    <Text style={styles.userEmail}>Stato: <Text style={{ color: '#FF6B00' }}>{String(item.status || '').toUpperCase()}</Text></Text>
-    <Text style={styles.userEmail}>ETA: {item.eta_minutes != null ? `${item.eta_minutes} min` : '—'}</Text>
-    <Text style={styles.userEmail}>Totale: €{item.total_amount != null ? Number(item.total_amount).toFixed(2) : '0.00'}</Text>
-    <TouchableOpacity style={styles.trackBtn} onPress={() => onOpen(item.id)}>
-      <Text style={styles.trackBtnText}>Traccia</Text>
-    </TouchableOpacity>
   </View>
 );
 
