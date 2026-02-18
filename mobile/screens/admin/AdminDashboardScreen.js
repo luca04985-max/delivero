@@ -24,6 +24,7 @@ export default function AdminDashboardScreen({ navigation }) {
   const [users, setUsers] = useState([]);
   const [tickets, setTickets] = useState([]);
   const [trackingOrders, setTrackingOrders] = useState([]);
+  const [expandedStates, setExpandedStates] = useState(new Set());
 
   // Edit States
   const [editingUser, setEditingUser] = useState(null);
@@ -203,9 +204,25 @@ export default function AdminDashboardScreen({ navigation }) {
                 ) : null}
               </View>
             )}
-            renderItem={({ item }) => {
+            renderItem={({ item, index }) => {
               if (activeTab === 'users') return <UserItem item={item} onEdit={(item) => { setEditingUser(item); setEditName(item.name); setEditEmail(item.email); setNewRole(item.role); }} onDelete={handleDeleteUser} currentUser={currentUser} />;
-              if (activeTab === 'orders') return <OrderItem item={item} />;
+              if (activeTab === 'orders') {
+                const currentItem = orders[index];
+                const previousItem = index > 0 ? orders[index - 1] : null;
+                const isFirstItem = index === 0;
+                const showSeparator = isFirstItem || (previousItem && String(previousItem.status || '').toUpperCase() !== String(currentItem.status || '').toUpperCase());
+
+                return (
+                  <View>
+                    {showSeparator && (
+                      <View style={styles.statusSeparator}>
+                        <Text style={styles.separatorText}>Stato: {String(currentItem.status || '').toUpperCase()}</Text>
+                      </View>
+                    )}
+                    <OrderItem item={item} navigation={navigation} />
+                  </View>
+                );
+              }
               if (activeTab === 'tickets') return <TicketItem item={item} />;
               if (activeTab === 'tracking') return <TrackingOrderItem item={item} onOpen={(orderId) => navigation.navigate('OrderTracking', { orderId })} />;
               return null;
@@ -325,13 +342,26 @@ const UserItem = ({ item, onEdit, onDelete, currentUser }) => {
   );
 };
 
-const OrderItem = ({ item }) => (
-  <View style={styles.card}>
-    <Text style={styles.orderId}>Ordine #{item.id}</Text>
-    <Text style={styles.orderStatus}>{item.status.toUpperCase()}</Text>
-    <Text style={styles.orderPrice}>€{item.total_amount}</Text>
-  </View>
-);
+const OrderItem = ({ item, navigation }) => {
+  const isDelivered = String(item.status || '').toUpperCase() === 'DELIVERED';
+
+  return (
+    <View style={[styles.card, isDelivered && styles.deliveredCard]}>
+      <Text style={styles.orderId}>Ordine #{item.id}</Text>
+      <Text style={styles.userEmail}>Cliente: {item.customer_name || '—'}</Text>
+      <Text style={styles.userEmail}>Rider: {item.rider_name || '—'}</Text>
+      <Text style={styles.userEmail}>Indirizzo: {item.delivery_address || '—'}</Text>
+      <Text style={styles.userEmail}>Stato: <Text style={[{ color: '#FF6B00' }, isDelivered && styles.deliveredStatus]}>{String(item.status || '').toUpperCase()}</Text></Text>
+      <Text style={styles.userEmail}>ETA: {item.eta_minutes != null ? `${item.eta_minutes} min` : '—'}</Text>
+      <Text style={styles.userEmail}>Totale: €{item.total_amount != null ? Number(item.total_amount).toFixed(2) : '0.00'}</Text>
+      {!isDelivered && (
+        <TouchableOpacity style={styles.trackBtn} onPress={() => navigation.navigate('OrderTracking', { orderId: item.id })}>
+          <Text style={styles.trackBtnText}>Traccia</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+};
 
 const TicketItem = ({ item }) => (
   <View style={styles.card}>
@@ -471,6 +501,31 @@ const styles = StyleSheet.create({
   btnCancelText: {
     color: '#fff',
     fontSize: 14,
+    fontWeight: 'bold',
+  },
+  deliveredCard: {
+    backgroundColor: '#f8f9fa',
+    borderLeftColor: '#28a745',
+    opacity: 0.8,
+  },
+  deliveredStatus: {
+    color: '#28a745',
+  },
+  statusSeparator: {
+    backgroundColor: '#2c3e50',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    elevation: 3,
+  },
+  separatorText: {
+    color: '#FF6B00',
+    fontSize: 12,
     fontWeight: 'bold',
   },
 });
