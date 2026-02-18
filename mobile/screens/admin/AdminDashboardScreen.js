@@ -23,6 +23,7 @@ export default function AdminDashboardScreen({ navigation }) {
   const [users, setUsers] = useState([]);
   const [tickets, setTickets] = useState([]);
   const [trackingOrders] = useState([]);
+  const [expandedStates, setExpandedStates] = useState(new Set());
 
   // Edit States
   const [editingUser, setEditingUser] = useState(null);
@@ -106,7 +107,17 @@ export default function AdminDashboardScreen({ navigation }) {
     setRefreshing(true);
     loadDashboardData();
   };
-
+  const toggleStateExpansion = (status) => {
+    setExpandedStates(prev => {
+      const next = new Set(prev);
+      if (next.has(status)) {
+        next.delete(status);
+      } else {
+        next.add(status);
+      }
+      return next;
+    });
+  };
   const handleUpdateUserRole = async (userId) => {
     try {
       setLoading(true);
@@ -189,16 +200,31 @@ export default function AdminDashboardScreen({ navigation }) {
                 const currentItem = orders[index];
                 const previousItem = index > 0 ? orders[index - 1] : null;
                 const isFirstItem = index === 0;
-                const showSeparator = isFirstItem || (previousItem && String(previousItem.status || '').toUpperCase() !== String(currentItem.status || '').toUpperCase());
+
+                const currentStatus = String(currentItem.status || '').toUpperCase();
+                const previousStatus = previousItem ? String(previousItem.status || '').toUpperCase() : null;
+
+                const showSeparator = isFirstItem || (previousStatus !== currentStatus);
+                const isExpanded = expandedStates.has(currentStatus);
 
                 return (
                   <View>
                     {showSeparator && (
-                      <View style={styles.statusSeparator}>
-                        <Text style={styles.separatorText}>Stato: {String(currentItem.status || '').toUpperCase()}</Text>
-                      </View>
+                      <TouchableOpacity
+                        style={styles.statusSeparator}
+                        onPress={() => toggleStateExpansion(currentStatus)}
+                        activeOpacity={0.7}
+                      >
+                        <Text style={styles.separatorText}>
+                          {currentStatus} {isExpanded ? ' ▲' : ' ▼'}
+                        </Text>
+                      </TouchableOpacity>
                     )}
-                    <OrderItem item={item} navigation={navigation} />
+
+                    {/* Mostra l'item solo se la categoria è espansa */}
+                    {isExpanded && (
+                      <OrderItem item={item} navigation={navigation} />
+                    )}
                   </View>
                 );
               }
