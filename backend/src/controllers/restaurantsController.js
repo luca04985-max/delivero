@@ -7,8 +7,8 @@ export const getRestaurants = async (req, res) => {
 
         let query = `
       SELECT 
-        id, name, rating, estimated_delivery_time as delivery_time, 
-        delivery_cost, image_url, description, address, 
+        id, name, rating, delivery_fee as delivery_cost, 
+        image_url, description, address, 
         latitude, longitude, is_open, restaurants.is_active, 
         (SELECT COUNT(*) FROM reviews WHERE restaurant_id = restaurants.id) as review_count
       FROM restaurants
@@ -34,9 +34,9 @@ export const getRestaurants = async (req, res) => {
             params.push(parseFloat(rating_min));
         }
 
-        if (max_delivery_time) {
-            query += ` AND estimated_delivery_time <= $${params.length + 1}`;
-            params.push(parseInt(max_delivery_time));
+        if (max_delivery_cost) {
+            query += ` AND delivery_fee <= $${params.length + 1}`;
+            params.push(parseFloat(max_delivery_cost));
         }
 
         if (max_delivery_cost) {
@@ -61,8 +61,8 @@ export const getRestaurant = async (req, res) => {
         // Get restaurant details
         const restaurantRes = await db.query(
             `SELECT 
-              id, name, rating, estimated_delivery_time as delivery_time, 
-              delivery_cost, image_url, description, address, 
+              id, name, rating, delivery_fee as delivery_cost, 
+              image_url, description, address, 
               latitude, longitude, is_open, phone, website
        FROM restaurants 
        WHERE id = $1 AND restaurants.is_active = true`,
