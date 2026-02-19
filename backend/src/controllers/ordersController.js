@@ -6,7 +6,7 @@ export const getOrders = async (req, res) => {
   try {
     const userId = req.user.userId;
     const result = await db.query(
-      'SELECT * FROM orders WHERE user_id = $1 ORDER BY created_at DESC',
+      'SELECT * FROM orders WHERE customer_id = $1 ORDER BY created_at DESC',
       [userId]
     );
     res.status(200).json(result.rows);
@@ -21,7 +21,7 @@ export const getOrderById = async (req, res) => {
     const userId = req.user.userId;
 
     const result = await db.query(
-      'SELECT * FROM orders WHERE id = $1 AND user_id = $2',
+      'SELECT * FROM orders WHERE id = $1 AND customer_id = $2',
       [id, userId]
     );
 
@@ -102,7 +102,7 @@ export const createOrder = async (req, res) => {
     const { delivery_latitude, delivery_longitude } = req.body;
 
     const result = await db.query(
-      'INSERT INTO orders (user_id, restaurant_id, items, total_amount, delivery_address, delivery_latitude, delivery_longitude, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+      'INSERT INTO orders (customer_id, restaurant_id, items, total_amount, delivery_address, delivery_latitude, delivery_longitude, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
       [userId, restaurantId, JSON.stringify(items), totalAmount, deliveryAddress, delivery_latitude || null, delivery_longitude || null, 'pending']
     );
 
@@ -123,7 +123,7 @@ export const updateOrderStatus = async (req, res) => {
     }
 
     const result = await db.query(
-      'UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2 AND user_id = $3 RETURNING *',
+      'UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2 AND customer_id = $3 RETURNING *',
       [status, id, userId]
     );
 
@@ -256,7 +256,7 @@ export const updateRiderOrderStatus = async (req, res) => {
     console.log(`✅ Order updated successfully:`, updatedOrder);
 
     // Emit real-time update via WebSocket
-    broadcastOrderStatusChange(id, updatedOrder.user_id, status);
+    broadcastOrderStatusChange(id, updatedOrder.customer_id, status);
 
     // Also broadcast to WebSocket bridge clients
     try {
@@ -312,7 +312,7 @@ export const cancelOrder = async (req, res) => {
     const result = await db.query(
       `UPDATE orders 
        SET status = 'cancelled', updated_at = NOW() 
-       WHERE id = $1 AND user_id = $2 AND status IN ('pending', 'accepted') 
+       WHERE id = $1 AND customer_id = $2 AND status IN ('pending', 'accepted') 
        RETURNING *`,
       [id, userId]
     );
@@ -339,7 +339,7 @@ export const trackOrder = async (req, res) => {
     let queryParams = [id];
 
     if (userRole === 'customer') {
-      query += ' AND user_id = $2';
+      query += ' AND customer_id = $2';
       queryParams.push(userId);
     } else if (userRole === 'rider' || userRole === 'manager') {
       // Riders and managers can see orders they're assigned to or any order
@@ -459,7 +459,7 @@ export const getTrackHistory = async (req, res) => {
 
     // Validate order exists and get user_id
     const orderCheck = await db.query(
-      'SELECT id, user_id FROM orders WHERE id = $1',
+      'SELECT id, customer_id FROM orders WHERE id = $1',
       [id]
     );
 
@@ -492,7 +492,7 @@ export const getActiveOrders = async (req, res) => {
         o.id,
         o.status,
         o.rider_id,
-        o.user_id,
+        o.customer_id,
         o.delivery_address,
         o.rider_latitude,
         o.rider_longitude,
@@ -505,7 +505,7 @@ export const getActiveOrders = async (req, res) => {
         c.name as customer_name
        FROM orders o
        LEFT JOIN users u ON o.rider_id = u.id
-       LEFT JOIN users c ON o.user_id = c.id
+       LEFT JOIN users c ON o.customer_id = c.id
        WHERE o.status IN ('pending', 'accepted', 'pickup', 'in_transit')
        ORDER BY o.created_at DESC`,
       []
