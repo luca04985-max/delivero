@@ -4,31 +4,62 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const CartContext = createContext();
 
 const initialState = {
-    items: [], // [{id, restaurantId, name, price, quantity, customizations: []}]
+    items: [], // [{id, restaurantId, name, price, quantity, customizations: [], type: 'restaurant'|'shopping'}]
     restaurantId: null,
     totalPrice: 0,
     itemCount: 0,
+    restaurantItems: [], // Separa per ristoranti
+    shoppingItems: [],   // Separa per shopping
 };
 
 const cartReducer = (state, action) => {
     switch (action.type) {
         case 'ADD_TO_CART': {
-            const { item, restaurantId, customizations } = action.payload;
+            const { item, restaurantId, customizations = [] } = action.payload;
+            const cartItem = {
+                ...item,
+                customizations,
+                quantity: 1,
+                id: Math.random(),
+                type: item.type || 'restaurant',
+                restaurantId: restaurantId || null
+            };
 
-            // Se cambio ristorante, svuoto il carrello
-            if (state.restaurantId && state.restaurantId !== restaurantId) {
-                return {
-                    items: [{ ...item, customizations, quantity: 1, id: Math.random() }],
+            // Se è un prodotto restaurant e cambio ristorante, svuoto il carrello
+            if (cartItem.type === 'restaurant' && state.restaurantId && state.restaurantId !== restaurantId) {
+                const newItems = [cartItem];
+                return calculateTotals({
+                    ...state,
+                    items: newItems,
                     restaurantId,
-                    totalPrice: item.price,
-                    itemCount: 1,
-                };
+                });
             }
 
-            // Aggiungi o incrementa
+            // Per shopping, posso aggiungere direttamente senza svuotare
+            if (cartItem.type === 'shopping') {
+                const existingIndex = state.items.findIndex(
+                    i => i.id === item.id && i.type === 'shopping'
+                );
+
+                let newItems;
+                if (existingIndex > -1) {
+                    newItems = [...state.items];
+                    newItems[existingIndex].quantity += 1;
+                } else {
+                    newItems = [...state.items, cartItem];
+                }
+
+                return calculateTotals({
+                    ...state,
+                    items: newItems,
+                });
+            }
+
+            // Per restaurant, controllo personalizzazioni
             const existingIndex = state.items.findIndex(
                 i => i.menuItemId === item.id &&
-                    JSON.stringify(i.customizations) === JSON.stringify(customizations)
+                    JSON.stringify(i.customizations) === JSON.stringify(customizations) &&
+                    i.type === 'restaurant'
             );
 
             let newItems;
@@ -37,38 +68,29 @@ const cartReducer = (state, action) => {
                 newItems[existingIndex].quantity += 1;
             } else {
                 newItems = [...state.items, {
-                    ...item,
+                    ...cartItem,
                     menuItemId: item.id,
-                    customizations,
-                    quantity: 1,
-                    id: Math.random()
                 }];
             }
 
-            const totalPrice = newItems.reduce((sum, item) =>
-                sum + (item.price * item.quantity), 0
-            );
-
-            return {
+            return calculateTotals({
+                ...state,
                 items: newItems,
                 restaurantId,
-                totalPrice: parseFloat(totalPrice.toFixed(2)),
-                itemCount: newItems.reduce((sum, item) => sum + item.quantity, 0),
-            };
+            });
         }
 
         case 'REMOVE_FROM_CART': {
             const newItems = state.items.filter(i => i.id !== action.payload);
-            const totalPrice = newItems.reduce((sum, item) =>
-                sum + (item.price * item.quantity), 0
-            );
+            const newRestaurantId = newItems.filter(i => i.type === 'restaurant').length === 0
+                ? null
+                : state.restaurantId;
 
-            return {
+            return calculateTotals({
+                ...state,
                 items: newItems,
-                restaurantId: newItems.length === 0 ? null : state.restaurantId,
-                totalPrice: parseFloat(totalPrice.toFixed(2)),
-                itemCount: newItems.reduce((sum, item) => sum + item.quantity, 0),
-            };
+                restaurantId: newRestaurantId,
+            });
         }
 
         case 'UPDATE_QUANTITY': {
@@ -80,27 +102,45 @@ const cartReducer = (state, action) => {
             const newItems = state.items.map(item =>
                 item.id === id ? { ...item, quantity } : item
             );
-            const totalPrice = newItems.reduce((sum, item) =>
-                sum + (item.price * item.quantity), 0
-            );
 
-            return {
+            return calculateTotals({
                 ...state,
                 items: newItems,
-                totalPrice: parseFloat(totalPrice.toFixed(2)),
-                itemCount: newItems.reduce((sum, item) => sum + item.quantity, 0),
-            };
+            });
         }
 
         case 'CLEAR_CART':
-            return initialState;
+            return calculateTotals({
+                ...initialState,
+            });
 
         case 'LOAD_CART':
-            return action.payload;
+            return calculateTotals({
+                ...state,
+                items: action.payload.items || [],
+            });
 
         default:
             return state;
     }
+};
+
+// Helper per calcolare totali e separare per tipo
+const calculateTotals = (state) => {
+    const itemCount = state.items.reduce((sum, item) => sum + item.quantity, 0);
+    const totalPrice = state.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    // Separa per tipo
+    const restaurantItems = state.items.filter(item => item.type === 'restaurant');
+    const shoppingItems = state.items.filter(item => item.type === 'shopping');
+
+    return {
+        ...state,
+        itemCount,
+        totalPrice: parseFloat(totalPrice.toFixed(2)),
+        restaurantItems,
+        shoppingItems,
+    };
 };
 
 export const CartProvider = ({ children }) => {
@@ -135,7 +175,7 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    const addToCart = (item, restaurantId, customizations = []) => {
+    const addToCart = (item, restaurantId = null, customizations = []) => {
         dispatch({
             type: 'ADD_TO_CART',
             payload: { item, restaurantId, customizations }
@@ -160,7 +200,13 @@ export const CartProvider = ({ children }) => {
             addToCart,
             removeFromCart,
             updateQuantity,
-            clearCart
+            clearCart,
+            // Compatibilità con codice esistente
+            items: cart.items,
+            totalPrice: cart.totalPrice,
+            itemCount: cart.itemCount,
+            restaurantItems: cart.restaurantItems,
+            shoppingItems: cart.shoppingItems,
         }}>
             {children}
         </CartContext.Provider>

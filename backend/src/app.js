@@ -6,6 +6,8 @@ import http from "http";
 import logger from "./utils/logger.js";
 import { generalLimiter, authLimiter } from "./middleware/rateLimiter.js";
 import authRoutes from "./routes/auth.js";
+import userRoutes from "./routes/user.js";
+import riderRoutes from "./routes/rider.js";
 import orderRoutes from "./routes/orders.js";
 import billRoutes from "./routes/bills.js";
 import paymentRoutes from "./routes/payments.js";
@@ -67,6 +69,8 @@ app.get('/health', (req, res) => {
 
 // Routes
 app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/rider", riderRoutes);
 app.use("/api/restaurants", restaurantsRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/bills", billRoutes);

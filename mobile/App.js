@@ -24,13 +24,13 @@ import CustomerHomeScreen from './screens/customer/CustomerHomeScreen';
 import RestaurantsScreen from './screens/customer/RestaurantsScreen';
 import RestaurantDetailScreen from './screens/customer/RestaurantDetailScreen';
 import CartScreen from './screens/customer/CartScreen';
-import GroceriesScreen from './screens/customer/GroceriesScreen';
 import { useCart } from './context/CartContext';
 import ShoppingScreen from './screens/customer/ShoppingScreen';
 import BrandProductsScreen from './screens/customer/BrandProductsScreen';
 import CustomerOrdersScreen from './screens/customer/CustomerOrdersScreen';
 import CustomerOrderTrackingScreen from './screens/customer/CustomerOrderTrackingScreen';
 import OrderTrackingLiveScreen from './screens/customer/OrderTrackingLiveScreen';
+import CustomerTicketsScreen from './screens/customer/CustomerTicketsScreen';
 import RiderHomeScreen from './screens/rider/RiderHomeScreen';
 import RiderActiveScreen from './screens/rider/RiderActiveScreen';
 import RiderTicketsScreen from './screens/rider/RiderTicketsScreen';
@@ -96,20 +96,6 @@ function CustomerTabs({ onLogout, user }) {
           title: user?.name || 'Ristoranti',
           tabBarLabel: '🍽️ Ristoranti',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🍽️</Text>,
-          headerRight: () => (
-            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Groceries"
-        component={GroceriesScreen}
-        options={{
-          title: user?.name || 'Spesa',
-          tabBarLabel: '🛒 Spesa',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🛒</Text>,
           headerRight: () => (
             <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
               <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>

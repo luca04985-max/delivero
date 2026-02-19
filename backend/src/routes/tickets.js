@@ -86,6 +86,46 @@ router.get('/admin/all', authenticateToken, async (req, res) => {
   }
 });
 
+// Get customer tickets
+router.get('/customer', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+    const userRes = await db.query('SELECT role FROM users WHERE id = $1', [userId]);
+    const role = userRes.rows[0]?.role;
+    if (role !== 'customer') {
+      return res.status(403).json({ error: 'Customer access required' });
+    }
+
+    const tickets = await getUserTickets(userId);
+    res.json(tickets);
+  } catch (error) {
+    console.error('Error getting customer tickets:', error);
+    res.status(500).json({ error: 'Failed to get customer tickets' });
+  }
+});
+
+// Get rider tickets
+router.get('/rider', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+    const userRes = await db.query('SELECT role FROM users WHERE id = $1', [userId]);
+    const role = userRes.rows[0]?.role;
+    if (role !== 'rider') {
+      return res.status(403).json({ error: 'Rider access required' });
+    }
+
+    const tickets = await getUserTickets(userId);
+    res.json(tickets);
+  } catch (error) {
+    console.error('Error getting rider tickets:', error);
+    res.status(500).json({ error: 'Failed to get rider tickets' });
+  }
+});
+
 // Get user's tickets
 router.get('/my-tickets', authenticateToken, async (req, res) => {
   try {
