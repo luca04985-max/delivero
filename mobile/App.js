@@ -33,6 +33,7 @@ import CustomerOrderTrackingScreen from './screens/customer/CustomerOrderTrackin
 import OrderTrackingLiveScreen from './screens/customer/OrderTrackingLiveScreen';
 import RiderHomeScreen from './screens/rider/RiderHomeScreen';
 import RiderActiveScreen from './screens/rider/RiderActiveScreen';
+import RiderTicketsScreen from './screens/rider/RiderTicketsScreen';
 import AdminDashboardScreen from './screens/admin/AdminDashboardScreen';
 import AdminTicketsScreen from './screens/admin/AdminTicketsScreen';
 import { ActivityIndicator, View, Text, TouchableOpacity } from 'react-native';
@@ -56,7 +57,7 @@ function AuthStack() {
 }
 
 // Customer Stack
-function CustomerTabs({ onLogout }) {
+function CustomerTabs({ onLogout, user }) {
   const cart = useCart();
 
   return (
@@ -78,7 +79,7 @@ function CustomerTabs({ onLogout }) {
         name="Home"
         component={CustomerHomeScreen}
         options={{
-          title: '🍔 Home',
+          title: user?.name || 'Home',
           tabBarLabel: '🍔 Home',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🏠</Text>,
           headerRight: () => (
@@ -92,36 +93,56 @@ function CustomerTabs({ onLogout }) {
         name="Restaurants"
         component={RestaurantsScreen}
         options={{
-          title: '🍽️ Ristoranti',
+          title: user?.name || 'Ristoranti',
           tabBarLabel: '🍽️ Ristoranti',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🍽️</Text>,
+          headerRight: () => (
+            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
+              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+            </TouchableOpacity>
+          ),
         }}
       />
       <Tab.Screen
         name="Groceries"
         component={GroceriesScreen}
         options={{
-          title: '🛒 Spesa',
+          title: user?.name || 'Spesa',
           tabBarLabel: '🛒 Spesa',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🛒</Text>,
+          headerRight: () => (
+            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
+              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+            </TouchableOpacity>
+          ),
         }}
       />
       <Tab.Screen
         name="Shopping"
         component={ShoppingScreen}
         options={{
-          title: '🛍️ Shopping',
+          title: user?.name || 'Shopping',
           tabBarLabel: '🛍️ Shopping',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🛍️</Text>,
+          headerRight: () => (
+            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
+              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+            </TouchableOpacity>
+          ),
         }}
       />
       <Tab.Screen
         name="Cart"
         component={CartScreen}
         options={{
-          title: '🛒 Carrello',
+          title: user?.name || 'Carrello',
           tabBarLabel: '🛒 Carrello',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🛒</Text>,
+          headerRight: () => (
+            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
+              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+            </TouchableOpacity>
+          ),
           tabBarBadge: cart?.itemCount > 0 ? cart.itemCount : null,
         }}
       />
@@ -129,22 +150,41 @@ function CustomerTabs({ onLogout }) {
         name="Orders"
         component={CustomerOrdersScreen}
         options={{
-          title: '📦 Ordini',
+          title: user?.name || 'Ordini',
           tabBarLabel: '📦 Ordini',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>📦</Text>,
+          headerRight: () => (
+            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
+              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Tickets"
+        component={CustomerTicketsScreen}
+        options={{
+          title: user?.name || 'Ticket',
+          tabBarLabel: '🎫 Ticket',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🎫</Text>,
+          headerRight: () => (
+            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
+              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+            </TouchableOpacity>
+          ),
         }}
       />
     </Tab.Navigator>
   );
 }
 
-function CustomerStack({ onLogout }) {
+function CustomerStack({ onLogout, user }) {
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="CustomerTabs"
         // pass onLogout down to tabs so header button can call it
-        children={() => <CustomerTabs onLogout={onLogout} />}
+        children={() => <CustomerTabs onLogout={onLogout} user={user} />}
         options={{ headerShown: false }}
       />
       <Stack.Screen
@@ -199,7 +239,7 @@ function CustomerStack({ onLogout }) {
 }
 
 // Rider Stack
-function RiderStack({ onLogout }) {
+function RiderStack({ onLogout, user }) {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -219,7 +259,7 @@ function RiderStack({ onLogout }) {
         name="Available"
         component={RiderHomeScreen}
         options={{
-          title: '📦 Ordini Disponibili',
+          title: user?.name || 'Disponibili',
           tabBarLabel: '📦 Disponibili',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>📦</Text>,
           headerRight: () => (
@@ -233,9 +273,28 @@ function RiderStack({ onLogout }) {
         name="Active"
         component={RiderActiveScreen}
         options={{
-          title: '🚚 Mie Consegne',
+          title: user?.name || 'Consegne',
           tabBarLabel: '🚚 Consegne',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🚚</Text>,
+          headerRight: () => (
+            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
+              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Tickets"
+        component={RiderTicketsScreen}
+        options={{
+          title: user?.name || 'Ticket',
+          tabBarLabel: '🎫 Ticket',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🎫</Text>,
+          headerRight: () => (
+            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
+              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+            </TouchableOpacity>
+          ),
         }}
       />
     </Tab.Navigator>
@@ -261,7 +320,7 @@ function ManagerStack({ token, user, onLogout }) {
         name="AdminDashboard"
         component={AdminDashboardScreen}
         options={{
-          title: '⚙️ Admin Dashboard',
+          title: user?.name || 'Admin Dashboard',
           headerRight: () => (
             <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
               <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
@@ -274,7 +333,12 @@ function ManagerStack({ token, user, onLogout }) {
         name="AdminTickets"
         component={AdminTicketsScreen}
         options={{
-          title: '🎫 Tickets',
+          title: user?.name || 'Tickets',
+          headerRight: () => (
+            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
+              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+            </TouchableOpacity>
+          ),
         }}
         initialParams={{ token }}
       />
@@ -282,7 +346,12 @@ function ManagerStack({ token, user, onLogout }) {
         name="OrderTracking"
         component={CustomerOrderTrackingScreen}
         options={{
-          title: '📍 Tracciamento Ordine',
+          title: user?.name || 'Tracciamento Ordine',
+          headerRight: () => (
+            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
+              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+            </TouchableOpacity>
+          ),
         }}
         initialParams={{ token }}
       />
@@ -440,25 +509,31 @@ export default function App() {
         {state.userToken == null ? (
           <AuthStack />
         ) : state.user?.role === 'customer' ? (
-          <CustomerStack onLogout={async () => {
-            try {
-              await AsyncStorage.removeItem('token');
-              await AsyncStorage.removeItem('user');
-            } catch (e) {
-              console.warn('Errore durante logout:', e);
-            }
-            dispatch({ type: 'SIGN_OUT' });
-          }} />
+          <CustomerStack
+            user={state.user}
+            onLogout={async () => {
+              try {
+                await AsyncStorage.removeItem('token');
+                await AsyncStorage.removeItem('user');
+              } catch (e) {
+                console.warn('Errore durante logout:', e);
+              }
+              dispatch({ type: 'SIGN_OUT' });
+            }}
+          />
         ) : state.user?.role === 'rider' ? (
-          <RiderStack onLogout={async () => {
-            try {
-              await AsyncStorage.removeItem('token');
-              await AsyncStorage.removeItem('user');
-            } catch (e) {
-              console.warn('Errore durante logout:', e);
-            }
-            dispatch({ type: 'SIGN_OUT' });
-          }} />
+          <RiderStack
+            user={state.user}
+            onLogout={async () => {
+              try {
+                await AsyncStorage.removeItem('token');
+                await AsyncStorage.removeItem('user');
+              } catch (e) {
+                console.warn('Errore durante logout:', e);
+              }
+              dispatch({ type: 'SIGN_OUT' });
+            }}
+          />
         ) : state.user?.role === 'manager' || state.user?.role === 'admin' ? (
           <ManagerStack token={state.userToken} user={state.user} onLogout={async () => {
             try {

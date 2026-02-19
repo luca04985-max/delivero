@@ -21,7 +21,7 @@ async function makeRequest(endpoint, options = {}) {
     if (token) {
       headers.Authorization = `Bearer ${token}`;
     }
-console.log(headers.Authorization );
+    console.log(headers.Authorization);
     const fullUrl = `${API_URL}${endpoint}`;
     console.log('🌐 Making request:', {
       url: fullUrl,
@@ -274,6 +274,27 @@ export const ordersAPI = {
   // Manager: get all active orders with tracking
   getActiveOrdersTracking: async () => {
     return makeRequest('/orders/active/all', { method: 'GET' });
+  },
+
+  // Customer tickets
+  getCustomerTickets: async () => {
+    return makeRequest('/tickets/customer', { method: 'GET' });
+  },
+  createCustomerTicket: async (data) => {
+    return makeRequest('/tickets/customer', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+  // Rider tickets
+  getRiderTickets: async () => {
+    return makeRequest('/tickets/rider', { method: 'GET' });
+  },
+  createRiderTicket: async (data) => {
+    return makeRequest('/tickets/rider', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   },
 
   // Location sharing (riders)

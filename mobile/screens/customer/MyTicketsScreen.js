@@ -20,7 +20,7 @@ export default function MyTicketsScreen({ navigation }) {
   return (
     <View style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>I miei Ticket</Text>
+        <Text style={styles.headerTitle}>🎫 I Miei Ticket</Text>
         <TouchableOpacity onPress={() => navigation.navigate('TicketForm')}>
           <Text style={{ color: '#fff', fontWeight: 'bold' }}>+ Nuovo</Text>
         </TouchableOpacity>
