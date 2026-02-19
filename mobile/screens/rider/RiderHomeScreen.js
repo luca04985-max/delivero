@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator, RefreshControl } from 'react-native';
 import { ordersAPI } from '../../services/api';
+import { riderHomeScreenStyles } from './styles/RiderHomeScreenStyles';
 
 export default function RiderHomeScreen({ navigation }) {
   const [availableOrders, setAvailableOrders] = useState([]);
@@ -34,23 +35,31 @@ export default function RiderHomeScreen({ navigation }) {
   };
 
   const renderOrder = ({ item }) => (
-    <View style={styles.card}>
-      <Text style={styles.emoji}>📦 {item.category || 'Consegna'}</Text>
-      <View style={{ flex: 1, marginLeft: 10 }}>
-        <Text style={styles.address}>Da: {item.pickup_address || 'Punto Ritiro'}</Text>
-        <Text style={styles.address}>A: {item.delivery_address}</Text>
-        <Text style={styles.payout}>Guadagno stimato: €{item.rider_payout || '5.00'}</Text>
+    <View style={riderHomeScreenStyles.card}>
+      <View style={riderHomeScreenStyles.iconContainer}>
+        <Text style={riderHomeScreenStyles.emoji}>📦</Text>
       </View>
-      <TouchableOpacity style={styles.acceptBtn} onPress={() => handleAcceptOrder(item.id)}>
-        <Text style={{ color: '#fff', fontWeight: 'bold' }}>ACCETTA</Text>
+      <View style={riderHomeScreenStyles.textGroup}>
+        <Text style={riderHomeScreenStyles.address}>Da: {item.pickup_address || 'Punto Ritiro'}</Text>
+        <Text style={riderHomeScreenStyles.address}>A: {item.delivery_address}</Text>
+        <View style={riderHomeScreenStyles.payoutContainer}>
+          <Text style={riderHomeScreenStyles.payout}>€{item.rider_payout || '5.00'}</Text>
+        </View>
+      </View>
+      <TouchableOpacity style={riderHomeScreenStyles.acceptBtn} onPress={() => handleAcceptOrder(item.id)}>
+        <Text style={riderHomeScreenStyles.acceptBtnText}>ACCETTA</Text>
       </TouchableOpacity>
     </View>
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Ordini Disponibili</Text>
+    <View style={riderHomeScreenStyles.container}>
+      <View style={riderHomeScreenStyles.header}>
+        <Text style={riderHomeScreenStyles.headerTitle}>Ordini Disponibili</Text>
+        <View style={riderHomeScreenStyles.statusBadge}>
+          <View style={riderHomeScreenStyles.statusDot}></View>
+          <Text style={riderHomeScreenStyles.statusText}>Online</Text>
+        </View>
       </View>
       <FlatList
         data={availableOrders}
@@ -63,13 +72,3 @@ export default function RiderHomeScreen({ navigation }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  header: { backgroundColor: '#1a1a2e', padding: 20, paddingTop: 50 },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
-  card: { backgroundColor: '#fff', padding: 15, borderRadius: 12, marginBottom: 10, flexDirection: 'row', alignItems: 'center', elevation: 2 },
-  emoji: { fontSize: 24 },
-  address: { fontSize: 13, color: '#666' },
-  payout: { fontSize: 14, fontWeight: 'bold', color: '#28A745', marginTop: 5 },
-  acceptBtn: { backgroundColor: '#FF6B00', padding: 10, borderRadius: 8 }
-});

@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-  FlatList,
-  TextInput,
-  Alert,
-  ActivityIndicator,
-  RefreshControl,
-  Dimensions
+  View, Text, ScrollView, TouchableOpacity, FlatList,
+  TextInput, Alert, ActivityIndicator, RefreshControl, Dimensions
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { makeRequest } from '../../services/api'; // Usiamo makeRequest come standard
+import { makeRequest } from '../../services/api';
+// Correzione import tema (2 livelli su)
+import { mobileTheme } from '../../theme';
+import { customerHomeScreenStyles } from './styles/CustomerHomeScreenStyles';
 
 const { width } = Dimensions.get('window');
 
@@ -94,15 +88,38 @@ export default function CustomerHomeScreen({ navigation }) {
     r.category.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  // Generate HTML for OpenStreetMap with restaurant markers
+  // GESTIONE CLIC SU MAPPA
+  const handleMapMessage = (event) => {
+    const data = event.nativeEvent.data;
+    if (data.startsWith('restaurant:')) {
+      const restaurantId = data.split(':')[1];
+      const restaurant = restaurants.find(r => r.id.toString() === restaurantId);
+      if (restaurant) {
+        navigation.navigate('RestaurantDetail', { restaurant });
+      }
+    }
+  };
+
   const generateCustomerMapHtml = () => {
     const centerLat = userLocation?.latitude || 41.880025;
     const centerLon = userLocation?.longitude || 12.67594;
 
+    // Generazione marker con postMessage corretto
     const markers = filteredRestaurants.map(rest => `
         L.marker([${rest.latitude || 41.88}, ${rest.longitude || 12.67}])
             .addTo(map)
-            .bindPopup('<b>${rest.name}</b><br/>${rest.category}<br/><a href="#" onclick="window.ReactNativeWebView.postMessage(\\"restaurant:${rest.id}\\")">Vedi Menu →</a>');
+            .bindPopup(\`
+                <div style="font-family: sans-serif; padding: 5px;">
+                    <b style="font-size: 14px;">${rest.name}</b><br/>
+                    <span style="color: #666;">${rest.category}</span><br/>
+                    <button 
+                        onclick="window.ReactNativeWebView.postMessage('restaurant:${rest.id}')"
+                        style="margin-top: 8px; background: ${mobileTheme.colors.primary}; color: white; border: none; padding: 5px 10px; border-radius: 5px; width: 100%;"
+                    >
+                        Vedi Menu
+                    </button>
+                </div>
+            \`);
     `).join('\n');
 
     return `
@@ -112,28 +129,19 @@ export default function CustomerHomeScreen({ navigation }) {
             <meta charset="utf-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
             <style>
                 body { margin:0; padding:0; }
                 #map { position:absolute; top:0; bottom:0; width:100%; height:100%; }
+                .leaflet-popup-content-wrapper { border-radius: 12px; }
             </style>
         </head>
         <body>
             <div id="map"></div>
-            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
             <script>
-                var map = L.map('map').setView([${centerLat}, ${centerLon}], 14);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap contributors'
-                }).addTo(map);
+                var map = L.map('map', { zoomControl: false }).setView([${centerLat}, ${centerLon}], 14);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
                 ${markers}
-                
-                // Handle restaurant clicks
-                window.ReactNativeWebView.postMessage = function(data) {
-                    if (data.startsWith('restaurant:')) {
-                        // This will be handled by onMessage in WebView
-                        window.location.href = 'delivero://restaurant?' + data;
-                    }
-                };
             </script>
         </body>
         </html>
@@ -141,15 +149,15 @@ export default function CustomerHomeScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={customerHomeScreenStyles.container}>
       {/* Header con Toggle Mappa */}
-      <View style={styles.header}>
+      <View style={customerHomeScreenStyles.header}>
         <View>
-          <Text style={styles.title}>Delivero Roma</Text>
-          <Text style={styles.subtitle}>📍 {userLocation ? 'Roma Est Attiva' : 'Ricerca posizione...'}</Text>
+          <Text style={customerHomeScreenStyles.title}>Delivero Roma</Text>
+          <Text style={customerHomeScreenStyles.subtitle}>📍 {userLocation ? 'Roma Est Attiva' : 'Ricerca posizione...'}</Text>
         </View>
         <TouchableOpacity
-          style={styles.mapToggleBtn}
+          style={customerHomeScreenStyles.mapToggleBtn}
           onPress={() => setViewMode(viewMode === 'list' ? 'map' : 'list')}
         >
           <Text style={{ color: '#fff', fontWeight: 'bold' }}>
@@ -164,43 +172,43 @@ export default function CustomerHomeScreen({ navigation }) {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadData} />}
         >
           {/* 1. Servizi Rapidi (Orizzontali) */}
-          <View style={styles.whiteSection}>
-            <Text style={styles.sectionTitle}>Servizi Extra</Text>
+          <View style={customerHomeScreenStyles.whiteSection}>
+            <Text style={customerHomeScreenStyles.sectionTitle}>Servizi Extra</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ paddingLeft: 15 }}>
               {specialServices.map(service => (
                 <TouchableOpacity
                   key={service.id}
-                  style={styles.serviceCircle}
+                  style={customerHomeScreenStyles.serviceCircle}
                   onPress={() => navigation.navigate(service.screen)}
                 >
-                  <View style={styles.iconCircle}><Text style={{ fontSize: 24 }}>{service.emoji}</Text></View>
-                  <Text style={styles.serviceText}>{service.name}</Text>
+                  <View style={customerHomeScreenStyles.iconCircle}><Text style={{ fontSize: 24 }}>{service.emoji}</Text></View>
+                  <Text style={customerHomeScreenStyles.serviceText}>{service.name}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
           </View>
 
           {/* 2. Search Bar (Sticky) */}
-          <View style={styles.searchSection}>
+          <View style={customerHomeScreenStyles.searchSection}>
             <TextInput
               placeholder="Cerca pizza, sushi, farmacia..."
-              style={styles.searchInput}
+              style={customerHomeScreenStyles.searchInput}
               value={searchText}
               onChangeText={setSearchText}
             />
           </View>
 
           {/* 3. Categorie Food (Orizzontali) */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Categorie Food</Text>
+          <View style={customerHomeScreenStyles.section}>
+            <Text style={customerHomeScreenStyles.sectionTitle}>Categorie Food</Text>
             <FlatList
               data={categories}
               horizontal
               showsHorizontalScrollIndicator={false}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
-                <TouchableOpacity style={styles.categoryPill} onPress={() => navigation.navigate('Restaurants', { category: item.name })}>
-                  <Text style={styles.categoryText}>{item.name}</Text>
+                <TouchableOpacity style={customerHomeScreenStyles.categoryPill} onPress={() => navigation.navigate('Restaurants', { category: item.name })}>
+                  <Text style={customerHomeScreenStyles.categoryText}>{item.name}</Text>
                 </TouchableOpacity>
               )}
               contentContainerStyle={{ paddingHorizontal: 15 }}
@@ -208,33 +216,32 @@ export default function CustomerHomeScreen({ navigation }) {
           </View>
 
           {/* 4. Lista Ristoranti */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Ristoranti Vicini</Text>
+          <View style={customerHomeScreenStyles.section}>
+            <Text style={customerHomeScreenStyles.sectionTitle}>Ristoranti Vicini</Text>
             {filteredRestaurants.map(rest => (
               <TouchableOpacity
                 key={rest.id}
-                style={styles.restCard}
+                style={customerHomeScreenStyles.restCard}
                 onPress={() => navigation.navigate('RestaurantDetail', { restaurant: rest })}
               >
-                <View style={styles.restInfo}>
-                  <Text style={styles.restName}>{rest.name}</Text>
-                  <Text style={styles.restSub}>{rest.category} • ⭐ {rest.rating}</Text>
+                <View style={customerHomeScreenStyles.restInfo}>
+                  <Text style={customerHomeScreenStyles.restName}>{rest.name}</Text>
+                  <Text style={customerHomeScreenStyles.restSub}>{rest.category} • ⭐ {rest.rating}</Text>
                 </View>
-                <View style={styles.restBadge}><Text style={styles.badgeText}>{rest.time || '25'} min</Text></View>
+                <View style={customerHomeScreenStyles.restBadge}><Text style={customerHomeScreenStyles.badgeText}>{rest.time || '25'} min</Text></View>
               </TouchableOpacity>
             ))}
           </View>
         </ScrollView>
       ) : (
         /* VISTA MAPPA INTERATTIVA */
-        <View style={styles.mapContainer}>
+        <View style={customerHomeScreenStyles.mapContainer}>
           <WebView
-            style={styles.map}
+            style={customerHomeScreenStyles.map}
             source={{ html: generateCustomerMapHtml() }}
+            onMessage={handleMapMessage} // Fondamentale per ricevere i clic dalla mappa
             javaScriptEnabled={true}
             domStorageEnabled={true}
-            startInLoadingState={true}
-            renderLoading={() => <ActivityIndicator style={styles.mapLoader} size="large" />}
           />
         </View>
       )}
@@ -242,28 +249,3 @@ export default function CustomerHomeScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9f9f9' },
-  header: { backgroundColor: '#FF6B00', padding: 20, paddingTop: 50, flexDirection: 'row', justifyContent: 'space-between' },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#fff' },
-  subtitle: { color: '#fff', opacity: 0.9, fontSize: 12 },
-  mapToggleBtn: { backgroundColor: 'rgba(255,255,255,0.2)', paddingVertical: 8, paddingHorizontal: 15, borderRadius: 20, alignSelf: 'center' },
-  whiteSection: { backgroundColor: '#fff', paddingVertical: 15, marginBottom: 10 },
-  sectionTitle: { fontSize: 18, fontWeight: 'bold', marginHorizontal: 15, marginBottom: 15, color: '#333' },
-  serviceCircle: { alignItems: 'center', marginRight: 20 },
-  iconCircle: { width: 60, height: 60, borderRadius: 30, backgroundColor: '#FFF0E6', justifyContent: 'center', alignItems: 'center', marginBottom: 5 },
-  serviceText: { fontSize: 12, fontWeight: '500' },
-  searchSection: { padding: 15, backgroundColor: '#f9f9f9' },
-  searchInput: { backgroundColor: '#fff', padding: 12, borderRadius: 10, borderWidth: 1, borderColor: '#eee', elevation: 2 },
-  categoryPill: { backgroundColor: '#FF6B00', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 25, marginRight: 10 },
-  categoryText: { color: '#fff', fontWeight: 'bold' },
-  restCard: { backgroundColor: '#fff', marginHorizontal: 15, marginBottom: 12, borderRadius: 12, padding: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', elevation: 2 },
-  restName: { fontSize: 16, fontWeight: 'bold' },
-  restSub: { color: '#666', fontSize: 13, marginTop: 3 },
-  restBadge: { backgroundColor: '#FFE5CC', padding: 8, borderRadius: 8 },
-  badgeText: { color: '#FF6B00', fontWeight: 'bold', fontSize: 12 },
-  map: { flex: 1 },
-  mapContainer: { flex: 1 },
-  mapLoader: { position: 'absolute', top: 20, right: 20 },
-  section: { marginBottom: 20 }
-});

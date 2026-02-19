@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   ActivityIndicator,
   Alert,
   TouchableOpacity,
@@ -11,6 +10,8 @@ import {
 import { WebView } from 'react-native-webview';
 import { ordersAPI } from '../../services/api';
 import * as Location from 'expo-location';
+import { mobileTheme } from '../../theme';
+import { customerOrderTrackingScreenStyles } from './styles/CustomerOrderTrackingScreenStyles';
 
 // Leaflet Map for Web
 const LeafletTrackingMap = ({ riderLocation, customerLocation, order, history = [] }) => {
@@ -271,9 +272,9 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
 
   if (loading) {
     return (
-      <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color="#FF6B00" />
-        <Text style={styles.loadingText}>Caricamento tracciamento...</Text>
+      <View style={customerOrderTrackingScreenStyles.loadingContainer}>
+        <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
+        <Text style={customerOrderTrackingScreenStyles.loadingText}>Caricamento tracciamento...</Text>
       </View>
     );
   }
@@ -352,221 +353,83 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={customerOrderTrackingScreenStyles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backButton}>← Indietro</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>📍 Tracciamento Ordine</Text>
-        <View style={{ width: 40 }} />
+      <View style={customerOrderTrackingScreenStyles.header}>
+        <View style={customerOrderTrackingScreenStyles.headerContent}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Text style={customerOrderTrackingScreenStyles.statusText}>← Indietro</Text>
+          </TouchableOpacity>
+          <Text style={customerOrderTrackingScreenStyles.title}>📍 Tracciamento Ordine</Text>
+          <View style={customerOrderTrackingScreenStyles.statusBadge}>
+            <Text style={customerOrderTrackingScreenStyles.statusText}>{statusEmoji[order?.status] || '📦'}</Text>
+          </View>
+        </View>
       </View>
 
       {/* Status Badge */}
-      <View style={styles.statusContainer}>
-        <Text style={styles.statusIcon}>{statusEmoji[order?.status] || '📦'}</Text>
-        <Text style={styles.statusText}>{statusText[order?.status] || 'Non disponibile'}</Text>
+      <View style={customerOrderTrackingScreenStyles.statusContainer}>
+        <Text style={customerOrderTrackingScreenStyles.statusText}>{statusText[order?.status] || 'Non disponibile'}</Text>
         {order?.eta_minutes && order?.status === 'in_transit' && (
-          <Text style={styles.etaText}>ETA: {order.eta_minutes} minuti</Text>
+          <Text style={customerOrderTrackingScreenStyles.etaText}>ETA: {order.eta_minutes} minuti</Text>
         )}
       </View>
 
       {/* Map */}
       {riderLocation && customerLocation && (
-        <View style={{ height: 300, marginHorizontal: 12, borderRadius: 12, overflow: 'hidden' }}>
+        <View style={customerOrderTrackingScreenStyles.mapContainer}>
           <WebView
-            style={{ flex: 1 }}
+            style={customerOrderTrackingScreenStyles.map}
             source={{ html: generateCustomerTrackingMapHtml() }}
             javaScriptEnabled={true}
             domStorageEnabled={true}
             startInLoadingState={true}
-            renderLoading={() => <ActivityIndicator style={styles.mapLoader} size="large" />}
+            renderLoading={() => <ActivityIndicator style={customerOrderTrackingScreenStyles.mapLoader} size="large" />}
           />
         </View>
       )}
 
       {/* Order Details */}
-      <View style={styles.detailsContainer}>
-        <Text style={styles.sectionTitle}>📦 Dettagli Ordine</Text>
+      <View style={customerOrderTrackingScreenStyles.detailsContainer}>
+        <Text style={customerOrderTrackingScreenStyles.sectionTitle}>📦 Dettagli Ordine</Text>
 
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>ID Ordine:</Text>
-          <Text style={styles.detailValue}>#{order?.id}</Text>
+        <View style={customerOrderTrackingScreenStyles.detailRow}>
+          <Text style={customerOrderTrackingScreenStyles.detailLabel}>ID Ordine:</Text>
+          <Text style={customerOrderTrackingScreenStyles.detailValue}>#{order?.id}</Text>
         </View>
 
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Importo:</Text>
-          <Text style={styles.detailValue}>€{parseFloat(order?.total_amount || 0).toFixed(2)}</Text>
+        <View style={customerOrderTrackingScreenStyles.detailRow}>
+          <Text style={customerOrderTrackingScreenStyles.detailLabel}>Importo:</Text>
+          <Text style={customerOrderTrackingScreenStyles.detailValue}>€{parseFloat(order?.total_amount || 0).toFixed(2)}</Text>
         </View>
 
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Consegna a:</Text>
-          <Text style={styles.detailValue}>{order?.delivery_address || 'Indirizzo non disponibile'}</Text>
+        <View style={customerOrderTrackingScreenStyles.detailRow}>
+          <Text style={customerOrderTrackingScreenStyles.detailLabel}>Consegna a:</Text>
+          <Text style={customerOrderTrackingScreenStyles.detailValue}>{order?.delivery_address || 'Indirizzo non disponibile'}</Text>
         </View>
 
         {order?.rider_id && (
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Rider assegnato:</Text>
-            <Text style={styles.detailValue}>ID: {order.rider_id}</Text>
+          <View style={customerOrderTrackingScreenStyles.detailRow}>
+            <Text style={customerOrderTrackingScreenStyles.detailLabel}>Rider assegnato:</Text>
+            <Text style={customerOrderTrackingScreenStyles.detailValue}>ID: {order.rider_id}</Text>
           </View>
         )}
 
         {order?.eta_minutes && (
-          <View style={styles.etaBox}>
-            <Text style={styles.etaBoxTitle}>⏱️ Tempo Stimato di Arrivo</Text>
-            <Text style={styles.etaBoxValue}>{order.eta_minutes} minuti</Text>
+          <View style={customerOrderTrackingScreenStyles.etaBox}>
+            <Text style={customerOrderTrackingScreenStyles.etaBoxTitle}>⏱️ Tempo Stimato di Arrivo</Text>
+            <Text style={customerOrderTrackingScreenStyles.etaBoxValue}>{order.eta_minutes} minuti</Text>
           </View>
         )}
       </View>
 
       {/* Refresh Button */}
       <TouchableOpacity
-        style={styles.refreshButton}
+        style={customerOrderTrackingScreenStyles.refreshButton}
         onPress={loadTrackingInfo}
       >
-        <Text style={styles.refreshButtonText}>🔄 Aggiorna</Text>
+        <Text style={customerOrderTrackingScreenStyles.refreshButtonText}>🔄 Aggiorna</Text>
       </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8f9fa',
-  },
-  centerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f8f9fa',
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 16,
-    color: '#666',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 12,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1a1a2e',
-  },
-  backButton: {
-    fontSize: 16,
-    color: '#3b82f6',
-    fontWeight: '500',
-  },
-  statusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#e3f2fd',
-    marginHorizontal: 12,
-    marginVertical: 12,
-    borderRadius: 8,
-    borderLeftWidth: 4,
-    borderLeftColor: '#3b82f6',
-  },
-  statusIcon: {
-    fontSize: 24,
-    marginRight: 12,
-  },
-  statusText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1a1a2e',
-    flex: 1,
-  },
-  etaText: {
-    fontSize: 14,
-    color: '#dc2626',
-    fontWeight: '700',
-  },
-  mapContainer: {
-    height: 300,
-    marginHorizontal: 12,
-    marginVertical: 12,
-    borderRadius: 12,
-    overflow: 'hidden',
-    backgroundColor: '#f0f0f0',
-  },
-  mapLoader: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' },
-  detailsContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#fff',
-    marginHorizontal: 12,
-    marginVertical: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1a1a2e',
-    marginBottom: 12,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-  },
-  detailLabel: {
-    fontSize: 14,
-    color: '#666',
-    fontWeight: '500',
-  },
-  detailValue: {
-    fontSize: 14,
-    color: '#1a1a2e',
-    fontWeight: '600',
-  },
-  etaBox: {
-    backgroundColor: '#fef3c7',
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 12,
-    borderLeftWidth: 4,
-    borderLeftColor: '#f59e0b',
-  },
-  etaBoxTitle: {
-    fontSize: 14,
-    color: '#92400e',
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  etaBoxValue: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#d97706',
-  },
-  refreshButton: {
-    marginHorizontal: 12,
-    marginVertical: 12,
-    paddingVertical: 12,
-    backgroundColor: '#3b82f6',
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  refreshButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
-  },
-});

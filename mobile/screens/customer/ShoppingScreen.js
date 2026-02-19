@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, TextInput, ActivityIndicator, Image } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, TextInput, ActivityIndicator, Image } from 'react-native';
 import { useCart } from '../../context/CartContext';
+import { shoppingScreenStyles } from './styles/ShoppingScreenStyles';
 
 export default function ShoppingScreen({ navigation }) {
   const [searchText, setSearchText] = useState('');
@@ -46,75 +47,73 @@ export default function ShoppingScreen({ navigation }) {
 
   const renderCategory = ({ item }) => (
     <TouchableOpacity
-      style={[styles.categoryCard, { backgroundColor: item.color }]}
+      style={shoppingScreenStyles.categoryCard}
       onPress={() => navigation.navigate('CategoryProducts', { category: item })}
     >
-      <Text style={styles.categoryEmoji}>{item.emoji}</Text>
-      <Text style={styles.categoryName}>{item.name}</Text>
+      <Text style={shoppingScreenStyles.categoryEmoji}>{item.emoji}</Text>
+      <Text style={shoppingScreenStyles.categoryName}>{item.name}</Text>
     </TouchableOpacity>
   );
 
   const renderBrand = ({ item }) => (
     <TouchableOpacity
-      style={[styles.brandCard, { borderTopColor: item.color }]}
+      style={shoppingScreenStyles.brandCard}
       onPress={() => navigation.navigate('BrandProducts', { brand: item })}
     >
-      <View style={styles.brandHeader}>
-        <Text style={styles.brandEmoji}>{item.emoji}</Text>
-        <View style={styles.brandInfo}>
-          <Text style={styles.brandName}>{item.name}</Text>
-          <Text style={styles.brandSubtitle}>{item.products} prodotti</Text>
-          <View style={styles.ratingContainer}>
-            <Text style={styles.rating}>⭐ {item.rating}</Text>
-          </View>
-        </View>
+      <View style={shoppingScreenStyles.brandEmoji}>
+        <Text style={shoppingScreenStyles.brandEmoji}>{item.emoji}</Text>
       </View>
-      <View style={styles.brandFooter}>
-        <Text style={styles.deliveryInfo}>🚚 Consegna 30-45 min</Text>
-        <Text style={styles.minOrder}>Min. €15</Text>
+      <View style={shoppingScreenStyles.brandInfo}>
+        <Text style={shoppingScreenStyles.brandName}>{item.name}</Text>
+        <Text style={shoppingScreenStyles.brandDetails}>{item.products} prodotti • ⭐ {item.rating}</Text>
+        <View style={shoppingScreenStyles.deliveryBadge}>
+          <Text style={shoppingScreenStyles.deliveryText}>30-45 min</Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0066FF" />
-        <Text style={styles.loadingText}>Caricamento negozi...</Text>
+      <View style={shoppingScreenStyles.container}>
+        <ActivityIndicator size="large" color={shoppingScreenStyles.loadingText.color} />
+        <Text style={shoppingScreenStyles.loadingText}>Caricamento negozi...</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Shopping Roma Est</Text>
-        <Text style={styles.subtitle}>Supermercati e Negozi</Text>
+    <View style={shoppingScreenStyles.container}>
+      <View style={shoppingScreenStyles.header}>
+        <View style={shoppingScreenStyles.headerContent}>
+          <Text style={shoppingScreenStyles.title}>Shopping Roma Est</Text>
+          <Text style={shoppingScreenStyles.subtitle}>Supermercati e Negozi</Text>
+        </View>
       </View>
 
-      <View style={styles.searchContainer}>
+      <View style={shoppingScreenStyles.searchContainer}>
         <TextInput
           placeholder="Cerca negozio o prodotto..."
-          style={styles.searchInput}
+          style={shoppingScreenStyles.searchInput}
           onChangeText={setSearchText}
           value={searchText}
         />
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Categorie</Text>
+      <View style={shoppingScreenStyles.section}>
+        <Text style={shoppingScreenStyles.sectionTitle}>Categorie</Text>
         <FlatList
           data={categories}
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderCategory}
-          contentContainerStyle={styles.categoriesList}
+          contentContainerStyle={shoppingScreenStyles.categoriesList}
         />
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Supermercati</Text>
+      <View style={shoppingScreenStyles.section}>
+        <Text style={shoppingScreenStyles.sectionTitle}>Supermercati</Text>
         <FlatList
           data={brands.filter(b =>
             b.name.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -122,39 +121,10 @@ export default function ShoppingScreen({ navigation }) {
           )}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderBrand}
-          contentContainerStyle={styles.brandsList}
+          contentContainerStyle={shoppingScreenStyles.brandsList}
           showsVerticalScrollIndicator={false}
         />
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8f8f8' },
-  header: { backgroundColor: '#0066FF', padding: 20, paddingTop: 40 },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#fff' },
-  subtitle: { color: '#fff', opacity: 0.8 },
-  searchContainer: { padding: 15 },
-  searchInput: { backgroundColor: '#fff', padding: 12, borderRadius: 10, borderWidth: 1, borderColor: '#ddd' },
-  section: { marginBottom: 20 },
-  sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#333', paddingHorizontal: 15, marginBottom: 10 },
-  categoriesList: { paddingHorizontal: 15 },
-  categoryCard: { alignItems: 'center', justifyContent: 'center', width: 100, height: 80, borderRadius: 12, marginRight: 10, elevation: 2 },
-  categoryEmoji: { fontSize: 24, marginBottom: 4 },
-  categoryName: { fontSize: 12, color: '#fff', fontWeight: '600', textAlign: 'center' },
-  brandsList: { padding: 15 },
-  brandCard: { backgroundColor: '#fff', padding: 15, borderRadius: 12, marginBottom: 10, elevation: 2, borderTopWidth: 4 },
-  brandHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
-  brandEmoji: { fontSize: 30, marginRight: 15 },
-  brandInfo: { flex: 1 },
-  brandName: { fontSize: 18, fontWeight: 'bold' },
-  brandSubtitle: { color: '#666', fontSize: 13 },
-  ratingContainer: { marginTop: 4 },
-  rating: { fontSize: 12, color: '#FF6B00', fontWeight: '600' },
-  brandFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  deliveryInfo: { fontSize: 12, color: '#4CAF50' },
-  minOrder: { fontSize: 12, color: '#666', fontWeight: '600' },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { marginTop: 10, fontSize: 16, color: '#666' }
-});

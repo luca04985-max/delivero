@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, RefreshControl, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, RefreshControl, ActivityIndicator, Alert } from 'react-native';
 import { ordersAPI } from '../../services/api';
+import { customerOrdersScreenStyles } from './styles/CustomerOrdersScreenStyles';
 
 export default function CustomerOrdersScreen({ navigation }) {
   const [orders, setOrders] = useState([]);
@@ -22,55 +23,69 @@ export default function CustomerOrdersScreen({ navigation }) {
   useEffect(() => { fetchOrders(); }, []);
 
   const renderOrder = ({ item }) => (
-    <View style={styles.orderCard}>
-      <View style={styles.orderHeader}>
-        <Text style={styles.orderId}>Ordine #{item.id.toString().slice(-5)}</Text>
-        <Text style={[styles.status, { color: item.status === 'delivered' ? '#28A745' : '#FF6B00' }]}>
-          {item.status.toUpperCase()}
-        </Text>
+    <View style={customerOrdersScreenStyles.orderCard}>
+      <View style={customerOrdersScreenStyles.orderHeader}>
+        <Text style={customerOrdersScreenStyles.orderId}>Ordine #{item.id.toString().slice(-5)}</Text>
+        <View style={customerOrdersScreenStyles.orderStatus}>
+          <Text style={customerOrdersScreenStyles.orderStatusText}>
+            {item.status.toUpperCase()}
+          </Text>
+        </View>
       </View>
-      <Text style={styles.details}>{item.restaurant_name || 'Servizio Delivero'}</Text>
-      <Text style={styles.price}>€{item.total_price || item.total}</Text>
-
-      <View style={styles.actions}>
-        {item.status !== 'delivered' && item.status !== 'cancelled' ? (
-          <TouchableOpacity
-            style={styles.trackBtn}
-            onPress={() => navigation.navigate('OrderTrackingLive', { orderId: item.id })}
-          >
-            <Text style={{ color: '#fff', fontWeight: 'bold' }}>Traccia Live 📍</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity style={styles.reorderBtn} onPress={() => Alert.alert("Reorder", "Funzione in arrivo!")}>
-            <Text style={{ color: '#FF6B00' }}>Ordina di nuovo</Text>
-          </TouchableOpacity>
-        )}
+      <View style={customerOrdersScreenStyles.orderInfo}>
+        <Text style={customerOrdersScreenStyles.orderDate}>{item.created_at || 'Data non disponibile'}</Text>
+        <Text style={customerOrdersScreenStyles.orderTotal}>€{item.total_price || item.total}</Text>
       </View>
+      <View style={customerOrdersScreenStyles.orderItems}>
+        {item.items?.slice(0, 2).map((orderItem, index) => (
+          <View key={index} style={customerOrdersScreenStyles.orderItem}>
+            <Text style={customerOrdersScreenStyles.itemQuantity}>{orderItem.quantity}x</Text>
+            <Text style={customerOrdersScreenStyles.itemName}>{orderItem.name}</Text>
+            <Text style={customerOrdersScreenStyles.itemPrice}>€{orderItem.price}</Text>
+          </View>
+        ))}
+      </View>
+      {item.status !== 'delivered' && item.status !== 'cancelled' ? (
+        <TouchableOpacity
+          style={customerOrdersScreenStyles.trackButton}
+          onPress={() => navigation.navigate('OrderTrackingLive', { orderId: item.id })}
+        >
+          <Text style={customerOrdersScreenStyles.trackButtonText}>Traccia Live 📍</Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity style={customerOrdersScreenStyles.trackButton} onPress={() => Alert.alert("Reorder", "Funzione in arrivo!")}>
+          <Text style={customerOrdersScreenStyles.trackButtonText}>Ordina di nuovo</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 
-  if (loading) return <ActivityIndicator size="large" style={{ flex: 1 }} />;
+  if (loading) return (
+    <View style={customerOrdersScreenStyles.loadingContainer}>
+      <ActivityIndicator size="large" />
+      <Text style={customerOrdersScreenStyles.loadingText}>Caricamento ordini...</Text>
+    </View>
+  );
 
   return (
-    <FlatList
-      data={orders}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={renderOrder}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchOrders} />}
-      contentContainerStyle={{ padding: 15 }}
-      ListEmptyComponent={<Text style={{ textAlign: 'center', marginTop: 20 }}>Nessun ordine trovato.</Text>}
-    />
+    <View style={customerOrdersScreenStyles.container}>
+      <View style={customerOrdersScreenStyles.header}>
+        <View style={customerOrdersScreenStyles.headerContent}>
+          <Text style={customerOrdersScreenStyles.title}>I Miei Ordini</Text>
+        </View>
+      </View>
+      <FlatList
+        data={orders}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderOrder}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchOrders} />}
+        contentContainerStyle={customerOrdersScreenStyles.ordersList}
+        ListEmptyComponent={
+          <View style={customerOrdersScreenStyles.emptyContainer}>
+            <Text style={customerOrdersScreenStyles.emptyText}>Nessun ordine trovato</Text>
+          </View>
+        }
+      />
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  orderCard: { backgroundColor: '#fff', padding: 15, borderRadius: 12, marginBottom: 15, elevation: 3 },
-  orderHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
-  orderId: { fontWeight: 'bold', fontSize: 16 },
-  status: { fontWeight: '700', fontSize: 12 },
-  details: { color: '#666', marginBottom: 5 },
-  price: { fontSize: 18, fontWeight: 'bold', color: '#333' },
-  actions: { marginTop: 15, borderTopWidth: 1, borderTopColor: '#eee', paddingTop: 10 },
-  trackBtn: { backgroundColor: '#FF6B00', padding: 10, borderRadius: 8, alignItems: 'center' },
-  reorderBtn: { padding: 10, borderRadius: 8, alignItems: 'center', borderWidth: 1, borderColor: '#FF6B00' }
-});

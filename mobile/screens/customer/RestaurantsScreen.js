@@ -1,18 +1,21 @@
-import React, { useState, useEffect, useCallback } from 'react'; // Aggiunto useCallback
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
   FlatList,
+  ScrollView,
   TextInput,
   ActivityIndicator,
   Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { makeRequest } from '../../services/api';
-// Se non hai lodash installato, puoi usare un debounce semplice o installarlo con: npm install lodash.debounce
 import debounce from 'lodash.debounce';
+import { restaurantsScreenStyles } from './styles/RestaurantsScreenStyles';
+import { sharedHeaderStyles } from './styles/SharedHeaderStyles';
+import { sharedCategoryStyles } from './styles/SharedCategoryStyles';
+import { mobileTheme } from '../../theme';
 
 export default function RestaurantsScreen({ navigation, route }) {
   const [searchText, setSearchText] = useState('');
@@ -89,91 +92,182 @@ export default function RestaurantsScreen({ navigation, route }) {
     loadRestaurants(searchText, category); // Al click cambiamo subito, no debounce
   };
 
-  const renderCategoryItem = ({ item }) => (
-    <TouchableOpacity
-      style={[
-        styles.categoryPill,
-        selectedCategory === item && styles.categoryPillActive
-      ]}
-      onPress={() => handleCategoryChange(item)}
-    >
-      <Text style={[
-        styles.categoryPillText,
-        selectedCategory === item && styles.categoryPillTextActive
-      ]}>
-        {item}
-      </Text>
-    </TouchableOpacity>
-  );
+  const renderCategoryItem = ({ item }) => {
+    // Ref per controllare se questa è la categoria attiva
+    const isActive = selectedCategory === item;
+
+    return (
+      <TouchableOpacity
+        key={item}
+        style={[
+          restaurantsScreenStyles.categoryCard,
+          isActive && sharedCategoryStyles.categoryCardActive
+        ]}
+        onPress={() => handleCategoryChange(item)}
+      >
+        <Text style={[
+          restaurantsScreenStyles.categoryButtonText,
+          isActive && sharedCategoryStyles.categoryButtonTextActive
+        ]}>
+          {item}
+        </Text>
+
+        {/* Badge speciale per categoria attiva */}
+        {isActive && (
+          <View style={{
+            position: 'absolute',
+            top: -5,
+            right: -5,
+            backgroundColor: 'primary',
+            borderRadius: 10,
+            width: 20,
+            height: 20,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+            <Text style={{
+              color: 'white',
+              fontSize: 10,
+              fontWeight: 'bold',
+            }}>
+              ✓
+            </Text>
+          </View>
+        )}
+      </TouchableOpacity>
+    );
+  };
 
   const renderRestaurantItem = ({ item }) => (
     <TouchableOpacity
-      style={styles.restaurantCard}
+      style={restaurantsScreenStyles.restaurantCard}
       onPress={() => navigation.navigate('RestaurantDetail', { restaurant: item })}
     >
-      <View style={styles.restaurantHeader}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.restaurantName}>{item.name}</Text>
-          <Text style={styles.restaurantCategory}>{item.category || 'Ristorante'}</Text>
-        </View>
-        <Text style={styles.rating}>⭐ {Number(item.rating || 0).toFixed(1)}</Text>
+      <View style={restaurantsScreenStyles.restaurantImage}>
+        <Text style={{ fontSize: 32, color: '#666' }}>🍽️</Text>
       </View>
-
-      <View style={styles.restaurantFooter}>
-        <Text style={styles.time}>⏱️ {item.delivery_time || 0} min</Text>
-        <Text style={styles.distance}>💰 €{Number(item.delivery_cost || 0).toFixed(2)}</Text>
-        <Text style={styles.reviewCount}>👥 {item.review_count || 0} recensioni</Text>
+      <View style={restaurantsScreenStyles.restaurantContent}>
+        <View style={restaurantsScreenStyles.restaurantHeader}>
+          <Text style={restaurantsScreenStyles.restaurantName}>{item.name}</Text>
+          <TouchableOpacity style={restaurantsScreenStyles.favoriteButton}>
+            <Text>❤️</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={restaurantsScreenStyles.restaurantInfo}>{item.category}</Text>
+        <View style={restaurantsScreenStyles.restaurantFooter}>
+          <View style={restaurantsScreenStyles.ratingContainer}>
+            <Text>⭐</Text>
+            <Text style={restaurantsScreenStyles.rating}>{Number(item.rating || 0).toFixed(1)}</Text>
+          </View>
+          <Text style={restaurantsScreenStyles.deliveryInfo}>{item.delivery_time || 0} min</Text>
+          <View style={restaurantsScreenStyles.deliveryBadge}>
+            <Text style={restaurantsScreenStyles.deliveryText}>€{Number(item.delivery_cost || 0).toFixed(2)}</Text>
+          </View>
+        </View>
       </View>
     </TouchableOpacity>
   );
 
   return (
-    <View style={styles.container}>
-      <LinearGradient
-        colors={['#FF6B00', '#FF8C00']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.header}
-      >
-        <Text style={styles.headerTitle}>🍽️ Ristoranti</Text>
-        <Text style={styles.headerSubtitle}>Scopri nuove destinazioni</Text>
-      </LinearGradient>
+    <View style={restaurantsScreenStyles.container}>
+      <View style={restaurantsScreenStyles.header}>
+        <View style={restaurantsScreenStyles.headerContent}>
+          <Text style={restaurantsScreenStyles.title}>🍽️ Ristoranti</Text>
+          <Text style={restaurantsScreenStyles.subtitle}>Scopri nuove destinazioni</Text>
+        </View>
+      </View>
 
-      <View style={styles.searchContainer}>
+      <View style={restaurantsScreenStyles.searchContainer}>
         <TextInput
-          style={styles.searchInput}
+          style={restaurantsScreenStyles.searchInput}
           placeholder="🔍 Cerca ristoranti..."
           value={searchText}
           onChangeText={handleSearch}
-          placeholderTextColor="#999"
         />
       </View>
 
-      <FlatList
-        data={categories}
-        renderItem={renderCategoryItem}
-        keyExtractor={(item, index) => index.toString()}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.categoriesContainer}
-        contentContainerStyle={styles.categoriesContent}
-      />
+      <View style={restaurantsScreenStyles.categoriesContainer}>
+        {/* Categoria attiva fissa a sinistra */}
+        <View style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}>
+          <TouchableOpacity
+            style={[
+              restaurantsScreenStyles.categoryCard,
+              sharedCategoryStyles.categoryCardActive
+            ]}
+            onPress={() => handleCategoryChange(selectedCategory)}
+          >
+            <Text style={[
+              restaurantsScreenStyles.categoryButtonText,
+              sharedCategoryStyles.categoryButtonTextActive
+            ]}>
+              {selectedCategory}
+            </Text>
+            {/* Badge speciale per categoria attiva */}
+            <View style={{
+              position: 'absolute',
+              top: -5,
+              right: -5,
+              backgroundColor: mobileTheme.colors.primary,
+              borderRadius: 10,
+              width: 20,
+              height: 20,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+              <Text style={{
+                color: mobileTheme.colors.white,
+                fontSize: 10,
+                fontWeight: 'bold',
+              }}>
+                ✓
+              </Text>
+            </View>
+          </TouchableOpacity>
 
-      {loading && restaurants.length === 0 ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#FF6B00" />
-          <Text style={styles.loadingText}>Caricamento...</Text>
+          {/* Separatore visivo */}
+          <View style={{
+            width: 1,
+            height: 30,
+            backgroundColor: mobileTheme.colors.border,
+            marginHorizontal: mobileTheme.spacing[2],
+          }} />
+
+          {/* Altre categorie scorrevoli */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={restaurantsScreenStyles.categoriesList}
+          >
+            {categories
+              .filter(cat => cat !== selectedCategory)
+              .map(category => (
+                <TouchableOpacity
+                  key={category}
+                  style={restaurantsScreenStyles.categoryCard}
+                  onPress={() => handleCategoryChange(category)}
+                >
+                  <Text style={restaurantsScreenStyles.categoryButtonText}>
+                    {category}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+          </ScrollView>
         </View>
-      ) : (
+      </View>
+
+      {loading && restaurants.length === 0 ? null : (
         <FlatList
           data={restaurants}
           renderItem={renderRestaurantItem}
           keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={styles.restaurantsContent}
+          contentContainerStyle={restaurantsScreenStyles.restaurantsList}
           ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>😅 Nessun ristorante trovato</Text>
-              <Text style={styles.emptySubtext}>Prova a cambiare i filtri o la ricerca</Text>
+            <View style={restaurantsScreenStyles.emptyContainer}>
+              <Text style={restaurantsScreenStyles.emptyText}>😅 Nessun ristorante trovato</Text>
+              <Text style={restaurantsScreenStyles.emptyText}>Prova a cambiare i filtri o la ricerca</Text>
             </View>
           }
         />
@@ -181,33 +275,3 @@ export default function RestaurantsScreen({ navigation, route }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8f8f8' },
-  header: { padding: 12, paddingTop: 15, backgroundColor: '#FF6B00', borderBottomWidth: 1, borderBottomColor: '#eee', elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 },
-  headerTitle: { fontSize: 18, fontWeight: 'bold', color: '#fff' },
-  headerSubtitle: { fontSize: 11, color: '#fff', marginTop: 2, opacity: 0.9 },
-  searchContainer: { padding: 10, backgroundColor: '#FF6B00' },
-  searchInput: { backgroundColor: '#fff', borderRadius: 25, paddingHorizontal: 15, paddingVertical: 10, fontSize: 14 },
-  categoriesContainer: { backgroundColor: '#fff', maxHeight: 44 },
-  categoriesContent: { paddingHorizontal: 6, alignItems: 'center' },
-  categoryPill: { paddingHorizontal: 8, paddingVertical: 4, marginHorizontal: 2, borderRadius: 12, backgroundColor: '#f0f0f0', borderWidth: 1, borderColor: '#ddd' },
-  categoryPillActive: { backgroundColor: '#FF6B00', borderColor: '#FF6B00' },
-  categoryPillText: { fontSize: 12, fontWeight: '600', color: '#666' },
-  categoryPillTextActive: { color: '#fff' },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { marginTop: 12, color: '#666' },
-  restaurantsContent: { padding: 10, paddingBottom: 15 },
-  restaurantCard: { backgroundColor: '#fff', borderRadius: 8, padding: 10, marginBottom: 8, elevation: 2, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 2 },
-  restaurantHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
-  restaurantName: { fontSize: 14, fontWeight: 'bold', color: '#333' },
-  restaurantCategory: { fontSize: 11, color: '#666' },
-  rating: { fontSize: 13, fontWeight: 'bold', color: '#FF6B00' },
-  restaurantFooter: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#eee', paddingTop: 6 },
-  reviewCount: { fontSize: 11, color: '#999' },
-  distance: { fontSize: 11, color: '#999' },
-  time: { fontSize: 11, color: '#FF6B00', fontWeight: 'bold' },
-  emptyContainer: { alignItems: 'center', marginTop: 50 },
-  emptyText: { fontSize: 16, fontWeight: 'bold', color: '#999' },
-  emptySubtext: { color: '#ccc' },
-});

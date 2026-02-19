@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Platform, ActivityIndicator } from 'react-native';
+import { View, Text, Platform, ActivityIndicator } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { io } from 'socket.io-client';
 import { makeRequest } from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
+import { managerRealTimeMapScreenStyles } from './styles/ManagerRealTimeMapScreenStyles';
 
 const SOCKET_URL = 'https://delivero-gyjx.onrender.com';
 
@@ -199,7 +200,7 @@ export default function ManagerRealTimeMapScreen() {
     }, []);
 
     if (Platform.OS === 'web') {
-        return <View style={styles.center}><Text>Usa la Dashboard Web per la mappa interattiva</Text></View>;
+        return <View style={managerRealTimeMapScreenStyles.center}><Text>Usa la Dashboard Web per la mappa interattiva</Text></View>;
     }
 
     // Generate HTML for OpenStreetMap with markers
@@ -266,23 +267,16 @@ export default function ManagerRealTimeMapScreen() {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={managerRealTimeMapScreenStyles.container}>
             <WebView
                 key={mapKey} // Force complete remount when riders change
-                style={styles.map}
+                style={managerRealTimeMapScreenStyles.map}
                 source={{ html: generateMapHtml() }}
                 javaScriptEnabled={true}
                 domStorageEnabled={true}
                 startInLoadingState={true}
-                renderLoading={() => <ActivityIndicator style={styles.loader} size="large" />}
+                renderLoading={() => <ActivityIndicator style={managerRealTimeMapScreenStyles.loader} size="large" />}
             />
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: { flex: 1 },
-    map: { width: '100%', height: '100%' },
-    center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    loader: { position: 'absolute', top: 20, right: 20 }
-});
