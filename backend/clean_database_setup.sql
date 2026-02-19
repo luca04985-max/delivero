@@ -53,11 +53,24 @@ CREATE TABLE IF NOT EXISTS restaurants (
 );
 
 -- ========================================
+-- RESTAURANT CATEGORIES TABLE
+-- ========================================
+CREATE TABLE IF NOT EXISTS restaurant_categories (
+    id SERIAL PRIMARY KEY,
+    restaurant_id INTEGER NOT NULL REFERENCES restaurants(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL,
+    is_active BOOLEAN DEFAULT true,
+    display_order INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ========================================
 -- MENU ITEMS TABLE
 -- ========================================
 CREATE TABLE IF NOT EXISTS menu_items (
     id SERIAL PRIMARY KEY,
-    restaurant_id INTEGER REFERENCES restaurants(id) ON DELETE CASCADE,
+    restaurant_id INTEGER NOT NULL REFERENCES restaurants(id) ON DELETE CASCADE,
+    category_id INTEGER NOT NULL REFERENCES restaurant_categories(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     description TEXT,
     price DECIMAL(10, 2) NOT NULL,
@@ -185,7 +198,10 @@ CREATE TABLE IF NOT EXISTS notifications (
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
 CREATE INDEX IF NOT EXISTS idx_restaurants_active ON restaurants(is_active);
+CREATE INDEX IF NOT EXISTS idx_restaurant_categories_restaurant ON restaurant_categories(restaurant_id);
+CREATE INDEX IF NOT EXISTS idx_restaurant_categories_active ON restaurant_categories(is_active);
 CREATE INDEX IF NOT EXISTS idx_menu_items_restaurant ON menu_items(restaurant_id);
+CREATE INDEX IF NOT EXISTS idx_menu_items_category ON menu_items(category_id);
 CREATE INDEX IF NOT EXISTS idx_orders_customer ON orders(customer_id);
 CREATE INDEX IF NOT EXISTS idx_orders_restaurant ON orders(restaurant_id);
 CREATE INDEX IF NOT EXISTS idx_orders_rider ON orders(rider_id);

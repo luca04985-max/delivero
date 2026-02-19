@@ -134,10 +134,10 @@ export const getRestaurant = async (req, res) => {
 export const getCategories = async (req, res) => {
     try {
         const result = await db.query(
-            `SELECT DISTINCT category 
+            `SELECT DISTINCT name as category 
              FROM restaurant_categories 
-             WHERE restaurant_categories.is_active = true AND category IS NOT NULL
-             ORDER BY category ASC`
+             WHERE restaurant_categories.is_active = true AND name IS NOT NULL
+             ORDER BY name ASC`
         );
         res.json(result.rows.map(r => r.category));
     } catch (error) {
