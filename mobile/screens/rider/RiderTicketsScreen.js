@@ -104,34 +104,3 @@ export default function RiderTicketsScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  header: { backgroundColor: '#0066FF', padding: 20, paddingTop: 50 },
-  title: { color: '#fff', fontSize: 22, fontWeight: 'bold' },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { fontSize: 16, color: '#666' },
-  emptyText: { textAlign: 'center', marginTop: 50, fontSize: 16, color: '#666' },
-  fab: { position: 'absolute', bottom: 30, right: 30, backgroundColor: '#0066FF', width: 60, height: 60, borderRadius: 30, justifyContent: 'center', alignItems: 'center', elevation: 8 },
-  fabText: { color: '#fff', fontSize: 24, fontWeight: 'bold' },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
-  modalContent: { backgroundColor: '#fff', padding: 20, borderRadius: 15, width: '90%', maxWidth: 400 },
-  modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 15, textAlign: 'center' },
-  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 12, marginBottom: 10, backgroundColor: '#f9f9f9' },
-  textArea: { height: 80, textAlignVertical: 'top' },
-  modalButtons: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 },
-  button: { flex: 1, padding: 12, borderRadius: 8, marginHorizontal: 5 },
-  cancelButton: { backgroundColor: '#ccc' },
-  createButton: { backgroundColor: '#0066FF' },
-  cancelButtonText: { color: '#333', textAlign: 'center', fontWeight: 'bold' },
-  createButtonText: { color: '#fff', textAlign: 'center', fontWeight: 'bold' },
-  ticketCard: { backgroundColor: '#fff', padding: 15, borderRadius: 10, marginBottom: 10, elevation: 2, borderLeftWidth: 4, borderLeftColor: '#0066FF' },
-  ticketTitle: { fontWeight: 'bold', fontSize: 16 },
-  ticketType: { color: '#666', fontSize: 12, marginVertical: 5 },
-  ticketDesc: { fontSize: 14, color: '#444' },
-  ticketDate: { fontSize: 12, color: '#999', marginTop: 5 },
-  ticketStatus: { position: 'absolute', top: 10, right: 10, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12, fontSize: 10, backgroundColor: '#ff9800', color: '#fff' },
-  resolved: { backgroundColor: '#28A745' },
-  responseBox: { backgroundColor: '#f0f8f0', padding: 10, borderRadius: 8, marginTop: 10 },
-  responseTitle: { fontSize: 12, fontWeight: 'bold', color: '#2e7d32', marginBottom: 5 },
-  responseText: { fontSize: 13, color: '#333' }
-});

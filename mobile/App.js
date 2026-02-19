@@ -31,6 +31,8 @@ import CustomerOrdersScreen from './screens/customer/CustomerOrdersScreen';
 import CustomerOrderTrackingScreen from './screens/customer/CustomerOrderTrackingScreen';
 import OrderTrackingLiveScreen from './screens/customer/OrderTrackingLiveScreen';
 import CustomerTicketsScreen from './screens/customer/CustomerTicketsScreen';
+import CreateTicketScreen from './screens/customer/CreateTicketScreen';
+import TicketDetailScreen from './screens/customer/TicketDetailScreen';
 import RiderHomeScreen from './screens/rider/RiderHomeScreen';
 import RiderActiveScreen from './screens/rider/RiderActiveScreen';
 import RiderTicketsScreen from './screens/rider/RiderTicketsScreen';
@@ -211,6 +213,34 @@ function CustomerStack({ onLogout, user }) {
         component={OrderTrackingLiveScreen}
         options={{
           title: '🗺️ Tracking Live',
+          headerStyle: {
+            backgroundColor: '#FF6B00',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
+      />
+      <Stack.Screen
+        name="CreateTicket"
+        component={CreateTicketScreen}
+        options={{
+          title: '📝 Nuovo Ticket',
+          headerStyle: {
+            backgroundColor: '#FF6B00',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
+      />
+      <Stack.Screen
+        name="TicketDetail"
+        component={TicketDetailScreen}
+        options={{
+          title: '🎫 Dettagli Ticket',
           headerStyle: {
             backgroundColor: '#FF6B00',
           },

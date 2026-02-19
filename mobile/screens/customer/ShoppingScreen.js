@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, TextInput, ActivityIndicator, Image } from 'react-native';
 import { useCart } from '../../context/CartContext';
 import { shoppingScreenStyles } from './styles/ShoppingScreenStyles';
+import { sharedCategoryStyles } from './styles/SharedCategoryStyles';
+import { mobileTheme } from '../../theme';
 
 export default function ShoppingScreen({ navigation }) {
   const [searchText, setSearchText] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('Frutta e Verdura'); // Categoria attiva di default
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -45,15 +48,50 @@ export default function ShoppingScreen({ navigation }) {
     }
   };
 
-  const renderCategory = ({ item }) => (
-    <TouchableOpacity
-      style={shoppingScreenStyles.categoryCard}
-      onPress={() => navigation.navigate('CategoryProducts', { category: item })}
-    >
-      <Text style={shoppingScreenStyles.categoryEmoji}>{item.emoji}</Text>
-      <Text style={shoppingScreenStyles.categoryName}>{item.name}</Text>
-    </TouchableOpacity>
-  );
+  const renderCategory = ({ item }) => {
+    const isActive = selectedCategory === item.name;
+
+    return (
+      <TouchableOpacity
+        key={item}
+        style={[
+          shoppingScreenStyles.categoryCard,
+          isActive && sharedCategoryStyles.categoryCardActive
+        ]}
+        onPress={() => setSelectedCategory(item.name)}
+      >
+        <Text style={[
+          shoppingScreenStyles.categoryButtonText,
+          isActive && sharedCategoryStyles.categoryButtonTextActive
+        ]}>
+          {item.name}
+        </Text>
+
+        {/* Badge speciale per categoria attiva */}
+        {isActive && (
+          <View style={{
+            position: 'absolute',
+            top: -5,
+            right: -5,
+            backgroundColor: mobileTheme.colors.primary,
+            borderRadius: 10,
+            width: 20,
+            height: 20,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+            <Text style={{
+              color: mobileTheme.colors.white,
+              fontSize: 10,
+              fontWeight: 'bold',
+            }}>
+              ✓
+            </Text>
+          </View>
+        )}
+      </TouchableOpacity>
+    );
+  };
 
   const renderBrand = ({ item }) => (
     <TouchableOpacity

@@ -211,9 +211,6 @@ export default function RestaurantDetailScreen({ route, navigation }) {
         <View style={styles.container}>
             {/* Header */}
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Text style={styles.backButton}>← Indietro</Text>
-                </TouchableOpacity>
                 <View style={{ flex: 1, marginLeft: 12 }}>
                     <Text style={styles.restaurantName}>{restaurantDetail?.name}</Text>
                     <Text style={styles.restaurantInfo}>

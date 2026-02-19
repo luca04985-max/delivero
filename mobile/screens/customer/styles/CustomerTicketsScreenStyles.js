@@ -6,7 +6,7 @@ export const customerTicketsScreenStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: mobileTheme.colors.background,
   },
-  
+
   // HEADER
   header: {
     backgroundColor: mobileTheme.colors.secondary,
@@ -25,7 +25,7 @@ export const customerTicketsScreenStyles = StyleSheet.create({
     color: mobileTheme.colors.white,
     letterSpacing: -0.5,
   },
-  
+
   // TABS
   tabsContainer: {
     flexDirection: 'row',
@@ -55,7 +55,7 @@ export const customerTicketsScreenStyles = StyleSheet.create({
     color: mobileTheme.colors.white,
     fontWeight: mobileTheme.typography.fontWeight.bold,
   },
-  
+
   // TICKETS LIST
   ticketsList: {
     flex: 1,
@@ -116,7 +116,7 @@ export const customerTicketsScreenStyles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: mobileTheme.spacing[3],
   },
-  
+
   // RESPONSE BOX
   responseBox: {
     backgroundColor: mobileTheme.colors.background,
@@ -138,7 +138,7 @@ export const customerTicketsScreenStyles = StyleSheet.create({
     color: mobileTheme.colors.text.secondary,
     lineHeight: 18,
   },
-  
+
   // ACTION BUTTONS
   actionButton: {
     backgroundColor: mobileTheme.colors.primary,
@@ -156,27 +156,120 @@ export const customerTicketsScreenStyles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
-  
+
   // FAB BUTTON
   fab: {
     position: 'absolute',
-    bottom: 30,
-    right: 20,
+    bottom: mobileTheme.spacing[6],
+    right: mobileTheme.spacing[5],
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: mobileTheme.colors.primary,
-    width: 65,
-    height: 65,
-    borderRadius: 32.5,
     justifyContent: 'center',
     alignItems: 'center',
     ...mobileTheme.shadows.xl,
     elevation: 8,
   },
   fabText: {
-    fontSize: 24,
+    fontSize: mobileTheme.typography.fontSize['2xl'],
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.white,
+    lineHeight: 28,
   },
-  
+
+  // NEW TICKET FORM
+  newTicketForm: {
+    backgroundColor: mobileTheme.colors.white,
+    margin: mobileTheme.spacing[4],
+    padding: mobileTheme.spacing[5],
+    borderRadius: mobileTheme.borderRadius.lg,
+    ...mobileTheme.shadows.medium,
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.border,
+  },
+  formTitle: {
+    fontSize: mobileTheme.typography.fontSize.xl,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    color: mobileTheme.colors.text.primary,
+    marginBottom: mobileTheme.spacing[4],
+  },
+  label: {
+    fontSize: mobileTheme.typography.fontSize.base,
+    fontWeight: mobileTheme.typography.fontWeight.semibold,
+    color: mobileTheme.colors.text.primary,
+    marginBottom: mobileTheme.spacing[2],
+  },
+  ticketTypesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: mobileTheme.spacing[2],
+    marginBottom: mobileTheme.spacing[4],
+  },
+  ticketTypeButton: {
+    backgroundColor: mobileTheme.colors.background,
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.border,
+    borderRadius: mobileTheme.borderRadius.md,
+    paddingVertical: mobileTheme.spacing[2],
+    paddingHorizontal: mobileTheme.spacing[3],
+  },
+  ticketTypeButtonActive: {
+    backgroundColor: mobileTheme.colors.primary,
+    borderColor: mobileTheme.colors.primary,
+  },
+  ticketTypeText: {
+    fontSize: mobileTheme.typography.fontSize.sm,
+    color: mobileTheme.colors.text.primary,
+    fontWeight: mobileTheme.typography.fontWeight.medium,
+  },
+  ticketTypeTextActive: {
+    color: mobileTheme.colors.white,
+    fontWeight: mobileTheme.typography.fontWeight.semibold,
+  },
+  input: {
+    backgroundColor: mobileTheme.colors.background,
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.border,
+    borderRadius: mobileTheme.borderRadius.md,
+    padding: mobileTheme.spacing[3],
+    fontSize: mobileTheme.typography.fontSize.base,
+    color: mobileTheme.colors.text.primary,
+    marginBottom: mobileTheme.spacing[3],
+  },
+  textArea: {
+    height: 100,
+    textAlignVertical: 'top',
+  },
+  formButtons: {
+    flexDirection: 'row',
+    gap: mobileTheme.spacing[3],
+    marginTop: mobileTheme.spacing[4],
+  },
+  button: {
+    flex: 1,
+    paddingVertical: mobileTheme.spacing[3],
+    borderRadius: mobileTheme.borderRadius.md,
+    alignItems: 'center',
+  },
+  cancelButton: {
+    backgroundColor: mobileTheme.colors.background,
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.border,
+  },
+  cancelButtonText: {
+    color: mobileTheme.colors.text.secondary,
+    fontWeight: mobileTheme.typography.fontWeight.medium,
+  },
+  createButton: {
+    backgroundColor: mobileTheme.colors.primary,
+    ...mobileTheme.shadows.medium,
+  },
+  createButtonText: {
+    color: mobileTheme.colors.white,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+  },
+
   // EMPTY STATES
   loadingContainer: {
     flex: 1,

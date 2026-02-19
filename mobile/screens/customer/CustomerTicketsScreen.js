@@ -1,156 +1,151 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Alert, Modal, TextInput } from 'react-native';
-import { ordersAPI } from '../../services/api';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+  RefreshControl,
+  ActivityIndicator,
+  ScrollView,
+} from 'react-native';
+import { makeRequest } from '../../services/api';
+import { ticketCache } from '../../services/ticketCache';
 import { customerTicketsScreenStyles } from './styles/CustomerTicketsScreenStyles';
 
-export default function CustomerTicketsScreen() {
+export default function CustomerTicketsScreen({ navigation }) {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [newTicket, setNewTicket] = useState({ title: '', description: '' });
+  const [refreshing, setRefreshing] = useState(false);
 
-  const fetchTickets = async () => {
+  useEffect(() => {
+    loadTickets();
+  }, []);
+
+  const loadTickets = useCallback(async (forceRefresh = false) => {
     try {
-      const data = await ordersAPI.getCustomerTickets();
-      setTickets(data);
-    } catch (e) {
-      Alert.alert("Errore", "Impossibile recuperare i ticket");
+      // Controlla se abbiamo dati in cache validi
+      if (!forceRefresh) {
+        const cachedTickets = ticketCache.getTickets();
+        if (cachedTickets) {
+          setTickets(cachedTickets);
+          setLoading(false);
+          return;
+        }
+      }
+
+      const data = await makeRequest('/tickets/customer', { method: 'GET' });
+      const ticketsData = data || [];
+
+      // Salva in cache
+      ticketCache.setTickets(ticketsData);
+
+      setTickets(ticketsData);
+    } catch (error) {
+      console.error('Error loading tickets:', error);
+      Alert.alert('Errore', 'Impossibile caricare i ticket');
     } finally {
       setLoading(false);
     }
-  };
-
-  const createTicket = async () => {
-    if (!newTicket.title.trim() || !newTicket.description.trim()) {
-      Alert.alert('Errore', 'Compila tutti i campi');
-      return;
-    }
-
-    try {
-      await ordersAPI.createCustomerTicket(newTicket);
-      Alert.alert('Successo', 'Ticket inviato con successo');
-      setNewTicket({ title: '', description: '' });
-      setShowModal(false);
-      fetchTickets();
-    } catch (e) {
-      Alert.alert('Errore', 'Impossibile inviare il ticket');
-    }
-  };
-
-  useEffect(() => {
-    fetchTickets();
   }, []);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    loadTickets(true).finally(() => setRefreshing(false));
+  }, [loadTickets]);
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'open': return '#4CAF50';
+      case 'in_progress': return '#FF9800';
+      case 'resolved': return '#2196F3';
+      default: return '#757575';
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'open': return 'Aperto';
+      case 'in_progress': return 'In corso';
+      case 'resolved': return 'Risolto';
+      default: return status;
+    }
+  };
+
+  const renderTicket = ({ item }) => (
+    <TouchableOpacity
+      style={customerTicketsScreenStyles.ticketCard}
+      onPress={() => navigation.navigate('TicketDetail', { ticketId: item.id })}
+    >
+      <View style={customerTicketsScreenStyles.ticketHeader}>
+        <Text style={customerTicketsScreenStyles.ticketTitle}>{item.title}</Text>
+        <View style={[
+          customerTicketsScreenStyles.statusBadge,
+          { backgroundColor: getStatusColor(item.status) }
+        ]}>
+          <Text style={customerTicketsScreenStyles.statusText}>
+            {getStatusText(item.status)}
+          </Text>
+        </View>
+      </View>
+
+      <Text style={customerTicketsScreenStyles.ticketDescription} numberOfLines={2}>
+        {item.description}
+      </Text>
+
+      <View style={customerTicketsScreenStyles.ticketFooter}>
+        <Text style={customerTicketsScreenStyles.ticketDate}>
+          {new Date(item.created_at).toLocaleDateString()}
+        </Text>
+        <Text style={customerTicketsScreenStyles.ticketId}>#{item.id}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+  if (loading) {
+    return (
+      <View style={customerTicketsScreenStyles.container}>
+        <ActivityIndicator size="large" color="#FF6B00" />
+        <Text style={customerTicketsScreenStyles.loadingText}>Caricamento ticket...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={customerTicketsScreenStyles.container}>
       <View style={customerTicketsScreenStyles.header}>
-        <View style={customerTicketsScreenStyles.headerContent}>
-          <Text style={customerTicketsScreenStyles.title}>🎫 I Miei Ticket</Text>
-        </View>
+        <Text style={customerTicketsScreenStyles.title}>🎫 I Miei Ticket</Text>
       </View>
 
-      {loading ? (
-        <View style={customerTicketsScreenStyles.loadingContainer}>
-          <Text style={customerTicketsScreenStyles.loadingText}>Caricamento ticket...</Text>
-        </View>
-      ) : tickets.length === 0 ? (
-        <View style={customerTicketsScreenStyles.emptyContainer}>
-          <Text style={customerTicketsScreenStyles.emptyText}>Nessun ticket trovato</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={tickets}
-          keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={customerTicketsScreenStyles.ticketsList}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={customerTicketsScreenStyles.ticketCard}>
-              <View style={customerTicketsScreenStyles.ticketHeader}>
-                <Text style={customerTicketsScreenStyles.ticketTitle}>{item.title}</Text>
-                <Text style={customerTicketsScreenStyles.ticketDate}>
-                  {new Date(item.createdAt).toLocaleDateString()}
-                </Text>
-              </View>
-              
-              <Text style={customerTicketsScreenStyles.ticketDescription}>{item.description}</Text>
-              
-              <View style={customerTicketsScreenStyles.statusContainer}>
-                <View style={[
-                  customerTicketsScreenStyles.statusBadge,
-                  item.status === 'open' ? customerTicketsScreenStyles.statusOpen : customerTicketsScreenStyles.statusClosed
-                ]}>
-                  <Text style={customerTicketsScreenStyles.statusText}>
-                    {item.status === 'open' ? 'Aperto' : 'Chiuso'}
-                  </Text>
-                </View>
-              </View>
+      <ScrollView
+        style={customerTicketsScreenStyles.content}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        {tickets.length === 0 ? (
+          <View style={customerTicketsScreenStyles.emptyContainer}>
+            <Text style={customerTicketsScreenStyles.emptyText}>Nessun ticket trovato</Text>
+            <Text style={customerTicketsScreenStyles.emptySubtext}>Crea il tuo primo ticket</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={tickets}
+            renderItem={renderTicket}
+            keyExtractor={(item) => item.id.toString()}
+            contentContainerStyle={customerTicketsScreenStyles.ticketsList}
+            scrollEnabled={false}
+          />
+        )}
+      </ScrollView>
 
-              {item.response && (
-                <View style={customerTicketsScreenStyles.responseBox}>
-                  <Text style={customerTicketsScreenStyles.responseTitle}>Risposta:</Text>
-                  <Text style={customerTicketsScreenStyles.responseText}>{item.response}</Text>
-                </View>
-              )}
-
-              <TouchableOpacity 
-                style={customerTicketsScreenStyles.actionButton}
-                onPress={() => setShowModal(true)}
-              >
-                <Text style={customerTicketsScreenStyles.actionButtonText}>Aggiungi Risposta</Text>
-              </TouchableOpacity>
-            </TouchableOpacity>
-          )}
-        />
-      )}
-
+      {/* FAB Button - Naviga a schermata separata */}
       <TouchableOpacity
         style={customerTicketsScreenStyles.fab}
-        onPress={() => setShowModal(true)}
+        onPress={() => navigation.navigate('CreateTicket')}
       >
         <Text style={customerTicketsScreenStyles.fabText}>+</Text>
       </TouchableOpacity>
-
-      <Modal
-        visible={showModal}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setShowModal(false)}
-      >
-        <View style={customerTicketsScreenStyles.modalOverlay}>
-          <View style={customerTicketsScreenStyles.modalContent}>
-            <Text style={customerTicketsScreenStyles.modalTitle}>Nuova Risposta</Text>
-            
-            <TextInput
-              style={customerTicketsScreenStyles.input}
-              placeholder="Titolo"
-              value={newTicket.title}
-              onChangeText={(text) => setNewTicket(prev => ({ ...prev, title: text }))}
-            />
-            
-            <TextInput
-              style={[customerTicketsScreenStyles.input, customerTicketsScreenStyles.textArea]}
-              placeholder="Descrizione"
-              value={newTicket.description}
-              onChangeText={(text) => setNewTicket(prev => ({ ...prev, description: text }))}
-              multiline
-            />
-            
-            <View style={customerTicketsScreenStyles.modalButtons}>
-              <TouchableOpacity
-                style={[customerTicketsScreenStyles.button, customerTicketsScreenStyles.cancelButton]}
-                onPress={() => setShowModal(false)}
-              >
-                <Text style={customerTicketsScreenStyles.cancelButtonText}>Annulla</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[customerTicketsScreenStyles.button, customerTicketsScreenStyles.createButton]}
-                onPress={createTicket}
-              >
-                <Text style={customerTicketsScreenStyles.createButtonText}>Invia</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }

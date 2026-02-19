@@ -210,10 +210,6 @@ const AdminTickets = () => {
         </>
       ) : (
         <div style={styles.detailPanel}>
-          <button onClick={() => setSelectedTicket(null)} style={styles.backButton}>
-            ← Torna alla lista
-          </button>
-
           <div style={styles.detailGrid}>
             <div style={styles.detailLeft}>
               <h3 style={styles.detailTitle}>
