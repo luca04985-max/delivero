@@ -70,7 +70,7 @@ export const getUserOrders = async (userId, limit = 10, offset = 0) => {
               r.address as restaurant_address
        FROM orders o
        LEFT JOIN restaurants r ON o.restaurant_id = r.id
-       WHERE o.user_id = $1
+       WHERE o.customer_id = $1
        ORDER BY o.created_at DESC
        LIMIT $2 OFFSET $3`,
       [userId, limit, offset]
