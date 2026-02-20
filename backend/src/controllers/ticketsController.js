@@ -53,7 +53,7 @@ async function getAllTickets(filters = {}) {
 async function getUserTickets(userId) {
   try {
     const result = await pool.query(
-      `SELECT t.*, o.*
+      `SELECT t.*, o.status as statusOrder,t.status as statusticket,o.*
        FROM tickets t
        LEFT JOIN orders o ON t.order_id = o.id
        WHERE t.user_id = $1 
