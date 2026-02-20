@@ -120,20 +120,83 @@ router.get('/admin/all', authenticateToken, async (req, res) => {
 // Get customer tickets
 router.get('/customer', authenticateToken, async (req, res) => {
   try {
+    console.log('🎫 GET /customer route hit');
+    console.log('🔑 Request headers:', req.headers);
+    console.log('👤 User from middleware:', req.user);
+
     const userId = req.user?.userId;
-    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+    console.log('🆔 Extracted userId:', userId);
+
+    if (!userId) {
+      console.log('❌ No userId found, returning 401');
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
 
     const userRes = await db.query('SELECT role FROM users WHERE id = $1', [userId]);
     const role = userRes.rows[0]?.role;
+    console.log('👔 User role:', role);
+
     if (role !== 'customer') {
+      console.log('❌ User is not customer, returning 403');
       return res.status(403).json({ error: 'Customer access required' });
     }
 
+    console.log('🎫 Calling getUserTickets for userId:', userId);
     const tickets = await getUserTickets(userId);
+    console.log('🎫 Tickets returned:', tickets);
+
     res.json(tickets);
   } catch (error) {
     console.error('Error getting customer tickets:', error);
     res.status(500).json({ error: 'Failed to get customer tickets' });
+  }
+});
+
+// Get specific customer ticket by ID
+router.get('/customer/:id', authenticateToken, async (req, res) => {
+  try {
+    console.log('🎫 GET /customer/:id route hit');
+    console.log('🔑 Request headers:', req.headers);
+    console.log('👤 User from middleware:', req.user);
+    console.log('🎫 Requested ticket ID:', req.params.id);
+
+    const userId = req.user?.userId;
+    console.log('🆔 Extracted userId:', userId);
+
+    if (!userId) {
+      console.log('❌ No userId found, returning 401');
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const userRes = await db.query('SELECT role FROM users WHERE id = $1', [userId]);
+    const role = userRes.rows[0]?.role;
+    console.log('👔 User role:', role);
+
+    if (role !== 'customer') {
+      console.log('❌ User is not customer, returning 403');
+      return res.status(403).json({ error: 'Customer access required' });
+    }
+
+    console.log('🎫 Calling getTicketById for ticket ID:', req.params.id);
+    const ticket = await getTicketById(req.params.id);
+    console.log('🎫 Ticket returned:', ticket);
+
+    if (!ticket) {
+      console.log('❌ Ticket not found, returning 404');
+      return res.status(404).json({ error: 'Ticket not found' });
+    }
+
+    // Check if user can access this ticket (customer can only see their own tickets)
+    if (ticket.user_id !== userId) {
+      console.log('❌ Access denied - ticket belongs to different user');
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    console.log('🎫 Access granted, returning ticket');
+    res.json(ticket);
+  } catch (error) {
+    console.error('Error getting customer ticket:', error);
+    res.status(500).json({ error: 'Failed to get ticket' });
   }
 });
 
