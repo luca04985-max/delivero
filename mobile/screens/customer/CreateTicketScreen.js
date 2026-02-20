@@ -56,7 +56,7 @@ export default function CreateTicketScreen({ navigation, route }) {
 
       const response = await makeRequest('/tickets/customer', {
         method: 'POST',
-        data: ticketData,
+        body: JSON.stringify(ticketData),
       });
 
       Alert.alert('Successo', 'Ticket creato con successo', [
