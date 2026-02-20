@@ -199,28 +199,19 @@ export default function CustomerTicketsScreen({ navigation }) {
         </Text>
 
         {/* Mostra informazioni ordine associato se presente */}
-        {item.order_id && (
+        {item.ticket_order_id && (
           <View style={customerTicketsScreenStyles.orderInfo}>
             <Text style={customerTicketsScreenStyles.orderLabel}>Ordine Associato:</Text>
-            <Text style={customerTicketsScreenStyles.orderId}>#{item.order_id?.toString().slice(-5)}</Text>
-            <Text style={customerTicketsScreenStyles.orderDate}>Ordine del {new Date(item.created_at).toLocaleDateString()}</Text>
+            <Text style={customerTicketsScreenStyles.orderId}>#{item.ticket_order_id?.toString().slice(-5)}</Text>
+            <Text style={customerTicketsScreenStyles.orderDate}>Ordine del {new Date(item.order_created_at).toLocaleDateString()}</Text>
             <Text style={customerTicketsScreenStyles.orderTotal}>€{item.total_amount || item.total_price || item.total}</Text>
-            <Text style={customerTicketsScreenStyles.orderRestaurant}>{item.restaurant_name}</Text>
             <Text style={customerTicketsScreenStyles.orderAddress}>📍 {item.delivery_address}</Text>
-          </View>
-        )}
-
-        {/* Mostra messaggio per ticket senza ordine */}
-        {!item.order_id && (
-          <View style={customerTicketsScreenStyles.orderInfo}>
-            <Text style={customerTicketsScreenStyles.orderLabel}>📝 Ticket Generico</Text>
-            <Text style={customerTicketsScreenStyles.orderDate}>Creato il {new Date(item.created_at).toLocaleDateString()}</Text>
           </View>
         )}
 
         <View style={customerTicketsScreenStyles.ticketFooter}>
           <Text style={customerTicketsScreenStyles.ticketDate}>
-            {new Date(item.created_at).toLocaleDateString()}
+            {new Date(item.ticket_created_at).toLocaleDateString()}
           </Text>
           <Text style={customerTicketsScreenStyles.ticketId}>#{item.id}</Text>
         </View>
