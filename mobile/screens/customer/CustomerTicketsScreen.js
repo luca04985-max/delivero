@@ -10,7 +10,6 @@ import {
   ScrollView,
 } from 'react-native';
 import { makeRequest } from '../../services/api';
-import { ticketCache } from '../../services/ticketCache';
 import { customerTicketsScreenStyles } from './styles/CustomerTicketsScreenStyles';
 
 export default function CustomerTicketsScreen({ navigation }) {
@@ -20,34 +19,17 @@ export default function CustomerTicketsScreen({ navigation }) {
   const [expandedSections, setExpandedSections] = useState({}); // Nuovo stato per sezioni espanse
 
   useEffect(() => {
-    // Forza il refresh per pulire la cache vecchia e ottenere dati corretti
-    loadTickets(true);
+    loadTickets();
   }, []);
 
-  const loadTickets = useCallback(async (forceRefresh = false) => {
+  const loadTickets = useCallback(async () => {
     try {
-      // Se forziamo il refresh, puliamo completamente la cache
-      if (forceRefresh) {
-        ticketCache.invalidateCache();
-        console.log('Cache cleared, forcing fresh data...');
-      }
-
-      // Controlla se abbiamo dati in cache validi
-      if (!forceRefresh) {
-        const cachedTickets = ticketCache.getTickets();
-        if (cachedTickets) {
-          console.log('Using cached tickets:', cachedTickets);
-          setTickets(cachedTickets);
-          setLoading(false);
-          return;
-        }
-      }
-
+      setLoading(true);
       const data = await makeRequest('/tickets/customer', { method: 'GET' });
       const ticketsData = data || [];
 
-      // Filtra solo ticket validi (con ID non null)
-      const validTickets = ticketsData.filter(ticket => ticket.id != null);
+      // Filtra solo ticket validi (con ID non null) - TEMPORANEAMENTE MOSTRA TUTTI
+      const validTickets = ticketsData.filter(ticket => ticket.id != null || ticket.statusticket != null);
 
       // Log per verificare i dati ricevuti dal backend
       console.log('=== TICKETS DATA FROM BACKEND ===');
@@ -56,9 +38,12 @@ export default function CustomerTicketsScreen({ navigation }) {
       console.log('Valid tickets (filtered):', validTickets);
       console.log('First ticket:', validTickets[0]);
       console.log('Order data in first ticket:', validTickets[0]?.restaurant_name, validTickets[0]?.delivery_address, validTickets[0]?.total_amount);
-
-      // Salva in cache
-      ticketCache.setTickets(validTickets);
+      console.log('Tickets with order:', validTickets.filter(t => t.order_id != null));
+      console.log('Tickets without order:', validTickets.filter(t => t.order_id == null));
+      console.log('Tickets by status:', validTickets.reduce((acc, t) => {
+        acc[t.statusticket] = (acc[t.statusticket] || 0) + 1;
+        return acc;
+      }, {}));
 
       setTickets(validTickets);
     } catch (error) {
@@ -71,14 +56,14 @@ export default function CustomerTicketsScreen({ navigation }) {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    loadTickets(true).finally(() => setRefreshing(false));
+    loadTickets().finally(() => setRefreshing(false));
   }, [loadTickets]);
 
   // Funzione per toggle delle sezioni
-  const toggleSection = (status) => {
+  const toggleSection = (statusticket) => {
     setExpandedSections(prev => ({
       ...prev,
-      [status]: !prev[status] // Inverte lo stato: se era chiuso (false/undefined) lo apre (true)
+      [statusticket]: !prev[statusticket] // Inverte lo stato: se era chiuso (false/undefined) lo apre (true)
     }));
   };
 
@@ -86,8 +71,7 @@ export default function CustomerTicketsScreen({ navigation }) {
     switch (status) {
       case 'open': return '#4CAF50';
       case 'in_progress': return '#FF9800';
-      case 'resolved': return '#2196F3';
-      default: return '#757575';
+      default: return '#666';
     }
   };
 
@@ -95,7 +79,6 @@ export default function CustomerTicketsScreen({ navigation }) {
     switch (status) {
       case 'open': return 'Aperto';
       case 'in_progress': return 'In corso';
-      case 'resolved': return 'Risolto';
       default: return status;
     }
   };
@@ -153,27 +136,30 @@ export default function CustomerTicketsScreen({ navigation }) {
     const result = [];
 
     // Ciclo sui gruppi di stato
-    Object.keys(statusGroups).forEach(status => {
-      const groupTickets = statusGroups[status];
+    Object.keys(statusGroups).forEach(statusticket => {
+      const groupTickets = statusGroups[statusticket];
       // Controlliamo se questa specifica sezione è espansa
-      const isExpanded = !!expandedSections[status];
+      const isExpanded = !!expandedSections[statusticket];
 
       // 1. Aggiungiamo sempre il separatore (con controllo di sicurezza)
-      const statusData = statusInfo[status] || { label: status, icon: '📋' };
+      const statusData = statusInfo[statusticket] || { label: statusticket, icon: '📋' };
       result.push(
-        <View key={`separator-${status}`}>
-          {renderStatusSeparator(status, groupTickets.length, statusData, isExpanded)}
+        <View key={`separator-${statusticket}`}>
+          {renderStatusSeparator(statusticket, groupTickets.length, statusData, isExpanded)}
         </View>
       );
 
       // 2. Aggiungiamo i ticket SOLO se la sezione è espansa
       if (isExpanded) {
         groupTickets.forEach(ticket => {
-          result.push(
-            <View key={`ticket-${ticket.id}`}>
-              {renderTicket({ item: ticket })}
-            </View>
-          );
+          // Aggiungi solo ticket con ID valido per evitare chiavi duplicate
+          if (ticket.id != null) {
+            result.push(
+              <View key={`ticket-${ticket.id}`}>
+                {renderTicket({ item: ticket })}
+              </View>
+            );
+          }
         });
       }
     });
@@ -199,10 +185,10 @@ export default function CustomerTicketsScreen({ navigation }) {
           <Text style={customerTicketsScreenStyles.ticketTitle}>{item.title}</Text>
           <View style={[
             customerTicketsScreenStyles.statusBadge,
-            { backgroundColor: getStatusColor(item.status) }
+            { backgroundColor: getStatusColor(item.statusticket) }
           ]}>
             <Text style={customerTicketsScreenStyles.statusText}>
-              {getStatusText(item.status)}
+              {getStatusText(item.statusticket)}
             </Text>
           </View>
         </View>
@@ -218,7 +204,16 @@ export default function CustomerTicketsScreen({ navigation }) {
             <Text style={customerTicketsScreenStyles.orderId}>#{item.order_id?.toString().slice(-5)}</Text>
             <Text style={customerTicketsScreenStyles.orderDate}>Ordine del {new Date(item.created_at).toLocaleDateString()}</Text>
             <Text style={customerTicketsScreenStyles.orderTotal}>€{item.total_amount || item.total_price || item.total}</Text>
+            <Text style={customerTicketsScreenStyles.orderRestaurant}>{item.restaurant_name}</Text>
             <Text style={customerTicketsScreenStyles.orderAddress}>📍 {item.delivery_address}</Text>
+          </View>
+        )}
+
+        {/* Mostra messaggio per ticket senza ordine */}
+        {!item.order_id && (
+          <View style={customerTicketsScreenStyles.orderInfo}>
+            <Text style={customerTicketsScreenStyles.orderLabel}>📝 Ticket Generico</Text>
+            <Text style={customerTicketsScreenStyles.orderDate}>Creato il {new Date(item.created_at).toLocaleDateString()}</Text>
           </View>
         )}
 
