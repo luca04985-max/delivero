@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
-  Alert,
   TextInput,
   ScrollView,
   ActivityIndicator,
   RefreshControl,
+  Alert,
+  TouchableOpacity,
 } from 'react-native';
 import { makeRequest } from '../../services/api';
 import { ticketCache } from '../../services/ticketCache';
@@ -20,6 +20,14 @@ export default function TicketDetailScreen({ navigation, route }) {
   const [refreshing, setRefreshing] = useState(false);
   const [newResponse, setNewResponse] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: '', type: '' });
+
+  const showToast = (message, type = 'info') => {
+    setToast({ visible: true, message, type });
+    setTimeout(() => {
+      setToast({ visible: false, message: '', type: '' });
+    }, 10000); // 10 secondi come richiesto
+  };
 
   // Controlla se proveniamo da CreateTicket
   const isFromCreateTicket = route.params?.fromCreateTicket || false;
@@ -51,7 +59,7 @@ export default function TicketDetailScreen({ navigation, route }) {
       setTicket(data);
     } catch (error) {
       console.error('Error loading ticket detail:', error);
-      Alert.alert('Errore', 'Impossibile caricare i dettagli del ticket');
+      showToast('❌ Impossibile caricare i dettagli del ticket', 'error');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -65,7 +73,7 @@ export default function TicketDetailScreen({ navigation, route }) {
 
   const addResponse = async () => {
     if (!newResponse.trim()) {
-      Alert.alert('Errore', 'La risposta non può essere vuota');
+      showToast('⚠️ La risposta non può essere vuota', 'warning');
       return;
     }
     console.log("Commento: " + newResponse)
@@ -77,17 +85,24 @@ export default function TicketDetailScreen({ navigation, route }) {
           comment: newResponse, // Cambiato da 'content' a 'comment'
         },
       });
+      console.log("Response: " + JSON.stringify(response));
+      console.log("Response success: " + response.success);
 
-      if (response.success) {
-        Alert.alert('Successo', 'Risposta inviata con successo');
+      // Se la risposta contiene i dati del commento, considerala come successo
+      if (response && response.id && response.comment) {
+        showToast('✅ Risposta inviata con successo', 'success');
+        setNewResponse('');
+        loadTicketDetail();
+      } else if (response.success) {
+        showToast('✅ Risposta inviata con successo', 'success');
         setNewResponse('');
         loadTicketDetail();
       } else {
-        Alert.alert('Errore', response.message || 'Impossibile inviare la risposta');
+        showToast('❌ Impossibile inviare la risposta', 'error');
       }
     } catch (error) {
       console.error('Error adding response:', error);
-      Alert.alert('Errore', 'Impossibile inviare la risposta');
+      showToast('❌ Impossibile inviare la risposta', 'error');
     } finally {
       setSubmitting(false);
     }
@@ -250,20 +265,20 @@ export default function TicketDetailScreen({ navigation, route }) {
         {/* Risposte */}
         <View style={ticketDetailScreenStyles.section}>
           <Text style={ticketDetailScreenStyles.sectionTitle}>
-            💬 Risposte ({ticket.responses?.length || 0})
+            💬 Risposte {(ticket.comments || ticket.responses)?.length || 0}
           </Text>
 
-          {ticket.responses && ticket.responses.length > 0 ? (
-            ticket.responses.map((response, index) => (
+          {(ticket.comments || ticket.responses) && (ticket.comments || ticket.responses).length > 0 ? (
+            (ticket.comments || ticket.responses).map((response, index) => (
               <View key={response.id || index} style={ticketDetailScreenStyles.responseCard}>
                 <View style={ticketDetailScreenStyles.responseHeader}>
                   <View style={ticketDetailScreenStyles.responseAuthorContainer}>
                     <Text style={ticketDetailScreenStyles.responseAuthor}>
-                      {response.author_name || 'Supporto'}
+                      {response.user_name || response.author_name || 'Name: '}
                     </Text>
                     <View style={ticketDetailScreenStyles.authorBadge}>
                       <Text style={ticketDetailScreenStyles.authorBadgeText}>
-                        {response.author_role || 'Staff'}
+                        {response.role || response.author_role || 'Ruolo: '}
                       </Text>
                     </View>
                   </View>
@@ -278,7 +293,7 @@ export default function TicketDetailScreen({ navigation, route }) {
                 </View>
                 <View style={ticketDetailScreenStyles.responseContentBox}>
                   <Text style={ticketDetailScreenStyles.responseContent}>
-                    {response.content}
+                    {response.comment || response.content}
                   </Text>
                 </View>
               </View>
@@ -326,6 +341,38 @@ export default function TicketDetailScreen({ navigation, route }) {
           </View>
         )}
       </ScrollView>
+
+      {/* Toast Notification */}
+      {toast.visible && (
+        <View style={{
+          position: 'absolute',
+          top: 50,
+          left: 20,
+          right: 20,
+          backgroundColor: toast.type === 'success' ? '#4CAF50' :
+            toast.type === 'error' ? '#F44336' :
+              toast.type === 'warning' ? '#FF9800' : '#2196F3',
+          padding: 15,
+          borderRadius: 10,
+          flexDirection: 'row',
+          alignItems: 'center',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+          elevation: 5,
+          zIndex: 1000,
+        }}>
+          <Text style={{
+            color: 'white',
+            fontSize: 16,
+            fontWeight: '600',
+            flex: 1,
+          }}>
+            {toast.message}
+          </Text>
+        </View>
+      )}
     </View>
   );
 }

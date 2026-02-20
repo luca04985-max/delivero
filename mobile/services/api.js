@@ -40,7 +40,7 @@ async function makeRequest(endpoint, options = {}) {
     const response = await fetch(fullUrl, requestOptions);
 
     const data = await response.json();
-
+    console.log("Response data: " + JSON.stringify(data));
     if (!response.ok) {
       console.error('❌ Request failed:', data);
       throw data || { message: 'Errore nella richiesta' };

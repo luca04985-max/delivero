@@ -333,6 +333,7 @@ router.post('/:id/comments', authenticateToken, async (req, res) => {
     }
 
     const newComment = await addTicketComment(req.params.id, userId, comment);
+    console.log("NEW COMMENT")
     res.status(201).json(newComment);
   } catch (error) {
     console.error('Error adding comment:', error);
