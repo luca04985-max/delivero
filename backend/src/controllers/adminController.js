@@ -21,7 +21,7 @@ export const getAdminStats = async (req, res) => {
 
     // Recent orders
     const recentOrders = await db.query(
-      'SELECT o.id, o.total_amount, o.status, u.name, o.created_at FROM orders o JOIN users u ON o.user_id = u.id ORDER BY o.created_at DESC LIMIT 10'
+      'SELECT o.id, o.total_amount, o.status, u.name, o.created_at FROM orders o JOIN users u ON o.customer_id = u.id ORDER BY o.created_at DESC LIMIT 10'
     );
 
     res.status(200).json({
@@ -98,7 +98,7 @@ export const getAllOrders = async (req, res) => {
     }
 
     const result = await db.query(
-      'SELECT o.*, u.name, u.email FROM orders o JOIN users u ON o.user_id = u.id ORDER BY o.created_at DESC'
+      'SELECT o.*, u.name, u.email FROM orders o JOIN users u ON o.customer_id = u.id ORDER BY o.created_at DESC'
     );
     res.status(200).json(result.rows);
   } catch (error) {
@@ -192,12 +192,12 @@ export const deleteUser = async (req, res) => {
       // Delete order_tracks where order belongs to user OR user is the rider
       await db.query(`
         DELETE FROM order_tracks WHERE order_id IN (
-          SELECT id FROM orders WHERE user_id = $1 OR rider_id = $1
+          SELECT id FROM orders WHERE customer_id = $1 OR rider_id = $1
         )
       `, [targetId]);
 
       // Delete orders where user is the creator OR the rider
-      await db.query('DELETE FROM orders WHERE user_id = $1 OR rider_id = $1', [targetId]);
+      await db.query('DELETE FROM orders WHERE customer_id = $1 OR rider_id = $1', [targetId]);
 
       // Delete tickets for user
       await db.query('DELETE FROM tickets WHERE user_id = $1', [targetId]);

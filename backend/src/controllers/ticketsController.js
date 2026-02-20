@@ -6,7 +6,7 @@ async function createTicket(userId, type, title, description, attachmentUrls = [
     console.error("Request: " + userId, type, title, description, attachmentUrls = [], order_id = null);
     const result = await pool.query(
       `INSERT INTO tickets (user_id, type, title, description, attachment_urls, status, order_id)
-       VALUES ($1, $2, $3, $4, $5, 'open')
+       VALUES ($1, $2, $3, $4, $5, 'open', $6)
        RETURNING *`,
       [userId, type, title, description, JSON.stringify(attachmentUrls), order_id]
     );

@@ -53,7 +53,7 @@ export default function CreateTicketScreen({ navigation, route }) {
         type: newTicket.type,
         order_id: orderId || null, // Associa l'ordine se presente
       };
-
+      console.log("Request: ", ticketData);
       const response = await makeRequest('/tickets/customer', {
         method: 'POST',
         body: JSON.stringify(ticketData),

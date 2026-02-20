@@ -40,6 +40,7 @@ router.post('/', authenticateToken, async (req, res) => {
 router.post('/customer', authenticateToken, async (req, res) => {
   try {
     const { type, title, description, order_id, attachmentUrls } = req.body;
+    console.log("Request:", req.body);
     if (!type || !title || !description) {
       return res.status(400).json({ error: 'Type, title, and description are required' });
     }
