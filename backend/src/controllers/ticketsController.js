@@ -3,7 +3,6 @@ import pool from '../config/db.js';
 // Create a new ticket
 async function createTicket(userId, type, title, description, attachmentUrls = [], order_id) {
   try {
-    console.error("Request: " + userId, type, title, description, attachmentUrls = [], order_id);
     // Gestisci attachmentUrls correttamente - usa JSON.stringify solo se ci sono allegati
     const attachmentJson = attachmentUrls && attachmentUrls.length > 0 ? JSON.stringify(attachmentUrls) : '{}';
     const result = await pool.query(

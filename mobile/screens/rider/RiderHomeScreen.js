@@ -11,10 +11,9 @@ export default function RiderHomeScreen({ navigation }) {
   const fetchAvailable = async () => {
     try {
       const data = await ordersAPI.getAvailable();
-      console.log('📦 Available orders:', data);
       setAvailableOrders(data);
     } catch (e) {
-      console.error(e);
+      console.error('Error fetching available orders:', e);
     } finally {
       setLoading(false);
       setRefreshing(false);

@@ -14,18 +14,16 @@ export function initPush() {
             const cred = JSON.parse(fileContent);
             admin.initializeApp({ credential: admin.credential.cert(cred) });
             initialized = true;
-            console.log('✅ Firebase admin initialized from path:', svcPath);
             return;
         }
         if (svcJson) {
             const obj = JSON.parse(svcJson);
             admin.initializeApp({ credential: admin.credential.cert(obj) });
             initialized = true;
-            console.log('✅ Firebase admin initialized from JSON env');
             return;
         }
     } catch (e) {
-        console.warn('❌ Firebase admin init failed:', e.message);
+        console.error('Firebase admin init failed:', e.message);
     }
 }
 
@@ -33,13 +31,11 @@ export async function sendPushToUser(userId, payload) {
     try {
         if (!initialized) initPush();
         if (!admin.apps.length) {
-            console.log('FCM not configured; skipping push');
             return false;
         }
         const res = await db.query('SELECT push_token FROM users WHERE id = $1', [userId]);
         const token = res.rows[0]?.push_token;
         if (!token) {
-            console.log('No push token for user', userId);
             return false;
         }
         const message = {
@@ -51,10 +47,9 @@ export async function sendPushToUser(userId, payload) {
             data: payload.data || {}
         };
         const r = await admin.messaging().send(message);
-        console.log('Push sent, result:', r);
         return true;
     } catch (e) {
-        console.warn('sendPushToUser failed:', e.message);
+        console.error('sendPushToUser failed:', e.message);
         return false;
     }
 }

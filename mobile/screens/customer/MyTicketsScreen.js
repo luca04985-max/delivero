@@ -25,7 +25,6 @@ export default function MyTicketsScreen({ navigation }) {
           const payload = parts[1];
           const decoded = JSON.parse(decode(payload));
           setUserId(decoded.userId);
-          console.log('Decoded user ID:', decoded.userId);
         }
       } catch (error) {
         console.error('Error getting user ID:', error);
@@ -38,9 +37,6 @@ export default function MyTicketsScreen({ navigation }) {
   // Estrai dati ordine passati dalla navigazione
   const orderData = route.params?.orderData;
   const orderId = route.params?.orderId;
-  console.log('MyTicketsScreen - OrderData from route:', orderData);
-  console.log('MyTicketsScreen - OrderId from route:', orderId);
-  console.log('MyTicketsScreen - All route params:', route.params);
 
   const ticketTypes = [
     { label: '🐛 Bug', value: 'bug' },
@@ -104,10 +100,6 @@ export default function MyTicketsScreen({ navigation }) {
   };
 
   const renderTicket = ({ item }) => {
-    console.log('=== RENDERING TICKET ===');
-    console.log('Rendering ticket:', item);
-    console.log('Order ID in ticket:', item.order_id);
-
     return (
       <TouchableOpacity
         style={myTicketsScreenStyles.ticketCard}

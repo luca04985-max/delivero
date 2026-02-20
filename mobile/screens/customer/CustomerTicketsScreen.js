@@ -31,25 +31,9 @@ export default function CustomerTicketsScreen({ navigation }) {
       // Filtra solo ticket validi (con ID non null) - TEMPORANEAMENTE MOSTRA TUTTI
       const validTickets = ticketsData.filter(ticket => ticket.id != null || ticket.ticket_status != null);
 
-      // Log per verificare i dati ricevuti dal backend
-      console.log('=== TICKETS DATA FROM BACKEND ===');
-      console.log('Raw data:', data);
-      console.log('Tickets data:', ticketsData);
-      console.log('Valid tickets (filtered):', validTickets);
-      console.log('First ticket:', validTickets[0]);
-      console.log('Order data in first ticket:', validTickets[0]?.restaurant_name, validTickets[0]?.delivery_address, validTickets[0]?.total_amount);
-      console.log('Tickets with order:', validTickets.filter(t => t.order_id != null));
-      console.log('Tickets without order:', validTickets.filter(t => t.order_id == null));
-      console.log('Tickets by status:', validTickets.reduce((acc, t) => {
-        acc[t.ticket_status] = (acc[t.ticket_status] || 0) + 1;
-        return acc;
-      }, {}));
-
       setTickets(validTickets);
     } catch (error) {
       console.error('Error loading tickets:', error);
-      // Toast silenzioso invece di alert invasivo
-      console.log('⚠️ Impossibile caricare i ticket');
     } finally {
       setLoading(false);
     }
@@ -169,14 +153,6 @@ export default function CustomerTicketsScreen({ navigation }) {
   };
 
   const renderTicket = ({ item }) => {
-    // Log per verificare i dati del ticket durante il rendering
-    console.log('=== RENDERING TICKET ===');
-    console.log('Ticket item:', item);
-    console.log('Order ID:', item.order_id);
-    console.log('Restaurant name:', item.restaurant_name);
-    console.log('Delivery address:', item.delivery_address);
-    console.log('Total amount:', item.total_amount);
-
     return (
       <TouchableOpacity
         style={customerTicketsScreenStyles.ticketCard}

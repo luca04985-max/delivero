@@ -33,7 +33,6 @@ export default function CreateTicketScreen({ navigation, route }) {
           const payload = parts[1];
           const decoded = JSON.parse(decode(payload));
           setUserId(decoded.userId);
-          console.log('Decoded user ID:', decoded.userId);
         }
       } catch (error) {
         console.error('Error getting user ID:', error);
@@ -46,8 +45,6 @@ export default function CreateTicketScreen({ navigation, route }) {
   // Dati dell'ordine passati dalla navigazione
   const orderData = route.params?.orderData;
   const orderId = route.params?.orderId;
-  console.log('OrderData from route:', orderData);
-  console.log('OrderId from route:', orderId);
 
   // Nascondi completamente il pulsante indietro nell'header
   useEffect(() => {
@@ -80,7 +77,6 @@ export default function CreateTicketScreen({ navigation, route }) {
         order_id: orderId || null, // Associa l'ordine se presente
         user_id: userId, // Aggiungi user_id dal token
       };
-      console.log("Request: ", ticketData);
       const response = await makeRequest('/tickets/customer', {
         method: 'POST',
         body: JSON.stringify(ticketData),

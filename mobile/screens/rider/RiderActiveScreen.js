@@ -13,22 +13,19 @@ export default function RiderActiveScreen() {
   const fetchActiveOrders = async () => {
     try {
       const data = await ordersAPI.getActiveRiderOrders();
-      console.log('📋 Active orders from API:', data);
       setActiveOrders(data);
     } catch (e) {
-      console.log('❌ Error fetching active orders:', e);
+      console.error('Error fetching active orders:', e);
     }
   };
 
   const updateStatus = async (orderId, newStatus) => {
-    console.log(' Updating order status:', { orderId, newStatus });
     try {
       const response = await ordersAPI.updateOrderStatus(orderId, newStatus);
-      console.log(' API Response:', response);
       Alert.alert("Stato Aggiornato", `L'ordine è ora: ${newStatus}`);
       fetchActiveOrders();
     } catch (e) {
-      console.error(' Error updating status:', e);
+      console.error('Error updating status:', e);
       Alert.alert("Errore", "Impossibile aggiornare lo stato.");
     }
   };

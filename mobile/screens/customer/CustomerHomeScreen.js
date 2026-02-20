@@ -65,7 +65,9 @@ export default function CustomerHomeScreen({ navigation }) {
       if (data) {
         setCategories(data.map((c, i) => ({ id: i, name: c })));
       }
-    } catch (e) { console.log("Errore categorie", e); }
+    } catch (e) {
+      console.error('Error loading categories:', e);
+    }
   };
 
   const loadData = async () => {
@@ -77,7 +79,7 @@ export default function CustomerHomeScreen({ navigation }) {
       const savedFavs = await AsyncStorage.getItem('favorites');
       if (savedFavs) setFavorites(JSON.parse(savedFavs));
     } catch (e) {
-      console.log("Errore caricamento", e);
+      console.error('Error loading data:', e);
     } finally {
       setRefreshing(false);
     }

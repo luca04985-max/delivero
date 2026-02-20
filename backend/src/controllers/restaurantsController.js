@@ -108,7 +108,7 @@ export const getRestaurant = async (req, res) => {
             );
             reviews = reviewsRes.rows || [];
         } catch (reviewError) {
-            console.log('Reviews table not available yet:', reviewError.message);
+            console.warn('Reviews table not available yet:', reviewError.message);
             reviews = [];
         }
 

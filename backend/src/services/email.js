@@ -26,7 +26,6 @@ export const sendOrderConfirmation = async (email, orderId, amount) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log(`Email sent to ${email}`);
   } catch (error) {
     console.error('Error sending email:', error);
   }
@@ -47,7 +46,6 @@ export const sendBillReminder = async (email, billType, dueDate, amount) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log(`Reminder email sent to ${email}`);
   } catch (error) {
     console.error('Error sending email:', error);
   }
@@ -68,7 +66,21 @@ export const sendPasswordReset = async (email, resetLink) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log(`Reset email sent to ${email}`);
+  } catch (error) {
+    console.error('Error sending email:', error);
+  }
+};
+
+export const sendEmail = async (email, subject, html) => {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject,
+    html,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
   } catch (error) {
     console.error('Error sending email:', error);
   }

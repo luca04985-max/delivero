@@ -40,8 +40,6 @@ export const initializeSocket = (httpServer) => {
   io.use(authenticateSocketMiddleware);
 
   io.on('connection', (socket) => {
-    console.log(`User ${socket.userId} (${socket.userRole}) connected`);
-
     // Join user room for receiving their order updates
     socket.on('joinUserRoom', (userId) => {
       socket.join(`user_${userId}`);
@@ -51,7 +49,6 @@ export const initializeSocket = (httpServer) => {
     socket.on('joinManagerRoom', () => {
       if (['manager', 'admin'].includes(socket.userRole)) {
         socket.join('managers');
-        console.log(`Manager ${socket.userId} joined managers room`);
       }
     });
 
