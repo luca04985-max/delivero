@@ -39,9 +39,10 @@ export default function RestaurantDetailScreen({ route, navigation }) {
             const data = await makeRequest(`/restaurants/${restaurant.id}`, { method: 'GET' });
             setRestaurantDetail(data);
 
-            // Set first category as selected
+            // Set first category as selected (extract unique categories from menu items)
             if (data.menu && data.menu.length > 0) {
-                setSelectedCategory(data.menu[0].category_id);
+                const uniqueCategories = [...new Set(data.menu.map(item => item.category))];
+                setSelectedCategory(uniqueCategories[0]);
             }
         } catch (error) {
             console.error('Error loading restaurant:', error);

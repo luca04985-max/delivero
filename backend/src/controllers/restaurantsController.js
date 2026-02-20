@@ -75,28 +75,21 @@ export const getRestaurant = async (req, res) => {
 
         const restaurant = restaurantRes.rows[0];
 
-        // Get menu categories and items (simplified query without customizations first)
+        // Get menu items directly (senza raggruppamento per categoria)
         const menuRes = await db.query(
             `SELECT 
-        rc.id as category_id,
-        rc.name as category,
-        COALESCE(json_agg(
-          json_build_object(
-            'id', mi.id,
-            'name', mi.name,
-            'description', mi.description,
-            'price', mi.price,
-            'image_url', mi.image_url,
-            'allergens', mi.allergens,
-            'is_available', mi.is_available,
-            'customizations', '[]'::json
-          ) ORDER BY mi.name
-        ) FILTER (WHERE mi.id IS NOT NULL), '[]'::json) as items
-       FROM restaurant_categories rc
-       LEFT JOIN menu_items mi ON rc.id = mi.category_id AND mi.is_available = true
-       WHERE rc.restaurant_id = $1 AND rc.is_active = true
-       GROUP BY rc.id, rc.name
-       ORDER BY rc.display_order ASC`,
+            mi.id,
+            mi.name,
+            mi.description,
+            mi.price,
+            mi.image_url,
+            mi.allergens,
+            mi.is_available,
+            mi.preparation_time_minutes,
+            mi.category
+          FROM menu_items mi
+          WHERE mi.restaurant_id = $1 AND mi.is_available = true
+          ORDER BY mi.name`,
             [id]
         );
 
