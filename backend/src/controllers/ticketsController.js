@@ -53,7 +53,7 @@ async function getAllTickets(filters = {}) {
 async function getUserTickets(userId) {
   try {
     const result = await pool.query(
-      ` t.id,
+      ` select t.id,
         t.user_id,
         t.order_id               AS ticket_order_id,
         t.status                 AS ticket_status,

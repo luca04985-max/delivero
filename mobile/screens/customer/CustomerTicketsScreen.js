@@ -29,7 +29,7 @@ export default function CustomerTicketsScreen({ navigation }) {
       const ticketsData = data || [];
 
       // Filtra solo ticket validi (con ID non null) - TEMPORANEAMENTE MOSTRA TUTTI
-      const validTickets = ticketsData.filter(ticket => ticket.id != null || ticket.statusticket != null);
+      const validTickets = ticketsData.filter(ticket => ticket.id != null || ticket.ticket_status != null);
 
       // Log per verificare i dati ricevuti dal backend
       console.log('=== TICKETS DATA FROM BACKEND ===');
@@ -41,14 +41,15 @@ export default function CustomerTicketsScreen({ navigation }) {
       console.log('Tickets with order:', validTickets.filter(t => t.order_id != null));
       console.log('Tickets without order:', validTickets.filter(t => t.order_id == null));
       console.log('Tickets by status:', validTickets.reduce((acc, t) => {
-        acc[t.statusticket] = (acc[t.statusticket] || 0) + 1;
+        acc[t.ticket_status] = (acc[t.ticket_status] || 0) + 1;
         return acc;
       }, {}));
 
       setTickets(validTickets);
     } catch (error) {
       console.error('Error loading tickets:', error);
-      Alert.alert('Errore', 'Impossibile caricare i ticket');
+      // Toast silenzioso invece di alert invasivo
+      console.log('⚠️ Impossibile caricare i ticket');
     } finally {
       setLoading(false);
     }
@@ -60,10 +61,10 @@ export default function CustomerTicketsScreen({ navigation }) {
   }, [loadTickets]);
 
   // Funzione per toggle delle sezioni
-  const toggleSection = (statusticket) => {
+  const toggleSection = (ticket_status) => {
     setExpandedSections(prev => ({
       ...prev,
-      [statusticket]: !prev[statusticket] // Inverte lo stato: se era chiuso (false/undefined) lo apre (true)
+      [ticket_status]: !prev[ticket_status] // Inverte lo stato: se era chiuso (false/undefined) lo apre (true)
     }));
   };
 
@@ -121,10 +122,10 @@ export default function CustomerTicketsScreen({ navigation }) {
 
     // Raggruppa i ticket per stato
     tickets.forEach(ticket => {
-      if (!statusGroups[ticket.statusticket]) {
-        statusGroups[ticket.statusticket] = [];
+      if (!statusGroups[ticket.ticket_status]) {
+        statusGroups[ticket.ticket_status] = [];
       }
-      statusGroups[ticket.statusticket].push(ticket);
+      statusGroups[ticket.ticket_status].push(ticket);
     });
 
     const statusInfo = {
@@ -136,16 +137,16 @@ export default function CustomerTicketsScreen({ navigation }) {
     const result = [];
 
     // Ciclo sui gruppi di stato
-    Object.keys(statusGroups).forEach(statusticket => {
-      const groupTickets = statusGroups[statusticket];
+    Object.keys(statusGroups).forEach(ticket_status => {
+      const groupTickets = statusGroups[ticket_status];
       // Controlliamo se questa specifica sezione è espansa
-      const isExpanded = !!expandedSections[statusticket];
+      const isExpanded = !!expandedSections[ticket_status];
 
       // 1. Aggiungiamo sempre il separatore (con controllo di sicurezza)
-      const statusData = statusInfo[statusticket] || { label: statusticket, icon: '📋' };
+      const statusData = statusInfo[ticket_status] || { label: ticket_status, icon: '📋' };
       result.push(
-        <View key={`separator-${statusticket}`}>
-          {renderStatusSeparator(statusticket, groupTickets.length, statusData, isExpanded)}
+        <View key={`separator-${ticket_status}`}>
+          {renderStatusSeparator(ticket_status, groupTickets.length, statusData, isExpanded)}
         </View>
       );
 
@@ -185,10 +186,10 @@ export default function CustomerTicketsScreen({ navigation }) {
           <Text style={customerTicketsScreenStyles.ticketTitle}>{item.title}</Text>
           <View style={[
             customerTicketsScreenStyles.statusBadge,
-            { backgroundColor: getStatusColor(item.statusticket) }
+            { backgroundColor: getStatusColor(item.ticket_status) }
           ]}>
             <Text style={customerTicketsScreenStyles.statusText}>
-              {getStatusText(item.statusticket)}
+              {getStatusText(item.ticket_status)}
             </Text>
           </View>
         </View>
