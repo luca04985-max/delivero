@@ -97,9 +97,15 @@ async function getUserTickets(userId) {
 async function getTicketById(ticketId) {
   try {
     const ticketResult = await pool.query(
-      `SELECT t.*, u.name as user_name, u.email as user_email 
+      `SELECT t.*, u.name as user_name, u.email as user_email,
+             o.id as order_id, o.status as order_status, o.total_amount,
+             o.delivery_fee, o.delivery_address, o.customer_phone,
+             o.notes AS order_notes, o.rating, o.rating_comment,
+             o.estimated_delivery_time, o.actual_delivery_time,
+             o.created_at AS order_created_at, o.updated_at AS order_updated_at
        FROM tickets t 
-       JOIN users u ON t.user_id = u.id 
+       LEFT JOIN users u ON t.user_id = u.id 
+       LEFT JOIN orders o ON t.order_id = o.id
        WHERE t.id = $1`,
       [ticketId]
     );

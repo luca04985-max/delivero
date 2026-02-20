@@ -71,7 +71,7 @@ export default function TicketDetailScreen({ navigation, route }) {
 
     try {
       setSubmitting(true);
-      const response = await makeRequest(`/tickets/customer/${ticketId}/responses`, {
+      const response = await makeRequest(`/tickets/customer/${ticketId}/comments`, {
         method: 'POST',
         data: {
           content: newResponse,
@@ -157,7 +157,6 @@ export default function TicketDetailScreen({ navigation, route }) {
         {/* Header del Ticket */}
         <View style={ticketDetailScreenStyles.ticketHeader}>
           <View style={ticketDetailScreenStyles.ticketHeaderTop}>
-            <Text style={ticketDetailScreenStyles.ticketId}>#{ticket.id}</Text>
             <View style={[
               ticketDetailScreenStyles.statusBadge,
               { backgroundColor: getStatusColor(ticket.status) }
@@ -166,21 +165,19 @@ export default function TicketDetailScreen({ navigation, route }) {
                 {getStatusText(ticket.status)}
               </Text>
             </View>
-          </View>
-
-          <Text style={ticketDetailScreenStyles.ticketTitle}>{ticket.title}</Text>
-
-          <View style={ticketDetailScreenStyles.ticketMeta}>
             <Text style={ticketDetailScreenStyles.ticketType}>
               {getTypeEmoji(ticket.type)} {ticket.type}
             </Text>
+          </View>
+
+
+          <View style={ticketDetailScreenStyles.ticketMeta}>
+            <Text style={ticketDetailScreenStyles.ticketTitle}>{ticket.title}</Text>
             <Text style={ticketDetailScreenStyles.ticketDate}>
               {new Date(ticket.created_at).toLocaleDateString('it-IT', {
                 day: '2-digit',
                 month: 'long',
                 year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
               })}
             </Text>
           </View>
@@ -188,6 +185,60 @@ export default function TicketDetailScreen({ navigation, route }) {
 
         {/* Descrizione del Ticket */}
         <View style={ticketDetailScreenStyles.section}>
+          {/* Ordine Associato (se presente) */}
+          {ticket.order_id && (
+            <View style={ticketDetailScreenStyles.section}>
+              <Text style={ticketDetailScreenStyles.sectionTitle}>📦 Ordine Associato</Text>
+              <View style={{
+                backgroundColor: '#f8f9fa',
+                borderRadius: 10,
+                padding: 15,
+                borderLeftWidth: 4,
+                borderLeftColor: '#FF6B00'
+              }}>
+                <Text style={{
+                  fontSize: 16,
+                  fontWeight: '600',
+                  color: '#333',
+                  marginBottom: 8
+                }}>
+                  Ordine #{ticket.order_id}
+                </Text>
+                {ticket.total_amount && (
+                  <Text style={{
+                    fontSize: 14,
+                    color: '#666',
+                    marginBottom: 5
+                  }}>
+                    Importo: €{ticket.total_amount}
+                  </Text>
+                )}
+                {ticket.order_status && (
+                  <Text style={{
+                    fontSize: 14,
+                    color: '#666',
+                    marginBottom: 5
+                  }}>
+                    Stato: {ticket.order_status === 'pending' && '⏳ In Attesa'}
+                    {ticket.order_status === 'accepted' && '✓ Accettato'}
+                    {ticket.order_status === 'preparing' && '👨‍🍳 In Preparazione'}
+                    {ticket.order_status === 'pickup' && '📦 Pronto per Ritiro'}
+                    {ticket.order_status === 'delivering' && '🚗 In Consegna'}
+                    {ticket.order_status === 'delivered' && '✅ Consegnato'}
+                    {ticket.order_status === 'cancelled' && '❌ Cancellato'}
+                  </Text>
+                )}
+                {ticket.delivery_address && (
+                  <Text style={{
+                    fontSize: 14,
+                    color: '#666'
+                  }}>
+                    📍 {ticket.delivery_address}
+                  </Text>
+                )}
+              </View>
+            </View>
+          )}
           <Text style={ticketDetailScreenStyles.sectionTitle}>📋 Descrizione</Text>
           <View style={ticketDetailScreenStyles.descriptionBox}>
             <Text style={ticketDetailScreenStyles.ticketDescription}>

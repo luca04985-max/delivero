@@ -433,11 +433,6 @@ export default function App() {
         token = await AsyncStorage.getItem('token');
         user = await AsyncStorage.getItem('user');
         if (user) user = JSON.parse(user);
-
-        if (token && user) {
-          console.log('✅ Token trovato in AsyncStorage:', token.substring(0, 20) + '...');
-          console.log('✅ User trovato:', user);
-        }
       } catch (e) {
         // Restoring token failed
         console.error('Error restoring token:', e);
@@ -463,10 +458,8 @@ export default function App() {
 
           if (currentToken && currentUser) {
             const user = JSON.parse(currentUser);
-            console.log('🔄 Token/user changed, updating app state');
             dispatch({ type: 'SIGN_IN', token: currentToken, user });
           } else if (!currentToken) {
-            console.log('🔄 Token removed, signing out');
             dispatch({ type: 'SIGN_OUT' });
           }
         }
@@ -495,12 +488,10 @@ export default function App() {
           finalStatus = status;
         }
         if (finalStatus !== 'granted') {
-          console.log('Failed to get push token permission');
           return;
         }
         const tokenData = await Notifications.getExpoPushTokenAsync();
         const token = tokenData.data;
-        console.log('Got push token:', token);
         await AsyncStorage.setItem('push_token', token);
         // send to backend
         try {
@@ -525,14 +516,6 @@ export default function App() {
       </View>
     );
   }
-
-  // Debug log
-  console.log('🔍 App state:', {
-    isLoading: state.isLoading,
-    hasToken: !!state.userToken,
-    userRole: state.user?.role,
-    userEmail: state.user?.email,
-  });
 
   return (
     <CartProvider>

@@ -47,7 +47,6 @@ export function initLocalNotifications(socket) {
 
     // Listen for proximity alert and show desktop notification
     socket.on('riderNearby', (data) => {
-        console.log('[LocalNotif] Rider nearby!', data);
         showLocalNotification('🏍️ Il tuo rider è vicino!', {
             body: data.eta_minutes ? `ETA: ${data.eta_minutes} minuti` : 'A meno di 500 metri',
             tag: `order-${data.orderId}`,

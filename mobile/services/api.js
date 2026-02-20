@@ -21,14 +21,7 @@ async function makeRequest(endpoint, options = {}) {
     if (token) {
       headers.Authorization = `Bearer ${token}`;
     }
-    console.log(headers.Authorization);
     const fullUrl = `${API_URL}${endpoint}`;
-    console.log('🌐 Making request:', {
-      url: fullUrl,
-      method: options.method || 'GET',
-      headers: { ...headers, Authorization: headers.Authorization ? 'Bearer [TOKEN]' : undefined },
-      body: options.body ? JSON.parse(options.body) : undefined
-    });
 
     const response = await fetch(fullUrl, {
       ...options,
@@ -36,12 +29,6 @@ async function makeRequest(endpoint, options = {}) {
     });
 
     const data = await response.json();
-
-    console.log('📡 Response received:', {
-      status: response.status,
-      ok: response.ok,
-      data: data
-    });
 
     if (!response.ok) {
       console.error('❌ Request failed:', data);

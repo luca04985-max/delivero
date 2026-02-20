@@ -7,9 +7,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
-  Alert,
   StyleSheet,
   ScrollView,
+  Animated,
 } from 'react-native';
 import { authAPI } from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,10 +18,18 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: '', type: '' });
+
+  const showToast = (message, type = 'info') => {
+    setToast({ visible: true, message, type });
+    setTimeout(() => {
+      setToast({ visible: false, message: '', type: '' });
+    }, 10000); // Aumentato da 3000 a 5000ms
+  };
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Errore', 'Compila tutti i campi');
+      showToast('⚠️ Compila tutti i campi', 'warning');
       return;
     }
 
@@ -37,98 +45,112 @@ export default function LoginScreen({ navigation }) {
         timeoutPromise
       ]);
 
-      console.log('✅ Login riuscito, token salvato');
-
       // Breve pausa per permettere al listener di AsyncStorage di rilevare il cambio
       setTimeout(() => {
-        Alert.alert('Successo', `Benvenuto ${response.user.name}!`);
+        showToast(`✅ Benvenuto ${response.user.name}!`, 'success');
       }, 100);
     } catch (error) {
       const message = error.message === 'Server slow to respond - try again'
         ? 'Server in avvio, riprova tra 30 secondi (Render cold start)'
         : error.message || 'Credenziali non valide';
-
-      Alert.alert('Errore Login', message);
+      showToast(`❌ ${message}`, 'error');
+    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView contentContainerStyle={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.logo}>🚀</Text>
-          <Text style={styles.title}>Delivero</Text>
-          <Text style={styles.subtitle}>Accedi al tuo account</Text>
-        </View>
-
-        {/* Form */}
-        <View style={styles.form}>
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>📧 Email</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="tuoemail@example.com"
-              placeholderTextColor="#999"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              editable={!loading}
-            />
+    <>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView contentContainerStyle={styles.container}>
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={styles.logo}>🚀</Text>
+            <Text style={styles.title}>Delivero</Text>
+            <Text style={styles.subtitle}>Accedi al tuo account</Text>
           </View>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>🔒 Password</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="••••••••"
-              placeholderTextColor="#999"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              editable={!loading}
-            />
-          </View>
+          {/* Form */}
+          <View style={styles.form}>
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>📧 Email</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="tuoemail@example.com"
+                placeholderTextColor="#999"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                editable={!loading}
+              />
+            </View>
 
-          <TouchableOpacity
-            style={[styles.button, loading && styles.buttonDisabled]}
-            onPress={handleLogin}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>🚀 Accedi</Text>
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>🔒 Password</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="••••••••"
+                placeholderTextColor="#999"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                editable={!loading}
+              />
+            </View>
+
+            <TouchableOpacity
+              style={[styles.button, loading && styles.buttonDisabled]}
+              onPress={handleLogin}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>🚀 Accedi</Text>
+              )}
+            </TouchableOpacity>
+
+            {/* Toast Custom */}
+            {toast.visible && (
+              <Animated.View
+                style={[
+                  styles.toast,
+                  toast.type === 'success' && styles.toastSuccess,
+                  toast.type === 'warning' && styles.toastWarning,
+                  toast.type === 'error' && styles.toastError,
+                ]}
+              >
+                <Text style={styles.toastText}>{toast.message}</Text>
+              </Animated.View>
             )}
-          </TouchableOpacity>
 
-          <View style={styles.divider} />
+            <View style={styles.divider} />
 
-          <TouchableOpacity
-            style={styles.linkButton}
-            onPress={() => navigation.navigate('Register')}
-            disabled={loading}
-          >
-            <Text style={styles.linkText}>
-              Non hai un account? <Text style={styles.linkBold}>Registrati</Text>
-            </Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity
+              style={styles.linkButton}
+              onPress={() => navigation.navigate('Register')}
+              disabled={loading}
+            >
+              <Text style={styles.linkText}>
+                Non hai un account? <Text style={styles.linkBold}>Registrati</Text>
+              </Text>
+            </TouchableOpacity>
+          </View>
 
-        {/* Info */}
-        <View style={styles.info}>
-          <Text style={styles.infoTitle}>💡 Demo Account</Text>
-          <Text style={styles.infoText}>👤 Customer: demo.customer@delivero.local / 123456</Text>
-          <Text style={styles.infoText}>🚗 Rider: demo.rider@delivero.local / 123456</Text>
-          <Text style={styles.infoText}>👨‍💼 Manager: demo.manager@delivero.local / 123456</Text>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          {/* Info */}
+          <View style={styles.info}>
+            <Text style={styles.infoTitle}>💡 Demo Account</Text>
+            <Text style={styles.infoText}>👤 Customer: demo.customer@delivero.local / 123456</Text>
+            <Text style={styles.infoText}>🚗 Rider: demo.rider@delivero.local / 123456</Text>
+            <Text style={styles.infoText}>👨‍💼 Manager: demo.manager@delivero.local / 123456</Text>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </>
   );
 }
 
@@ -226,6 +248,35 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
     marginBottom: 5,
-    fontFamily: 'Courier New',
+    fontWeight: '500',
+  },
+  toast: {
+    position: 'absolute',
+    top: 80,
+    left: 20,
+    right: 20,
+    backgroundColor: '#333',
+    borderRadius: 12,
+    padding: 16,
+    zIndex: 9999,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    elevation: 5,
+  },
+  toastSuccess: {
+    backgroundColor: '#4CAF50',
+  },
+  toastWarning: {
+    backgroundColor: '#FF9800',
+  },
+  toastError: {
+    backgroundColor: '#F44336',
+  },
+  toastText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
   },
 });

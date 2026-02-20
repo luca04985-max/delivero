@@ -7,9 +7,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
-  Alert,
   StyleSheet,
   ScrollView,
+  Animated,
 } from 'react-native';
 // 1. IMPORTA IL PICKER DA QUI
 import { Picker } from '@react-native-picker/picker';
@@ -23,157 +23,181 @@ export default function RegisterScreen({ navigation }) {
   const [role, setRole] = useState('customer');
 
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: '', type: '' });
+
+  const showToast = (message, type = 'info') => {
+    setToast({ visible: true, message, type });
+    setTimeout(() => {
+      setToast({ visible: false, message: '', type: '' });
+    }, 4000);
+  };
 
   const handleRegister = async () => {
     if (!name || !email || !password || !confirmPassword) {
-      Alert.alert('Errore', 'Compila tutti i campi');
+      showToast('⚠️ Compila tutti i campi', 'warning');
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert('Errore', 'Le password non coincidono');
+      showToast('⚠️ Le password non coincidono', 'warning');
       return;
     }
 
     if (password.length < 6) {
-      Alert.alert('Errore', 'La password deve avere almeno 6 caratteri');
+      showToast('⚠️ La password deve avere almeno 6 caratteri', 'warning');
       return;
     }
 
     setLoading(true);
     try {
       const response = await authAPI.register(email, password, name, role);
-      Alert.alert('Successo', 'Account creato! Accedi ora');
+      showToast('✅ Account creato con successo!', 'success');
       navigation.navigate('Login');
     } catch (error) {
-      Alert.alert('Errore Registrazione', error.message || 'Errore sconosciuto');
+      showToast(`❌ ${error.message || 'Errore sconosciuto'}`, 'error');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView contentContainerStyle={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.logo}>✍️</Text>
-          <Text style={styles.title}>Registrati</Text>
-          <Text style={styles.subtitle}>Crea il tuo account Delivero</Text>
-        </View>
-
-        {/* Form */}
-        <View style={styles.form}>
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>👤 Nome Completo</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Luca Rossi"
-              placeholderTextColor="#999"
-              value={name}
-              onChangeText={setName}
-              editable={!loading}
-            />
+    <>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView contentContainerStyle={styles.container}>
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={styles.logo}>✍️</Text>
+            <Text style={styles.title}>Registrati</Text>
+            <Text style={styles.subtitle}>Crea il tuo account Delivero</Text>
           </View>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>📧 Email</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="tuoemail@example.com"
-              placeholderTextColor="#999"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              editable={!loading}
-            />
-          </View>
-
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>👥 Tipo di Account</Text>
-            <View style={styles.pickerContainer}>
-              {/* 2. IL COMPONENTE ORA USA LA LIBRERIA ESTERNA */}
-              <Picker
-                selectedValue={role}
-                onValueChange={(itemValue) => setRole(itemValue)}
-                style={styles.picker}
-                enabled={!loading} // Su Android funziona correttamente qui
-              >
-                <Picker.Item label="👤 Consumatore" value="customer" />
-                <Picker.Item label="🚗 Rider" value="rider" />
-              </Picker>
+          {/* Form */}
+          <View style={styles.form}>
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>👤 Nome Completo</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Luca Rossi"
+                placeholderTextColor="#999"
+                value={name}
+                onChangeText={setName}
+                editable={!loading}
+              />
             </View>
+
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>📧 Email</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="tuoemail@example.com"
+                placeholderTextColor="#999"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                editable={!loading}
+              />
+            </View>
+
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>👥 Tipo di Account</Text>
+              <View style={styles.pickerContainer}>
+                {/* 2. IL COMPONENTE ORA USA LA LIBRERIA ESTERNA */}
+                <Picker
+                  selectedValue={role}
+                  onValueChange={(itemValue) => setRole(itemValue)}
+                  style={styles.picker}
+                  enabled={!loading} // Su Android funziona correttamente qui
+                >
+                  <Picker.Item label="👤 Consumatore" value="customer" />
+                  <Picker.Item label="🚗 Rider" value="rider" />
+                </Picker>
+              </View>
+            </View>
+
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>🔒 Password</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="•••••••"
+                placeholderTextColor="#999"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                editable={!loading}
+              />
+            </View>
+
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>🔒 Conferma Password</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="•••••••"
+                placeholderTextColor="#999"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                secureTextEntry
+                editable={!loading}
+              />
+            </View>
+
+            <TouchableOpacity
+              style={[styles.button, loading && styles.buttonDisabled]}
+              onPress={handleRegister}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>🚀 Registrati</Text>
+              )}
+            </TouchableOpacity>
+
+            <View style={styles.divider} />
+
+            <TouchableOpacity
+              style={styles.linkButton}
+              onPress={() => navigation.navigate('Login')}
+              disabled={loading}
+            >
+              <Text style={styles.linkText}>
+                Hai già un account? <Text style={styles.linkBold}>Accedi</Text>
+              </Text>
+            </TouchableOpacity>
           </View>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>🔒 Password</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="••••••••"
-              placeholderTextColor="#999"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              editable={!loading}
-            />
-          </View>
-
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>🔒 Conferma Password</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="••••••••"
-              placeholderTextColor="#999"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry
-              editable={!loading}
-            />
-          </View>
-
-          <TouchableOpacity
-            style={[styles.button, loading && styles.buttonDisabled]}
-            onPress={handleRegister}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>🚀 Registrati</Text>
-            )}
-          </TouchableOpacity>
-
-          <View style={styles.divider} />
-
-          <TouchableOpacity
-            style={styles.linkButton}
-            onPress={() => navigation.navigate('Login')}
-            disabled={loading}
-          >
-            <Text style={styles.linkText}>
-              Hai già un account? <Text style={styles.linkBold}>Accedi</Text>
+          {/* Info */}
+          <View style={styles.info}>
+            <Text style={styles.infoText}>
+              ✅ Registrazione standard: creerai un account cliente (o rider se abilitato)
             </Text>
-          </TouchableOpacity>
-        </View>
+            <Text style={styles.infoText}>
+              ✅ I consumatori ordineranno da app mobile
+            </Text>
+            <Text style={styles.infoText}>
+              ✅ I rider consegneranno ordini da app mobile
+            </Text>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
-        {/* Info */}
-        <View style={styles.info}>
-          <Text style={styles.infoText}>
-            ✅ Registrazione standard: creerai un account cliente (o rider se abilitato)
-          </Text>
-          <Text style={styles.infoText}>
-            ✅ I consumatori ordineranno da app mobile
-          </Text>
-          <Text style={styles.infoText}>
-            ✅ I rider consegneranno ordini da app mobile
-          </Text>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      {/* Toast Custom */}
+      {toast.visible && (
+        <Animated.View
+          style={[
+            styles.toast,
+            toast.type === 'success' && styles.toastSuccess,
+            toast.type === 'warning' && styles.toastWarning,
+            toast.type === 'error' && styles.toastError,
+          ]}
+        >
+          <Text style={styles.toastText}>{toast.message}</Text>
+        </Animated.View>
+      )}
+    </>
   );
 }
 
@@ -277,5 +301,34 @@ const styles = StyleSheet.create({
     color: '#0066FF',
     marginBottom: 8,
     fontWeight: '500',
+  },
+  toast: {
+    position: 'absolute',
+    top: 80,
+    left: 20,
+    right: 20,
+    backgroundColor: '#333',
+    borderRadius: 12,
+    padding: 16,
+    zIndex: 9999,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    elevation: 5,
+  },
+  toastSuccess: {
+    backgroundColor: '#4CAF50',
+  },
+  toastWarning: {
+    backgroundColor: '#FF9800',
+  },
+  toastError: {
+    backgroundColor: '#F44336',
+  },
+  toastText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
   },
 });
