@@ -46,6 +46,8 @@ export default function CreateTicketScreen({ navigation, route }) {
   // Dati dell'ordine passati dalla navigazione
   const orderData = route.params?.orderData;
   const orderId = route.params?.orderId;
+  console.log('OrderData from route:', orderData);
+  console.log('OrderId from route:', orderId);
 
   // Nascondi completamente il pulsante indietro nell'header
   useEffect(() => {

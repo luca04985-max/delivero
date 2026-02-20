@@ -1,9 +1,9 @@
 import pool from '../config/db.js';
 
 // Create a new ticket
-async function createTicket(userId, type, title, description, attachmentUrls = [], order_id = null) {
+async function createTicket(userId, type, title, description, attachmentUrls = [], order_id) {
   try {
-    console.error("Request: " + userId, type, title, description, attachmentUrls = [], order_id = null);
+    console.error("Request: " + userId, type, title, description, attachmentUrls = [], order_id);
     // Gestisci attachmentUrls correttamente - usa JSON.stringify solo se ci sono allegati
     const attachmentJson = attachmentUrls && attachmentUrls.length > 0 ? JSON.stringify(attachmentUrls) : '{}';
     const result = await pool.query(
@@ -182,6 +182,10 @@ async function getTicketStats() {
         COUNT(CASE WHEN type = 'complaint' THEN 1 END) as complaint_count,
         COUNT(CASE WHEN type = 'feature_request' THEN 1 END) as feature_count,
         COUNT(CASE WHEN type = 'support' THEN 1 END) as support_count,
+        COUNT(CASE WHEN type = 'technical' THEN 1 END) as technical_count,
+        COUNT(CASE WHEN type = 'payment' THEN 1 END) as payment_count,
+        COUNT(CASE WHEN type = 'delivery' THEN 1 END) as delivery_count,
+        COUNT(CASE WHEN type = 'other' THEN 1 END) as other_count,
         COUNT(CASE WHEN priority = 'critical' THEN 1 END) as critical_count
        FROM tickets`
     );
