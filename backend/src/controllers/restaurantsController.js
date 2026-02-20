@@ -93,7 +93,7 @@ export const getRestaurant = async (req, res) => {
           ) ORDER BY mi.name
         ) FILTER (WHERE mi.id IS NOT NULL), '[]'::json) as items
        FROM restaurant_categories rc
-       LEFT JOIN menu_items mi ON rc.id = mi.category_id AND mi.is_active = true
+       LEFT JOIN menu_items mi ON rc.id = mi.category_id AND mi.available = true
        WHERE rc.restaurant_id = $1 AND rc.is_active = true
        GROUP BY rc.id, rc.name
        ORDER BY rc.display_order ASC`,
