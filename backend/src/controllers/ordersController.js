@@ -130,7 +130,9 @@ export const updateOrderStatus = async (req, res) => {
     if (!status) {
       return res.status(400).json({ message: 'Status is required' });
     }
-
+    console.log("----------------ORDER STATUS--------------");
+    console.log("ID: " + id);
+    console.log("Status: " + status + " Location: " + location);
     const result = await db.query(
       'UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2 AND customer_id = $3 RETURNING *',
       [status, id, userId]
