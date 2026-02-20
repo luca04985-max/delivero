@@ -4,12 +4,13 @@ import pool from '../config/db.js';
 async function createTicket(userId, type, title, description, attachmentUrls = [], order_id = null) {
   try {
     console.error("Request: " + userId, type, title, description, attachmentUrls = [], order_id = null);
-    // Gestisci attachmentUrls correttamente - usa NULL invece di array vuoto
+    // Gestisci attachmentUrls correttamente - usa JSON.stringify solo se ci sono allegati
+    const attachmentJson = attachmentUrls && attachmentUrls.length > 0 ? JSON.stringify(attachmentUrls) : '{}';
     const result = await pool.query(
       `INSERT INTO tickets (user_id, type, title, description, attachment_urls, status, order_id)
        VALUES ($1, $2, $3, $4, $5, 'open', $6)
        RETURNING *`,
-      [userId, type, title, description, null, order_id]
+      [userId, type, title, description, attachmentJson, order_id]
     );
     return result.rows[0];
   } catch (error) {
