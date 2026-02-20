@@ -149,7 +149,7 @@ export default function CreateTicketScreen({ navigation, route }) {
             <Text style={createTicketScreenStyles.label}>Ordine (Opzionale)</Text>
             <TouchableOpacity
               style={createTicketScreenStyles.selectOrderButton}
-              onPress={() => navigation.navigate('CustomerOrders', { selectMode: true })}
+              onPress={() => navigation.navigate('OrderSelection')}
             >
               <Text style={createTicketScreenStyles.selectOrderText}>
                 📋 Seleziona un ordine da associare

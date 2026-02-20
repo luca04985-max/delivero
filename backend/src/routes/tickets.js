@@ -36,6 +36,32 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
+// Create a new ticket for customer (customer specific route)
+router.post('/customer', authenticateToken, async (req, res) => {
+  try {
+    const { type, title, description, order_id, attachmentUrls } = req.body;
+    if (!type || !title || !description) {
+      return res.status(400).json({ error: 'Type, title, and description are required' });
+    }
+
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+    // Check if user is customer
+    const userRes = await db.query('SELECT role FROM users WHERE id = $1', [userId]);
+    const role = userRes.rows[0]?.role;
+    if (role !== 'customer') {
+      return res.status(403).json({ error: 'Customer access required' });
+    }
+
+    const ticket = await createTicket(userId, type, title, description, attachmentUrls || [], order_id);
+    res.status(201).json(ticket);
+  } catch (error) {
+    console.error('Error creating customer ticket:', error);
+    res.status(500).json({ error: 'Failed to create ticket' });
+  }
+});
+
 // Get all tickets (admin only)
 router.get('/admin', authenticateToken, async (req, res) => {
   try {
@@ -136,7 +162,7 @@ router.get('/my-tickets', authenticateToken, async (req, res) => {
     res.json(tickets);
   } catch (error) {
     console.error('Error getting user tickets:', error);
-    res.status(500).json({ error: 'Failed to get your tickets' });
+    res.status(500).json({ error: 'Failed to get user tickets' });
   }
 });
 

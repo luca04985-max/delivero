@@ -17,6 +17,7 @@ export default function CustomerTicketsScreen({ navigation }) {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [expandedSections, setExpandedSections] = useState({}); // Nuovo stato per sezioni espanse
 
   useEffect(() => {
     loadTickets();
@@ -54,6 +55,14 @@ export default function CustomerTicketsScreen({ navigation }) {
     loadTickets(true).finally(() => setRefreshing(false));
   }, [loadTickets]);
 
+  // Funzione per toggle delle sezioni
+  const toggleSection = (status) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [status]: !prev[status] // Inverte lo stato: se era chiuso (false/undefined) lo apre (true)
+    }));
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'open': return '#4CAF50';
@@ -70,6 +79,86 @@ export default function CustomerTicketsScreen({ navigation }) {
       case 'resolved': return 'Risolto';
       default: return status;
     }
+  };
+
+  // Funzione per renderizzare il separatore di stato
+  const renderStatusSeparator = (status, count, statusInfo, isExpanded) => {
+    return (
+      <TouchableOpacity
+        style={[
+          customerTicketsScreenStyles.statusSeparator,
+          { borderLeftColor: getStatusColor(status) }
+        ]}
+        onPress={() => toggleSection(status)}
+      >
+        <View style={customerTicketsScreenStyles.statusSeparatorContent}>
+          <View style={customerTicketsScreenStyles.statusSeparatorLeft}>
+            <Text style={customerTicketsScreenStyles.statusSeparatorIcon}>
+              {statusInfo.icon}
+            </Text>
+            <Text style={customerTicketsScreenStyles.statusSeparatorTitle}>
+              {statusInfo.label}
+            </Text>
+          </View>
+          <View style={customerTicketsScreenStyles.statusSeparatorRight}>
+            <Text style={customerTicketsScreenStyles.statusSeparatorCount}>
+              {count}
+            </Text>
+            <Text style={customerTicketsScreenStyles.statusSeparatorToggle}>
+              {isExpanded ? '🔼' : '🔽'}
+            </Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  // Funzione per renderizzare i ticket con separatori
+  const renderTicketsWithSeparators = () => {
+    const statusGroups = {};
+
+    // Raggruppa i ticket per stato
+    tickets.forEach(ticket => {
+      if (!statusGroups[ticket.status]) {
+        statusGroups[ticket.status] = [];
+      }
+      statusGroups[ticket.status].push(ticket);
+    });
+
+    const statusInfo = {
+      open: { label: 'Aperti', icon: '🔓' },
+      in_progress: { label: 'In Corso', icon: '⚙️' },
+      resolved: { label: 'Risolti', icon: '✅' }
+    };
+
+    const result = [];
+
+    // Ciclo sui gruppi di stato
+    Object.keys(statusGroups).forEach(status => {
+      const groupTickets = statusGroups[status];
+      // Controlliamo se questa specifica sezione è espansa
+      const isExpanded = !!expandedSections[status];
+
+      // 1. Aggiungiamo sempre il separatore
+      result.push(
+        <View key={`separator-${status}`}>
+          {renderStatusSeparator(status, groupTickets.length, statusInfo[status], isExpanded)}
+        </View>
+      );
+
+      // 2. Aggiungiamo i ticket SOLO se la sezione è espansa
+      if (isExpanded) {
+        groupTickets.forEach(ticket => {
+          result.push(
+            <View key={`ticket-${ticket.id}`}>
+              {renderTicket({ item: ticket })}
+            </View>
+          );
+        });
+      }
+    });
+
+    return result;
   };
 
   const renderTicket = ({ item }) => (
@@ -129,13 +218,7 @@ export default function CustomerTicketsScreen({ navigation }) {
             <Text style={customerTicketsScreenStyles.emptySubtext}>Crea il tuo primo ticket</Text>
           </View>
         ) : (
-          <FlatList
-            data={tickets}
-            renderItem={renderTicket}
-            keyExtractor={(item) => item.id.toString()}
-            contentContainerStyle={customerTicketsScreenStyles.ticketsList}
-            scrollEnabled={false}
-          />
+          renderTicketsWithSeparators()
         )}
       </ScrollView>
 

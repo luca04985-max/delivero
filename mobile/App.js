@@ -33,6 +33,7 @@ import OrderTrackingLiveScreen from './screens/customer/OrderTrackingLiveScreen'
 import CustomerTicketsScreen from './screens/customer/CustomerTicketsScreen';
 import CreateTicketScreen from './screens/customer/CreateTicketScreen';
 import TicketDetailScreen from './screens/customer/TicketDetailScreen';
+import OrderSelectionScreen from './screens/customer/OrderSelectionScreen';
 import RiderHomeScreen from './screens/rider/RiderHomeScreen';
 import RiderActiveScreen from './screens/rider/RiderActiveScreen';
 import RiderTicketsScreen from './screens/rider/RiderTicketsScreen';
@@ -213,6 +214,20 @@ function CustomerStack({ onLogout, user }) {
         component={OrderTrackingLiveScreen}
         options={{
           title: '🗺️ Tracking Live',
+          headerStyle: {
+            backgroundColor: '#FF6B00',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
+      />
+      <Stack.Screen
+        name="OrderSelection"
+        component={OrderSelectionScreen}
+        options={{
+          title: '📋 Seleziona Ordine',
           headerStyle: {
             backgroundColor: '#FF6B00',
           },

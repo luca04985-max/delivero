@@ -1,13 +1,13 @@
 import pool from '../config/db.js';
 
 // Create a new ticket
-async function createTicket(userId, type, title, description, attachmentUrls = []) {
+async function createTicket(userId, type, title, description, attachmentUrls = [], order_id = null) {
   try {
     const result = await pool.query(
-      `INSERT INTO tickets (user_id, type, title, description, attachment_urls, status)
+      `INSERT INTO tickets (user_id, type, title, description, attachment_urls, status, order_id)
        VALUES ($1, $2, $3, $4, $5, 'open')
        RETURNING *`,
-      [userId, type, title, description, JSON.stringify(attachmentUrls)]
+      [userId, type, title, description, JSON.stringify(attachmentUrls), order_id]
     );
     return result.rows[0];
   } catch (error) {
