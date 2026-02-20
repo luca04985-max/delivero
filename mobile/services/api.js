@@ -22,11 +22,22 @@ async function makeRequest(endpoint, options = {}) {
       headers.Authorization = `Bearer ${token}`;
     }
     const fullUrl = `${API_URL}${endpoint}`;
+    console.log("Full URL: " + fullUrl);
+    console.log("Headers: " + JSON.stringify(headers));
 
-    const response = await fetch(fullUrl, {
+    // Assicurati che options.data sia stringificato correttamente
+    let requestOptions = {
       ...options,
       headers,
-    });
+    };
+
+    // Se options.data esiste, convertilo a stringa JSON
+    if (options.data) {
+      requestOptions.body = JSON.stringify(options.data);
+      console.log("Request body: " + requestOptions.body);
+    }
+
+    const response = await fetch(fullUrl, requestOptions);
 
     const data = await response.json();
 
