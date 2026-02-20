@@ -6,7 +6,7 @@ export const createTicketScreenStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: mobileTheme.colors.background,
   },
-  
+
   // HEADER
   header: {
     backgroundColor: mobileTheme.colors.secondary,
@@ -43,6 +43,72 @@ export const createTicketScreenStyles = StyleSheet.create({
   content: {
     flex: 1,
     padding: mobileTheme.spacing[5],
+  },
+
+  // ORDER SELECTION
+  orderSummary: {
+    backgroundColor: mobileTheme.colors.background,
+    padding: mobileTheme.spacing[4],
+    borderRadius: mobileTheme.borderRadius.lg,
+    borderLeftWidth: 4,
+    borderLeftColor: mobileTheme.colors.primary,
+    marginBottom: mobileTheme.spacing[3],
+  },
+
+  orderTitle: {
+    fontSize: mobileTheme.typography.fontSize.md,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    color: mobileTheme.colors.text.primary,
+    marginBottom: mobileTheme.spacing[2],
+  },
+
+  orderInfo: {
+    fontSize: mobileTheme.typography.fontSize.sm,
+    color: mobileTheme.colors.text.secondary,
+    marginBottom: mobileTheme.spacing[1],
+  },
+
+  orderStatus: {
+    fontSize: mobileTheme.typography.fontSize.sm,
+    color: mobileTheme.colors.primary,
+    fontWeight: mobileTheme.typography.fontWeight.medium,
+  },
+
+  removeOrderButton: {
+    alignSelf: 'flex-start',
+    paddingVertical: mobileTheme.spacing[2],
+    paddingHorizontal: mobileTheme.spacing[3],
+    backgroundColor: mobileTheme.colors.error,
+    borderRadius: mobileTheme.borderRadius.sm,
+  },
+
+  removeOrderText: {
+    fontSize: mobileTheme.typography.fontSize.xs,
+    color: mobileTheme.colors.white,
+    fontWeight: mobileTheme.typography.fontWeight.medium,
+  },
+
+  selectOrderButton: {
+    backgroundColor: mobileTheme.colors.background,
+    padding: mobileTheme.spacing[4],
+    borderRadius: mobileTheme.borderRadius.lg,
+    borderWidth: 2,
+    borderColor: mobileTheme.colors.primary,
+    borderStyle: 'dashed',
+    alignItems: 'center',
+    marginBottom: mobileTheme.spacing[2],
+  },
+
+  selectOrderText: {
+    fontSize: mobileTheme.typography.fontSize.md,
+    color: mobileTheme.colors.primary,
+    fontWeight: mobileTheme.typography.fontWeight.medium,
+  },
+
+  helperText: {
+    fontSize: mobileTheme.typography.fontSize.xs,
+    color: mobileTheme.colors.text.tertiary,
+    fontStyle: 'italic',
   },
 
   // FORM

@@ -186,78 +186,81 @@ const TicketsList = () => {
           <div style={ticketsListStyles.detailCard}>
             <div style={ticketsListStyles.detailHeader}>
               <h2 style={ticketsListStyles.detailTitle}>
-                <div style={styles.detailSection}>
-                  <div style={styles.detailCard}>
-                    <div style={styles.detailHeader}>
-                      <h2 style={styles.detailTitle}>
-                        {getTypeIcon(selectedTicket.type)} {selectedTicket.title}
-                      </h2>
-                      <span
-                        style={{
-                          ...styles.statusBadge,
-                          backgroundColor: getStatusColor(selectedTicket.status)
-                        }}
-                      >
-                        {selectedTicket.status}
-                      </span>
-                    </div>
-
-                    {selectedTicket.admin_notes && (
-                      <div style={styles.adminNotes}>
-                        <strong>📌 Nota dell'Admin:</strong>
-                        <p>{selectedTicket.admin_notes}</p>
-                      </div>
-                    )}
-
-                    <div style={styles.detailBody}>
-                      <p><strong>Descrizione:</strong></p>
-                      <p>{selectedTicket.description}</p>
-
-                      <p><strong>Data creazione:</strong> {new Date(selectedTicket.created_at).toLocaleDateString('it-IT')}</p>
-                      <p><strong>Priorità:</strong> {selectedTicket.priority}</p>
-                    </div>
-
-                    <div style={styles.commentsSection}>
-                      <h3>💬 Commenti ({selectedTicket.comments?.length || 0})</h3>
-
-                      {selectedTicket.comments && selectedTicket.comments.map(comment => (
-                        <div key={comment.id} style={styles.commentCard}>
-                          <div style={styles.commentHeader}>
-                            <strong>{comment.user_name}</strong>
-                            <span style={styles.commentRole}>
-                              {comment.role === 'admin' ? '🔐 Admin' : '👤 ' + comment.role}
-                            </span>
-                            <small>{new Date(comment.created_at).toLocaleDateString('it-IT')}</small>
-                          </div>
-                          <p>{comment.comment}</p>
-                        </div>
-                      ))}
-
-                      <form onSubmit={handleAddComment} style={styles.commentForm}>
-                        <textarea
-                          value={comment}
-                          onChange={(e) => setComment(e.target.value)}
-                          placeholder="Aggiungi un commento..."
-                          rows="3"
-                          style={styles.commentInput}
-                        />
-                        <button
-                          type="submit"
-                          disabled={addingComment}
-                          style={{
-                            ...styles.submitComment,
-                            opacity: addingComment ? 0.6 : 1
-                          }}
-                        >
-                          {addingComment ? 'Invio...' : '📤 Invia Commento'}
-                        </button>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-      )}
+                {getTypeIcon(selectedTicket.type)} {selectedTicket.title}
+              </h2>
+              <span
+                style={{
+                  ...ticketsListStyles.statusBadge,
+                  backgroundColor: getStatusColor(selectedTicket.status)
+                }}
+              >
+                {selectedTicket.status}
+              </span>
             </div>
-            );
+
+            {selectedTicket.admin_notes && (
+              <div style={ticketsListStyles.adminNotes}>
+                <div style={ticketsListStyles.adminNotesTitle}>
+                  📌 Nota dell'Admin:
+                </div>
+                <p>{selectedTicket.admin_notes}</p>
+              </div>
+            )}
+
+            <div style={ticketsListStyles.detailBody}>
+              <p><strong>Descrizione:</strong></p>
+              <p>{selectedTicket.description}</p>
+
+              <p><strong>Data creazione:</strong> {new Date(selectedTicket.created_at).toLocaleDateString('it-IT')}</p>
+              <p><strong>Priorità:</strong> {selectedTicket.priority}</p>
+            </div>
+
+            <div style={ticketsListStyles.commentsSection}>
+              <h3 style={ticketsListStyles.commentsTitle}>
+                💬 Commenti ({selectedTicket.comments?.length || 0})
+              </h3>
+
+              {selectedTicket.comments && selectedTicket.comments.map(comment => (
+                <div key={comment.id} style={ticketsListStyles.commentCard}>
+                  <div style={ticketsListStyles.commentHeader}>
+                    <strong>{comment.user_name}</strong>
+                    <span style={[
+                      ticketsListStyles.commentRole,
+                      comment.role === 'admin' && ticketsListStyles.commentRoleAdmin,
+                      comment.role === 'user' && ticketsListStyles.commentRoleUser
+                    ]}>
+                      {comment.role === 'admin' ? '🔐 Admin' : '👤 Utente'}
+                    </span>
+                    <span style={ticketsListStyles.commentDate}>
+                      {new Date(comment.created_at).toLocaleDateString('it-IT')}
+                    </span>
+                  </div>
+                  <p style={ticketsListStyles.commentText}>{comment.comment}</p>
+                </div>
+              ))}
+
+              <form onSubmit={handleAddComment} style={ticketsListStyles.commentForm}>
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Aggiungi un commento..."
+                  rows="3"
+                  style={ticketsListStyles.commentInput}
+                />
+                <button
+                  type="submit"
+                  disabled={addingComment}
+                  style={ticketsListStyles.submitComment}
+                >
+                  {addingComment ? 'Invio...' : '📤 Invia Commento'}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
-            export default TicketsList;
+export default TicketsList;

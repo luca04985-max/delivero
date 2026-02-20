@@ -6,11 +6,20 @@ export const getOrders = async (req, res) => {
   try {
     const userId = req.user.userId;
     const result = await db.query(
-      'SELECT * FROM orders WHERE customer_id = $1 ORDER BY created_at DESC',
+      `SELECT o.*, 
+              r.name as restaurant_name,
+              r.address as restaurant_address,
+              r.image_url as restaurant_image,
+              r.rating as restaurant_rating
+       FROM orders o
+       LEFT JOIN restaurants r ON o.restaurant_id = r.id
+       WHERE o.customer_id = $1 
+       ORDER BY o.created_at DESC`,
       [userId]
     );
     res.status(200).json(result.rows);
   } catch (error) {
+    console.error('Error in getOrders:', error);
     res.status(500).json({ message: 'Errore nel recupero degli ordini', error: error.message });
   }
 };

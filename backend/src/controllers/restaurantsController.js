@@ -63,7 +63,7 @@ export const getRestaurant = async (req, res) => {
             `SELECT 
               id, name, rating, delivery_fee as delivery_cost, 
               image_url, description, address, 
-              latitude, longitude, is_open, phone, website
+              latitude, longitude, is_open, phone
        FROM restaurants 
        WHERE id = $1 AND restaurants.is_active = true`,
             [id]

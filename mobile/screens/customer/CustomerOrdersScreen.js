@@ -1,23 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, RefreshControl, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, RefreshControl, ActivityIndicator, Alert, ScrollView } from 'react-native';
 import { ordersAPI } from '../../services/api';
 import { customerOrdersScreenStyles } from './styles/CustomerOrdersScreenStyles';
 
-export default function CustomerOrdersScreen({ navigation }) {
+export default function CustomerOrdersScreen({ navigation, route }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [activeTab, setActiveTab] = useState('all'); // 'all', 'pending', 'preparing', 'delivering', 'delivered', 'cancelled'
+  const [userRole, setUserRole] = useState(null);
+  const [selectMode, setSelectMode] = useState(route.params?.selectMode || false); // Modalità selezione ordine
+  // Aggiungi questa riga insieme agli altri useState
+  const [expandedSections, setExpandedSections] = useState({});
+
+  const toggleSection = (status) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [status]: !prev[status] // Inverte lo stato: se era chiuso (false/undefined) lo apre (true)
+    }));
+  };
 
   const fetchOrders = async () => {
     try {
       const data = await ordersAPI.getMyOrders();
       setOrders(data);
+
+      // Detect user role from order data
+      if (data && data.length > 0) {
+        // Check if user is a separator based on order patterns
+        const hasMultipleRestaurants = data.some(order => order.restaurant_id !== data[0].restaurant_id);
+        setUserRole(hasMultipleRestaurants ? 'separator' : 'customer');
+      }
     } catch (e) {
       Alert.alert("Errore", "Non ho potuto caricare i tuoi ordini.");
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
+  };
+
+  const getFilteredOrders = () => {
+    let filtered = orders;
+
+    if (activeTab !== 'all') {
+      filtered = orders.filter(order => order.status === activeTab);
+    }
+
+    // If separator, only show orders from their assigned restaurants
+    if (userRole === 'separator' && filtered.length > 0) {
+      const separatorRestaurants = [...new Set(orders.map(o => o.restaurant_id))];
+      filtered = filtered.filter(order => separatorRestaurants.includes(order.restaurant_id));
+    }
+
+    return filtered;
   };
 
   useEffect(() => { fetchOrders(); }, []);
@@ -28,24 +63,67 @@ export default function CustomerOrdersScreen({ navigation }) {
         <Text style={customerOrdersScreenStyles.orderId}>Ordine #{item.id.toString().slice(-5)}</Text>
         <View style={customerOrdersScreenStyles.orderStatus}>
           <Text style={customerOrdersScreenStyles.orderStatusText}>
-            {item.status.toUpperCase()}
+            {item.status === 'pending' && '⏳ IN ATTESA'}
+            {item.status === 'accepted' && '✓ ACCETTATO'}
+            {item.status === 'preparing' && '👨‍🍳 IN PREPARAZIONE'}
+            {item.status === 'pickup' && '📦 PRONTO PER RITIRO'}
+            {item.status === 'delivering' && '🚗 IN CONSEGNA'}
+            {item.status === 'delivered' && '✅ CONSEGNATO'}
+            {item.status === 'cancelled' && '❌ CANCELLATO'}
           </Text>
         </View>
       </View>
+
+      {item.restaurant_name && (
+        <View style={customerOrdersScreenStyles.restaurantInfo}>
+          <Text style={customerOrdersScreenStyles.restaurantName}>{item.restaurant_name}</Text>
+          {item.restaurant_address && (
+            <Text style={customerOrdersScreenStyles.restaurantAddress}>📍 {item.restaurant_address}</Text>
+          )}
+        </View>
+      )}
+
       <View style={customerOrdersScreenStyles.orderInfo}>
-        <Text style={customerOrdersScreenStyles.orderDate}>{item.created_at || 'Data non disponibile'}</Text>
-        <Text style={customerOrdersScreenStyles.orderTotal}>€{item.total_price || item.total}</Text>
+        <Text style={customerOrdersScreenStyles.orderDate}>
+          {item.created_at ? new Date(item.created_at).toLocaleDateString('it-IT', {
+            day: '2-digit',
+            month: 'short',
+            hour: '2-digit',
+            minute: '2-digit'
+          }) : 'Data non disponibile'}
+        </Text>
+        <Text style={customerOrdersScreenStyles.orderTotal}>€{item.total_amount || item.total_price || item.total}</Text>
+        {item.delivery_fee && (
+          <Text style={customerOrdersScreenStyles.deliveryFee}>Consegna: €{item.delivery_fee}</Text>
+        )}
       </View>
+
       <View style={customerOrdersScreenStyles.orderItems}>
-        {item.items?.slice(0, 2).map((orderItem, index) => (
+        <Text style={customerOrdersScreenStyles.itemsTitle}>Articoli:</Text>
+        {item.items?.slice(0, 3).map((orderItem, index) => (
           <View key={index} style={customerOrdersScreenStyles.orderItem}>
             <Text style={customerOrdersScreenStyles.itemQuantity}>{orderItem.quantity}x</Text>
             <Text style={customerOrdersScreenStyles.itemName}>{orderItem.name}</Text>
             <Text style={customerOrdersScreenStyles.itemPrice}>€{orderItem.price}</Text>
           </View>
         ))}
+        {item.items?.length > 3 && (
+          <Text style={customerOrdersScreenStyles.moreItems}>+{item.items.length - 3} altri articoli</Text>
+        )}
       </View>
-      {item.status !== 'delivered' && item.status !== 'cancelled' ? (
+
+      {item.notes && (
+        <View style={customerOrdersScreenStyles.notesSection}>
+          <Text style={customerOrdersScreenStyles.notesTitle}>📝 Note:</Text>
+          <Text style={customerOrdersScreenStyles.notesText}>{item.notes}</Text>
+        </View>
+      )}
+
+      {item.status === 'delivered' ? (
+        <TouchableOpacity style={customerOrdersScreenStyles.trackButton} onPress={() => Alert.alert("Reorder", "Funzione in arrivo!")}>
+          <Text style={customerOrdersScreenStyles.trackButtonText}>Ordina di nuovo</Text>
+        </TouchableOpacity>
+      ) : item.status === 'delivering' ? (
         <TouchableOpacity
           style={customerOrdersScreenStyles.trackButton}
           onPress={() => navigation.navigate('OrderTrackingLive', { orderId: item.id })}
@@ -53,12 +131,87 @@ export default function CustomerOrdersScreen({ navigation }) {
           <Text style={customerOrdersScreenStyles.trackButtonText}>Traccia Live 📍</Text>
         </TouchableOpacity>
       ) : (
-        <TouchableOpacity style={customerOrdersScreenStyles.trackButton} onPress={() => Alert.alert("Reorder", "Funzione in arrivo!")}>
-          <Text style={customerOrdersScreenStyles.trackButtonText}>Ordina di nuovo</Text>
-        </TouchableOpacity>
+        <View style={customerOrdersScreenStyles.buttonRow}>
+          <TouchableOpacity
+            style={[customerOrdersScreenStyles.trackButton, customerOrdersScreenStyles.createTicketButton]}
+            onPress={() => navigation.navigate('CreateTicket', {
+              orderId: item.id,
+              orderData: item
+            })}
+          >
+            <Text style={customerOrdersScreenStyles.trackButtonText}>📝 Apri Ticket</Text>
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );
+
+  const renderStatusSeparator = (status, count, info, isExpanded) => {
+    return (
+      <TouchableOpacity
+        style={customerOrdersScreenStyles.statusSeparator}
+        onPress={() => toggleSection(status)} // Chiama la funzione toggle
+      >
+        <View style={customerOrdersScreenStyles.statusSeparatorContent}>
+          <Text>{info.icon} {info.label} ({count})</Text>
+          {/* Cambia l'icona in base allo stato aperto/chiuso */}
+          <Text>{isExpanded ? '🔼' : '🔽'}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderOrdersWithSeparators = () => {
+    const statusGroups = {};
+
+    // Raggruppamento (rimane uguale)
+    orders.forEach(order => {
+      if (!statusGroups[order.status]) {
+        statusGroups[order.status] = [];
+      }
+      statusGroups[order.status].push(order);
+    });
+
+    const statusInfo = {
+      pending: { label: 'In Attesa', icon: '⏳' },
+      accepted: { label: 'Accettati', icon: '✓' },
+      preparing: { label: 'In Preparazione', icon: '👨‍🍳' },
+      pickup: { label: 'Pronti', icon: '📦' },
+      delivering: { label: 'In Consegna', icon: '🚗' },
+      delivered: { label: 'Consegnati', icon: '✅' },
+      cancelled: { label: 'Cancellati', icon: '❌' }
+    };
+
+    const result = [];
+
+    // Ciclo sui gruppi di stato
+    Object.keys(statusGroups).forEach(status => {
+      const groupOrders = statusGroups[status];
+      // Controlliamo se questa specifica sezione è espansa
+      const isExpanded = !!expandedSections[status];
+
+      // 1. Aggiungiamo sempre il separatore
+      result.push(
+        <View key={`separator-${status}`}>
+          {/* Passiamo isExpanded al separatore per cambiare l'icona se vuoi */}
+          {renderStatusSeparator(status, groupOrders.length, statusInfo[status], isExpanded)}
+        </View>
+      );
+
+      // 2. Aggiungiamo gli ordini SOLO se la sezione è espansa
+      if (isExpanded) {
+        groupOrders.forEach(order => {
+          result.push(
+            <View key={`order-${order.id}`}>
+              {renderOrder({ item: order })}
+            </View>
+          );
+        });
+      }
+    });
+
+    return result;
+  };
 
   if (loading) return (
     <View style={customerOrdersScreenStyles.loadingContainer}>
@@ -74,18 +227,41 @@ export default function CustomerOrdersScreen({ navigation }) {
           <Text style={customerOrdersScreenStyles.title}>I Miei Ordini</Text>
         </View>
       </View>
-      <FlatList
-        data={orders}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderOrder}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchOrders} />}
-        contentContainerStyle={customerOrdersScreenStyles.ordersList}
-        ListEmptyComponent={
-          <View style={customerOrdersScreenStyles.emptyContainer}>
-            <Text style={customerOrdersScreenStyles.emptyText}>Nessun ordine trovato</Text>
+
+      {/* Status Tabs - Solo per separator */}
+      {userRole === 'separator' && (
+        <ScrollView
+          style={customerOrdersScreenStyles.statusTabsContainer}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchOrders} />}
+        >
+          <View style={customerOrdersScreenStyles.separatorHeader}>
+            <Text style={customerOrdersScreenStyles.separatorTitle}>Stato Ordini Assegnati</Text>
+            <Text style={customerOrdersScreenStyles.separatorSubtitle}>
+              {activeTab === 'all'
+                ? `${orders.length} ordini totali`
+                : `${getFilteredOrders().length} ordini ${activeTab}`
+              }
+            </Text>
           </View>
-        }
-      />
+          {renderOrdersWithSeparators()}
+        </ScrollView>
+      )}
+
+      {/* Regular Orders List - Per customer */}
+      {userRole !== 'separator' && (
+        <FlatList
+          data={getFilteredOrders()}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderOrder}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchOrders} />}
+          contentContainerStyle={customerOrdersScreenStyles.ordersList}
+          ListEmptyComponent={
+            <View style={customerOrdersScreenStyles.emptyContainer}>
+              <Text style={customerOrdersScreenStyles.emptyText}>Nessun ordine trovato</Text>
+            </View>
+          }
+        />
+      )}
     </View>
   );
 }
