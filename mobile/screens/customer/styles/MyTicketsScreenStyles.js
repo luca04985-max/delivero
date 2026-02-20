@@ -22,255 +22,186 @@ export const myTicketsScreenStyles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  title: {
-    fontSize: mobileTheme.typography.fontSize['2xl'],
-    fontWeight: mobileTheme.typography.fontWeight.black,
+  headerTitle: {
+    fontSize: mobileTheme.typography.xl,
+    fontWeight: 'bold',
     color: mobileTheme.colors.white,
-    letterSpacing: -0.5,
   },
   newTicketButton: {
     backgroundColor: mobileTheme.colors.primary,
-    paddingVertical: mobileTheme.spacing[3],
-    paddingHorizontal: mobileTheme.spacing[5],
+    paddingHorizontal: mobileTheme.spacing[3],
+    paddingVertical: mobileTheme.spacing[1],
     borderRadius: mobileTheme.borderRadius.md,
-    alignItems: 'center',
-    marginTop: mobileTheme.spacing[3],
-    minWidth: 120,
-    ...mobileTheme.shadows.medium,
+    ...mobileTheme.shadows.small,
   },
-  newTicketText: {
-    fontSize: mobileTheme.typography.fontSize.sm,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+  newTicketButtonText: {
     color: mobileTheme.colors.white,
+    fontSize: mobileTheme.typography.sm,
+    fontWeight: 'bold',
   },
 
-  // TICKET CARDS
-  ticketsList: {
-    padding: mobileTheme.spacing[5],
-  },
+  // TICKET CARD
   ticketCard: {
     backgroundColor: mobileTheme.colors.white,
+    marginHorizontal: mobileTheme.spacing[4],
+    marginVertical: mobileTheme.spacing[2],
+    padding: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.lg,
-    padding: mobileTheme.spacing[5],
-    marginBottom: mobileTheme.spacing[4],
-    ...mobileTheme.shadows.soft,
-    borderWidth: 1,
-    borderColor: mobileTheme.colors.border,
+    ...mobileTheme.shadows.small,
   },
   ticketHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: mobileTheme.spacing[3],
+    alignItems: 'center',
+    marginBottom: mobileTheme.spacing[2],
   },
   ticketTitle: {
-    fontSize: mobileTheme.typography.fontSize.lg,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.text.primary,
+    fontSize: mobileTheme.typography.lg,
+    fontWeight: 'bold',
+    color: mobileTheme.colors.text,
     flex: 1,
-    marginRight: mobileTheme.spacing[3],
   },
-  ticketDate: {
-    fontSize: mobileTheme.typography.fontSize.sm,
-    color: mobileTheme.colors.text.tertiary,
-    fontWeight: mobileTheme.typography.fontWeight.medium,
+  ticketId: {
+    fontSize: mobileTheme.typography.sm,
+    color: mobileTheme.colors.textSecondary,
+    fontWeight: 'bold',
   },
   ticketDescription: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.secondary,
-    lineHeight: 20,
+    fontSize: mobileTheme.typography.md,
+    color: mobileTheme.colors.text,
     marginBottom: mobileTheme.spacing[3],
+    lineHeight: mobileTheme.typography.lh,
   },
 
-  // STATUS BADGES
-  statusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  // ORDER INFO
+  orderInfo: {
+    backgroundColor: mobileTheme.colors.primaryLight,
+    padding: mobileTheme.spacing[2],
+    borderRadius: mobileTheme.borderRadius.md,
     marginBottom: mobileTheme.spacing[3],
+    borderLeftWidth: 3,
+    borderLeftColor: mobileTheme.colors.primary,
   },
-  statusBadge: {
-    paddingHorizontal: mobileTheme.spacing[3],
+  orderLabel: {
+    fontSize: mobileTheme.typography.sm,
+    color: mobileTheme.colors.primary,
+    fontWeight: 'bold',
+    marginBottom: mobileTheme.spacing[1],
+  },
+  orderId: {
+    fontSize: mobileTheme.typography.md,
+    color: mobileTheme.colors.text,
+    fontWeight: 'bold',
+  },
+
+  // TICKET FOOTER
+  ticketFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  ticketDate: {
+    fontSize: mobileTheme.typography.sm,
+    color: mobileTheme.colors.textSecondary,
+  },
+  ticketStatus: {
+    fontSize: mobileTheme.typography.sm,
+    fontWeight: 'bold',
+    paddingHorizontal: mobileTheme.spacing[2],
     paddingVertical: mobileTheme.spacing[1],
-    borderRadius: mobileTheme.borderRadius.full,
-    marginRight: mobileTheme.spacing[2],
+    borderRadius: mobileTheme.borderRadius.sm,
   },
   statusOpen: {
-    backgroundColor: mobileTheme.colors.success,
+    backgroundColor: mobileTheme.colors.warningLight,
+    color: mobileTheme.colors.warning,
   },
-  statusClosed: {
-    backgroundColor: mobileTheme.colors.text.tertiary,
+  statusInProgress: {
+    backgroundColor: mobileTheme.colors.infoLight,
+    color: mobileTheme.colors.info,
   },
-  statusText: {
-    fontSize: mobileTheme.typography.fontSize.xs,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.white,
-  },
-
-  // ACTIONS
-  actionButton: {
-    backgroundColor: mobileTheme.colors.primary,
-    paddingVertical: mobileTheme.spacing[3],
-    borderRadius: mobileTheme.borderRadius.md,
-    alignItems: 'center',
-    marginTop: mobileTheme.spacing[3],
-  },
-  actionButtonText: {
-    fontSize: mobileTheme.typography.fontSize.sm,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.white,
+  statusResolved: {
+    backgroundColor: mobileTheme.colors.successLight,
+    color: mobileTheme.colors.success,
   },
 
-  // LOADING STATES
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.secondary,
-    marginTop: mobileTheme.spacing[4],
-  },
-
-  // MODAL STYLES
+  // MODAL
   modalOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 9999,
-    elevation: 10, // Per Android
   },
-  modalContainer: {
+  modalContent: {
     backgroundColor: mobileTheme.colors.white,
-    borderRadius: mobileTheme.borderRadius.lg,
-    padding: mobileTheme.spacing[6],
-    margin: mobileTheme.spacing[5],
-    maxWidth: '90%',
+    margin: mobileTheme.spacing[4],
+    borderRadius: mobileTheme.borderRadius.xl,
+    padding: mobileTheme.spacing[4],
     maxHeight: '80%',
-    ...mobileTheme.shadows.xl,
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: mobileTheme.spacing[4],
-  },
-  modalTitle: {
-    fontSize: mobileTheme.typography.fontSize.lg,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.text.primary,
-  },
-  closeButton: {
-    width: 30,
-    height: 30,
-    borderRadius: mobileTheme.borderRadius.full,
-    backgroundColor: mobileTheme.colors.background,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    fontSize: mobileTheme.typography.fontSize.lg,
-    color: mobileTheme.colors.text.secondary,
-    fontWeight: 'bold',
-  },
-  modalBody: {
-    marginBottom: mobileTheme.spacing[4],
-  },
-  modalInput: {
-    backgroundColor: mobileTheme.colors.background,
-    borderWidth: 1,
-    borderColor: mobileTheme.colors.border,
-    borderRadius: mobileTheme.borderRadius.md,
-    padding: mobileTheme.spacing[3],
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.primary,
     marginBottom: mobileTheme.spacing[3],
   },
-  modalFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: mobileTheme.spacing[3],
+  modalTitle: {
+    fontSize: mobileTheme.typography.xl,
+    fontWeight: 'bold',
+    color: mobileTheme.colors.text,
   },
-  modalButton: {
-    flex: 1,
-    paddingVertical: mobileTheme.spacing[3],
-    borderRadius: mobileTheme.borderRadius.md,
-    alignItems: 'center',
+  closeButton: {
+    fontSize: mobileTheme.typography.lg,
+    color: mobileTheme.colors.textSecondary,
   },
-  cancelButton: {
-    backgroundColor: mobileTheme.colors.background,
-    borderWidth: 1,
-    borderColor: mobileTheme.colors.border,
-  },
-  cancelButtonText: {
-    color: mobileTheme.colors.text.secondary,
-    fontWeight: mobileTheme.typography.fontWeight.medium,
-  },
-  createButton: {
-    backgroundColor: mobileTheme.colors.primary,
-  },
-  createButtonText: {
-    color: mobileTheme.colors.white,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
-  },
-
-  // FORM STYLES
-  formGroup: {
-    marginBottom: mobileTheme.spacing[4],
-  },
-  label: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    fontWeight: mobileTheme.typography.fontWeight.semibold,
-    color: mobileTheme.colors.text.primary,
-    marginBottom: mobileTheme.spacing[2],
-  },
-  ticketTypesContainer: {
-    flexDirection: 'column',
-    gap: mobileTheme.spacing[2],
-  },
-  ticketTypeButton: {
-    backgroundColor: mobileTheme.colors.background,
+  input: {
     borderWidth: 1,
     borderColor: mobileTheme.colors.border,
     borderRadius: mobileTheme.borderRadius.md,
     padding: mobileTheme.spacing[3],
+    fontSize: mobileTheme.typography.md,
+    marginBottom: mobileTheme.spacing[3],
+    color: mobileTheme.colors.text,
   },
-  ticketTypeButtonActive: {
+  inputLabel: {
+    fontSize: mobileTheme.typography.md,
+    fontWeight: 'bold',
+    color: mobileTheme.colors.text,
+    marginBottom: mobileTheme.spacing[1],
+  },
+  ticketTypeButtons: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: mobileTheme.spacing[3],
+  },
+  ticketTypeButton: {
+    paddingVertical: mobileTheme.spacing[2],
+    paddingHorizontal: mobileTheme.spacing[3],
+    borderRadius: mobileTheme.borderRadius.md,
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.border,
+    marginRight: mobileTheme.spacing[2],
+    marginBottom: mobileTheme.spacing[2],
+  },
+  ticketTypeButtonSelected: {
     backgroundColor: mobileTheme.colors.primary,
     borderColor: mobileTheme.colors.primary,
   },
-  ticketTypeText: {
-    fontSize: mobileTheme.typography.fontSize.sm,
-    color: mobileTheme.colors.text.primary,
+  ticketTypeButtonText: {
+    fontSize: mobileTheme.typography.sm,
   },
-  ticketTypeTextActive: {
+  ticketTypeButtonTextSelected: {
     color: mobileTheme.colors.white,
-    fontWeight: mobileTheme.typography.fontWeight.semibold,
   },
-
-  // EMPTY STATE
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
+  submitButton: {
+    backgroundColor: mobileTheme.colors.primary,
+    padding: mobileTheme.spacing[3],
+    borderRadius: mobileTheme.borderRadius.md,
     alignItems: 'center',
-    paddingHorizontal: mobileTheme.spacing[5],
+    ...mobileTheme.shadows.small,
   },
-  emptyText: {
-    fontSize: mobileTheme.typography.fontSize.lg,
-    color: mobileTheme.colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: mobileTheme.spacing[4],
-  },
-  emptySubtext: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.tertiary,
-    textAlign: 'center',
+  submitButtonText: {
+    color: mobileTheme.colors.white,
+    fontSize: mobileTheme.typography.md,
+    fontWeight: 'bold',
   },
 });
-
-export default myTicketsScreenStyles;

@@ -147,7 +147,26 @@ export const customerTicketsScreenStyles = StyleSheet.create({
   ticketId: {
     fontSize: mobileTheme.typography.fontSize.sm,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.text.secondary,
+  },
+
+  orderInfo: {
+    backgroundColor: mobileTheme.colors.primaryLight,
+    padding: mobileTheme.spacing[2],
+    borderRadius: mobileTheme.borderRadius.md,
+    marginBottom: mobileTheme.spacing[3],
+    borderLeftWidth: 3,
+    borderLeftColor: mobileTheme.colors.primary,
+  },
+  orderLabel: {
+    fontSize: mobileTheme.typography.fontSize.sm,
+    color: mobileTheme.colors.primary,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    marginBottom: mobileTheme.spacing[1],
+  },
+  orderId: {
+    fontSize: mobileTheme.typography.fontSize.md,
+    color: mobileTheme.colors.text,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
   },
 
   // FAB BUTTON

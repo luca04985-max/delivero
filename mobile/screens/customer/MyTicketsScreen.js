@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Alert, TextInput, ScrollView, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { makeRequest } from '../../services/api';
 import { myTicketsScreenStyles } from './styles/MyTicketsScreenStyles';
+import { decode } from 'base-64';
 
 export default function MyTicketsScreen({ navigation }) {
   const [tickets, setTickets] = useState([]);
@@ -10,6 +12,35 @@ export default function MyTicketsScreen({ navigation }) {
   const [newTicketTitle, setNewTicketTitle] = useState('');
   const [newTicketDescription, setNewTicketDescription] = useState('');
   const [newTicketType, setNewTicketType] = useState('complaint');
+  const [userId, setUserId] = useState(null);
+
+  // Ottieni user_id dal token JWT
+  useEffect(() => {
+    const getUserIdFromToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (token) {
+          // Decodifica il token JWT per ottenere user_id
+          const parts = token.split('.');
+          const payload = parts[1];
+          const decoded = JSON.parse(decode(payload));
+          setUserId(decoded.userId);
+          console.log('Decoded user ID:', decoded.userId);
+        }
+      } catch (error) {
+        console.error('Error getting user ID:', error);
+      }
+    };
+
+    getUserIdFromToken();
+  }, []);
+
+  // Estrai dati ordine passati dalla navigazione
+  const orderData = route.params?.orderData;
+  const orderId = route.params?.orderId;
+  console.log('MyTicketsScreen - OrderData from route:', orderData);
+  console.log('MyTicketsScreen - OrderId from route:', orderId);
+  console.log('MyTicketsScreen - All route params:', route.params);
 
   const ticketTypes = [
     { label: '🐛 Bug', value: 'bug' },
@@ -43,11 +74,13 @@ export default function MyTicketsScreen({ navigation }) {
       setLoading(true);
       const response = await makeRequest('/tickets/customer', {
         method: 'POST',
-        data: {
+        body: JSON.stringify({
           title: newTicketTitle,
           description: newTicketDescription,
           type: newTicketType,
-        },
+          order_id: orderId || null, // Associa l'ordine se presente
+          user_id: userId, // Aggiungi user_id dal token
+        }),
       });
 
       Alert.alert('Successo', 'Segnalazione inviata!', [
@@ -70,35 +103,49 @@ export default function MyTicketsScreen({ navigation }) {
     }
   };
 
-  const renderTicket = ({ item }) => (
-    <TouchableOpacity
-      style={myTicketsScreenStyles.ticketCard}
-      onPress={() => navigation.navigate('TicketDetail', { ticketId: item.id })}
-    >
-      <View style={myTicketsScreenStyles.ticketHeader}>
-        <Text style={myTicketsScreenStyles.ticketTitle}>{item.title}</Text>
-        <Text style={myTicketsScreenStyles.ticketId}>#{item.id}</Text>
-      </View>
+  const renderTicket = ({ item }) => {
+    console.log('=== RENDERING TICKET ===');
+    console.log('Rendering ticket:', item);
+    console.log('Order ID in ticket:', item.order_id);
 
-      <Text style={myTicketsScreenStyles.ticketDescription}>{item.description}</Text>
+    return (
+      <TouchableOpacity
+        style={myTicketsScreenStyles.ticketCard}
+        onPress={() => navigation.navigate('TicketDetail', { ticketId: item.id })}
+      >
+        <View style={myTicketsScreenStyles.ticketHeader}>
+          <Text style={myTicketsScreenStyles.ticketTitle}>{item.title}</Text>
+          <Text style={myTicketsScreenStyles.ticketId}>#{item.id}</Text>
+        </View>
 
-      <View style={myTicketsScreenStyles.ticketFooter}>
-        <Text style={myTicketsScreenStyles.ticketDate}>
-          {new Date(item.created_at).toLocaleDateString()}
-        </Text>
-        <Text style={[
-          myTicketsScreenStyles.ticketStatus,
-          item.status === 'open' && myTicketsScreenStyles.statusOpen,
-          item.status === 'in_progress' && myTicketsScreenStyles.statusInProgress,
-          item.status === 'resolved' && myTicketsScreenStyles.statusResolved,
-        ]}>
-          {item.status === 'open' ? 'Aperto' :
-            item.status === 'in_progress' ? 'In corso' :
-              item.status === 'resolved' ? 'Risolto' : item.status}
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
+        <Text style={myTicketsScreenStyles.ticketDescription}>{item.description}</Text>
+
+        {/* Mostra informazioni ordine associato se presente */}
+        {item.order_id && (
+          <View style={myTicketsScreenStyles.orderInfo}>
+            <Text style={myTicketsScreenStyles.orderLabel}>Ordine Associato:</Text>
+            <Text style={myTicketsScreenStyles.orderId}>#{item.order_id?.toString().slice(-5)}</Text>
+          </View>
+        )}
+
+        <View style={myTicketsScreenStyles.ticketFooter}>
+          <Text style={myTicketsScreenStyles.ticketDate}>
+            {new Date(item.created_at).toLocaleDateString()}
+          </Text>
+          <Text style={[
+            myTicketsScreenStyles.ticketStatus,
+            item.status === 'open' && myTicketsScreenStyles.statusOpen,
+            item.status === 'in_progress' && myTicketsScreenStyles.statusInProgress,
+            item.status === 'resolved' && myTicketsScreenStyles.statusResolved,
+          ]}>
+            {item.status === 'open' ? 'Aperto' :
+              item.status === 'in_progress' ? 'In corso' :
+                item.status === 'resolved' ? 'Risolto' : item.status}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   if (loading) {
     return (
