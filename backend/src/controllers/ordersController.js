@@ -366,36 +366,46 @@ export const trackOrder = async (req, res) => {
     }
 
     res.status(200).json(result.rows[0]);
-  } catch (error) {
-    res.status(500).json({ message: 'Errore nel tracciamento ordine', error: error.message });
-  }
-};
+    export const updateRiderLocation = async (req, res) => {
+      try {
+        console.log('📍 updateRiderLocation called');
+        console.log('🔑 Request user:', req.user);
+        console.log('📦 Order ID:', req.params.id);
+        console.log('📍 Request body:', req.body);
 
-// Update rider location
-export const updateRiderLocation = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const riderId = req.user.userId;
-    const { latitude, longitude, eta_minutes } = req.body;
+        const riderId = req.user.userId;
+        const { latitude, longitude, eta_minutes } = req.body;
 
-    // Validate input
-    if (latitude === undefined || longitude === undefined) {
-      return res.status(400).json({ message: 'Latitude e longitude sono obbligatori' });
-    }
+        console.log('🆔 Extracted riderId:', riderId);
+        console.log('📍 Location data:', { latitude, longitude, eta_minutes });
 
-    // Verify rider has this order and get customer id + delivery coords
-    const orderRes = await db.query('SELECT id, user_id, status, delivery_latitude, delivery_longitude FROM orders WHERE id = $1 AND rider_id = $2', [id, riderId]);
-    if (orderRes.rows.length === 0) {
-      return res.status(403).json({ message: 'Non autorizzato per questo ordine' });
-    }
-    const order = orderRes.rows[0];
-    if (!['accepted', 'pickup', 'in_transit'].includes(order.status)) {
-      return res.status(400).json({ message: 'Ordine non in stato tracciabile' });
-    }
+        // Validate input
+        if (latitude === undefined || longitude === undefined) {
+          console.log('❌ Missing coordinates');
+          return res.status(400).json({ message: 'Latitude e longitude sono obbligatori' });
+        }
 
-    // Update location on order
-    const result = await db.query(
-      `UPDATE orders 
+        console.log('🔍 Querying order for verification...');
+        // Verify rider has this order and get customer id + delivery coords
+        const orderRes = await db.query('SELECT id, customer_id, status, delivery_latitude, delivery_longitude FROM orders WHERE id = $1 AND rider_id = $2', [req.params.id, riderId]);
+        console.log('📊 Order query result:', orderRes.rows);
+
+        if (orderRes.rows.length === 0) {
+          console.log('❌ Order not found or not assigned to rider');
+          return res.status(403).json({ message: 'Non autorizzato per questo ordine' });
+        }
+        const order = orderRes.rows[0];
+        console.log('📦 Found order:', order);
+
+        if (!['accepted', 'pickup', 'in_transit'].includes(order.status)) {
+          console.log('❌ Invalid order status for tracking:', order.status);
+          return res.status(400).json({ message: 'Ordine non in stato tracciabile' });
+        }
+
+        console.log('🔄 Updating rider location in database...');
+        // Update location on order
+        const result = await db.query(
+          `UPDATE orders 
        SET 
         rider_latitude = $1,
         rider_longitude = $2,
@@ -403,101 +413,103 @@ export const updateRiderLocation = async (req, res) => {
         received_at = COALESCE(received_at, NOW()),
         updated_at = NOW()
        WHERE id = $4
-       RETURNING id, status, rider_latitude, rider_longitude, eta_minutes, updated_at`,
-      [latitude, longitude, eta_minutes || null, id]
-    );
+       RETURNING *`,
+          [latitude, longitude, eta_minutes, req.params.id]
+        );
 
-    const tracking = result.rows[0];
+        console.log('✅ Location update result:', result.rows);
 
-    // Persist track point for history
-    try {
-      await db.query(
-        `INSERT INTO order_tracks (order_id, latitude, longitude, recorded_at) VALUES ($1, $2, $3, NOW())`,
-        [id, latitude, longitude]
-      );
-    } catch (e) {
-      console.warn('Could not insert track point:', e.message);
-    }
+        if (result.rows.length === 0) {
+          console.log('❌ No rows updated');
+          return res.status(404).json({ message: 'Ordine non trovato' });
+        }
 
-    // Emit websocket updates: to customer and to managers via order channel
-    broadcastRiderLocation(id, latitude, longitude, tracking.eta_minutes || null);
+        const updatedOrder = result.rows[0];
+        console.log('📍 Updated order:', updatedOrder);
 
-    // Check proximity for push notifications
-    let shouldPush = false;
-    if (tracking.eta_minutes !== null && tracking.eta_minutes <= 5) {
-      shouldPush = true;
-    }
+        // Broadcast location update to customer
+        try {
+          console.log('📡 Broadcasting location update to customer:', order.customer_id);
+          broadcastLocationUpdate(req.params.id, order.customer_id, {
+            rider_latitude: latitude,
+            rider_longitude: longitude,
+            eta_minutes: eta_minutes
+          });
+          console.log('✅ Location broadcast sent');
+        } catch (error) {
+          console.warn('⚠️ Failed to broadcast location update:', error.message);
+        }
 
-    // also if we have delivery coords, compute distance and push if within threshold
-    if (!shouldPush && order.delivery_latitude && order.delivery_longitude) {
-      const toRad = (v) => (v * Math.PI) / 180;
-      const R = 6371000; // meters
-      const dLat = toRad(order.delivery_latitude - latitude);
-      const dLon = toRad(order.delivery_longitude - longitude);
-      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(toRad(latitude)) * Math.cos(toRad(order.delivery_latitude)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      const dist = R * c;
-      if (dist <= 500) {
-        shouldPush = true;
+        // also if we have delivery coords, compute distance and push if within threshold
+        if (!shouldPush && order.delivery_latitude && order.delivery_longitude) {
+          const toRad = (v) => (v * Math.PI) / 180;
+          const R = 6371000; // meters
+          const dLat = toRad(order.delivery_latitude - latitude);
+          const dLon = toRad(order.delivery_longitude - longitude);
+          const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(toRad(latitude)) * Math.cos(toRad(order.delivery_latitude)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+          const dist = R * c;
+          if (dist <= 500) {
+            shouldPush = true;
+          }
+        }
+
+        // server-side push via FCM if configured
+        if (shouldPush) {
+          try {
+            const push = await import('../services/push.js');
+            await push.sendPushToUser(order.user_id, { title: 'Il tuo rider è vicino!', body: `Preparati per la consegna!` });
+          } catch (e) {
+            console.warn('Push send failed:', e.message);
+          }
+        }
+
+        res.status(200).json({
+          message: 'Posizione aggiornata',
+          tracking
+        });
+      } catch (error) {
+        res.status(500).json({ message: 'Errore nell\'aggiornamento posizione', error: error.message });
       }
-    }
+    };
 
-    // server-side push via FCM if configured
-    if (shouldPush) {
+    // Get track history for an order
+    export const getTrackHistory = async (req, res) => {
       try {
-        const push = await import('../services/push.js');
-        await push.sendPushToUser(order.user_id, { title: 'Il tuo rider è vicino!', body: `Preparati per la consegna!` });
-      } catch (e) {
-        console.warn('Push send failed:', e.message);
+        const { id } = req.params;
+
+        // Validate order exists and get user_id
+        const orderCheck = await db.query(
+          'SELECT id, customer_id FROM orders WHERE id = $1',
+          [id]
+        );
+
+        if (orderCheck.rows.length === 0) {
+          return res.status(404).json({ message: 'Ordine non trovato' });
+        }
+
+        // Get tracking history
+        const result = await db.query(
+          `SELECT latitude, longitude, recorded_at FROM order_tracks WHERE order_id = $1 ORDER BY recorded_at ASC`,
+          [id]
+        );
+
+        // Return empty array if no tracking data found
+        res.status(200).json(result.rows || []);
+      } catch (error) {
+        console.error('Error in getTrackHistory:', error);
+        res.status(500).json({
+          message: 'Errore nel recupero storico tracciamento',
+          error: error.message
+        });
       }
-    }
+    };
 
-    res.status(200).json({
-      message: 'Posizione aggiornata',
-      tracking
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Errore nell\'aggiornamento posizione', error: error.message });
-  }
-};
-
-// Get track history for an order
-export const getTrackHistory = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    // Validate order exists and get user_id
-    const orderCheck = await db.query(
-      'SELECT id, customer_id FROM orders WHERE id = $1',
-      [id]
-    );
-
-    if (orderCheck.rows.length === 0) {
-      return res.status(404).json({ message: 'Ordine non trovato' });
-    }
-
-    // Get tracking history
-    const result = await db.query(
-      `SELECT latitude, longitude, recorded_at FROM order_tracks WHERE order_id = $1 ORDER BY recorded_at ASC`,
-      [id]
-    );
-
-    // Return empty array if no tracking data found
-    res.status(200).json(result.rows || []);
-  } catch (error) {
-    console.error('Error in getTrackHistory:', error);
-    res.status(500).json({
-      message: 'Errore nel recupero storico tracciamento',
-      error: error.message
-    });
-  }
-};
-
-// Get all active orders (for manager dashboard)
-export const getActiveOrders = async (req, res) => {
-  try {
-    const result = await db.query(
-      `SELECT 
+    // Get all active orders (for manager dashboard)
+    export const getActiveOrders = async (req, res) => {
+      try {
+        const result = await db.query(
+          `SELECT 
         o.id,
         o.status,
         o.rider_id,
@@ -517,11 +529,11 @@ export const getActiveOrders = async (req, res) => {
        LEFT JOIN users c ON o.customer_id = c.id
        WHERE o.status IN ('pending', 'accepted', 'pickup', 'in_transit')
        ORDER BY o.created_at DESC`,
-      []
-    );
+          []
+        );
 
-    res.status(200).json(result.rows);
-  } catch (error) {
-    res.status(500).json({ message: 'Errore nel recupero ordini attivi', error: error.message });
-  }
-};
+        res.status(200).json(result.rows);
+      } catch (error) {
+        res.status(500).json({ message: 'Errore nel recupero ordini attivi', error: error.message });
+      }
+    };
