@@ -311,7 +311,7 @@ router.patch('/:id/priority', authenticateToken, async (req, res) => {
 router.post('/:id/comments', authenticateToken, async (req, res) => {
   try {
     console.log("-----------Add comment to ticket----------------");
-    const { comment } = req.body.comment;
+    const { comment } = req.body;
     console.log("Comment:", comment);
     console.log("User ID:", req.user?.userId);
     console.log("User role:", req.user?.role);
