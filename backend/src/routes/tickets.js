@@ -39,13 +39,17 @@ router.post('/', authenticateToken, async (req, res) => {
 // Create a new ticket for customer (customer specific route)
 router.post('/customer', authenticateToken, async (req, res) => {
   try {
-    const { type, title, description, order_id, attachmentUrls } = req.body;
-    console.log("Request:", req.body);
+    const { type, title, description, order_id, attachmentUrls, user_id } = req.body;
+    console.log("Request body:", req.body);
+    console.log("User from middleware:", req.user);
+
     if (!type || !title || !description) {
       return res.status(400).json({ error: 'Type, title, and description are required' });
     }
 
-    const userId = req.user?.userId;
+    // Usa user_id dal body se presente, altrimenti dal middleware
+    const userId = user_id || req.user?.userId;
+    console.log("Extracted userId:", userId);
     if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
     // Check if user is customer

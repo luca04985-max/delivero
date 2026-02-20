@@ -8,8 +8,10 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { makeRequest } from '../../services/api';
 import { createTicketScreenStyles } from './styles/CreateTicketScreenStyles';
+import { decode } from 'base-64';
 
 export default function CreateTicketScreen({ navigation, route }) {
   const [newTicket, setNewTicket] = useState({
@@ -18,6 +20,28 @@ export default function CreateTicketScreen({ navigation, route }) {
     type: 'complaint',
   });
   const [submitting, setSubmitting] = useState(false);
+  const [userId, setUserId] = useState(null);
+
+  // Ottieni user_id dal token JWT
+  useEffect(() => {
+    const getUserIdFromToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (token) {
+          // Decodifica il token JWT per ottenere user_id
+          const parts = token.split('.');
+          const payload = parts[1];
+          const decoded = JSON.parse(decode(payload));
+          setUserId(decoded.userId);
+          console.log('Decoded user ID:', decoded.userId);
+        }
+      } catch (error) {
+        console.error('Error getting user ID:', error);
+      }
+    };
+
+    getUserIdFromToken();
+  }, []);
 
   // Dati dell'ordine passati dalla navigazione
   const orderData = route.params?.orderData;
@@ -52,6 +76,7 @@ export default function CreateTicketScreen({ navigation, route }) {
         description: newTicket.description,
         type: newTicket.type,
         order_id: orderId || null, // Associa l'ordine se presente
+        user_id: userId, // Aggiungi user_id dal token
       };
       console.log("Request: ", ticketData);
       const response = await makeRequest('/tickets/customer', {

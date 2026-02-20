@@ -120,16 +120,38 @@ export default function CustomerOrdersScreen({ navigation, route }) {
       )}
 
       {item.status === 'delivered' ? (
-        <TouchableOpacity style={customerOrdersScreenStyles.trackButton} onPress={() => Alert.alert("Reorder", "Funzione in arrivo!")}>
-          <Text style={customerOrdersScreenStyles.trackButtonText}>Ordina di nuovo</Text>
-        </TouchableOpacity>
+        <View style={customerOrdersScreenStyles.buttonRow}>
+          <TouchableOpacity style={customerOrdersScreenStyles.trackButton} onPress={() => Alert.alert("Reorder", "Funzione in arrivo!")}>
+            <Text style={customerOrdersScreenStyles.trackButtonText}>Ordina di nuovo</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[customerOrdersScreenStyles.trackButton, customerOrdersScreenStyles.createTicketButton]}
+            onPress={() => navigation.navigate('CreateTicket', {
+              orderId: item.id,
+              orderData: item
+            })}
+          >
+            <Text style={customerOrdersScreenStyles.trackButtonText}>📝 Apri Ticket</Text>
+          </TouchableOpacity>
+        </View>
       ) : item.status === 'delivering' ? (
-        <TouchableOpacity
-          style={customerOrdersScreenStyles.trackButton}
-          onPress={() => navigation.navigate('OrderTrackingLive', { orderId: item.id })}
-        >
-          <Text style={customerOrdersScreenStyles.trackButtonText}>Traccia Live 📍</Text>
-        </TouchableOpacity>
+        <View style={customerOrdersScreenStyles.buttonRow}>
+          <TouchableOpacity
+            style={customerOrdersScreenStyles.trackButton}
+            onPress={() => navigation.navigate('OrderTrackingLive', { orderId: item.id })}
+          >
+            <Text style={customerOrdersScreenStyles.trackButtonText}>Traccia Live 📍</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[customerOrdersScreenStyles.trackButton, customerOrdersScreenStyles.createTicketButton]}
+            onPress={() => navigation.navigate('CreateTicket', {
+              orderId: item.id,
+              orderData: item
+            })}
+          >
+            <Text style={customerOrdersScreenStyles.trackButtonText}>📝 Apri Ticket</Text>
+          </TouchableOpacity>
+        </View>
       ) : (
         <View style={customerOrdersScreenStyles.buttonRow}>
           <TouchableOpacity
