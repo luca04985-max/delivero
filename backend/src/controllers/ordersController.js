@@ -339,7 +339,7 @@ export const trackOrder = async (req, res) => {
     const userRole = req.user.role;
 
     // Customer can see their own orders, riders can see orders they're assigned to
-    let query = 'SELECT id, status, rider_id, delivery_address, created_at, updated_at, rider_latitude, rider_longitude, eta_minutes, received_at, user_id, total_amount, items FROM orders WHERE id = $1';
+    let query = 'SELECT id, status, rider_id, delivery_address, created_at, updated_at, rider_latitude, rider_longitude, eta_minutes, received_at, customer_id, total_amount, items FROM orders WHERE id = $1';
     let queryParams = [id];
 
     if (userRole === 'customer') {
