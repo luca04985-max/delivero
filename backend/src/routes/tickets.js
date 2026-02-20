@@ -312,11 +312,7 @@ router.post('/:id/comments', authenticateToken, async (req, res) => {
   try {
     console.log("-----------Add comment to ticket----------------");
     const { comment } = req.body;
-    console.log("Comment:", comment);
-    console.log("User ID:", req.user?.userId);
-    console.log("User role:", req.user?.role);
-    console.log("Ticket ID:", req.params.id);
-    console.log("Body:", req.body);
+
     if (!comment) {
       return res.status(400).json({ error: 'Comment is required' });
     }

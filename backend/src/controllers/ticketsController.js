@@ -171,6 +171,7 @@ async function updateTicketPriority(ticketId, priority) {
 // Add comment to ticket
 async function addTicketComment(ticketId, userId, comment) {
   try {
+    console.log("Adding comment to ticket:", ticketId, userId, comment);
     const result = await pool.query(
       `INSERT INTO ticket_comments (ticket_id, user_id, comment)
        VALUES ($1, $2, $3)
