@@ -57,6 +57,26 @@ export default function CustomerOrdersScreen({ navigation, route }) {
 
   useEffect(() => { fetchOrders(); }, []);
 
+  // Funzione per controllare se sono passate 24 ore dalla consegna
+  const is24HoursAfterDelivery = (deliveryTime) => {
+    console.log("Delivery time:", deliveryTime);
+    if (!deliveryTime) {
+      console.log("No delivery time, returning false");
+      return false;
+    }
+
+    const deliveryDate = new Date(deliveryTime);
+    const now = new Date();
+    const hoursDiff = (now - deliveryDate) / (1000 * 60 * 60); // Converti in ore
+    console.log("Delivery date:", deliveryDate);
+    console.log("Current date:", now);
+    console.log("Hours difference:", hoursDiff);
+
+    const result = hoursDiff >= 24;
+    console.log("Is 24+ hours:", result);
+    return result;
+  };
+
   const renderOrder = ({ item }) => (
     <View style={customerOrdersScreenStyles.orderCard}>
       <View style={customerOrdersScreenStyles.orderHeader}>
@@ -124,15 +144,17 @@ export default function CustomerOrdersScreen({ navigation, route }) {
           <TouchableOpacity style={customerOrdersScreenStyles.trackButton} onPress={() => Alert.alert("Reorder", "Funzione in arrivo!")}>
             <Text style={customerOrdersScreenStyles.trackButtonText}>Ordina di nuovo</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[customerOrdersScreenStyles.trackButton, customerOrdersScreenStyles.createTicketButton]}
-            onPress={() => navigation.navigate('CreateTicket', {
-              orderId: item.id,
-              orderData: item
-            })}
-          >
-            <Text style={customerOrdersScreenStyles.trackButtonText}>📝 Apri Ticket</Text>
-          </TouchableOpacity>
+          {!is24HoursAfterDelivery(item.actual_delivery_time) && (
+            <TouchableOpacity
+              style={[customerOrdersScreenStyles.trackButton, customerOrdersScreenStyles.createTicketButton]}
+              onPress={() => navigation.navigate('CreateTicket', {
+                orderId: item.id,
+                orderData: item
+              })}
+            >
+              <Text style={customerOrdersScreenStyles.trackButtonText}>📝 Apri Ticket</Text>
+            </TouchableOpacity>
+          )}
         </View>
       ) : item.status === 'delivering' ? (
         <View style={customerOrdersScreenStyles.buttonRow}>
