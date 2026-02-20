@@ -71,7 +71,7 @@ export default function TicketDetailScreen({ navigation, route }) {
 
     try {
       setSubmitting(true);
-      const response = await makeRequest(`/tickets/customer/${ticketId}/comments`, {
+      const response = await makeRequest(`/tickets/${ticketId}/comments`, {
         method: 'POST',
         data: {
           content: newResponse,
