@@ -75,13 +75,13 @@ export const getRestaurant = async (req, res) => {
 
         const restaurant = restaurantRes.rows[0];
 
-        // Get menu items directly (senza raggruppamento per categoria)
+        // Get menu items directly (con prezzi come numeri)
         const menuRes = await db.query(
             `SELECT 
             mi.id,
             mi.name,
             mi.description,
-            mi.price,
+            mi.price::numeric,
             mi.image_url,
             mi.allergens,
             mi.is_available,

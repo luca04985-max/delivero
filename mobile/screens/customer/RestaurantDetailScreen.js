@@ -21,6 +21,7 @@ export default function RestaurantDetailScreen({ route, navigation }) {
     const [restaurantDetail, setRestaurantDetail] = useState(null);
     const [loading, setLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState(null);
+    const [categories, setCategories] = useState([]);
     const [productModal, setProductModal] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [customizationSelections, setCustomizationSelections] = useState({});
@@ -43,6 +44,7 @@ export default function RestaurantDetailScreen({ route, navigation }) {
             if (data.menu && data.menu.length > 0) {
                 const uniqueCategories = [...new Set(data.menu.map(item => item.category))];
                 setSelectedCategory(uniqueCategories[0]);
+                setCategories(uniqueCategories);
             }
         } catch (error) {
             console.error('Error loading restaurant:', error);
@@ -91,17 +93,17 @@ export default function RestaurantDetailScreen({ route, navigation }) {
         <TouchableOpacity
             style={[
                 styles.categoryTab,
-                selectedCategory === item.category_id && styles.categoryTabActive,
+                selectedCategory === item && styles.categoryTabActive,
             ]}
-            onPress={() => setSelectedCategory(item.category_id)}
+            onPress={() => setSelectedCategory(item)}
         >
             <Text
                 style={[
                     styles.categoryTabText,
-                    selectedCategory === item.category_id && styles.categoryTabTextActive,
+                    selectedCategory === item && styles.categoryTabTextActive,
                 ]}
             >
-                {item.category}
+                {item}
             </Text>
         </TouchableOpacity>
     );
@@ -204,9 +206,9 @@ export default function RestaurantDetailScreen({ route, navigation }) {
         );
     }
 
-    const currentCategoryProducts = restaurantDetail?.menu?.find(
-        m => m.category_id === selectedCategory
-    )?.items || [];
+    const currentCategoryProducts = restaurantDetail?.menu?.filter(
+        item => item.category === selectedCategory
+    ) || [];
 
     return (
         <View style={styles.container}>
@@ -222,9 +224,9 @@ export default function RestaurantDetailScreen({ route, navigation }) {
 
             {/* Categories */}
             <FlatList
-                data={restaurantDetail?.menu || []}
+                data={categories}
                 renderItem={renderCategoryTab}
-                keyExtractor={(item) => item.category_id.toString()}
+                keyExtractor={(item, index) => item?.toString() || index.toString()}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 style={styles.categoriesList}
