@@ -100,7 +100,7 @@ export default function CartScreen({ navigation }) {
                         </View>
                         <View style={styles.itemInfo}>
                             <Text style={styles.itemName}>{item.name}</Text>
-                            <Text style={styles.itemPrice}>€{item.price.toFixed(2)}</Text>
+                            <Text style={styles.itemPrice}>€{item.price}</Text>
 
                             <View style={styles.quantityContainer}>
                                 <TouchableOpacity

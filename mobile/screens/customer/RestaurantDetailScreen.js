@@ -118,7 +118,7 @@ export default function RestaurantDetailScreen({ route, navigation }) {
                     <Text style={styles.productName}>{item.name}</Text>
                     <Text style={styles.productDescription}>{item.description}</Text>
                 </View>
-                <Text style={styles.productPrice}>€{item.price?.toFixed(2)}</Text>
+                <Text style={styles.productPrice}>€{item.price}</Text>
             </View>
 
             {item.allergens && item.allergens.length > 0 && (
@@ -270,7 +270,7 @@ export default function RestaurantDetailScreen({ route, navigation }) {
                             {/* Product Info */}
                             <Text style={styles.modalDescription}>{selectedProduct?.description}</Text>
                             <Text style={styles.modalPrice}>
-                                Prezzo: <Text style={styles.priceValue}>€{selectedProduct?.price?.toFixed(2)}</Text>
+                                Prezzo: <Text style={styles.priceValue}>€{selectedProduct?.price}</Text>
                             </Text>
 
                             {selectedProduct?.allergens && selectedProduct.allergens.length > 0 && (
