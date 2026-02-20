@@ -68,7 +68,7 @@ export default function TicketDetailScreen({ navigation, route }) {
       Alert.alert('Errore', 'La risposta non può essere vuota');
       return;
     }
-
+console.log("Commento: "+newResponse)
     try {
       setSubmitting(true);
       const response = await makeRequest(`/tickets/${ticketId}/comments`, {
