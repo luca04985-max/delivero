@@ -7,13 +7,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
-  StyleSheet,
   ScrollView,
   Animated,
 } from 'react-native';
 // 1. IMPORTA IL PICKER DA QUI
 import { Picker } from '@react-native-picker/picker';
 import { authAPI } from '../../services/api';
+import RegisterScreenStyles from './styles/RegisterScreenStyles.js';
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState('');
@@ -66,20 +66,20 @@ export default function RegisterScreen({ navigation }) {
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={RegisterScreenStyles.container}>
           {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.logo}>✍️</Text>
-            <Text style={styles.title}>Registrati</Text>
-            <Text style={styles.subtitle}>Crea il tuo account Delivero</Text>
+          <View style={RegisterScreenStyles.header}>
+            <Text style={RegisterScreenStyles.logo}>✍️</Text>
+            <Text style={RegisterScreenStyles.title}>Registrati</Text>
+            <Text style={RegisterScreenStyles.subtitle}>Crea il tuo account Delivero</Text>
           </View>
 
           {/* Form */}
-          <View style={styles.form}>
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>👤 Nome Completo</Text>
+          <View style={RegisterScreenStyles.form}>
+            <View style={RegisterScreenStyles.inputGroup}>
+              <Text style={RegisterScreenStyles.label}>👤 Nome Completo</Text>
               <TextInput
-                style={styles.input}
+                style={RegisterScreenStyles.input}
                 placeholder="Luca Rossi"
                 placeholderTextColor="#999"
                 value={name}
@@ -88,10 +88,10 @@ export default function RegisterScreen({ navigation }) {
               />
             </View>
 
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>📧 Email</Text>
+            <View style={RegisterScreenStyles.inputGroup}>
+              <Text style={RegisterScreenStyles.label}>📧 Email</Text>
               <TextInput
-                style={styles.input}
+                style={RegisterScreenStyles.input}
                 placeholder="tuoemail@example.com"
                 placeholderTextColor="#999"
                 value={email}
@@ -102,14 +102,14 @@ export default function RegisterScreen({ navigation }) {
               />
             </View>
 
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>👥 Tipo di Account</Text>
-              <View style={styles.pickerContainer}>
+            <View style={RegisterScreenStyles.inputGroup}>
+              <Text style={RegisterScreenStyles.label}>👥 Tipo di Account</Text>
+              <View style={RegisterScreenStyles.pickerContainer}>
                 {/* 2. IL COMPONENTE ORA USA LA LIBRERIA ESTERNA */}
                 <Picker
                   selectedValue={role}
                   onValueChange={(itemValue) => setRole(itemValue)}
-                  style={styles.picker}
+                  style={RegisterScreenStyles.picker}
                   enabled={!loading} // Su Android funziona correttamente qui
                 >
                   <Picker.Item label="👤 Consumatore" value="customer" />
@@ -118,11 +118,11 @@ export default function RegisterScreen({ navigation }) {
               </View>
             </View>
 
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>🔒 Password</Text>
+            <View style={RegisterScreenStyles.inputGroup}>
+              <Text style={RegisterScreenStyles.label}>🔒 Password</Text>
               <TextInput
-                style={styles.input}
-                placeholder="•••••••"
+                style={RegisterScreenStyles.input}
+                placeholder="••••••"
                 placeholderTextColor="#999"
                 value={password}
                 onChangeText={setPassword}
@@ -131,11 +131,11 @@ export default function RegisterScreen({ navigation }) {
               />
             </View>
 
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>🔒 Conferma Password</Text>
+            <View style={RegisterScreenStyles.inputGroup}>
+              <Text style={RegisterScreenStyles.label}>🔒 Conferma Password</Text>
               <TextInput
-                style={styles.input}
-                placeholder="•••••••"
+                style={RegisterScreenStyles.input}
+                placeholder="••••••"
                 placeholderTextColor="#999"
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
@@ -145,39 +145,39 @@ export default function RegisterScreen({ navigation }) {
             </View>
 
             <TouchableOpacity
-              style={[styles.button, loading && styles.buttonDisabled]}
+              style={[RegisterScreenStyles.button, loading && RegisterScreenStyles.buttonDisabled]}
               onPress={handleRegister}
               disabled={loading}
             >
               {loading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.buttonText}>🚀 Registrati</Text>
+                <Text style={RegisterScreenStyles.buttonText}>🚀 Registrati</Text>
               )}
             </TouchableOpacity>
 
-            <View style={styles.divider} />
+            <View style={RegisterScreenStyles.divider} />
 
             <TouchableOpacity
-              style={styles.linkButton}
+              style={RegisterScreenStyles.linkButton}
               onPress={() => navigation.navigate('Login')}
               disabled={loading}
             >
-              <Text style={styles.linkText}>
-                Hai già un account? <Text style={styles.linkBold}>Accedi</Text>
+              <Text style={RegisterScreenStyles.linkText}>
+                Hai già un account? <Text style={RegisterScreenStyles.linkBold}>Accedi</Text>
               </Text>
             </TouchableOpacity>
           </View>
 
           {/* Info */}
-          <View style={styles.info}>
-            <Text style={styles.infoText}>
+          <View style={RegisterScreenStyles.info}>
+            <Text style={RegisterScreenStyles.infoText}>
               ✅ Registrazione standard: creerai un account cliente (o rider se abilitato)
             </Text>
-            <Text style={styles.infoText}>
+            <Text style={RegisterScreenStyles.infoText}>
               ✅ I consumatori ordineranno da app mobile
             </Text>
-            <Text style={styles.infoText}>
+            <Text style={RegisterScreenStyles.infoText}>
               ✅ I rider consegneranno ordini da app mobile
             </Text>
           </View>
@@ -188,147 +188,15 @@ export default function RegisterScreen({ navigation }) {
       {toast.visible && (
         <Animated.View
           style={[
-            styles.toast,
-            toast.type === 'success' && styles.toastSuccess,
-            toast.type === 'warning' && styles.toastWarning,
-            toast.type === 'error' && styles.toastError,
+            RegisterScreenStyles.toast,
+            toast.type === 'success' && RegisterScreenStyles.toastSuccess,
+            toast.type === 'warning' && RegisterScreenStyles.toastWarning,
+            toast.type === 'error' && RegisterScreenStyles.toastError,
           ]}
         >
-          <Text style={styles.toastText}>{toast.message}</Text>
+          <Text style={RegisterScreenStyles.toastText}>{toast.message}</Text>
         </Animated.View>
       )}
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: '#fff',
-    padding: 20,
-    justifyContent: 'center',
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  logo: {
-    fontSize: 50,
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#FF6B00',
-    marginBottom: 5,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-  },
-  form: {
-    marginBottom: 30,
-  },
-  formGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 8,
-    color: '#333',
-  },
-  input: {
-    borderWidth: 2,
-    borderColor: '#E0E0E0',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 12,
-    fontSize: 16,
-    backgroundColor: '#F8F9FA',
-  },
-  pickerContainer: {
-    borderWidth: 2,
-    borderColor: '#E0E0E0',
-    borderRadius: 10,
-    overflow: 'hidden',
-    backgroundColor: '#F8F9FA',
-  },
-  picker: {
-    height: 55, // Su Android è meglio definire un'altezza
-    width: '100%',
-  },
-  button: {
-    backgroundColor: '#FF6B00',
-    borderRadius: 10,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  divider: {
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    marginVertical: 20,
-  },
-  linkButton: {
-    alignItems: 'center',
-  },
-  linkText: {
-    fontSize: 14,
-    color: '#666',
-  },
-  linkBold: {
-    color: '#FF6B00',
-    fontWeight: '600',
-  },
-  info: {
-    backgroundColor: '#F0F8FF',
-    borderRadius: 10,
-    padding: 15,
-    borderLeftWidth: 4,
-    borderLeftColor: '#0066FF',
-  },
-  infoText: {
-    fontSize: 13,
-    color: '#0066FF',
-    marginBottom: 8,
-    fontWeight: '500',
-  },
-  toast: {
-    position: 'absolute',
-    top: 80,
-    left: 20,
-    right: 20,
-    backgroundColor: '#333',
-    borderRadius: 12,
-    padding: 16,
-    zIndex: 9999,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    elevation: 5,
-  },
-  toastSuccess: {
-    backgroundColor: '#4CAF50',
-  },
-  toastWarning: {
-    backgroundColor: '#FF9800',
-  },
-  toastError: {
-    backgroundColor: '#F44336',
-  },
-  toastText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-});

@@ -7,12 +7,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
-  StyleSheet,
   ScrollView,
   Animated,
 } from 'react-native';
 import { authAPI } from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import LoginScreenStyles from './styles/LoginScreenStyles.js';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -65,20 +65,20 @@ export default function LoginScreen({ navigation }) {
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={LoginScreenStyles.container}>
           {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.logo}>🚀</Text>
-            <Text style={styles.title}>Delivero</Text>
-            <Text style={styles.subtitle}>Accedi al tuo account</Text>
+          <View style={LoginScreenStyles.header}>
+            <Text style={LoginScreenStyles.logo}>🚀</Text>
+            <Text style={LoginScreenStyles.title}>Delivero</Text>
+            <Text style={LoginScreenStyles.subtitle}>Accedi al tuo account</Text>
           </View>
 
           {/* Form */}
-          <View style={styles.form}>
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>📧 Email</Text>
+          <View style={LoginScreenStyles.form}>
+            <View style={LoginScreenStyles.inputGroup}>
+              <Text style={LoginScreenStyles.label}>📧 Email</Text>
               <TextInput
-                style={styles.input}
+                style={LoginScreenStyles.input}
                 placeholder="tuoemail@example.com"
                 placeholderTextColor="#999"
                 value={email}
@@ -89,11 +89,11 @@ export default function LoginScreen({ navigation }) {
               />
             </View>
 
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>🔒 Password</Text>
+            <View style={LoginScreenStyles.inputGroup}>
+              <Text style={LoginScreenStyles.label}>🔒 Password</Text>
               <TextInput
-                style={styles.input}
-                placeholder="••••••••"
+                style={LoginScreenStyles.input}
+                placeholder="•••••••"
                 placeholderTextColor="#999"
                 value={password}
                 onChangeText={setPassword}
@@ -103,14 +103,14 @@ export default function LoginScreen({ navigation }) {
             </View>
 
             <TouchableOpacity
-              style={[styles.button, loading && styles.buttonDisabled]}
+              style={[LoginScreenStyles.button, loading && LoginScreenStyles.buttonDisabled]}
               onPress={handleLogin}
               disabled={loading}
             >
               {loading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.buttonText}>🚀 Accedi</Text>
+                <Text style={LoginScreenStyles.buttonText}>🚀 Accedi</Text>
               )}
             </TouchableOpacity>
 
@@ -118,165 +118,38 @@ export default function LoginScreen({ navigation }) {
             {toast.visible && (
               <Animated.View
                 style={[
-                  styles.toast,
-                  toast.type === 'success' && styles.toastSuccess,
-                  toast.type === 'warning' && styles.toastWarning,
-                  toast.type === 'error' && styles.toastError,
+                  LoginScreenStyles.toast,
+                  toast.type === 'success' && LoginScreenStyles.toastSuccess,
+                  toast.type === 'warning' && LoginScreenStyles.toastWarning,
+                  toast.type === 'error' && LoginScreenStyles.toastError,
                 ]}
               >
-                <Text style={styles.toastText}>{toast.message}</Text>
+                <Text style={LoginScreenStyles.toastText}>{toast.message}</Text>
               </Animated.View>
             )}
 
-            <View style={styles.divider} />
+            <View style={LoginScreenStyles.divider} />
 
             <TouchableOpacity
-              style={styles.linkButton}
+              style={LoginScreenStyles.linkButton}
               onPress={() => navigation.navigate('Register')}
               disabled={loading}
             >
-              <Text style={styles.linkText}>
-                Non hai un account? <Text style={styles.linkBold}>Registrati</Text>
+              <Text style={LoginScreenStyles.linkText}>
+                Non hai un account? <Text style={LoginScreenStyles.linkBold}>Registrati</Text>
               </Text>
             </TouchableOpacity>
           </View>
 
           {/* Info */}
-          <View style={styles.info}>
-            <Text style={styles.infoTitle}>💡 Demo Account</Text>
-            <Text style={styles.infoText}>👤 Customer: demo.customer@delivero.local / 123456</Text>
-            <Text style={styles.infoText}>🚗 Rider: demo.rider@delivero.local / 123456</Text>
-            <Text style={styles.infoText}>👨‍💼 Manager: demo.manager@delivero.local / 123456</Text>
+          <View style={LoginScreenStyles.info}>
+            <Text style={LoginScreenStyles.infoTitle}>💡 Demo Account</Text>
+            <Text style={LoginScreenStyles.infoText}>👤 Customer: demo.customer@delivero.local / 123456</Text>
+            <Text style={LoginScreenStyles.infoText}>🚗 Rider: demo.rider@delivero.local / 123456</Text>
+            <Text style={LoginScreenStyles.infoText}>👨‍💼 Manager: demo.manager@delivero.local / 123456</Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: '#fff',
-    padding: 20,
-    justifyContent: 'center',
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 40,
-  },
-  logo: {
-    fontSize: 50,
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#FF6B00',
-    marginBottom: 5,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-  },
-  form: {
-    marginBottom: 30,
-  },
-  formGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 8,
-    color: '#333',
-  },
-  input: {
-    borderWidth: 2,
-    borderColor: '#E0E0E0',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 12,
-    fontSize: 16,
-    backgroundColor: '#F8F9FA',
-  },
-  button: {
-    backgroundColor: '#FF6B00',
-    borderRadius: 10,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  divider: {
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    marginVertical: 20,
-  },
-  linkButton: {
-    alignItems: 'center',
-  },
-  linkText: {
-    fontSize: 14,
-    color: '#666',
-  },
-  linkBold: {
-    color: '#FF6B00',
-    fontWeight: '600',
-  },
-  info: {
-    backgroundColor: '#F8F9FA',
-    borderRadius: 10,
-    padding: 15,
-    borderLeftWidth: 4,
-    borderLeftColor: '#FF6B00',
-  },
-  infoTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 10,
-    color: '#333',
-  },
-  infoText: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 5,
-    fontWeight: '500',
-  },
-  toast: {
-    position: 'absolute',
-    top: 80,
-    left: 20,
-    right: 20,
-    backgroundColor: '#333',
-    borderRadius: 12,
-    padding: 16,
-    zIndex: 9999,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    elevation: 5,
-  },
-  toastSuccess: {
-    backgroundColor: '#4CAF50',
-  },
-  toastWarning: {
-    backgroundColor: '#FF9800',
-  },
-  toastError: {
-    backgroundColor: '#F44336',
-  },
-  toastText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-});
