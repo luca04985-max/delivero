@@ -288,6 +288,9 @@ export const ordersAPI = {
   getRiderTickets: async () => {
     return makeRequest('/tickets/rider', { method: 'GET' });
   },
+  getRiderTicketById: async (ticketId) => {
+    return makeRequest(`/tickets/rider/${ticketId}`, { method: 'GET' });
+  },
   createRiderTicket: async (data) => {
     return makeRequest('/tickets/rider', {
       method: 'POST',

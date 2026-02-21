@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   Alert,
   TouchableOpacity,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { makeRequest } from '../../services/api';
 import { ticketCache } from '../../services/ticketCache';
 import { ticketDetailScreenStyles } from './styles/TicketDetailScreenStyles';
@@ -21,6 +22,7 @@ export default function TicketDetailScreen({ navigation, route }) {
   const [newResponse, setNewResponse] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ visible: false, message: '', type: '' });
+  const [userRole, setUserRole] = useState(null);
 
   const showToast = (message, type = 'info') => {
     setToast({ visible: true, message, type });
@@ -35,6 +37,22 @@ export default function TicketDetailScreen({ navigation, route }) {
   useEffect(() => {
     loadTicketDetail();
   }, [ticketId]);
+
+  // Carica il ruolo dell'utente
+  useEffect(() => {
+    const loadUserRole = async () => {
+      try {
+        const userStr = await AsyncStorage.getItem('user');
+        if (userStr) {
+          const user = JSON.parse(userStr);
+          setUserRole(user.role);
+        }
+      } catch (error) {
+        console.error('Error loading user role:', error);
+      }
+    };
+    loadUserRole();
+  }, []);
 
   // Nascondi completamente il pulsante indietro nell'header
   useEffect(() => {
@@ -54,8 +72,16 @@ export default function TicketDetailScreen({ navigation, route }) {
         return;
       }
 
-      // Se non in cache, fai la chiamata API
-      const data = await makeRequest(`/tickets/customer/${ticketId}`, { method: 'GET' });
+      // Se non in cache, fai la chiamata API basata sul ruolo
+      let data;
+      if (userRole === 'rider') {
+        console.log('🏍️ Loading rider ticket:', ticketId);
+        data = await makeRequest(`/tickets/rider/${ticketId}`, { method: 'GET' });
+      } else {
+        console.log('👤 Loading customer ticket:', ticketId);
+        data = await makeRequest(`/tickets/customer/${ticketId}`, { method: 'GET' });
+      }
+
       setTicket(data);
     } catch (error) {
       console.error('Error loading ticket detail:', error);

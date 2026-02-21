@@ -200,6 +200,48 @@ router.get('/customer/:id', authenticateToken, async (req, res) => {
   }
 });
 
+router.get('/rider/:id', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user?.userId;
+    console.log('🆔 Extracted userId:', userId);
+
+    if (!userId) {
+      console.log('❌ No userId found, returning 401');
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const userRes = await db.query('SELECT role FROM users WHERE id = $1', [userId]);
+    const role = userRes.rows[0]?.role;
+    console.log('👔 User role:', role);
+
+    if (role !== 'rider') {
+      console.log('❌ User is not rider, returning 403');
+      return res.status(403).json({ error: 'Rider access required' });
+    }
+
+    console.log('🎫 Calling getTicketById for ticket ID:', req.params.id);
+    const ticket = await getTicketById(req.params.id);
+    console.log('🎫 Ticket returned:', ticket);
+
+    if (!ticket) {
+      console.log('❌ Ticket not found, returning 404');
+      return res.status(404).json({ error: 'Ticket not found' });
+    }
+
+    // Check if user can access this ticket (customer can only see their own tickets)
+    if (ticket.user_id !== userId) {
+      console.log('❌ Access denied - ticket belongs to different user');
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    console.log('🎫 Access granted, returning ticket');
+    res.json(ticket);
+  } catch (error) {
+    console.error('Error getting rider ticket:', error);
+    res.status(500).json({ error: 'Failed to get ticket' });
+  }
+});
+
 // Get rider tickets
 router.get('/rider', authenticateToken, async (req, res) => {
   try {

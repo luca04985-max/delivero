@@ -332,6 +332,47 @@ function RiderStack({ onLogout, user }) {
   );
 }
 
+// Rider Stack con schermate aggiuntive
+function RiderStackWithScreens({ onLogout, user }) {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="RiderTabs"
+        children={() => <RiderStack onLogout={onLogout} user={user} />}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="CreateTicket"
+        component={CreateTicketScreen}
+        options={{
+          title: '📝 Nuovo Ticket',
+          headerStyle: {
+            backgroundColor: '#0066FF',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
+      />
+      <Stack.Screen
+        name="TicketDetail"
+        component={TicketDetailScreen}
+        options={{
+          title: '🎫 Dettagli Ticket',
+          headerStyle: {
+            backgroundColor: '#0066FF',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
 // Manager Stack - Admin Dashboard
 function ManagerStack({ token, user, onLogout }) {
   return (
@@ -536,7 +577,7 @@ export default function App() {
             }}
           />
         ) : state.user?.role === 'rider' ? (
-          <RiderStack
+          <RiderStackWithScreens
             user={state.user}
             onLogout={async () => {
               try {
