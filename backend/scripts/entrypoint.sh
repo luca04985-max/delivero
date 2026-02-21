@@ -1,8 +1,11 @@
 #!/bin/sh
-# Entrypoint wrapper: run seed-on-start if DB empty, then start server
+# Entrypoint wrapper: run schema verification and demo data seeding, then start server
 
-echo "🔧 Running seed-on-start check..."
-./scripts/seed-on-start.sh
+echo " Running database schema verification..."
+node scripts/ensure-db-schema.js
 
-echo "🚀 Starting backend server..."
+echo " Running demo data seeding..."
+node scripts/seed-demo-data.js
+
+echo " Starting backend server..."
 exec npm start

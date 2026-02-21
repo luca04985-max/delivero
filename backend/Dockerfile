@@ -13,8 +13,9 @@ RUN npm install --production
 # Copy backend source into container
 COPY backend/ .
 
-# Make entrypoint script executable
+# Make scripts executable
 RUN chmod +x scripts/entrypoint.sh
+RUN chmod +x scripts/seed-on-start.sh
 
 # Set working dir to backend for runtime
 WORKDIR /app
