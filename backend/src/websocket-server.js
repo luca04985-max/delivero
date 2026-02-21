@@ -1,6 +1,6 @@
 import { WebSocketServer } from 'ws';
 import jwt from 'jsonwebtoken';
-import { getIO, broadcastRiderLocation, broadcastOrderStatusChange } from './services/socket.js';
+import { getIO, broadcastLocationUpdate, broadcastOrderStatusChange } from './services/socket.js';
 
 class WebSocketBridge {
     constructor() {
@@ -11,7 +11,7 @@ class WebSocketBridge {
 
     initialize(server) {
         // Create WebSocket server on a different port or attach to existing HTTP server
-        this.wss = new WebSocketServer({ 
+        this.wss = new WebSocketServer({
             port: process.env.WS_PORT || 3001,
             path: '/tracking'
         });
@@ -20,11 +20,11 @@ class WebSocketBridge {
 
         this.wss.on('connection', (ws, req) => {
             console.log('🔌 New WebSocket connection attempt');
-            
+
             // Extract orderId from URL
             const urlParts = req.url.split('/');
             const orderId = urlParts[urlParts.length - 1];
-            
+
             if (!orderId || isNaN(orderId)) {
                 console.log('❌ Invalid order ID in connection request');
                 ws.close(1003, 'Invalid order ID');
@@ -33,7 +33,7 @@ class WebSocketBridge {
 
             // Generate client ID
             const clientId = this.generateClientId();
-            
+
             // Store client with temporary auth status
             this.clients.set(clientId, {
                 socket: ws,
@@ -122,7 +122,7 @@ class WebSocketBridge {
         try {
             // Verify JWT token
             const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
-            
+
             // Update client with auth info
             client.userId = decoded.userId;
             client.role = decoded.role;
@@ -170,7 +170,7 @@ class WebSocketBridge {
 
                     if (isCustomer || isRider || isManager) {
                         console.log(`✅ Client ${clientId} authorized for order ${client.orderId}`);
-                        
+
                         // Send current order state
                         this.sendToClient(clientId, {
                             type: 'orderTrackingState',
@@ -233,9 +233,9 @@ class WebSocketBridge {
         // Also broadcast to Socket.IO clients
         try {
             broadcastRiderLocation(
-                client.orderId, 
-                data.rider_latitude, 
-                data.rider_longitude, 
+                client.orderId,
+                data.rider_latitude,
+                data.rider_longitude,
                 data.eta_minutes
             );
         } catch (error) {
@@ -315,7 +315,7 @@ class WebSocketBridge {
 
     cleanupDisconnectedClients() {
         let cleanedCount = 0;
-        
+
         this.clients.forEach((client, clientId) => {
             if (client.socket.readyState !== 1) { // Not OPEN
                 this.handleDisconnect(clientId);
