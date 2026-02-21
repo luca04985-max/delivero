@@ -5,6 +5,7 @@ import helmet from "helmet";
 import http from "http";
 import logger from "./utils/logger.js";
 import { generalLimiter, authLimiter } from "./middleware/rateLimiter.js";
+import PerformanceMiddleware from "./middleware/performance-middleware.js";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
 import riderRoutes from "./routes/rider.js";
@@ -18,6 +19,7 @@ import medicalTransportsRoutes from "./routes/medicalTransports.js";
 import documentPickupsRoutes from "./routes/documentPickups.js";
 import ticketsRoutes from "./routes/tickets.js";
 import restaurantsRoutes from "./routes/restaurants.js";
+import monitoringRoutes from "./routes/monitoring.js";
 import notificationsRoutes from "./routes/notifications.js";
 import { initializeSocket } from "./services/socket.js";
 import wsBridge from "./websocket-server.js";
@@ -27,6 +29,10 @@ dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
+
+// Initialize performance monitoring
+const performanceMiddleware = new PerformanceMiddleware();
+performanceMiddleware.initialize();
 
 // Security middleware
 app.use(helmet({
@@ -53,6 +59,9 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Performance monitoring middleware
+app.use(performanceMiddleware.middleware());
+
 // Rate limiting
 app.use(generalLimiter);
 
@@ -63,9 +72,10 @@ initializeSocket(server);
 wsBridge.initialize(server);
 
 // Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({ message: 'Server is running', timestamp: new Date().toISOString() });
-});
+app.get('/health', performanceMiddleware.healthCheck());
+
+// Monitoring routes
+app.use('/api/monitoring', monitoringRoutes);
 
 // Routes
 app.use("/api/auth", authLimiter, authRoutes);
