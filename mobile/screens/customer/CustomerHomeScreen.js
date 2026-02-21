@@ -26,11 +26,8 @@ export default function CustomerHomeScreen({ navigation }) {
 
   // Servizi Speciali (quelli che hai caricato nei file)
   const specialServices = [
-    { id: 'pharmacy', name: 'Farmacia', emoji: '💊', screen: 'Pharmacy' },
-    { id: 'bills', name: 'Bollette', emoji: '📄', screen: 'BillPayment' },
     { id: 'medical', name: 'Trasporto', emoji: '🚑', screen: 'MedicalTransport' },
     { id: 'docs', name: 'Documenti', emoji: '📁', screen: 'DocumentPickup' },
-    { id: 'grocery', name: 'Spesa', emoji: '🛒', screen: 'Groceries' },
   ];
 
   useEffect(() => {
