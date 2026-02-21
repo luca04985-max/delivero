@@ -12,7 +12,7 @@ const monitor = new PerformanceMonitor();
 const optimizer = new ResourceOptimizer();
 
 // Initialize monitoring
-monitor.initialize();
+monitor.startMonitoring();
 
 /**
  * GET /health - Basic health check
@@ -20,7 +20,7 @@ monitor.initialize();
 router.get('/health', (req, res) => {
   const metrics = monitor.getMetrics();
   const stress = monitor.isSystemUnderStress();
-  
+
   const health = {
     status: stress.isStressed ? 'degraded' : 'healthy',
     timestamp: new Date().toISOString(),
@@ -33,8 +33,8 @@ router.get('/health', (req, res) => {
     application: {
       requests: monitor.getMetrics().application.requests,
       errors: monitor.getMetrics().application.errors,
-      avgResponseTime: monitor.getMetrics().application.responseTime.length > 0 
-        ? monitor.getMetrics().application.responseTime.reduce((a, b) => a + b, 0) / monitor.getMetrics().application.responseTime.length 
+      avgResponseTime: monitor.getMetrics().application.responseTime.length > 0
+        ? monitor.getMetrics().application.responseTime.reduce((a, b) => a + b, 0) / monitor.getMetrics().application.responseTime.length
         : 0
     },
     database: {
@@ -45,7 +45,7 @@ router.get('/health', (req, res) => {
     stress,
     recommendations: monitor.getRecommendations()
   };
-  
+
   res.status(stress.isStressed ? 200 : 200).json(health);
 });
 
@@ -55,7 +55,7 @@ router.get('/health', (req, res) => {
 router.get('/metrics', (req, res) => {
   const metrics = monitor.getMetrics();
   const stats = monitor.getStats();
-  
+
   res.json({
     timestamp: new Date().toISOString(),
     metrics,
@@ -75,7 +75,7 @@ router.get('/metrics', (req, res) => {
 router.get('/dashboard', (req, res) => {
   const metrics = monitor.getMetrics();
   const stress = monitor.isSystemUnderStress();
-  
+
   // Generate ASCII dashboard
   const dashboard = `
 ╔══════════════════════════════════════════════════════════════╗
@@ -113,7 +113,7 @@ ${monitor.getRecommendations().length > 0 ? monitor.getRecommendations().join('\
 Last Updated: ${new Date().toLocaleString()}
 ═══════════════════════════════════════════════════════════════
 `;
-  
+
   res.set('Content-Type', 'text/plain');
   res.send(dashboard);
 });
@@ -141,7 +141,7 @@ router.get('/optimization/report', (req, res) => {
 router.get('/system', (req, res) => {
   const systemInfo = optimizer.systemInfo;
   const analysis = optimizer.analyzePerformance();
-  
+
   res.json({
     timestamp: new Date().toISOString(),
     system: systemInfo,
@@ -158,14 +158,14 @@ router.get('/system', (req, res) => {
  */
 router.post('/track-request', (req, res) => {
   const { responseTime, isError = false } = req.body;
-  
+
   if (typeof responseTime !== 'number' || responseTime < 0) {
     return res.status(400).json({ error: 'Invalid responseTime' });
   }
-  
+
   monitor.trackRequest(responseTime, isError);
-  
-  res.json({ 
+
+  res.json({
     message: 'Request tracked successfully',
     metrics: monitor.getStats()
   });
@@ -176,14 +176,14 @@ router.post('/track-request', (req, res) => {
  */
 router.post('/track-db-query', (req, res) => {
   const { responseTime, isSlow = false } = req.body;
-  
+
   if (typeof responseTime !== 'number' || responseTime < 0) {
     return res.status(400).json({ error: 'Invalid responseTime' });
   }
-  
+
   monitor.trackDbQuery(responseTime, isSlow);
-  
-  res.json({ 
+
+  res.json({
     message: 'Database query tracked successfully',
     metrics: monitor.getMetrics()
   });
@@ -196,7 +196,7 @@ router.get('/recommendations', (req, res) => {
   const performanceRecs = monitor.getRecommendations();
   const scalingRecs = optimizer.getScalingRecommendations();
   const optimizationRecs = optimizer.getOptimizationRecommendations();
-  
+
   res.json({
     timestamp: new Date().toISOString(),
     performance: performanceRecs,
@@ -204,10 +204,10 @@ router.get('/recommendations', (req, res) => {
     optimization: optimizationRecs,
     summary: {
       total: performanceRecs.length + scalingRecs.length + optimizationRecs.length,
-      critical: scalingRecs.filter(r => r.priority === 'high').length + 
-                optimizationRecs.filter(r => r.priority === 'high').length,
-      warning: scalingRecs.filter(r => r.priority === 'medium').length + 
-               optimizationRecs.filter(r => r.priority === 'medium').length
+      critical: scalingRecs.filter(r => r.priority === 'high').length +
+        optimizationRecs.filter(r => r.priority === 'high').length,
+      warning: scalingRecs.filter(r => r.priority === 'medium').length +
+        optimizationRecs.filter(r => r.priority === 'medium').length
     }
   });
 });
@@ -217,9 +217,9 @@ router.get('/recommendations', (req, res) => {
  */
 router.get('/stress-test', (req, res) => {
   const { duration = 10000 } = req.query; // Default 10 seconds
-  
+
   console.log('🔥 Starting stress test...');
-  
+
   // Simulate CPU stress
   const startTime = Date.now();
   const stressInterval = setInterval(() => {
@@ -228,17 +228,17 @@ router.get('/stress-test', (req, res) => {
     for (let i = 0; i < 1000000; i++) {
       result += Math.random();
     }
-    
+
     // Memory allocation
-    const largeArray = new Array(10000).fill(0).map(() => ({ 
-      id: Math.random(), 
-      data: new Array(100).fill(Math.random()) 
+    const largeArray = new Array(10000).fill(0).map(() => ({
+      id: Math.random(),
+      data: new Array(100).fill(Math.random())
     }));
-    
+
     if (Date.now() - startTime > duration) {
       clearInterval(stressInterval);
       console.log('✅ Stress test completed');
-      res.json({ 
+      res.json({
         message: 'Stress test completed',
         duration: duration,
         finalMetrics: monitor.getMetrics()
@@ -252,12 +252,12 @@ router.get('/stress-test', (req, res) => {
  */
 router.get('/benchmark', (req, res) => {
   const { iterations = 1000 } = req.query;
-  
+
   console.log('🏃 Starting performance benchmark...');
-  
+
   const startTime = Date.now();
   let operations = 0;
-  
+
   // CPU benchmark
   const cpuStart = Date.now();
   for (let i = 0; i < iterations; i++) {
@@ -265,7 +265,7 @@ router.get('/benchmark', (req, res) => {
     operations++;
   }
   const cpuTime = Date.now() - cpuStart;
-  
+
   // Memory benchmark
   const memStart = Date.now();
   const arrays = [];
@@ -274,9 +274,9 @@ router.get('/benchmark', (req, res) => {
     operations++;
   }
   const memTime = Date.now() - memStart;
-  
+
   const totalTime = Date.now() - startTime;
-  
+
   res.json({
     message: 'Benchmark completed',
     iterations: parseInt(iterations),
@@ -298,7 +298,7 @@ router.get('/alerts', (req, res) => {
   const stress = monitor.isSystemUnderStress();
   const analysis = optimizer.analyzePerformance();
   const alerts = [];
-  
+
   // CPU alerts
   if (stress.cpuHigh) {
     alerts.push({
@@ -309,7 +309,7 @@ router.get('/alerts', (req, res) => {
       recommendation: 'Consider scaling up or optimizing CPU-intensive operations'
     });
   }
-  
+
   // Memory alerts
   if (stress.memoryHigh) {
     alerts.push({
@@ -320,7 +320,7 @@ router.get('/alerts', (req, res) => {
       recommendation: 'Check for memory leaks or increase available memory'
     });
   }
-  
+
   // Load alerts
   if (stress.loadHigh) {
     alerts.push({
@@ -331,11 +331,11 @@ router.get('/alerts', (req, res) => {
       recommendation: 'Consider horizontal scaling'
     });
   }
-  
+
   // Application alerts
-  const errorRate = monitor.getStats().requests.total > 0 ? 
+  const errorRate = monitor.getStats().requests.total > 0 ?
     (monitor.getStats().requests.errors / monitor.getStats().requests.total) : 0;
-  
+
   if (errorRate > 0.05) {
     alerts.push({
       type: 'warning',
@@ -345,7 +345,7 @@ router.get('/alerts', (req, res) => {
       recommendation: 'Check application logs for errors'
     });
   }
-  
+
   res.json({
     timestamp: new Date().toISOString(),
     alerts,
@@ -364,7 +364,7 @@ function createBar(value, max, filledChar = '█', emptyChar = '░') {
   const percentage = Math.min(value, 100) / 100;
   const filledCount = Math.floor(percentage * max);
   const emptyCount = max - filledCount;
-  
+
   return filledChar.repeat(filledCount) + emptyChar.repeat(emptyCount);
 }
 
