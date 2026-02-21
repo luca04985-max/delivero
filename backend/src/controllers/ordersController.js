@@ -253,6 +253,7 @@ export const updateRiderOrderStatus = async (req, res) => {
       return res.status(400).json({ message: 'Invalid status for rider' });
     }
 
+    console.log('🔍 UpdateRiderOrderStatus - Executing DB query...');
     const result = await db.query(
       `UPDATE orders 
        SET status = $1, updated_at = NOW() 
@@ -261,7 +262,9 @@ export const updateRiderOrderStatus = async (req, res) => {
       [status, id, riderId]
     );
 
+    console.log('🔍 UpdateRiderOrderStatus - DB Query executed');
     console.log('🔍 UpdateRiderOrderStatus - DB Result rows:', result.rows.length);
+    console.log('🔍 UpdateRiderOrderStatus - Full result:', result.rows);
 
     if (result.rows.length === 0) {
       console.log('❌ Order not found or not assigned to this rider');
