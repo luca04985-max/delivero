@@ -2,6 +2,8 @@
 
 Piattaforma completa di food delivery e servizi multi-categoria con app mobile, backend e dashboard admin.
 
+**📚 Documentazione**: [English](README.md) | Italiano
+
 ## 📋 Panoramica del Progetto
 
 Delivero è una piattaforma moderna di delivery che include:
