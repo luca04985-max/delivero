@@ -15,7 +15,6 @@ COPY backend/ .
 
 # Make scripts executable
 RUN chmod +x scripts/entrypoint.sh
-RUN chmod +x scripts/seed-on-start.sh
 
 # Set working dir to backend for runtime
 WORKDIR /app
