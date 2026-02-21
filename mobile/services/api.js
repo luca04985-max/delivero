@@ -239,6 +239,17 @@ export const ordersAPI = {
       body: JSON.stringify({ status }),
     });
   },
+  updateOrderRiderStatus: async (id, status) => {
+    console.log('🚀 API Call: updateOrderRiderStatus', {
+      url: `/orders/${id}/rider-status`,
+      method: 'PUT',
+      body: { status }
+    });
+    return makeRequest(`/orders/${id}/rider-status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status }),
+    });
+  },
   completeOrder: async (id) => {
     return makeRequest(`/orders/${id}/complete`, { method: 'PUT' });
   },
