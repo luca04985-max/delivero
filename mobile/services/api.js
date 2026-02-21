@@ -22,8 +22,6 @@ async function makeRequest(endpoint, options = {}) {
       headers.Authorization = `Bearer ${token}`;
     }
     const fullUrl = `${API_URL}${endpoint}`;
-    console.log("Full URL: " + fullUrl);
-    console.log("Headers: " + JSON.stringify(headers));
 
     // Assicurati che options.data sia stringificato correttamente
     let requestOptions = {
@@ -40,7 +38,6 @@ async function makeRequest(endpoint, options = {}) {
     const response = await fetch(fullUrl, requestOptions);
 
     const data = await response.json();
-    console.log("Response data: " + JSON.stringify(data));
     if (!response.ok) {
       console.error('❌ Request failed:', data);
       throw data || { message: 'Errore nella richiesta' };

@@ -22,14 +22,14 @@ class PerformanceMiddleware {
    */
   initialize() {
     this.monitor.startMonitoring(5000); // Monitor every 5 seconds
-    
+
     // Handle graceful shutdown
     process.on('SIGINT', () => {
       console.log('\\n🛑 Graceful shutdown initiated...');
       this.monitor.stopMonitoring();
       process.exit(0);
     });
-    
+
     process.on('SIGTERM', () => {
       console.log('\\n🛑 Graceful shutdown initiated...');
       this.monitor.stopMonitoring();
@@ -44,37 +44,37 @@ class PerformanceMiddleware {
     return (req, res, next) => {
       const startTime = Date.now();
       const requestId = `${req.method}-${req.path}-${startTime}`;
-      
+
       // Store request start time
       this.requestTimes.set(requestId, startTime);
-      
+
       // Track request count
       this.requestCounts.total++;
       const endpoint = req.route?.path || req.path;
       this.requestCounts.byEndpoint.set(endpoint, (this.requestCounts.byEndpoint.get(endpoint) || 0) + 1);
       this.requestCounts.byMethod.set(req.method, (this.requestCounts.byMethod.get(req.method) || 0) + 1);
-      
+
       // Override res.end to track completion
       const originalEnd = res.end;
-      res.end = function(...args) {
+      res.end = function (...args) {
         const endTime = Date.now();
         const responseTime = endTime - startTime;
-        
+
         // Track request completion
         this.monitor.trackRequest(responseTime, res.statusCode >= 400);
-        
+
         // Clean up request tracking
         this.requestTimes.delete(requestId);
-        
+
         // Log slow requests
         if (responseTime > 1000) {
           console.log(`🐌 Slow request: ${req.method} ${req.path} - ${responseTime}ms`);
         }
-        
-        // Call original end
-        originalEnd.apply(this, args);
-      }.bind(this);
-      
+
+        // Call original end with correct context
+        return originalEnd.apply(res, args);
+      }.bind({ monitor: this.monitor, requestTimes: this.requestTimes });
+
       next();
     };
   }
@@ -87,16 +87,16 @@ class PerformanceMiddleware {
       // This would be integrated with actual database query tracking
       // For now, we'll simulate query tracking
       const originalQuery = req.db?.query;
-      
+
       if (originalQuery) {
         req.db.query = async (...args) => {
           const startTime = Date.now();
           try {
             const result = await originalQuery.apply(req.db, args);
             const responseTime = Date.now() - startTime;
-            
+
             this.monitor.trackDbQuery(responseTime, responseTime > 500);
-            
+
             return result;
           } catch (error) {
             const responseTime = Date.now() - startTime;
@@ -105,7 +105,7 @@ class PerformanceMiddleware {
           }
         };
       }
-      
+
       next();
     };
   }
@@ -118,7 +118,7 @@ class PerformanceMiddleware {
       const metrics = this.monitor.getMetrics();
       const stress = this.monitor.isSystemUnderStress();
       const recommendations = this.monitor.getRecommendations();
-      
+
       const health = {
         status: stress.isStressed ? 'degraded' : 'healthy',
         timestamp: new Date().toISOString(),
@@ -131,8 +131,8 @@ class PerformanceMiddleware {
         application: {
           requests: this.requestCounts.total,
           errors: this.requestCounts.errors,
-          avgResponseTime: metrics.application.responseTime.length > 0 
-            ? metrics.application.responseTime.reduce((a, b) => a + b, 0) / metrics.application.responseTime.length 
+          avgResponseTime: metrics.application.responseTime.length > 0
+            ? metrics.application.responseTime.reduce((a, b) => a + b, 0) / metrics.application.responseTime.length
             : 0
         },
         database: {
@@ -143,7 +143,7 @@ class PerformanceMiddleware {
         stress,
         recommendations
       };
-      
+
       res.status(stress.isStressed ? 200 : 200).json(health);
     };
   }
@@ -154,7 +154,7 @@ class PerformanceMiddleware {
   metricsEndpoint() {
     return (req, res) => {
       const metrics = this.monitor.getMetrics();
-      
+
       res.json({
         timestamp: new Date().toISOString(),
         metrics,
@@ -182,10 +182,10 @@ class PerformanceMiddleware {
     return (req, res) => {
       const metrics = this.monitor.getMetrics();
       const stress = this.monitor.isSystemUnderStress();
-      
+
       // Generate ASCII dashboard
       const dashboard = this.generateDashboard(metrics, stress);
-      
+
       res.set('Content-Type', 'text/plain');
       res.send(dashboard);
     };
@@ -198,7 +198,7 @@ class PerformanceMiddleware {
     const latestCpu = metrics.system.cpu[metrics.system.cpu.length - 1] || 0;
     const latestMem = metrics.system.memory[metrics.system.memory.length - 1] || 0;
     const latestLoad = metrics.system.loadAverage[metrics.system.loadAverage.length - 1] || 0;
-    
+
     return `
 ╔══════════════════════════════════════════════════════════════╗
 ║                    PERFORMANCE DASHBOARD                    ║
@@ -244,7 +244,7 @@ Last Updated: ${new Date().toLocaleString()}
     const percentage = Math.min(value, 100) / 100;
     const filledCount = Math.floor(percentage * max);
     const emptyCount = max - filledCount;
-    
+
     return filledChar.repeat(filledCount) + emptyChar.repeat(emptyCount);
   }
 
