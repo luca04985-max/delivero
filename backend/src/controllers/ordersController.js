@@ -247,6 +247,22 @@ export const updateRiderOrderStatus = async (req, res) => {
     console.log('🔍 UpdateRiderOrderStatus - Requested status:', status);
     console.log('🔍 UpdateRiderOrderStatus - Rider ID from token:', riderId);
 
+    // Verify order exists BEFORE updating
+    console.log('🔍 UpdateRiderOrderStatus - Checking if order exists...');
+    const orderCheck = await db.query(
+      'SELECT id, status, rider_id FROM orders WHERE id = $1 AND rider_id = $2',
+      [id, riderId]
+    );
+
+    console.log('🔍 UpdateRiderOrderStatus - Order check result:', orderCheck.rows.length);
+
+    if (orderCheck.rows.length === 0) {
+      console.log('❌ Order not found or not assigned to this rider');
+      return res.status(404).json({ message: 'Order not found or not assigned to this rider' });
+    }
+
+    console.log('🔍 UpdateRiderOrderStatus - Order exists, proceeding with update...');
+
     // Validate status transitions for riders
     const validStatuses = ['accepted', 'pickup', 'in_transit', 'delivered'];
     if (!validStatuses.includes(status)) {
@@ -262,7 +278,7 @@ export const updateRiderOrderStatus = async (req, res) => {
       [status, id, riderId]
     );
 
-    console.log('🔍 UpdateRiderOrderStatus - DB Query executed');
+    console.log('🔍 UpdateRiderOrderStatus - Transaction completed');
     console.log('🔍 UpdateRiderOrderStatus - DB Result rows:', result.rows.length);
     console.log('🔍 UpdateRiderOrderStatus - Full result:', result.rows);
 
