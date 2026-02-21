@@ -6,8 +6,339 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: mobileTheme.colors.background,
   },
-  
-  // HEADER IMAGE
+
+  // INLINE STYLES FROM RestaurantDetailScreen.js
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 14,
+    color: '#666',
+  },
+  header: {
+    backgroundColor: '#FF6B00',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    paddingTop: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backButton: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  restaurantName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  restaurantInfo: {
+    fontSize: 12,
+    color: '#fff',
+    opacity: 0.9,
+    marginTop: 4,
+  },
+  categoriesList: {
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    maxHeight: 44,
+  },
+  categoriesContent: {
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+    alignItems: 'center',
+  },
+  categoryTab: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginHorizontal: 2,
+    borderRadius: 12,
+    backgroundColor: '#f0f0f0',
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  categoryTabActive: {
+    backgroundColor: '#FF6B00',
+    borderColor: '#FF6B00',
+  },
+  categoryTabText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#666',
+  },
+  categoryTabTextActive: {
+    color: '#fff',
+  },
+  productsList: {
+    flex: 1,
+  },
+  productsContent: {
+    padding: 8,
+    paddingBottom: 12,
+  },
+  productCard: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 8,
+    marginBottom: 6,
+    borderWidth: 1,
+    borderColor: '#eee',
+  },
+  productHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 4,
+  },
+  productName: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  productDescription: {
+    fontSize: 11,
+    color: '#666',
+    marginTop: 2,
+  },
+  productPrice: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    color: '#FF6B00',
+  },
+  allergens: {
+    fontSize: 10,
+    color: '#d32f2f',
+    marginTop: 6,
+  },
+  customizationHint: {
+    fontSize: 11,
+    color: '#2196f3',
+    marginTop: 4,
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#999',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    flex: 1,
+    backgroundColor: '#fff',
+    marginTop: 100,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    overflow: 'hidden',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  closeButton: {
+    fontSize: 24,
+    color: '#999',
+    fontWeight: 'bold',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    flex: 1,
+    textAlign: 'center',
+  },
+  modalBody: {
+    flex: 1,
+    padding: 16,
+  },
+  modalDescription: {
+    fontSize: 13,
+    color: '#666',
+    marginBottom: 12,
+  },
+  modalPrice: {
+    fontSize: 13,
+    color: '#666',
+    marginBottom: 12,
+  },
+  priceValue: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FF6B00',
+  },
+  allergenBlock: {
+    backgroundColor: '#ffebee',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 12,
+  },
+  allergenLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#d32f2f',
+  },
+  allergenText: {
+    fontSize: 11,
+    color: '#d32f2f',
+    marginTop: 4,
+  },
+  customizationsSection: {
+    marginBottom: 16,
+  },
+  customizationsTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+  },
+  customizationBlock: {
+    marginBottom: 12,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  customizationLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+  },
+  customizationOptions: {
+    flexDirection: 'column',
+    gap: 6,
+  },
+  optionButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    backgroundColor: '#f8f8f8',
+  },
+  optionButtonSelected: {
+    borderColor: '#FF6B00',
+    backgroundColor: '#fff3e0',
+  },
+  optionText: {
+    fontSize: 12,
+    color: '#666',
+  },
+  optionTextSelected: {
+    color: '#FF6B00',
+    fontWeight: '600',
+  },
+  checkboxButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    backgroundColor: '#f8f8f8',
+  },
+  checkboxButtonSelected: {
+    borderColor: '#FF6B00',
+    backgroundColor: '#fff3e0',
+  },
+  checkboxText: {
+    fontSize: 12,
+    color: '#333',
+  },
+  textInput: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontSize: 12,
+    backgroundColor: '#f8f8f8',
+  },
+  notesSection: {
+    marginBottom: 16,
+  },
+  notesLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+  },
+  notesInput: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 12,
+    backgroundColor: '#f8f8f8',
+    textAlignVertical: 'top',
+  },
+  quantitySection: {
+    marginBottom: 16,
+  },
+  quantityLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+  },
+  quantityControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f8f8f8',
+    borderRadius: 8,
+    width: 120,
+  },
+  quantityButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+  },
+  quantityButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FF6B00',
+  },
+  quantityValue: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+    minWidth: 40,
+    textAlign: 'center',
+  },
+  modalFooter: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+  },
+  addToCartButton: {
+    backgroundColor: '#FF6B00',
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  addToCartText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+
+  // EXISTING STYLES FROM ORIGINAL FILE
   headerImage: {
     width: '100%',
     height: 200,
@@ -21,7 +352,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     bottom: 0,
     backgroundColor: 'rgba(0,0,0,0.3)',
   },
-  backButton: {
+  backButtonOverlay: {
     position: 'absolute',
     top: Platform.OS === 'ios' ? 60 : 40,
     left: mobileTheme.spacing[4],
@@ -31,7 +362,6 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    ...mobileTheme.shadows.soft,
   },
   favoriteButton: {
     position: 'absolute',
@@ -45,7 +375,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     alignItems: 'center',
     ...mobileTheme.shadows.soft,
   },
-  
+
   // RESTAURANT INFO
   restaurantInfo: {
     backgroundColor: mobileTheme.colors.white,
@@ -85,7 +415,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
   },
-  
+
   // MENU SECTION
   menuSection: {
     marginTop: mobileTheme.spacing[4],
@@ -152,7 +482,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: mobileTheme.typography.fontWeight.bold,
   },
-  
+
   // CART SUMMARY
   cartSummary: {
     backgroundColor: mobileTheme.colors.white,
@@ -209,7 +539,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
-  
+
   // LOADING STATES
   loadingContainer: {
     flex: 1,

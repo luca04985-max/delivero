@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Switch, Alert, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import { makeRequest } from '../../services/api';
+import { medicalTransportScreenStyles } from './styles/MedicalTransportScreenStyles';
 
 export default function MedicalTransportScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
@@ -25,29 +33,25 @@ export default function MedicalTransportScreen({ navigation }) {
   };
 
   return (
-    <ScrollView style={{ padding: 20, backgroundColor: '#fff' }}>
+    <ScrollView style={medicalTransportScreenStyles.content}>
       <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 20 }}>Prenota Trasporto Medico</Text>
       <TextInput
         placeholder="Nome Clinica / Dottore"
-        style={styles.input}
+        style={medicalTransportScreenStyles.input}
         onChangeText={(v) => setFormData({ ...formData, clinicName: v })}
       />
       <TextInput
         placeholder="Indirizzo di Ritiro"
-        style={styles.input}
+        style={medicalTransportScreenStyles.input}
         onChangeText={(v) => setFormData({ ...formData, pickupAddress: v })}
       />
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 15 }}>
         <Text>Viaggio di ritorno incluso</Text>
         <Switch value={formData.returnTrip} onValueChange={(v) => setFormData({ ...formData, returnTrip: v })} />
       </View>
-      <TouchableOpacity style={styles.btn} onPress={handleSubmit}>
-        {loading ? <ActivityIndicator color="#fff" /> : <Text style={{ color: '#fff', fontWeight: 'bold' }}>Conferma Prenotazione</Text>}
+      <TouchableOpacity style={medicalTransportScreenStyles.btn} onPress={handleSubmit}>
+        {loading ? <ActivityIndicator color="#fff" /> : <Text style={medicalTransportScreenStyles.btnText}>Conferma Prenotazione</Text>}
       </TouchableOpacity>
     </ScrollView>
   );
 }
-const styles = StyleSheet.create({
-  input: { borderWidth: 1, borderColor: '#ddd', padding: 12, borderRadius: 8, marginBottom: 15 },
-  btn: { backgroundColor: '#007AFF', padding: 15, borderRadius: 10, alignItems: 'center' }
-});

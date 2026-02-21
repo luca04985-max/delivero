@@ -5,93 +5,106 @@ export const riderActiveScreenStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: mobileTheme.colors.background,
-  },
-  content: {
     padding: mobileTheme.spacing[4],
   },
-  // CARD PRINCIPALE (Focus sull'ordine corrente)
+  header: {
+    marginBottom: mobileTheme.spacing[4],
+  },
+  headerTitle: {
+    fontSize: mobileTheme.typography.fontSize.lg,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    color: mobileTheme.colors.text.primary,
+  },
+
+  // ACTIVE ORDER CARD
   activeCard: {
     backgroundColor: mobileTheme.colors.white,
     padding: mobileTheme.spacing[5],
-    borderRadius: mobileTheme.borderRadius.xl,
-    marginBottom: mobileTheme.spacing[4],
-    // Rimuoviamo il bordo laterale sottile per un'ombra più marcata che dà profondità
-    ...mobileTheme.shadows.medium,
-    borderWidth: 1,
-    borderColor: mobileTheme.colors.border,
-  },
-
-  // STATUS CON COLORE DINAMICO
-  statusBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: mobileTheme.spacing[3],
-    paddingVertical: mobileTheme.spacing[1],
-    borderRadius: mobileTheme.borderRadius.full,
-    marginBottom: mobileTheme.spacing[3],
-    backgroundColor: mobileTheme.colors.primarySoft,
-  },
-  statusText: {
-    fontSize: 10,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
-    textTransform: 'uppercase',
-  },
-
-  // INFO ORDINE
-  orderTitle: {
-    fontSize: mobileTheme.typography.fontSize.xl,
-    fontWeight: mobileTheme.typography.fontWeight.black,
-    color: mobileTheme.colors.text.primary,
-    marginBottom: 2,
-  },
-  addressBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: mobileTheme.spacing[2],
-  },
-  addressText: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.secondary,
-    marginLeft: 8,
-  },
-
-  // PULSANTI AZIONE (Grandi e facili da premere)
-  actionGrid: {
-    flexDirection: 'row',
-    marginTop: mobileTheme.spacing[5],
-    gap: mobileTheme.spacing[2], // Uso di gap per spaziatura uniforme (RN 0.71+)
-  },
-  btnAction: {
-    paddingVertical: mobileTheme.spacing[4], // Più alto per facilitare il tocco con i guanti/all'aperto
     borderRadius: mobileTheme.borderRadius.lg,
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...mobileTheme.shadows.soft,
+    marginBottom: mobileTheme.spacing[4],
+    borderLeftWidth: 5,
+    borderLeftColor: mobileTheme.colors.primary,
+    ...mobileTheme.shadows.sm,
   },
-  btnPickup: { backgroundColor: mobileTheme.colors.warning },
-  btnTransit: { backgroundColor: mobileTheme.colors.secondary },
+  statusBadge: {
+    backgroundColor: mobileTheme.colors.background,
+    alignSelf: 'flex-start',
+    padding: mobileTheme.spacing[1],
+    borderRadius: mobileTheme.borderRadius.sm,
+    fontSize: mobileTheme.typography.fontSize.xs,
+    marginBottom: mobileTheme.spacing[3],
+    fontWeight: mobileTheme.typography.fontWeight.medium,
+    color: mobileTheme.colors.text.secondary,
+  },
+  customerName: {
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    color: mobileTheme.colors.text.primary,
+    marginBottom: mobileTheme.spacing[2],
+  },
+  address: {
+    color: mobileTheme.colors.text.secondary,
+    marginBottom: mobileTheme.spacing[3],
+  },
+
+  // BUTTONS ROW
+  row: {
+    flexDirection: 'row',
+    marginTop: mobileTheme.spacing[4],
+    justifyContent: 'space-between',
+    gap: mobileTheme.spacing[2],
+  },
+  btnPickup: {
+    backgroundColor: '#FFA500',
+    padding: mobileTheme.spacing[3],
+    borderRadius: mobileTheme.borderRadius.md,
+    flex: 1,
+    ...mobileTheme.shadows.sm,
+  },
+  btnTransit: {
+    backgroundColor: '#0066FF',
+    padding: mobileTheme.spacing[3],
+    borderRadius: mobileTheme.borderRadius.md,
+    flex: 1,
+    ...mobileTheme.shadows.sm,
+  },
   btnComplete: {
-    backgroundColor: mobileTheme.colors.success,
-    flex: 1.5, // Più importanza all'azione finale
+    backgroundColor: '#28A745',
+    padding: mobileTheme.spacing[3],
+    borderRadius: mobileTheme.borderRadius.md,
+    flex: 1.5,
+    ...mobileTheme.shadows.sm,
   },
   btnText: {
     color: mobileTheme.colors.white,
-    fontWeight: mobileTheme.typography.fontWeight.black,
-    fontSize: 13,
-    textTransform: 'uppercase',
+    textAlign: 'center',
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontSize: mobileTheme.typography.fontSize.xs,
   },
 
-  // ELEMENTO MAPPA RAPIDA (Mini preview)
-  miniMap: {
-    height: 150,
-    backgroundColor: mobileTheme.colors.border,
-    borderRadius: mobileTheme.borderRadius.lg,
-    marginTop: mobileTheme.spacing[4],
-    overflow: 'hidden',
+  // EMPTY STATE
+  emptyContainer: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  }
+    marginTop: mobileTheme.spacing[16],
+  },
+  emptyText: {
+    fontSize: mobileTheme.typography.fontSize.lg,
+    color: mobileTheme.colors.text.secondary,
+    textAlign: 'center',
+  },
+  emptySubtext: {
+    fontSize: mobileTheme.typography.fontSize.base,
+    color: mobileTheme.colors.text.tertiary,
+    textAlign: 'center',
+    marginTop: mobileTheme.spacing[2],
+    fontStyle: 'italic',
+  },
+
+  // REFRESH CONTROL
+  refreshContainer: {
+    flex: 1,
+  },
 });
 
 export default riderActiveScreenStyles;

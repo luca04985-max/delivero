@@ -1,16 +1,18 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
   FlatList,
   TouchableOpacity,
-  Alert,
   RefreshControl,
   ActivityIndicator,
-  ScrollView,
+  Alert,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { makeRequest } from '../../services/api';
 import { customerTicketsScreenStyles } from './styles/CustomerTicketsScreenStyles';
+import { useToast } from '../../hooks/useToast';
+import { useUserRole } from '../../hooks/useUserRole';
 
 export default function CustomerTicketsScreen({ navigation }) {
   const [tickets, setTickets] = useState([]);
@@ -44,29 +46,65 @@ export default function CustomerTicketsScreen({ navigation }) {
     loadTickets().finally(() => setRefreshing(false));
   }, [loadTickets]);
 
-  // Funzione per toggle delle sezioni
-  const toggleSection = (ticket_status) => {
+  // Ottimizzazione: memoizza il raggruppamento dei ticket per stato
+  const groupedTickets = useMemo(() => {
+    const grouped = {};
+
+    // Raggruppa ticket per stato
+    tickets.forEach(ticket => {
+      const status = ticket.ticket_status || ticket.status || 'unknown';
+      if (!grouped[status]) {
+        grouped[status] = [];
+      }
+      grouped[status].push(ticket);
+    });
+
+    // Ordina gli stati in modo logico
+    const statusOrder = ['open', 'in_progress', 'closed', 'unknown'];
+    const orderedGrouped = {};
+
+    statusOrder.forEach(status => {
+      if (grouped[status]) {
+        orderedGrouped[status] = grouped[status];
+      }
+    });
+
+    // Aggiunge eventuali stati non previsti
+    Object.keys(grouped).forEach(status => {
+      if (!statusOrder.includes(status)) {
+        orderedGrouped[status] = grouped[status];
+      }
+    });
+
+    return orderedGrouped;
+  }, [tickets]);
+
+  // Funzione per toggle delle sezioni - ottimizzata con useCallback
+  const toggleSection = useCallback((ticket_status) => {
     setExpandedSections(prev => ({
       ...prev,
-      [ticket_status]: !prev[ticket_status] // Inverte lo stato: se era chiuso (false/undefined) lo apre (true)
+      [ticket_status]: !prev[ticket_status]
     }));
-  };
+  }, []);
 
-  const getStatusColor = (status) => {
+  // Funzioni helper memoizzate
+  const getStatusColor = useCallback((status) => {
     switch (status) {
       case 'open': return '#4CAF50';
       case 'in_progress': return '#FF9800';
+      case 'closed': return '#9E9E9E';
       default: return '#666';
     }
-  };
+  }, []);
 
-  const getStatusText = (status) => {
+  const getStatusText = useCallback((status) => {
     switch (status) {
-      case 'open': return 'Aperto';
-      case 'in_progress': return 'In corso';
+      case 'open': return '🟢 Aperti';
+      case 'in_progress': return '🟠 In corso';
+      case 'closed': return '🔴 Chiusi';
       default: return status;
     }
-  };
+  }, []);
 
   // Funzione per renderizzare il separatore di stato
   const renderStatusSeparator = (status, count, statusInfo, isExpanded) => {

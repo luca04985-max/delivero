@@ -16,18 +16,18 @@ import { useUserRole } from '../../hooks/useUserRole';
 import { useToast } from '../../hooks/useToast';
 import { useTicketDetail } from '../../hooks/useTicketDetail';
 
+/**
+ * Schermata dettagli ticket - condivisa tra customer e rider
+ * Usa hook custom per gestire ruolo utente e caricamento dati
+ */
 export default function TicketDetailScreen({ navigation, route }) {
   const { ticketId } = route.params || {};
   const [newResponse, setNewResponse] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  // Hook custom per ruolo utente
+  // Hook custom
   const { userRole, isRider, isCustomer } = useUserRole();
-
-  // Hook custom per toast notifications
   const { toast, showToast } = useToast();
-
-  // Hook custom per caricamento dettagli ticket
   const { ticket, loading, refreshing, error, onRefresh } = useTicketDetail(ticketId, userRole);
 
   // Controlla se proveniamo da CreateTicket
@@ -46,7 +46,7 @@ export default function TicketDetailScreen({ navigation, route }) {
       showToast('⚠️ La risposta non può essere vuota', 'warning');
       return;
     }
-    console.log("Commento: " + newResponse)
+
     try {
       setSubmitting(true);
       const response = await makeRequest(`/tickets/${ticketId}/comments`, {
@@ -96,11 +96,11 @@ export default function TicketDetailScreen({ navigation, route }) {
 
   const getTypeEmoji = (type) => {
     switch (type) {
-      case 'bug': return '🐛';
       case 'complaint': return '😞';
-      case 'feature_request': return '💡';
-      case 'support': return '🆘';
-      default: return '📝';
+      case 'praise': return '😊';
+      case 'suggestion': return '💡';
+      case 'issue': return '⚠️';
+      default: return '📋';
     }
   };
 
@@ -113,10 +113,12 @@ export default function TicketDetailScreen({ navigation, route }) {
     );
   }
 
-  if (!ticket) {
+  if (error || !ticket) {
     return (
       <View style={ticketDetailScreenStyles.container}>
-        <Text style={ticketDetailScreenStyles.errorText}>Ticket non trovato</Text>
+        <Text style={ticketDetailScreenStyles.errorText}>
+          {error ? 'Errore nel caricamento' : 'Ticket non trovato'}
+        </Text>
         {!isFromCreateTicket && (
           <TouchableOpacity
             style={ticketDetailScreenStyles.backButton}
@@ -131,6 +133,16 @@ export default function TicketDetailScreen({ navigation, route }) {
 
   return (
     <View style={ticketDetailScreenStyles.container}>
+      {/* Toast Notification */}
+      {toast.visible && (
+        <View style={[
+          ticketDetailScreenStyles.toast,
+          { backgroundColor: toast.type === 'error' ? '#FF3B30' : toast.type === 'success' ? '#34C759' : '#007AFF' }
+        ]}>
+          <Text style={ticketDetailScreenStyles.toastText}>{toast.message}</Text>
+        </View>
+      )}
+
       <ScrollView
         style={ticketDetailScreenStyles.scrollView}
         refreshControl={
@@ -153,7 +165,6 @@ export default function TicketDetailScreen({ navigation, route }) {
             </Text>
           </View>
 
-
           <View style={ticketDetailScreenStyles.ticketMeta}>
             <Text style={ticketDetailScreenStyles.ticketTitle}>{ticket.title}</Text>
             <Text style={ticketDetailScreenStyles.ticketDate}>
@@ -161,8 +172,11 @@ export default function TicketDetailScreen({ navigation, route }) {
                 day: '2-digit',
                 month: 'long',
                 year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
               })}
             </Text>
+            <Text style={ticketDetailScreenStyles.ticketId}>#{ticket.id}</Text>
           </View>
         </View>
 
@@ -176,49 +190,22 @@ export default function TicketDetailScreen({ navigation, route }) {
                 backgroundColor: '#f8f9fa',
                 borderRadius: 10,
                 padding: 15,
+                marginBottom: 20,
                 borderLeftWidth: 4,
-                borderLeftColor: '#FF6B00'
+                borderLeftColor: '#FF6B00',
               }}>
-                <Text style={{
-                  fontSize: 16,
-                  fontWeight: '600',
-                  color: '#333',
-                  marginBottom: 8
-                }}>
-                  Ordine #{ticket.order_id}
+                <Text style={{ fontWeight: 'bold', color: '#333', marginBottom: 5 }}>
+                  Ordine #{ticket.order_id?.toString().slice(-5)}
                 </Text>
-                {ticket.total_amount && (
-                  <Text style={{
-                    fontSize: 14,
-                    color: '#666',
-                    marginBottom: 5
-                  }}>
-                    Importo: €{ticket.total_amount}
-                  </Text>
-                )}
-                {ticket.order_status && (
-                  <Text style={{
-                    fontSize: 14,
-                    color: '#666',
-                    marginBottom: 5
-                  }}>
-                    Stato: {ticket.order_status === 'pending' && '⏳ In Attesa'}
-                    {ticket.order_status === 'accepted' && '✓ Accettato'}
-                    {ticket.order_status === 'preparing' && '👨‍🍳 In Preparazione'}
-                    {ticket.order_status === 'pickup' && '📦 Pronto per Ritiro'}
-                    {ticket.order_status === 'delivering' && '🚗 In Consegna'}
-                    {ticket.order_status === 'delivered' && '✅ Consegnato'}
-                    {ticket.order_status === 'cancelled' && '❌ Cancellato'}
-                  </Text>
-                )}
-                {ticket.delivery_address && (
-                  <Text style={{
-                    fontSize: 14,
-                    color: '#666'
-                  }}>
-                    📍 {ticket.delivery_address}
-                  </Text>
-                )}
+                <Text style={{ color: '#666', fontSize: 12 }}>
+                  {new Date(ticket.order_created_at).toLocaleDateString('it-IT')}
+                </Text>
+                <Text style={{ color: '#FF6B00', fontWeight: 'bold', marginTop: 5 }}>
+                  €{ticket.total_amount || ticket.total_price || ticket.total}
+                </Text>
+                <Text style={{ color: '#666', fontSize: 12, marginTop: 5 }}>
+                  📍 {ticket.delivery_address}
+                </Text>
               </View>
             </View>
           )}
@@ -291,56 +278,25 @@ export default function TicketDetailScreen({ navigation, route }) {
                 multiline
                 numberOfLines={4}
                 textAlignVertical="top"
-                editable={!submitting}
               />
               <TouchableOpacity
                 style={[
                   ticketDetailScreenStyles.submitButton,
-                  submitting && ticketDetailScreenStyles.submitButtonDisabled
+                  { opacity: submitting || !newResponse.trim() ? 0.6 : 1 }
                 ]}
                 onPress={addResponse}
-                disabled={submitting}
+                disabled={submitting || !newResponse.trim()}
               >
-                <Text style={ticketDetailScreenStyles.submitButtonText}>
-                  {submitting ? 'Invio...' : 'Invia Risposta'}
-                </Text>
+                {submitting ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={ticketDetailScreenStyles.submitButtonText}>Invia Risposta</Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>
         )}
       </ScrollView>
-
-      {/* Toast Notification */}
-      {toast.visible && (
-        <View style={{
-          position: 'absolute',
-          top: 50,
-          left: 20,
-          right: 20,
-          backgroundColor: toast.type === 'success' ? '#4CAF50' :
-            toast.type === 'error' ? '#F44336' :
-              toast.type === 'warning' ? '#FF9800' : '#2196F3',
-          padding: 15,
-          borderRadius: 10,
-          flexDirection: 'row',
-          alignItems: 'center',
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
-          elevation: 5,
-          zIndex: 1000,
-        }}>
-          <Text style={{
-            color: 'white',
-            fontSize: 16,
-            fontWeight: '600',
-            flex: 1,
-          }}>
-            {toast.message}
-          </Text>
-        </View>
-      )}
     </View>
   );
 }

@@ -1,12 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator, RefreshControl } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+  RefreshControl,
+  Alert,
+} from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { ordersAPI } from '../../services/api';
 import { riderHomeScreenStyles } from './styles/RiderHomeScreenStyles';
+import { useToast } from '../../hooks/useToast';
 
 export default function RiderHomeScreen({ navigation }) {
   const [availableOrders, setAvailableOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  // Hook custom per toast
+  const { toast, showToast } = useToast();
 
   const fetchAvailable = async () => {
     try {
@@ -25,11 +38,11 @@ export default function RiderHomeScreen({ navigation }) {
   const handleAcceptOrder = async (orderId) => {
     try {
       await ordersAPI.acceptOrder(orderId);
-      Alert.alert("Successo", "Ordine accettato! Vai alla sezione 'Attivi' per gestirlo.");
+      showToast('✅ Ordine accettato! Vai alla sezione "Attivi" per gestirlo', 'success');
       fetchAvailable();
       navigation.navigate('Active');
     } catch (e) {
-      Alert.alert("Errore", "L'ordine potrebbe essere già stato preso da un altro rider.");
+      showToast('⚠️ L\'ordine potrebbe essere già stato preso da un altro rider', 'warning');
     }
   };
 

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
 import { WebView } from 'react-native-webview';
+import { orderTrackingLiveScreenStyles } from './styles/OrderTrackingLiveScreenStyles';
 import { makeRequest } from '../../services/api';
 
 export default function OrderTrackingLiveScreen({ route }) {
@@ -79,25 +80,19 @@ export default function OrderTrackingLiveScreen({ route }) {
     };
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={orderTrackingLiveScreenStyles.container}>
             <WebView
                 style={{ flex: 1 }}
                 source={{ html: generateTrackingMapHtml() }}
                 javaScriptEnabled={true}
                 domStorageEnabled={true}
                 startInLoadingState={true}
-                renderLoading={() => <ActivityIndicator style={styles.mapLoader} size="large" />}
+                renderLoading={() => <ActivityIndicator style={orderTrackingLiveScreenStyles.mapLoader} size="large" />}
             />
-            <View style={styles.infoBox}>
-                <Text style={styles.statusText}>Stato: {order?.status || 'In caricamento...'}</Text>
+            <View style={orderTrackingLiveScreenStyles.infoBox}>
+                <Text style={orderTrackingLiveScreenStyles.statusText}>Stato: {order?.status || 'In caricamento...'}</Text>
                 <Text>Consegna stimata: {order?.eta_minutes || '--'} min</Text>
             </View>
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    infoBox: { position: 'absolute', bottom: 20, left: 20, right: 20, backgroundColor: '#fff', padding: 20, borderRadius: 15, elevation: 5 },
-    statusText: { fontSize: 18, fontWeight: 'bold', color: '#FF6B00' },
-    mapLoader: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }
-});

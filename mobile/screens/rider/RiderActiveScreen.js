@@ -1,10 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+  RefreshControl,
+} from 'react-native';
 import { ordersAPI } from '../../services/api';
+import { riderActiveScreenStyles } from './styles/RiderActiveScreenStyles';
+import { useToast } from '../../hooks/useToast';
 import { useRiderLocationSender } from '../../hooks/useRiderLocationSender';
 
 export default function RiderActiveScreen() {
   const [activeOrders, setActiveOrders] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Hook custom per toast
+  const { toast, showToast } = useToast();
 
   useEffect(() => {
     fetchActiveOrders();
@@ -22,11 +35,11 @@ export default function RiderActiveScreen() {
   const updateStatus = async (orderId, newStatus) => {
     try {
       const response = await ordersAPI.updateOrderStatus(orderId, newStatus);
-      Alert.alert("Stato Aggiornato", `L'ordine è ora: ${newStatus}`);
+      showToast(`✅ Stato aggiornato: ${newStatus}`, 'success');
       fetchActiveOrders();
     } catch (e) {
       console.error('Error updating status:', e);
-      Alert.alert("Errore", "Impossibile aggiornare lo stato.");
+      showToast('❌ Impossibile aggiornare lo stato', 'error');
     }
   };
 
@@ -34,24 +47,24 @@ export default function RiderActiveScreen() {
     useRiderLocationSender(item?.id, item?.status);
 
     return (
-      <View style={styles.activeCard}>
-        <Text style={styles.statusBadge}>{item.status.toUpperCase()}</Text>
-        <Text style={{ fontWeight: 'bold' }}>Cliente: {item.customer_name || 'Utente'}</Text>
-        <Text>📍 {item.delivery_address}</Text>
+      <View style={riderActiveScreenStyles.activeCard}>
+        <Text style={riderActiveScreenStyles.statusBadge}>{item.status.toUpperCase()}</Text>
+        <Text style={riderActiveScreenStyles.customerName}>Cliente: {item.customer_name || 'Utente'}</Text>
+        <Text style={riderActiveScreenStyles.address}>📍 {item.delivery_address}</Text>
 
-        <View style={styles.row}>
+        <View style={riderActiveScreenStyles.row}>
           {item.status === 'accepted' && (
-            <TouchableOpacity style={styles.btnPickup} onPress={() => updateStatus(item.id, 'pickup')}>
-              <Text style={styles.btnText}>Ritirato</Text>
+            <TouchableOpacity style={riderActiveScreenStyles.btnPickup} onPress={() => updateStatus(item.id, 'pickup')}>
+              <Text style={riderActiveScreenStyles.btnText}>Ritirato</Text>
             </TouchableOpacity>
           )}
           {(item.status === 'pickup' || item.status === 'accepted') && (
-            <TouchableOpacity style={styles.btnTransit} onPress={() => updateStatus(item.id, 'in_transit')}>
-              <Text style={styles.btnText}>In Viaggio</Text>
+            <TouchableOpacity style={riderActiveScreenStyles.btnTransit} onPress={() => updateStatus(item.id, 'in_transit')}>
+              <Text style={riderActiveScreenStyles.btnText}>In Viaggio</Text>
             </TouchableOpacity>
           )}
-          <TouchableOpacity style={styles.btnComplete} onPress={() => updateStatus(item.id, 'delivered')}>
-            <Text style={styles.btnText}>Consegnato ✅</Text>
+          <TouchableOpacity style={riderActiveScreenStyles.btnComplete} onPress={() => updateStatus(item.id, 'delivered')}>
+            <Text style={riderActiveScreenStyles.btnText}>Consegnato ✅</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -59,23 +72,24 @@ export default function RiderActiveScreen() {
   };
 
   return (
-    <View style={{ flex: 1, padding: 15 }}>
-      <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 15 }}>Le tue consegne attive</Text>
+    <View style={riderActiveScreenStyles.container}>
+      <View style={riderActiveScreenStyles.header}>
+        <Text style={riderActiveScreenStyles.headerTitle}>Le tue consegne attive</Text>
+      </View>
       <FlatList
         data={activeOrders}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <ActiveOrderCard item={item} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={fetchActiveOrders} />
+        }
+        ListEmptyComponent={
+          <View style={riderActiveScreenStyles.emptyContainer}>
+            <Text style={riderActiveScreenStyles.emptyText}>Nessuna consegna attiva</Text>
+            <Text style={riderActiveScreenStyles.emptySubtext}>Accetta un ordine per iniziare</Text>
+          </View>
+        }
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  activeCard: { backgroundColor: '#fff', padding: 20, borderRadius: 15, marginBottom: 15, borderLeftWidth: 5, borderLeftColor: '#FF6B00' },
-  statusBadge: { backgroundColor: '#eee', alignSelf: 'flex-start', padding: 4, borderRadius: 4, fontSize: 10, marginBottom: 10 },
-  row: { flexDirection: 'row', marginTop: 15, justifyContent: 'space-between' },
-  btnPickup: { backgroundColor: '#FFA500', padding: 10, borderRadius: 8, flex: 1, marginRight: 5 },
-  btnTransit: { backgroundColor: '#0066FF', padding: 10, borderRadius: 8, flex: 1, marginRight: 5 },
-  btnComplete: { backgroundColor: '#28A745', padding: 10, borderRadius: 8, flex: 1.5 },
-  btnText: { color: '#fff', textAlign: 'center', fontWeight: 'bold', fontSize: 12 }
-});

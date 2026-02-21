@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Alert,
   TextInput,
   ScrollView,
   ActivityIndicator,
@@ -12,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { makeRequest } from '../../services/api';
 import { createTicketScreenStyles } from './styles/CreateTicketScreenStyles';
 import { decode } from 'base-64';
+import { useToast } from '../../hooks/useToast';
 
 export default function CreateTicketScreen({ navigation, route }) {
   const [newTicket, setNewTicket] = useState({
@@ -21,6 +21,9 @@ export default function CreateTicketScreen({ navigation, route }) {
   });
   const [submitting, setSubmitting] = useState(false);
   const [userId, setUserId] = useState(null);
+
+  // Hook custom per toast
+  const { toast, showToast } = useToast();
 
   // Ottieni user_id dal token JWT
   useEffect(() => {
@@ -62,7 +65,7 @@ export default function CreateTicketScreen({ navigation, route }) {
 
   const createTicket = async () => {
     if (!newTicket.title.trim() || !newTicket.description.trim()) {
-      Alert.alert('Errore', 'Compila tutti i campi obbligatori');
+      showToast('⚠️ Compila tutti i campi obbligatori', 'warning');
       return;
     }
 
@@ -82,21 +85,20 @@ export default function CreateTicketScreen({ navigation, route }) {
         body: JSON.stringify(ticketData),
       });
 
-      Alert.alert('Successo', 'Ticket creato con successo', [
-        {
-          text: 'OK',
-          onPress: () => {
-            if (navigation.canGoBack()) {
-              navigation.goBack();
-            } else {
-              navigation.navigate('CustomerTickets');
-            }
-          }
+      showToast('✅ Ticket creato con successo', 'success');
+
+      // Naviga indietro dopo breve delay per mostrare il toast
+      setTimeout(() => {
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        } else {
+          navigation.navigate('CustomerTickets');
         }
-      ]);
+      }, 1500);
+
     } catch (error) {
       console.error('Error creating ticket:', error);
-      Alert.alert('Errore', 'Impossibile creare il ticket');
+      showToast('❌ Impossibile creare il ticket', 'error');
     } finally {
       setSubmitting(false);
     }

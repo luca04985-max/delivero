@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Switch, Alert } from 'react-native';
-import API from '../../services/api';
+import {
+  View,
+  Text,
+  TextInput,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  Switch,
+  Alert,
+} from 'react-native';
+import { makeRequest } from '../../services/api';
+import { documentPickupScreenStyles } from './styles/DocumentPickupScreenStyles';
 
 const DocumentPickupScreen = () => {
   const [formData, setFormData] = useState({
@@ -50,7 +60,7 @@ const DocumentPickupScreen = () => {
 
       setTrackingNumber(response.data.tracking_number);
       Alert.alert('Successo', `Numero Tracking: ${response.data.tracking_number}`);
-      
+
       setFormData({
         documentType: 'certificate',
         pickupLocation: '',

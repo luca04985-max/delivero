@@ -6,8 +6,32 @@ export const medicalTransportScreenStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: mobileTheme.colors.background,
   },
-  
-  // HEADER
+
+  // INLINE STYLES FROM MedicalTransportScreen.js
+  input: {
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.border,
+    padding: mobileTheme.spacing[3],
+    borderRadius: mobileTheme.borderRadius.md,
+    marginBottom: mobileTheme.spacing[4],
+    backgroundColor: mobileTheme.colors.white,
+    fontSize: mobileTheme.typography.fontSize.base,
+    color: mobileTheme.colors.text.primary,
+  },
+  btn: {
+    backgroundColor: '#007AFF',
+    padding: mobileTheme.spacing[4],
+    borderRadius: mobileTheme.borderRadius.lg,
+    alignItems: 'center',
+    ...mobileTheme.shadows.medium,
+  },
+  btnText: {
+    color: mobileTheme.colors.white,
+    fontSize: mobileTheme.typography.fontSize.base,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+  },
+
+  // EXISTING STYLES FROM ORIGINAL FILE
   header: {
     backgroundColor: mobileTheme.colors.secondary,
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
@@ -25,7 +49,7 @@ export const medicalTransportScreenStyles = StyleSheet.create({
     color: mobileTheme.colors.white,
     letterSpacing: -0.5,
   },
-  
+
   // EMERGENCY CARD
   emergencyCard: {
     backgroundColor: mobileTheme.colors.errorBg,
@@ -57,7 +81,7 @@ export const medicalTransportScreenStyles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 20,
   },
-  
+
   // BOOKING FORM
   bookingCard: {
     backgroundColor: mobileTheme.colors.white,
@@ -93,7 +117,7 @@ export const medicalTransportScreenStyles = StyleSheet.create({
     color: mobileTheme.colors.text.primary,
     ...mobileTheme.shadows.soft,
   },
-  
+
   // TRANSPORT OPTIONS
   optionsContainer: {
     marginTop: mobileTheme.spacing[4],
@@ -132,7 +156,7 @@ export const medicalTransportScreenStyles = StyleSheet.create({
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.primary,
   },
-  
+
   // ACTION BUTTONS
   bookButton: {
     backgroundColor: mobileTheme.colors.primary,
@@ -166,7 +190,7 @@ export const medicalTransportScreenStyles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
-  
+
   // LOADING STATES
   loadingContainer: {
     flex: 1,
