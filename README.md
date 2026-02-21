@@ -2,6 +2,8 @@
 
 A complete multi-category food and delivery platform with mobile app, backend, and admin dashboard.
 
+**📚 Documentation**: [Italiano](README_ITA.md) | English
+
 ## 📋 Project Overview
 
 Delivero is a modern delivery platform that includes:
