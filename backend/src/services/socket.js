@@ -135,7 +135,7 @@ export const getIO = () => {
 };
 
 // Emit rider location update to all subscribers (customer + managers)
-export const broadcastRiderLocation = (orderId, latitude, longitude, eta_minutes) => {
+export const broadcastLocationUpdate = (orderId, latitude, longitude, eta_minutes) => {
   const io = getIO();
   const roomName = `order_${orderId}`;
   io.to(roomName).emit('riderLocationUpdate', {
