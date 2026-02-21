@@ -34,7 +34,7 @@ export default function RiderActiveScreen() {
 
   const updateStatus = async (orderId, newStatus) => {
     try {
-      const response = await ordersAPI.updateOrderStatus(orderId, newStatus);
+      const response = await ordersAPI.updateOrderRiderStatus(orderId, newStatus);
       showToast(`✅ Stato aggiornato: ${newStatus}`, 'success');
       fetchActiveOrders();
     } catch (e) {
@@ -44,7 +44,7 @@ export default function RiderActiveScreen() {
   };
 
   const ActiveOrderCard = ({ item }) => {
-    useRiderLocationSender(item?.id, item?.status);
+    //useRiderLocationSender(item?.id, item?.status);
 
     return (
       <View style={riderActiveScreenStyles.activeCard}>

@@ -6,7 +6,8 @@ import { ordersAPI } from '../services/api';
  * Hook that sends rider GPS location to backend every 5 seconds
  * while an active order is being delivered.
  * Only active when app is in foreground.
- */
+ **/
+
 export const useRiderLocationSender = (orderId, riderStatus) => {
     const [locating, setLocating] = useState(false);
     const [error, setError] = useState(null);

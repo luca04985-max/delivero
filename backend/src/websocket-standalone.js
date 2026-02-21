@@ -2,7 +2,7 @@ import http from 'http';
 import { WebSocketServer } from 'ws';
 import jwt from 'jsonwebtoken';
 import db from './config/db.js';
-import { getIO, broadcastRiderLocation, broadcastOrderStatusChange } from './services/socket.js';
+import { getIO, broadcastLocationUpdate, broadcastOrderStatusChange } from './services/socket.js';
 
 class WebSocketBridge {
     constructor() {
@@ -242,7 +242,7 @@ class WebSocketBridge {
 
         // Also broadcast to Socket.IO clients (if available)
         try {
-            broadcastRiderLocation(
+            broadcastLocationUpdate(
                 client.orderId,
                 data.rider_latitude,
                 data.rider_longitude,
