@@ -1,5 +1,5 @@
 import db from '../config/db.js';
-import { emitOrderUpdate, broadcastRiderLocation, broadcastOrderStatusChange } from '../services/socket.js';
+import { emitOrderUpdate, broadcastLocationUpdate, broadcastOrderStatusChange } from '../services/socket.js';
 import wsBridge from '../websocket-server.js';
 
 export const getOrders = async (req, res) => {
@@ -243,6 +243,10 @@ export const updateRiderOrderStatus = async (req, res) => {
       return res.status(400).json({ message: 'Status is required' });
     }
 
+    console.log('🔍 UpdateRiderOrderStatus - Order ID:', id);
+    console.log('🔍 UpdateRiderOrderStatus - Requested status:', status);
+    console.log('🔍 UpdateRiderOrderStatus - Rider ID from token:', riderId);
+
     // Validate status transitions for riders
     const validStatuses = ['accepted', 'pickup', 'in_transit', 'delivered'];
     if (!validStatuses.includes(status)) {
@@ -257,7 +261,10 @@ export const updateRiderOrderStatus = async (req, res) => {
       [status, id, riderId]
     );
 
+    console.log('🔍 UpdateRiderOrderStatus - DB Result rows:', result.rows.length);
+
     if (result.rows.length === 0) {
+      console.log('❌ Order not found or not assigned to this rider');
       return res.status(404).json({ message: 'Order not found or not assigned to this rider' });
     }
 
@@ -384,8 +391,13 @@ export const updateRiderLocation = async (req, res) => {
       return res.status(400).json({ message: 'Latitude e longitude sono obbligatori' });
     }
 
+    console.log('🔍 UpdateRiderLocation - Order ID:', req.params.id);
+    console.log('🔍 UpdateRiderLocation - Rider ID from token:', riderId);
+
     // Verify rider has this order and get customer id + delivery coords
     const orderRes = await db.query('SELECT id, customer_id, status, delivery_latitude, delivery_longitude FROM orders WHERE id = $1 AND rider_id = $2', [req.params.id, riderId]);
+
+    console.log('🔍 UpdateRiderLocation - Order check rows:', orderRes.rows.length);
 
     if (orderRes.rows.length === 0) {
       console.warn('❌ Order not found or not assigned to rider:', req.params.id);
