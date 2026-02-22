@@ -25,7 +25,7 @@ import { initializeSocket } from "./services/socket.js";
 import { authenticateToken } from "./middleware/auth.js";
 
 import db from './config/db.js';
-import { runMigrations } from './config/migrate.js';
+import runMigrations from './config/migrate.js';
 
 dotenv.config();
 
