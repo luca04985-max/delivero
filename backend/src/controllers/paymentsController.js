@@ -37,7 +37,13 @@ export const createCashPayment = async (req, res) => {
     console.log(' Order found for cash payment:', { id: order.id, customer_id: order.customer_id, total_amount: order.total_amount });
 
     const amount = Number(order.total_amount);
-    console.log(' Creating cash payment record with amount:', amount);
+    console.log('💰 Creating cash payment record with amount:', amount);
+    console.log('📋 Payment data being inserted:', {
+      order_id: orderId,
+      payment_method: 'cash',
+      amount: amount,
+      status: 'pending'
+    });
 
     // Create cash payment record
     const paymentResult = await db.query(
@@ -51,8 +57,31 @@ export const createCashPayment = async (req, res) => {
 
     res.status(201).json(paymentResult.rows[0]);
   } catch (error) {
-    console.error(' Error creating cash payment:', error);
-    res.status(500).json({ error: 'Failed to create cash payment' });
+    console.error('❌ Error creating cash payment:', error);
+    console.error('❌ Error details:', {
+      message: error.message,
+      detail: error.detail,
+      constraint: error.constraint,
+      table: error.table,
+      column: error.column,
+      datatype: error.datatype
+    });
+
+    // Log specifico per constraint violation
+    if (error.constraint === 'payments_status_check') {
+      console.error('🚨 PAYMENTS_STATUS_CHECK VIOLATION!');
+      console.error('📋 Attempted values:', {
+        payment_method: 'cash',
+        status: 'pending'
+      });
+      console.error('🔍 Expected values for status constraint: pending, processing, completed, failed, refunded');
+    }
+
+    res.status(500).json({
+      message: 'Error creating cash payment',
+      error: error.message,
+      constraint: error.constraint
+    });
   }
 };
 
