@@ -234,27 +234,40 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
   const loadTrackingInfo = async () => {
     try {
       setRefreshing(true);
+      console.log('📍 Loading tracking info for order:', orderId);
       const trackingData = await ordersAPI.getTrackingInfo(orderId);
+      console.log('📍 Tracking data received:', trackingData);
 
       setOrder(trackingData);
 
       if (trackingData.rider_latitude && trackingData.rider_longitude) {
-        setRiderLocation({
+        const riderLoc = {
           latitude: parseFloat(trackingData.rider_latitude),
           longitude: parseFloat(trackingData.rider_longitude),
-        });
+        };
+        console.log('📍 Setting rider location:', riderLoc);
+        setRiderLocation(riderLoc);
+      } else {
+        console.warn('📍 No rider location in tracking data');
       }
 
       // fetch track history
       try {
         const pts = await ordersAPI.getTrackHistory(orderId);
+        console.log('📍 Track history received:', pts);
         setTrackHistory(pts.map(p => ({ latitude: parseFloat(p.latitude), longitude: parseFloat(p.longitude) })));
       } catch (e) {
-        console.warn('Could not load track history', e.message);
+        console.warn('📍 Could not load track history', e.message);
       }
 
-      // Set default customer location
-      if (!customerLocation) {
+      // Set default customer location (use delivery address or fallback)
+      if (!customerLocation && order?.delivery_address) {
+        // For admin, use a reasonable default near the delivery area
+        setCustomerLocation({
+          latitude: 40.7100,  // Default NYC area - can be improved with geocoding
+          longitude: -74.0070,
+        });
+      } else if (!customerLocation) {
         setCustomerLocation({
           latitude: 40.7100,
           longitude: -74.0070,
@@ -263,7 +276,7 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
 
       setLoading(false);
     } catch (error) {
-      console.error('Error loading tracking:', error);
+      console.error('📍 Error loading tracking:', error);
       Alert.alert('Errore', 'Non è possibile caricare i dettagli della consegna');
     } finally {
       setRefreshing(false);
@@ -281,17 +294,19 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
 
   // Generate HTML for OpenStreetMap with rider and customer tracking
   const generateCustomerTrackingMapHtml = () => {
-    const riderLat = riderLocation?.latitude || 41.880025;
-    const riderLon = riderLocation?.longitude || 12.67594;
+    const riderLat = riderLocation?.latitude;
+    const riderLon = riderLocation?.longitude;
     const customerLat = customerLocation?.latitude || 41.880025;
     const customerLon = customerLocation?.longitude || 12.67594;
 
-    const centerLat = (riderLat + customerLat) / 2;
-    const centerLon = (riderLon + customerLon) / 2;
+    // Center on customer location if no rider location
+    const centerLat = riderLat ? (riderLat + customerLat) / 2 : customerLat;
+    const centerLon = riderLon ? (riderLon + customerLon) / 2 : customerLon;
+    const zoomLevel = riderLat ? 14 : 16; // Zoom più alto se solo cliente
 
     const polyline = trackHistory.length > 0
       ? trackHistory.map(p => `[${p.latitude}, ${p.longitude}]`).join(',')
-      : `[[${riderLat}, ${riderLon}], [${customerLat}, ${customerLon}]]`;
+      : (riderLat ? `[[${riderLat}, ${riderLon}], [${customerLat}, ${customerLon}]]` : null);
 
     return `
       <!DOCTYPE html>
@@ -309,27 +324,31 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
           <div id="map"></div>
           <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
           <script>
-              var map = L.map('map').setView([${centerLat}, ${centerLon}], 14);
+              var map = L.map('map').setView([${centerLat}, ${centerLon}], ${zoomLevel});
               L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                   attribution: '© OpenStreetMap contributors'
               }).addTo(map);
               
-              // Rider marker
+              // Rider marker - only if we have real location
+              ${riderLat ? `
               L.marker([${riderLat}, ${riderLon}])
                   .addTo(map)
                   .bindPopup('<b>🏍️ Rider</b><br/>Stato: ${order?.status || 'In viaggio'}<br/>ETA: ${order?.eta_minutes || '--'} min');
+              ` : ''}
               
               // Customer marker
               L.marker([${customerLat}, ${customerLon}])
                   .addTo(map)
-                  .bindPopup('<b>🏠 La tua posizione</b>');
+                  .bindPopup('<b>🏠 Area di consegna</b><br/>${order?.delivery_address || 'Indirizzo non disponibile'}');
               
-              // Route polyline
+              // Route polyline - only if we have both points
+              ${polyline ? `
               L.polyline([${polyline}], { color: '#ef4444', weight: 3 }).addTo(map);
               
               // Fit bounds to show both
               var bounds = L.latLngBounds([[${riderLat}, ${riderLon}], [${customerLat}, ${customerLon}]]);
               map.fitBounds(bounds, { padding: [50, 50] });
+              ` : ''}
           </script>
       </body>
       </html>
@@ -373,18 +392,22 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
       </View>
 
       {/* Map */}
-      {riderLocation && customerLocation && (
-        <View style={customerOrderTrackingScreenStyles.mapContainer}>
-          <WebView
-            style={customerOrderTrackingScreenStyles.map}
-            source={{ html: generateCustomerTrackingMapHtml() }}
-            javaScriptEnabled={true}
-            domStorageEnabled={true}
-            startInLoadingState={true}
-            renderLoading={() => <ActivityIndicator style={customerOrderTrackingScreenStyles.mapLoader} size="large" />}
-          />
-        </View>
-      )}
+      {(() => {
+        console.log('📍 Map render check:', { riderLocation, customerLocation, order });
+        // Show map if we have any location data or at least the order
+        return customerLocation || order;
+      })() && (
+          <View style={customerOrderTrackingScreenStyles.mapContainer}>
+            <WebView
+              style={customerOrderTrackingScreenStyles.map}
+              source={{ html: generateCustomerTrackingMapHtml() }}
+              javaScriptEnabled={true}
+              domStorageEnabled={true}
+              startInLoadingState={true}
+              renderLoading={() => <ActivityIndicator style={customerOrderTrackingScreenStyles.mapLoader} size="large" />}
+            />
+          </View>
+        )}
 
       {/* Order Details */}
       <View style={customerOrderTrackingScreenStyles.detailsContainer}>

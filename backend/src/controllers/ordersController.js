@@ -197,7 +197,7 @@ export const getActiveRiderOrders = async (req, res) => {
 
     const result = await db.query(
       `SELECT * FROM orders 
-       WHERE rider_id = $1 AND status IN ('accepted', 'pickup', 'in_transit', 'delivered') 
+       WHERE rider_id = $1 AND status IN ('accepted', 'pickup', 'in_transit', 'delivering', 'delivered') 
        ORDER BY updated_at DESC`,
       [riderId]
     );

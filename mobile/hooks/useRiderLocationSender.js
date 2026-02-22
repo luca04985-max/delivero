@@ -15,8 +15,8 @@ export const useRiderLocationSender = (orderId, riderStatus) => {
     const lastLocationRef = useRef(null);
 
     useEffect(() => {
-        // Only send location if order is in transit/pickup states
-        if (!orderId || !['accepted', 'pickup', 'in_transit'].includes(riderStatus)) {
+        // Only send location if order is in transit/pickup/delivering states
+        if (!orderId || !['accepted', 'pickup', 'in_transit', 'delivering'].includes(riderStatus)) {
             if (intervalRef.current) {
                 clearInterval(intervalRef.current);
                 intervalRef.current = null;
