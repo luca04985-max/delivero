@@ -233,11 +233,6 @@ export const getFinanceReport = async (req, res) => {
       ['confirmed']
     );
 
-    // Total bill payments
-    const billPaymentsResult = await db.query(
-      'SELECT COUNT(*) as total_bill_payments, SUM(amount) as total_amount FROM bill_payments'
-    );
-
     // Payment methods breakdown
     const paymentMethodsResult = await db.query(
       'SELECT payment_method, COUNT(*) as count, SUM(amount) as total FROM bill_payments GROUP BY payment_method'
@@ -249,10 +244,10 @@ export const getFinanceReport = async (req, res) => {
     );
 
     res.status(200).json({
-      totalRevenue: parseFloat(revenueResult.rows[0].total_revenue) || 0,
+      totalRevenue: parseFloat(revenueResult?.rows?.[0]?.total_revenue) || 0,
       billPayments: {
-        total: parseInt(billPaymentsResult.rows[0].total_bill_payments),
-        amount: parseFloat(billPaymentsResult.rows[0].total_amount) || 0
+        total: parseInt(billPaymentsResult?.rows?.[0]?.total_bill_payments),
+        amount: parseFloat(billPaymentsResult?.rows?.[0]?.total_amount) || 0
       },
       paymentMethods: paymentMethodsResult.rows,
       ordersByStatus: orderStatusResult.rows
@@ -271,11 +266,6 @@ export const getServiceMetrics = async (req, res) => {
     if (userResult.rows.length === 0 || (userResult.rows[0].role !== 'admin' && userResult.rows[0].role !== 'manager')) {
       return res.status(403).json({ message: 'Access denied' });
     }
-
-    // Pharmacy metrics
-    const pharmacyMetrics = await db.query(
-      'SELECT COUNT(DISTINCT po.id) as total_orders FROM pharmacy_orders po'
-    );
 
     // Medical transport metrics
     const transportMetrics = await db.query(
