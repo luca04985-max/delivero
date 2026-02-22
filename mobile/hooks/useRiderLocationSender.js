@@ -14,15 +14,20 @@ export const useRiderLocationSender = (orderId, riderStatus) => {
     const intervalRef = useRef(null);
     const lastLocationRef = useRef(null);
 
+    console.log('📍 useRiderLocationSender called:', { orderId, riderStatus });
+
     useEffect(() => {
         // Only send location if order is in transit/pickup/delivering states
         if (!orderId || !['accepted', 'pickup', 'in_transit', 'delivering'].includes(riderStatus)) {
+            console.log('📍 Location sender INACTIVE - invalid order or status:', { orderId, riderStatus });
             if (intervalRef.current) {
                 clearInterval(intervalRef.current);
                 intervalRef.current = null;
             }
             return;
         }
+
+        console.log('📍 Location sender ACTIVATED for order:', orderId, 'status:', riderStatus);
 
         const startLocationTracking = async () => {
             try {
@@ -57,7 +62,9 @@ export const useRiderLocationSender = (orderId, riderStatus) => {
 
                         // Send to backend
                         try {
+                            console.log('📍 Sending location for order:', orderId, { latitude, longitude, eta_minutes });
                             await ordersAPI.updateRiderLocation(orderId, latitude, longitude, eta_minutes);
+                            console.log('✅ Location sent successfully for order:', orderId);
                             lastLocationRef.current = { latitude, longitude };
                             setError(null);
                         } catch (apiError) {
@@ -70,7 +77,7 @@ export const useRiderLocationSender = (orderId, riderStatus) => {
                                     intervalRef.current = null;
                                 }
                             } else {
-                                console.warn('Failed to send location:', apiError.message);
+                                console.warn('❌ Failed to send location:', apiError.message);
                                 setError(apiError.message);
                             }
                         }

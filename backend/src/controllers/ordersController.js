@@ -429,7 +429,7 @@ export const updateRiderLocation = async (req, res) => {
     }
     const order = orderRes.rows[0];
 
-    if (!['accepted', 'pickup', 'in_transit'].includes(order.status)) {
+    if (!['accepted', 'pickup', 'in_transit', 'delivering'].includes(order.status)) {
       console.log('ℹ️ Order not in trackable status:', order.status);
       return res.status(200).json({
         message: 'Ordine non in stato tracciabile',
