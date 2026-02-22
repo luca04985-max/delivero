@@ -1,5 +1,6 @@
 import db from '../config/db.js';
 import { emitOrderUpdate, broadcastLocationUpdate, broadcastOrderStatusChange } from '../services/socket.js';
+import { bufferLocationUpdate } from '../services/locationBatcher.js';
 import wsBridge from '../websocket-server.js';
 
 export const getOrders = async (req, res) => {
@@ -461,6 +462,24 @@ export const updateRiderLocation = async (req, res) => {
         rider_longitude: result.rows[0].rider_longitude,
         eta_minutes: result.rows[0].eta_minutes
       });
+
+      // Add to location batcher for order_tracks table
+      try {
+        bufferLocationUpdate(
+          req.params.id,
+          latitude,
+          longitude,
+          eta_minutes,
+          order.customer_id,
+          riderId,
+          order.delivery_latitude,
+          order.delivery_longitude,
+          eta_minutes
+        );
+        console.log('📍 UpdateRiderLocation - Added to location batcher');
+      } catch (batchError) {
+        console.warn('⚠️ UpdateRiderLocation - Batcher error:', batchError.message);
+      }
     }
 
     if (result.rows.length === 0) {
