@@ -439,6 +439,7 @@ export const updateRiderLocation = async (req, res) => {
     }
 
     // Update location on order
+    console.log('🔍 UpdateRiderLocation - Updating coordinates:', { latitude, longitude, eta_minutes });
     const result = await db.query(
       `UPDATE orders 
        SET 
@@ -451,6 +452,16 @@ export const updateRiderLocation = async (req, res) => {
        RETURNING *`,
       [latitude, longitude, eta_minutes, req.params.id]
     );
+
+    console.log('🔍 UpdateRiderLocation - Update result rows:', result.rows.length);
+    if (result.rows.length > 0) {
+      console.log('✅ UpdateRiderLocation - Updated order:', {
+        id: result.rows[0].id,
+        rider_latitude: result.rows[0].rider_latitude,
+        rider_longitude: result.rows[0].rider_longitude,
+        eta_minutes: result.rows[0].eta_minutes
+      });
+    }
 
     if (result.rows.length === 0) {
       console.warn('❌ No rows updated for order:', req.params.id);
