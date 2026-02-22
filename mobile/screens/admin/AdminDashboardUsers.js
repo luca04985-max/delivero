@@ -132,7 +132,7 @@ export default function AdminDashboardUsers({ navigation }) {
         <Text style={styles.userName}>{item.name}</Text>
         <Text style={styles.userEmail}>{item.email} - <Text style={{ color: '#FF6B00' }}>{item.role}</Text></Text>
 
-        <View style={styles.row}>
+        <View style={styles.userActions}>
           <TouchableOpacity
             onPress={() => {
               setEditingUser(item);
@@ -140,10 +140,10 @@ export default function AdminDashboardUsers({ navigation }) {
               setEditEmail(item.email);
               setNewRole(item.role);
             }}
-            style={styles.btnEdit}
+            style={[styles.btnEdit, isSelf && styles.btnDisabled]}
             disabled={isSelf}
           >
-            <Text style={styles.btnText}>Modifica</Text>
+            <Text style={styles.buttonText}>Modifica</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -151,7 +151,7 @@ export default function AdminDashboardUsers({ navigation }) {
             style={[styles.btnDelete, isSelf && styles.btnDisabled]}
             disabled={isSelf}
           >
-            <Text style={styles.btnText}>{isSelf ? "Can't Delete Self" : "Elimina"}</Text>
+            <Text style={styles.buttonText}>{isSelf ? "Can't Delete Self" : "Elimina"}</Text>
           </TouchableOpacity>
         </View>
       </View>

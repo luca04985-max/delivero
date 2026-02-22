@@ -132,15 +132,58 @@ export const adminDashboardUsersStyles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
   },
-  disabledButton: {
-    backgroundColor: mobileTheme.colors.text.tertiary,
+  // User actions container
+  userActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: mobileTheme.spacing[3],
+    gap: mobileTheme.spacing[2],                        // Spazio tra i tasti
+  },
+
+  // User action buttons - Stili migliorati
+  btnEdit: {
+    backgroundColor: mobileTheme.colors.primary,      // Arancione per modifica
+    paddingVertical: mobileTheme.spacing[2],
+    paddingHorizontal: mobileTheme.spacing[3],
+    borderRadius: mobileTheme.borderRadius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 80,
+    marginRight: mobileTheme.spacing[2],
+    ...mobileTheme.shadows.soft,                    // Ombra leggera per profondità
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.primaryDark,
+  },
+  btnDelete: {
+    backgroundColor: mobileTheme.colors.error,          // Rosso per elimina
+    paddingVertical: mobileTheme.spacing[2],
+    paddingHorizontal: mobileTheme.spacing[3],
+    borderRadius: mobileTheme.borderRadius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 80,
+    ...mobileTheme.shadows.soft,                    // Ombra leggera per profondità
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.error,
+  },
+  btnDisabled: {
+    backgroundColor: mobileTheme.colors.text.tertiary,  // Grigio per disabilitato
     opacity: 0.5,
+    paddingVertical: mobileTheme.spacing[2],
+    paddingHorizontal: mobileTheme.spacing[3],
+    borderRadius: mobileTheme.borderRadius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 80,
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.border,
   },
   buttonText: {
     fontSize: mobileTheme.typography.fontSize.sm,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.white,
     textTransform: 'uppercase',
+    letterSpacing: 0.5,                            // Spaziatura per leggibilità
   },
 
   // Role badge

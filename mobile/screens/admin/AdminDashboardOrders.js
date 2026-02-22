@@ -120,6 +120,7 @@ export default function AdminDashboardOrders({ navigation }) {
 
   const renderOrder = ({ item }) => {
     const isDelivered = String(item.status || '').toUpperCase() === 'DELIVERED';
+    const isInTransit = String(item.status || '').toUpperCase() === 'DELIVERING';
 
     return (
       <View style={[styles.card, isDelivered && styles.deliveredCard]}>
@@ -150,7 +151,7 @@ export default function AdminDashboardOrders({ navigation }) {
           <Text style={styles.orderTotal}>€{item.total_amount != null ? Number(item.total_amount).toFixed(2) : '0.00'}</Text>
         </View>
 
-        {!isDelivered && (
+        {isInTransit && (
           <TouchableOpacity style={styles.trackButton} onPress={() => navigation.navigate('OrderTracking', { orderId: item.id })}>
             <Text style={styles.trackButtonText}>Traccia</Text>
           </TouchableOpacity>

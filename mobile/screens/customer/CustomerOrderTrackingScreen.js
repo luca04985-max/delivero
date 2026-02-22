@@ -357,9 +357,6 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
       {/* Header */}
       <View style={customerOrderTrackingScreenStyles.header}>
         <View style={customerOrderTrackingScreenStyles.headerContent}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={customerOrderTrackingScreenStyles.statusText}>← Indietro</Text>
-          </TouchableOpacity>
           <Text style={customerOrderTrackingScreenStyles.title}>📍 Tracciamento Ordine</Text>
           <View style={customerOrderTrackingScreenStyles.statusBadge}>
             <Text style={customerOrderTrackingScreenStyles.statusText}>{statusEmoji[order?.status] || '📦'}</Text>
