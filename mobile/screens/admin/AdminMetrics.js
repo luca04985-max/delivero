@@ -63,16 +63,6 @@ export default function AdminMetrics({ navigation }) {
           <View>
             <Text style={styles.welcome}>📈 Service Metrics</Text>
 
-            {/* Pharmacy Services */}
-            {metrics.pharmacy && (
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>🏥 Servizi Farmacia</Text>
-                <Text style={styles.sectionValue}>{metrics.pharmacy.total_orders || 0}</Text>
-                <Text style={styles.sectionSubtext}>Ordini farmacia completati</Text>
-                <Text style={styles.sectionSubtext}>Incasso: €{Number(metrics.pharmacy.total_revenue || 0).toFixed(2)}</Text>
-              </View>
-            )}
-
             {/* Medical Transport Services */}
             {metrics.medicalTransports && (
               <View style={styles.section}>

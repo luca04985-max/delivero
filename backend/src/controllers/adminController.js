@@ -267,26 +267,11 @@ export const getServiceMetrics = async (req, res) => {
       return res.status(403).json({ message: 'Access denied' });
     }
 
-    // Medical transport metrics
-    const transportMetrics = await db.query(
-      'SELECT COUNT(DISTINCT id) as total_transports FROM medical_transports'
-    );
-
-    // Document pickup metrics
-    const pickupMetrics = await db.query(
-      'SELECT COUNT(DISTINCT id) as total_pickups FROM document_pickups'
-    );
-
-    // Bill payment metrics
-    const billMetrics = await db.query(
-      'SELECT COUNT(DISTINCT id) as total_bills FROM bills'
-    );
-
     res.status(200).json({
-      pharmacy: pharmacyMetrics.rows[0],
-      medicalTransports: transportMetrics.rows[0],
-      documentPickups: pickupMetrics.rows[0],
-      bills: billMetrics.rows[0]
+      pharmacy: pharmacyMetrics?.rows[0] || null,
+      medicalTransports: transportMetrics?.rows[0] || null,
+      documentPickups: pickupMetrics?.rows[0] || null,
+      bills: billMetrics?.rows[0] || null
     });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching service metrics', error: error.message });

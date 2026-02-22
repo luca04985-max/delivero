@@ -70,15 +70,6 @@ export default function AdminFinance({ navigation }) {
               <Text style={styles.sectionSubtext}>Periodo: {finance.period || 'N/D'}</Text>
             </View>
 
-            {/* Bill Payments Section */}
-            {finance.billPayments && (
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Pagamenti Bollette</Text>
-                <Text style={styles.sectionValue}>{finance.billPayments.total || 0}</Text>
-                <Text style={styles.sectionSubtext}>Importo totale: €{Number(finance.billPayments.amount || 0).toFixed(2)}</Text>
-              </View>
-            )}
-
             {/* Orders Revenue Breakdown */}
             {finance.ordersRevenue && (
               <View style={styles.section}>
