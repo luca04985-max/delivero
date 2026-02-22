@@ -35,6 +35,14 @@ export default function RiderHomeScreen({ navigation }) {
 
   useEffect(() => { fetchAvailable(); }, []);
 
+  // Refresh automatico quando lo screen diventa visibile
+  useFocusEffect(
+    useCallback(() => {
+      console.log('🔄 RiderHomeScreen focused - refreshing available orders');
+      fetchAvailable();
+    }, [])
+  );
+
   const handleAcceptOrder = async (orderId) => {
     try {
       await ordersAPI.acceptOrder(orderId);

@@ -194,6 +194,7 @@ export const acceptOrder = async (req, res) => {
 export const getActiveRiderOrders = async (req, res) => {
   try {
     const riderId = req.user.userId;
+    console.log('🔍 getActiveRiderOrders - riderId:', riderId);
 
     const result = await db.query(
       `SELECT * FROM orders 
@@ -202,8 +203,12 @@ export const getActiveRiderOrders = async (req, res) => {
       [riderId]
     );
 
+    console.log('🔍 Found orders:', result.rows.length);
+    console.log('🔍 Orders:', result.rows.map(o => ({ id: o.id, status: o.status, rider_id: o.rider_id })));
+
     res.status(200).json(result.rows);
   } catch (error) {
+    console.error('❌ Error in getActiveRiderOrders:', error);
     res.status(500).json({ message: 'Errore nel recupero ordini attivi', error: error.message });
   }
 };

@@ -8,6 +8,7 @@ import {
   RefreshControl,
   ScrollView,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { ordersAPI } from '../../services/api';
 import { riderActiveScreenStyles } from './styles/RiderActiveScreenStyles';
 import { useToast } from '../../hooks/useToast';
@@ -25,6 +26,14 @@ export default function RiderActiveScreen() {
     fetchActiveOrders();
   }, []);
 
+  // Refresh automatico quando lo screen diventa visibile
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log('🔄 RiderActiveScreen focused - refreshing orders');
+      fetchActiveOrders();
+    }, [])
+  );
+
   // Funzione per toggle delle sezioni
   const toggleSection = (status) => {
     setExpandedSections(prev => ({
@@ -35,16 +44,23 @@ export default function RiderActiveScreen() {
 
   const fetchActiveOrders = async () => {
     try {
+      console.log('🔄 Fetching active orders...');
       const data = await ordersAPI.getActiveRiderOrders();
+      console.log('📊 Received orders:', data);
+      console.log('📊 Orders count:', data?.length || 0);
+      data?.forEach((order, index) => {
+        console.log(`📊 Order ${index + 1}:`, { id: order.id, status: order.status, rider_id: order.rider_id });
+      });
       setActiveOrders(data);
     } catch (e) {
-      console.error('Error fetching active orders:', e);
+      console.error('❌ Error fetching active orders:', e);
     }
   };
 
   const updateStatus = async (orderId, newStatus) => {
     try {
       const response = await ordersAPI.updateOrderRiderStatus(orderId, newStatus);
+      console.log('🔄 Updated order status:', response);
       showToast(`✅ Stato aggiornato: ${newStatus}`, 'success');
       fetchActiveOrders();
     } catch (e) {
@@ -71,6 +87,11 @@ export default function RiderActiveScreen() {
           {(item.status === 'pickup' || item.status === 'accepted') && (
             <TouchableOpacity style={riderActiveScreenStyles.btnTransit} onPress={() => updateStatus(item.id, 'in_transit')}>
               <Text style={riderActiveScreenStyles.btnText}>In Viaggio</Text>
+            </TouchableOpacity>
+          )}
+          {(item.status === 'in_transit' || item.status === 'delivering') && (
+            <TouchableOpacity style={riderActiveScreenStyles.btnTransit} onPress={() => updateStatus(item.id, 'delivering')}>
+              <Text style={riderActiveScreenStyles.btnText}>In Consegna</Text>
             </TouchableOpacity>
           )}
           {item.status !== 'delivered' && (
@@ -113,6 +134,7 @@ export default function RiderActiveScreen() {
       accepted: { label: 'Accettati', icon: '📋' },
       pickup: { label: 'Ritirati', icon: '📦' },
       in_transit: { label: 'In Viaggio', icon: '🚚' },
+      delivering: { label: 'In Consegna', icon: '🚗' },
       delivered: { label: 'Consegnati', icon: '✅' }
     };
 

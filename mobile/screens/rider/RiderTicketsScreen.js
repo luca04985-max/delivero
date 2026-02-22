@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { ordersAPI } from '../../services/api';
 import { riderTicketsScreenStyles } from './styles/RiderTicketsScreenStyles';
 
@@ -21,6 +22,14 @@ export default function RiderTicketsScreen({ navigation }) {
   useEffect(() => {
     loadTickets();
   }, []);
+
+  // Refresh automatico quando lo screen diventa visibile
+  useFocusEffect(
+    useCallback(() => {
+      console.log('🔄 RiderTicketsScreen focused - refreshing tickets');
+      loadTickets();
+    }, [loadTickets])
+  );
 
   const loadTickets = useCallback(async () => {
     try {
