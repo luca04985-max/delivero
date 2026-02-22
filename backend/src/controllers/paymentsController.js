@@ -111,7 +111,7 @@ export const createStripePayment = async (req, res) => {
 
     // Create payment record
     const paymentResult = await db.query(
-      `INSERT INTO payments (order_id, payment_method, amount, status, stripe_payment_intent_id, created_at)
+      `INSERT INTO payments (order_id, payment_method, amount, status, stripe_payment_id, created_at)
        VALUES ($1, 'stripe', $2, 'pending', $3, CURRENT_TIMESTAMP)
        RETURNING *`,
       [orderId, order.total_amount, paymentIntent.id]
@@ -144,7 +144,7 @@ export const confirmStripePayment = async (req, res) => {
     // Update payment status to completed
     const result = await db.query(
       `UPDATE payments 
-       SET status = 'completed', confirmed_at = CURRENT_TIMESTAMP, stripe_payment_intent_id = $1
+       SET status = 'completed', confirmed_at = CURRENT_TIMESTAMP, stripe_payment_id = $1
        WHERE order_id = $2 AND payment_method = 'stripe'
        RETURNING *`,
       [paymentIntentId, orderId]
