@@ -1,21 +1,28 @@
 import { StyleSheet, Platform } from 'react-native';
 import { mobileTheme } from '../../../theme';
+import { unifiedStyles } from '../../../theme/UnifiedStyles';
 
-export const adminDashboardScreenStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: mobileTheme.colors.background // Grigio azzurrato più pulito
+export const AdminDashboardScreenStyles = StyleSheet.create({
+  ...unifiedStyles,
+
+  // Override specifici per AdminDashboard
+  welcome: {
+    fontSize: mobileTheme.typography.fontSize['3xl'],
+    fontWeight: mobileTheme.typography.fontWeight.black,
+    marginBottom: mobileTheme.spacing[4],
+    color: mobileTheme.colors.text.primary,
+    letterSpacing: -1,
   },
 
-  // NAVBAR / TABBAR MODERNA
+  // TABBAR STYLES
   tabBar: {
-    backgroundColor: mobileTheme.colors.secondary, // Blu Navy profondo
+    backgroundColor: mobileTheme.colors.secondary,
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
     paddingBottom: mobileTheme.spacing[2],
     ...mobileTheme.shadows.medium,
   },
   tabBarContent: {
-    paddingHorizontal: mobileTheme.spacing[4]
+    paddingHorizontal: mobileTheme.spacing[4],
   },
   tab: {
     alignItems: 'center',
@@ -25,8 +32,7 @@ export const adminDashboardScreenStyles = StyleSheet.create({
     borderRadius: mobileTheme.borderRadius.md,
   },
   activeTab: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Effetto selezione soft
-    borderBottomWidth: 0, // Rimuoviamo la linea per un look più "pill"
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   tabText: {
     color: mobileTheme.colors.text.tertiary,
@@ -34,129 +40,191 @@ export const adminDashboardScreenStyles = StyleSheet.create({
     fontWeight: mobileTheme.typography.fontWeight.semibold
   },
   activeTabText: {
-    color: mobileTheme.colors.primary, // L'arancione risalta sul navy
+    color: mobileTheme.colors.primary,
     fontWeight: mobileTheme.typography.fontWeight.bold
   },
 
-  content: {
-    flex: 1,
-    padding: mobileTheme.spacing[4]
-  },
-  welcome: {
-    fontSize: mobileTheme.typography.fontSize['3xl'],
-    fontWeight: mobileTheme.typography.fontWeight.black,
-    marginBottom: mobileTheme.spacing[4],
-    color: mobileTheme.colors.text.primary,
-    letterSpacing: -1,
-  },
-
-  // CARD MODERNE (Senza bordi laterali spessi, ma con ombre)
-  card: {
+  // SECTION STYLES (per Stats, Finance, Metrics)
+  section: {
     backgroundColor: mobileTheme.colors.white,
-    padding: mobileTheme.spacing[4],
-    borderRadius: mobileTheme.borderRadius.lg,
-    marginBottom: mobileTheme.spacing[4],
-    ...mobileTheme.shadows.soft,
-    borderWidth: 1,
-    borderColor: mobileTheme.colors.border,
-  },
-
-  // STAT CARDS (Look a griglia moderna)
-  statCard: {
-    backgroundColor: mobileTheme.colors.white,
+    margin: mobileTheme.spacing[4],
     padding: mobileTheme.spacing[5],
     borderRadius: mobileTheme.borderRadius.lg,
-    alignItems: 'center',
-    marginBottom: mobileTheme.spacing[4],
-    ...mobileTheme.shadows.medium,
-    borderTopWidth: 4, // Spostiamo il colore sopra per un look più dashboard
-    borderTopColor: mobileTheme.colors.primary
+    ...mobileTheme.shadows.sm,
+    marginBottom: mobileTheme.spacing[3],
   },
-  statValue: {
-    fontSize: 28,
+  sectionTitle: {
+    fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.secondary
+    color: mobileTheme.colors.text.primary,
+    marginBottom: mobileTheme.spacing[3],
   },
-  statLabel: {
+  sectionValue: {
+    fontSize: mobileTheme.typography.fontSize['2xl'],
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    color: mobileTheme.colors.primary,
+    marginBottom: mobileTheme.spacing[2],
+  },
+  sectionSubtext: {
+    fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
-    textTransform: 'uppercase',
-    fontSize: 10,
-    letterSpacing: 1,
-    marginTop: 4
+    marginBottom: mobileTheme.spacing[1],
+  },
+  headerContent: {
+    flexDirection: 'column', // I componenti ora vanno uno sotto l'altro
+    alignItems: 'flex-start', // Li allinea a sinistra
+  },
+  // MONTHLY STATS (per Finance)
+  monthlyStat: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: mobileTheme.spacing[2],
+    borderBottomWidth: 1,
+    borderBottomColor: mobileTheme.colors.border,
+  },
+  monthLabel: {
+    fontSize: mobileTheme.typography.fontSize.sm,
+    color: mobileTheme.colors.text.primary,
+    fontWeight: mobileTheme.shadows.medium,
+  },
+  monthValue: {
+    fontSize: mobileTheme.typography.fontSize.md,
+    color: mobileTheme.colors.primary,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+  },
+  monthOrders: {
+    fontSize: mobileTheme.typography.fontSize.sm,
+    color: mobileTheme.colors.text.secondary,
   },
 
-  // BUTTONS (Stile "Apple" morbido)
+  // USER SPECIFIC STYLES
   btnEdit: {
-    backgroundColor: mobileTheme.colors.primarySoft, // Sfondo arancio light
-    paddingVertical: mobileTheme.spacing[2],
-    paddingHorizontal: mobileTheme.spacing[4],
-    borderRadius: mobileTheme.borderRadius.md,
-    marginRight: mobileTheme.spacing[3],
-    borderWidth: 1,
-    borderColor: mobileTheme.colors.primary,
-  },
-  btnText: {
-    color: mobileTheme.colors.primary, // Testo arancio su fondo light arancio
-    fontWeight: mobileTheme.typography.fontWeight.bold,
-    fontSize: mobileTheme.typography.fontSize.sm
+    ...unifiedStyles.editButton,
   },
   btnDelete: {
-    backgroundColor: mobileTheme.colors.errorBg,
-    paddingVertical: mobileTheme.spacing[2],
-    paddingHorizontal: mobileTheme.spacing[4],
-    borderRadius: mobileTheme.borderRadius.md,
+    ...unifiedStyles.deleteButton,
+  },
+  btnDisabled: {
+    ...unifiedStyles.disabledButton,
+  },
+  btnText: {
+    ...unifiedStyles.buttonText,
   },
 
-  // BANNERS (Colori pastello moderni)
-  errorBanner: {
-    backgroundColor: mobileTheme.colors.errorBg,
-    padding: mobileTheme.spacing[4],
-    borderRadius: mobileTheme.borderRadius.md,
-    borderLeftWidth: 4,
-    borderLeftColor: mobileTheme.colors.error,
-    marginBottom: mobileTheme.spacing[3]
+  // MODAL SPECIFIC STYLES
+  editRow: {
+    marginBottom: mobileTheme.spacing[4],
   },
-  successBanner: {
-    backgroundColor: mobileTheme.colors.successBg,
-    padding: mobileTheme.spacing[4],
-    borderRadius: mobileTheme.borderRadius.md,
-    borderLeftWidth: 4,
-    borderLeftColor: mobileTheme.colors.success,
-    marginBottom: mobileTheme.spacing[3]
+  editField: {
+    marginBottom: mobileTheme.spacing[3],
   },
-
-  // INPUTS (Puliti e spaziosi)
-  textInput: {
+  fieldLabel: {
+    fontSize: mobileTheme.typography.fontSize.sm,
+    fontWeight: mobileTheme.shadows.medium,
+    color: mobileTheme.colors.text.secondary,
+    marginBottom: mobileTheme.spacing[2],
+  },
+  fieldValue: {
+    fontSize: mobileTheme.typography.fontSize.base,
+    color: mobileTheme.colors.text.primary,
+  },
+  fieldRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: mobileTheme.spacing[3],
+  },
+  pickerContainer: {
+    backgroundColor: mobileTheme.colors.background,
+    borderRadius: mobileTheme.borderRadius.md,
     borderWidth: 1,
     borderColor: mobileTheme.colors.border,
-    borderRadius: mobileTheme.borderRadius.md,
-    padding: mobileTheme.spacing[4],
-    fontSize: mobileTheme.typography.fontSize.base,
-    backgroundColor: '#FFF',
-    color: mobileTheme.colors.text.primary,
-    ...mobileTheme.shadows.soft,
   },
-
-  // MODAL (Glassmorphism overlay)
-  modalOverlay: {
+  editActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: mobileTheme.spacing[3],
+    marginTop: mobileTheme.spacing[4],
+  },
+  saveButton: {
+    ...unifiedStyles.button,
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.7)', // Navy trasparente invece del nero
-    justifyContent: 'center',
-    padding: mobileTheme.spacing[4],
   },
-  modalCard: {
-    backgroundColor: mobileTheme.colors.white,
-    borderRadius: mobileTheme.borderRadius.xl,
-    padding: mobileTheme.spacing[6],
-    ...mobileTheme.shadows.medium,
+  cancelButton: {
+    backgroundColor: mobileTheme.colors.text.secondary,
+    paddingVertical: mobileTheme.spacing[3],
+    paddingHorizontal: mobileTheme.spacing[4],
+    borderRadius: mobileTheme.borderRadius.md,
+    flex: 1,
+    alignItems: 'center',
+  },
+  btnSaveText: {
+    ...unifiedStyles.buttonText,
+  },
+  btnCancelText: {
+    fontSize: mobileTheme.typography.fontSize.sm,
+    fontWeight: mobileTheme.shadows.medium,
+    color: mobileTheme.colors.white,
   },
 
-  // STATUS SPECIFICI
+  // TICKET MODAL SPECIFIC
+  ticketHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: mobileTheme.spacing[4],
+  },
+  infoSection: {
+    marginBottom: mobileTheme.spacing[4],
+  },
+  priorityBadge: {
+    paddingHorizontal: mobileTheme.spacing[2],
+    paddingVertical: mobileTheme.spacing[1],
+    borderRadius: mobileTheme.borderRadius.sm,
+  },
+  priorityText: {
+    fontSize: mobileTheme.typography.fontSize.xs,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    color: mobileTheme.colors.white,
+  },
+
+  // DELIVERED STATE
   deliveredCard: {
-    backgroundColor: '#F1F5F9', // Colore spento
-    borderColor: mobileTheme.colors.border,
     opacity: 0.7,
-  }
+    backgroundColor: mobileTheme.colors.background,
+  },
+  deliveredStatus: {
+    color: mobileTheme.colors.success,
+  },
+
+  // ROLE SELECTION BUTTONS
+  roleButtons: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: mobileTheme.spacing[2],
+    marginTop: mobileTheme.spacing[2],
+  },
+  roleButton: {
+    paddingHorizontal: mobileTheme.spacing[3],
+    paddingVertical: mobileTheme.spacing[2],
+    borderRadius: mobileTheme.borderRadius.md,
+    backgroundColor: mobileTheme.colors.background,
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.border,
+  },
+  roleButtonSelected: {
+    backgroundColor: mobileTheme.colors.primary,
+    borderColor: mobileTheme.colors.primary,
+  },
+  roleButtonText: {
+    fontSize: mobileTheme.typography.fontSize.sm,
+    fontWeight: mobileTheme.shadows.medium,
+    color: mobileTheme.colors.text.secondary,
+  },
+  roleButtonTextSelected: {
+    color: mobileTheme.colors.white,
+  },
 });
 
-export default adminDashboardScreenStyles;
+export default AdminDashboardScreenStyles;

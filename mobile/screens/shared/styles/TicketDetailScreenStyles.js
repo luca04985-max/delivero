@@ -1,14 +1,11 @@
 import { StyleSheet } from 'react-native';
 import { mobileTheme } from '../../../theme';
+import { unifiedStyles } from '../../../theme/UnifiedStyles';
 
 export const ticketDetailScreenStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: mobileTheme.colors.background,
-  },
-  scrollView: {
-    flex: 1,
-  },
+  ...unifiedStyles,
+
+  // Override specifici per TicketDetail
   loadingText: {
     fontSize: mobileTheme.typography.fontSize.base,
     color: mobileTheme.colors.text.secondary,
@@ -19,24 +16,6 @@ export const ticketDetailScreenStyles = StyleSheet.create({
     color: mobileTheme.colors.text.secondary,
     textAlign: 'center',
     marginTop: mobileTheme.spacing[8],
-  },
-
-  // TOAST NOTIFICATIONS
-  toast: {
-    position: 'absolute',
-    top: 50,
-    left: 20,
-    right: 20,
-    padding: mobileTheme.spacing[3],
-    borderRadius: mobileTheme.borderRadius.md,
-    zIndex: 1000,
-    ...mobileTheme.shadows.medium,
-  },
-  toastText: {
-    color: mobileTheme.colors.white,
-    fontSize: mobileTheme.typography.fontSize.sm,
-    fontWeight: mobileTheme.typography.fontWeight.medium,
-    textAlign: 'center',
   },
 
   // TICKET HEADER
@@ -53,28 +32,6 @@ export const ticketDetailScreenStyles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: mobileTheme.spacing[3],
   },
-  ticketId: {
-    fontSize: mobileTheme.typography.fontSize.lg,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.text.primary,
-  },
-  statusBadge: {
-    paddingHorizontal: mobileTheme.spacing[3],
-    paddingVertical: mobileTheme.spacing[1],
-    borderRadius: mobileTheme.borderRadius.full,
-  },
-  statusText: {
-    fontSize: mobileTheme.typography.fontSize.xs,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.white,
-  },
-  ticketTitle: {
-    fontSize: mobileTheme.typography.fontSize.xl,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.text.primary,
-    marginBottom: mobileTheme.spacing[3],
-    lineHeight: 24,
-  },
   ticketMeta: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -88,26 +45,6 @@ export const ticketDetailScreenStyles = StyleSheet.create({
   ticketDate: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.tertiary,
-  },
-
-  // SECTIONS
-  section: {
-    backgroundColor: mobileTheme.colors.white,
-    margin: mobileTheme.spacing[4],
-    padding: mobileTheme.spacing[5],
-    borderRadius: mobileTheme.borderRadius.lg,
-    ...mobileTheme.shadows.sm,
-  },
-  sectionTitle: {
-    fontSize: mobileTheme.typography.fontSize.lg,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.text.primary,
-    marginBottom: mobileTheme.spacing[3],
-  },
-  ticketDescription: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.primary,
-    lineHeight: 22,
   },
 
   // RESPONSES

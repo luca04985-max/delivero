@@ -54,7 +54,7 @@ export const managerRealTimeMapScreenStyles = StyleSheet.create({
   },
   riderName: {
     fontSize: mobileTheme.typography.fontSize.base,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: mobileTheme.fontWeight.bold,
     color: mobileTheme.colors.text.primary,
   },
   statusIndicator: {
@@ -79,7 +79,7 @@ export const managerRealTimeMapScreenStyles = StyleSheet.create({
   },
   loadingText: {
     fontSize: mobileTheme.typography.fontSize.base,
-    fontWeight: mobileTheme.typography.fontWeight.semibold,
+    fontWeight: mobileTheme.fontWeight.semibold,
     color: mobileTheme.colors.text.secondary,
     marginTop: mobileTheme.spacing[4],
     letterSpacing: 1,

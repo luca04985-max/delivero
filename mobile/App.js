@@ -38,8 +38,8 @@ import RiderHomeScreen from './screens/rider/RiderHomeScreen';
 import RiderActiveScreen from './screens/rider/RiderActiveScreen';
 import RiderTicketsScreen from './screens/rider/RiderTicketsScreen';
 import AdminDashboardScreen from './screens/admin/AdminDashboardScreen';
-import AdminTicketsScreen from './screens/admin/AdminTicketsScreen';
 import { ActivityIndicator, View, Text, TouchableOpacity } from 'react-native';
+import AdminDashboardTickets from './screens/admin/AdminDashboardTickets';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -403,7 +403,7 @@ function ManagerStack({ token, user, onLogout }) {
       />
       <Stack.Screen
         name="AdminTickets"
-        component={AdminTicketsScreen}
+        component={AdminDashboardTickets}
         options={{
           title: user?.name || 'Tickets',
           headerRight: () => (

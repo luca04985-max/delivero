@@ -1,104 +1,63 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { Modal, useState } from 'react';
 import {
-  View, Text, FlatList, TouchableOpacity,
-  ActivityIndicator, Alert, Platform, RefreshControl, TextInput, Modal, ScrollView
+  View, Text, ScrollView, TouchableOpacity,
+  ActivityIndicator, Alert, RefreshControl
 } from 'react-native';
-import { adminAPI, ordersAPI } from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Picker } from '@react-native-picker/picker';
-import { adminDashboardScreenStyles as styles } from './styles/AdminDashboardScreenStyles';
+import { AdminDashboardScreenStyles as styles } from './styles/AdminDashboardScreenStyles';
+
+// Import all the separate screen components
+import AdminStats from './AdminStats';
+import AdminFinance from './AdminFinance';
+import AdminMetrics from './AdminMetrics';
+import AdminDashboardOrders from './AdminDashboardOrders';
+import AdminDashboardTickets from './AdminDashboardTickets';
+import AdminDashboardUsers from './AdminDashboardUsers';
 
 export default function AdminDashboardScreen({ navigation }) {
   const [activeTab, setActiveTab] = useState('stats');
-  const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
-
-  // Data States
-  const [stats, setStats] = useState(null);
-  const [finance, setFinance] = useState(null);
-  const [metrics, setMetrics] = useState(null);
-  const [orders, setOrders] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [tickets, setTickets] = useState([]);
-  const [trackingOrders, setTrackingOrders] = useState([]);
-  const [expandedStates, setExpandedStates] = useState(new Set(['IN_TRANSIT']));
-  const [expandedSections, setExpandedSections] = useState({});
-
-  // Edit States
-  const [editingUser, setEditingUser] = useState(null);
-  const [newRole, setNewRole] = useState("");
-  const [editName, setEditName] = useState("");
-  const [editEmail, setEditEmail] = useState("");
-  const [selectedTicket, setSelectedTicket] = useState(null);
-
-  useEffect(() => {
-    if (!editingUser) return;
-    setEditName(editingUser?.name || "");
-    setEditEmail(editingUser?.email || "");
-    setNewRole(editingUser?.role || "customer");
-  }, [editingUser]);
-
-  useEffect(() => {
-    loadCurrentUser();
-    loadDashboardData();
-  }, [activeTab]);
 
   const loadCurrentUser = async () => {
     const userStr = await AsyncStorage.getItem('user');
     if (userStr) setCurrentUser(JSON.parse(userStr));
   };
 
-  const loadDashboardData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      setSuccess(null);
-
-      if (activeTab === 'stats') {
-        const data = await adminAPI.getStats();
-        setStats(data);
-      } else if (activeTab === 'users') {
-        const data = await adminAPI.getAllUsers();
-        setUsers(Array.isArray(data) ? data : data.data || []);
-      } else if (activeTab === 'orders') {
-        const data = await adminAPI.getAllOrders();
-        setOrders(Array.isArray(data) ? data : data.data || []);
-      } else if (activeTab === 'tickets') {
-        const data = await adminAPI.getAdminTickets();
-        setTickets(Array.isArray(data) ? data : data.data || []);
-      } else if (activeTab === 'finance') {
-        const data = await adminAPI.getFinanceReport();
-        setFinance(data);
-      } else if (activeTab === 'metrics') {
-        const data = await adminAPI.getServiceMetrics();
-        setMetrics(data);
-      }
-    } catch (err) {
-      setError("Errore nel caricamento dati: " + err.message);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
+  React.useEffect(() => {
+    loadCurrentUser();
+  }, []);
 
   const renderHeader = () => (
+    <View style={styles.header}>
+      <View style={styles.headerContent}>
+        <Text style={styles.title}>👑 Admin Dashboard</Text>
+        <Text style={styles.subtitle}>Gestione completa sistema</Text>
+      </View>
+    </View>
+  );
+
+  const renderTabBar = () => (
     <View style={styles.tabBar}>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.tabBarContent}
       >
-        {['stats', 'users', 'orders', 'tickets', 'finance', 'metrics'].map((tab) => (
+        {[
+          { key: 'stats', label: 'Stats', icon: '📊' },
+          { key: 'users', label: 'Users', icon: '👥' },
+          { key: 'orders', label: 'Orders', icon: '📦' },
+          { key: 'tickets', label: 'Tickets', icon: '🎫' },
+          { key: 'finance', label: 'Finance', icon: '💰' },
+          { key: 'metrics', label: 'Metrics', icon: '📈' }
+        ].map((tab) => (
           <TouchableOpacity
-            key={tab}
-            style={[styles.tab, activeTab === tab && styles.activeTab]}
-            onPress={() => setActiveTab(tab)}
+            key={tab.key}
+            style={[styles.tab, activeTab === tab.key && styles.activeTab]}
+            onPress={() => setActiveTab(tab.key)}
           >
-            <Text style={[styles.tabText, activeTab === tab && styles.activeTabText]}>
-              {tab.toUpperCase()}
+            <Text style={[styles.tabText, activeTab === tab.key && styles.activeTabText]}>
+              {tab.icon} {tab.label}
             </Text>
           </TouchableOpacity>
         ))}
@@ -106,502 +65,34 @@ export default function AdminDashboardScreen({ navigation }) {
     </View>
   );
 
-  const onRefresh = () => {
-    setRefreshing(true);
-    loadDashboardData();
-  };
+  const renderContent = () => {
+    const commonProps = { navigation };
 
-  const toggleStateExpansion = (status) => {
-    setExpandedStates(prev => {
-      const next = new Set(prev);
-      if (next.has(status)) {
-        next.delete(status);
-      } else {
-        next.add(status);
-      }
-      return next;
-    });
-  };
-
-  const toggleSection = (section) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section] // Inverte lo stato: se era chiuso (false/undefined) lo apre (true)
-    }));
-  };
-
-  const renderOrderStatusSeparator = (status, count, info, isExpanded) => {
-    return (
-      <TouchableOpacity
-        style={styles.statusSeparator}
-        onPress={() => toggleSection(status)}
-        activeOpacity={0.7}
-      >
-        <Text style={styles.separatorText}>
-          {info.icon} {info.label} ({count}) {isExpanded ? '🔼' : '🔽'}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
-
-  const renderTicketStatusSeparator = (status, count, info, isExpanded) => {
-    return (
-      <TouchableOpacity
-        style={styles.statusSeparator}
-        onPress={() => toggleSection(status)}
-        activeOpacity={0.7}
-      >
-        <Text style={styles.separatorText}>
-          {info.icon} {info.label} ({count}) {isExpanded ? '🔼' : '🔽'}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
-
-  const renderOrdersWithSeparators = () => {
-    const statusGroups = {};
-
-    // Raggruppamento ordini per stato
-    orders.forEach(order => {
-      const status = String(order.status || '').toUpperCase();
-      if (!statusGroups[status]) {
-        statusGroups[status] = [];
-      }
-      statusGroups[status].push(order);
-    });
-
-    const statusInfo = {
-      'PENDING': { label: 'In Attesa', icon: '⏳' },
-      'CONFIRMED': { label: 'Confermati', icon: '✅' },
-      'PREPARING': { label: 'In Preparazione', icon: '👨‍🍳' },
-      'READY': { label: 'Pronti', icon: '📦' },
-      'PICKUP': { label: 'Ritiro', icon: '📦' },
-      'IN_TRANSIT': { label: 'In Viaggio', icon: '🚚' },
-      'DELIVERING': { label: 'In Consegna', icon: '🚗' },
-      'DELIVERED': { label: 'Consegnati', icon: '✅' },
-      'CANCELLED': { label: 'Cancellati', icon: '❌' }
-    };
-
-    const result = [];
-
-    // Ciclo sui gruppi di stato
-    Object.keys(statusGroups).forEach(status => {
-      const groupOrders = statusGroups[status];
-      // Controlliamo se questa specifica sezione è espansa
-      const isExpanded = !!expandedSections[status];
-
-      // 1. Aggiungiamo sempre il separatore
-      result.push(
-        <View key={`separator-${status}`}>
-          {renderOrderStatusSeparator(status, groupOrders.length, statusInfo[status] || { label: status, icon: '📋' }, isExpanded)}
-        </View>
-      );
-
-      // 2. Aggiungiamo gli ordini SOLO se la sezione è espansa
-      if (isExpanded) {
-        groupOrders.forEach(order => {
-          result.push(
-            <View key={`order-${order.id}`}>
-              <OrderItem item={order} navigation={navigation} />
-            </View>
-          );
-        });
-      }
-    });
-
-    return result;
-  };
-
-  const renderTicketsWithSeparators = () => {
-    const statusGroups = {};
-
-    // Raggruppamento ticket per stato
-    tickets.forEach(ticket => {
-      const status = String(ticket.ticket_status || ticket.status || '').toUpperCase();
-      if (!statusGroups[status]) {
-        statusGroups[status] = [];
-      }
-      statusGroups[status].push(ticket);
-    });
-
-    const statusInfo = {
-      'OPEN': { label: 'Aperti', icon: '🔓' },
-      'IN_PROGRESS': { label: 'In Corso', icon: '⚙️' },
-      'CLOSED': { label: 'Chiusi', icon: '✅' },
-      'RESOLVED': { label: 'Risolti', icon: '🎯' }
-    };
-
-    const result = [];
-
-    // Ciclo sui gruppi di stato
-    Object.keys(statusGroups).forEach(status => {
-      const groupTickets = statusGroups[status];
-      // Controlliamo se questa specifica sezione è espansa
-      const isExpanded = !!expandedSections[status];
-
-      // 1. Aggiungiamo sempre il separatore
-      result.push(
-        <View key={`separator-${status}`}>
-          {renderTicketStatusSeparator(status, groupTickets.length, statusInfo[status] || { label: status, icon: '📋' }, isExpanded)}
-        </View>
-      );
-
-      // 2. Aggiungiamo i ticket SOLO se la sezione è espansa
-      if (isExpanded) {
-        groupTickets.forEach(ticket => {
-          result.push(
-            <View key={`ticket-${ticket.id}`}>
-              <TicketItem item={ticket} onPress={() => {
-                console.log('Ticket cliccato:', ticket);
-                setSelectedTicket(ticket);
-                console.log('selectedTicket impostato:', ticket);
-              }} />
-            </View>
-          );
-        });
-      }
-    });
-
-    return result;
-  };
-
-  const handleUpdateUserRole = async (userId) => {
-    try {
-      setLoading(true);
-      await adminAPI.updateUser(userId, { name: editName, email: editEmail, role: newRole });
-      setSuccess('Utente aggiornato');
-      setEditingUser(null);
-      loadDashboardData();
-    } catch (err) {
-      setError(err?.message || 'Errore aggiornamento utente');
-    } finally {
-      setLoading(false);
+    switch (activeTab) {
+      case 'stats':
+        return <AdminStats {...commonProps} />;
+      case 'users':
+        return <AdminDashboardUsers {...commonProps} />;
+      case 'orders':
+        return <AdminDashboardOrders {...commonProps} />;
+      case 'tickets':
+        return <AdminDashboardTickets {...commonProps} />;
+      case 'finance':
+        return <AdminFinance {...commonProps} />;
+      case 'metrics':
+        return <AdminMetrics {...commonProps} />;
+      default:
+        return <AdminStats {...commonProps} />;
     }
-  };
-
-  const handleDeleteUser = (userId) => {
-    if (currentUser?.id && String(currentUser.id) === String(userId)) {
-      Alert.alert('Operazione non consentita', 'Non puoi eliminare il tuo account.');
-      return;
-    }
-    Alert.alert("Attenzione", "Eliminare definitivamente l'utente?", [
-      { text: "Annulla", style: "cancel" },
-      {
-        text: "Elimina", style: "destructive", onPress: async () => {
-          await adminAPI.deleteUser(userId);
-          loadDashboardData();
-        }
-      }
-    ]);
   };
 
   return (
     <View style={styles.container}>
       {renderHeader()}
-
+      {renderTabBar()}
       <View style={styles.content}>
-        {error && <Text style={styles.errorBanner}>{error}</Text>}
-        {success && <Text style={styles.successBanner}>{success}</Text>}
-
-        {loading && !refreshing ? (
-          <ActivityIndicator size="large" color="#FF6B00" style={{ marginTop: 50 }} />
-        ) : activeTab === 'orders' || activeTab === 'tickets' ? (
-          <ScrollView
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-            style={styles.content}
-          >
-            {activeTab === 'orders' && renderOrdersWithSeparators()}
-            {activeTab === 'tickets' && renderTicketsWithSeparators()}
-          </ScrollView>
-        ) : (
-          <FlatList
-            data={activeTab === 'users' ? users : activeTab === 'tracking' ? trackingOrders : []}
-            keyExtractor={(item) => item.id.toString()}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-            ListHeaderComponent={() => (
-              <View>
-                {activeTab === 'stats' && stats ? (
-                  <View>
-                    <Text style={styles.welcome}>📊 Dashboard Statistiche</Text>
-                    <StatCard label="Utenti" value={stats.totalUsers} />
-                    <StatCard label="Ordini" value={stats.totalOrders} />
-                    <StatCard label="Incasso" value={`€${stats.totalRevenue?.toFixed(2)}`} />
-                  </View>
-                ) : null}
-
-                {activeTab === 'finance' && finance ? (
-                  <View>
-                    <Text style={styles.welcome}>💰 Finance</Text>
-                    <StatCard label="Incasso" value={`€${Number(finance.totalRevenue || 0).toFixed(2)}`} />
-                    <StatCard label="Bill Payments" value={finance.billPayments?.total || 0} />
-                    <StatCard label="Bills Total" value={`€${Number(finance.billPayments?.amount || 0).toFixed(2)}`} />
-                  </View>
-                ) : null}
-
-                {activeTab === 'metrics' && metrics ? (
-                  <View>
-                    <Text style={styles.welcome}>📈 Metrics</Text>
-                    <StatCard label="Pharmacy Orders" value={metrics.pharmacy?.total_orders || 0} />
-                    <StatCard label="Medical Transports" value={metrics.medicalTransports?.total_transports || 0} />
-                    <StatCard label="Document Pickups" value={metrics.documentPickups?.total_pickups || 0} />
-                    <StatCard label="Bills" value={metrics.bills?.total_bills || 0} />
-                  </View>
-                ) : null}
-              </View>
-            )}
-            renderItem={({ item }) => {
-              if (activeTab === 'users') return <UserItem item={item} onEdit={(item) => { setEditingUser(item); setEditName(item.name); setEditEmail(item.email); setNewRole(item.role); }} onDelete={handleDeleteUser} currentUser={currentUser} />;
-              return null;
-            }}
-          />
-        )}
-
-        <Modal
-          visible={!!editingUser}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setEditingUser(null)}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalCard}>
-              <Text style={styles.modalTitle}>Modifica Utente</Text>
-
-              <View style={styles.editRow}>
-                <View style={styles.editField}>
-                  <Text style={styles.fieldLabel}>Nome:</Text>
-                  <TextInput
-                    style={styles.textInput}
-                    value={editName}
-                    onChangeText={setEditName}
-                  />
-                </View>
-              </View>
-
-              <View style={styles.editRow}>
-                <View style={styles.editField}>
-                  <Text style={styles.fieldLabel}>Email:</Text>
-                  <TextInput
-                    style={styles.textInput}
-                    value={editEmail}
-                    onChangeText={setEditEmail}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                  />
-                </View>
-              </View>
-
-              <View style={styles.editRow}>
-                <View style={styles.editField}>
-                  <Text style={styles.fieldLabel}>Ruolo:</Text>
-                  <View style={styles.pickerContainer}>
-                    <Picker
-                      selectedValue={newRole}
-                      onValueChange={(value) => setNewRole(value)}
-                      dropdownIconColor="#333"
-                    >
-                      <Picker.Item label="Customer" value="customer" />
-                      <Picker.Item label="Rider" value="rider" />
-                      <Picker.Item label="Manager" value="manager" />
-                      <Picker.Item label="Admin" value="admin" />
-                    </Picker>
-                  </View>
-                </View>
-              </View>
-
-              <View style={styles.editActions}>
-                <TouchableOpacity
-                  style={styles.saveButton}
-                  onPress={() => handleUpdateUserRole(editingUser.id)}
-                  disabled={loading}
-                >
-                  <Text style={styles.btnSaveText}>Salva</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.cancelButton}
-                  onPress={() => setEditingUser(null)}
-                  disabled={loading}
-                >
-                  <Text style={styles.btnCancelText}>Annulla</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
-
-        {/* Modal per dettagli ticket */}
-        <Modal
-          visible={!!selectedTicket}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setSelectedTicket(null)}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalCard}>
-              <View style={styles.ticketHeader}>
-                <Text style={styles.ticketId}>#{selectedTicket?.id}</Text>
-                <Text style={styles.modalTitle}>Dettagli Ticket</Text>
-              </View>
-
-              {!selectedTicket ? (
-                <View style={styles.editField}>
-                  <Text style={styles.textInput}>Nessun ticket selezionato</Text>
-                </View>
-              ) : (
-                <ScrollView style={{ maxHeight: 400 }}>
-                  <View style={styles.infoSection}>
-                    <Text style={styles.sectionTitle}>Informazioni Generali</Text>
-
-                    <View style={styles.fieldRow}>
-                      <Text style={styles.fieldLabel}>Titolo:</Text>
-                      <Text style={styles.fieldValue}>{selectedTicket?.title || '—'}</Text>
-                    </View>
-
-                    <View style={styles.fieldRow}>
-                      <Text style={styles.fieldLabel}>Descrizione:</Text>
-                      <Text style={styles.fieldValue}>{selectedTicket?.description || '—'}</Text>
-                    </View>
-
-                    <View style={styles.fieldRow}>
-                      <Text style={styles.fieldLabel}>Tipo:</Text>
-                      <View style={[styles.priorityBadge, { backgroundColor: selectedTicket?.type === 'bug' ? '#dc3545' : selectedTicket?.type === 'complaint' ? '#ffc107' : '#17a2b8' }]}>
-                        <Text style={styles.priorityText}>{selectedTicket?.type?.toUpperCase() || '—'}</Text>
-                      </View>
-                    </View>
-                  </View>
-
-                  <View style={styles.infoSection}>
-                    <Text style={styles.sectionTitle}>Stato e Priorità</Text>
-
-                    <View style={styles.fieldRow}>
-                      <Text style={styles.fieldLabel}>Stato:</Text>
-                      <View style={[styles.priorityBadge, { backgroundColor: selectedTicket?.status === 'open' ? '#28a745' : selectedTicket?.status === 'resolved' ? '#17a2b8' : '#ffc107' }]}>
-                        <Text style={styles.priorityText}>{selectedTicket?.status?.toUpperCase() || '—'}</Text>
-                      </View>
-                    </View>
-
-                    <View style={styles.fieldRow}>
-                      <Text style={styles.fieldLabel}>Priorità:</Text>
-                      <View style={[styles.priorityBadge, { backgroundColor: selectedTicket?.priority === 'high' ? '#dc3545' : selectedTicket?.priority === 'medium' ? '#ffc107' : '#6c757d' }]}>
-                        <Text style={styles.priorityText}>{selectedTicket?.priority?.toUpperCase() || '—'}</Text>
-                      </View>
-                    </View>
-                  </View>
-
-                  <View style={styles.infoSection}>
-                    <Text style={styles.sectionTitle}>Informazioni Utente</Text>
-
-                    <View style={styles.fieldRow}>
-                      <Text style={styles.fieldLabel}>Utente:</Text>
-                      <Text style={styles.fieldValue}>{selectedTicket?.user_name || '—'}</Text>
-                    </View>
-
-                    <View style={styles.fieldRow}>
-                      <Text style={styles.fieldLabel}>Email:</Text>
-                      <Text style={styles.fieldValue}>{selectedTicket?.user_email || '—'}</Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.infoSection}>
-                    <Text style={styles.sectionTitle}>Date</Text>
-
-                    <View style={styles.fieldRow}>
-                      <Text style={styles.fieldLabel}>Creato:</Text>
-                      <Text style={styles.fieldValue}>{selectedTicket?.created_at ? new Date(selectedTicket.created_at).toLocaleString() : '—'}</Text>
-                    </View>
-
-                    <View style={styles.fieldRow}>
-                      <Text style={styles.fieldLabel}>Aggiornato:</Text>
-                      <Text style={styles.fieldValue}>{selectedTicket?.updated_at ? new Date(selectedTicket.updated_at).toLocaleString() : '—'}</Text>
-                    </View>
-                  </View>
-                </ScrollView>
-              )}
-
-              <View style={styles.editActions}>
-                <TouchableOpacity
-                  style={styles.cancelButton}
-                  onPress={() => setSelectedTicket(null)}
-                >
-                  <Text style={styles.btnCancelText}>Chiudi</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
+        {renderContent()}
       </View>
     </View>
   );
 }
-
-// Sub-components per pulizia codice
-const StatCard = ({ label, value }) => (
-  <View style={styles.statCard}>
-    <Text style={styles.statValue}>{value || 0}</Text>
-    <Text style={styles.statLabel}>{label}</Text>
-  </View>
-);
-
-const UserItem = ({ item, onEdit, onDelete, currentUser }) => {
-  const isSelf = currentUser?.id === item.id;
-  return (
-    <View style={styles.card}>
-      <Text style={styles.userName}>{item.name}</Text>
-      <Text style={styles.userEmail}>{item.email} - <Text style={{ color: '#FF6B00' }}>{item.role}</Text></Text>
-
-      <View style={styles.row}>
-        <TouchableOpacity
-          onPress={() => onEdit(item)}
-          style={styles.btnEdit}
-          disabled={isSelf}
-        >
-          <Text style={styles.btnText}>Modifica</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => onDelete(item.id)}
-          style={[styles.btnDelete, isSelf && styles.btnDisabled]}
-          disabled={isSelf}
-        >
-          <Text style={styles.btnText}>{isSelf ? "Can't Delete Self" : "Elimina"}</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-};
-
-const OrderItem = ({ item, navigation }) => {
-  const isDelivered = String(item.status || '').toUpperCase() === 'DELIVERED';
-
-  return (
-    <View style={[styles.card, isDelivered && styles.deliveredCard]}>
-      <Text style={styles.orderId}>Ordine #{item.id}</Text>
-      <Text style={styles.userEmail}>Cliente: {item.customer_name || '—'}</Text>
-      <Text style={styles.userEmail}>Rider: {item.rider_name || '—'}</Text>
-      <Text style={styles.userEmail}>Indirizzo: {item.delivery_address || '—'}</Text>
-      <Text style={styles.userEmail}>Stato: <Text style={[{ color: '#FF6B00' }, isDelivered && styles.deliveredStatus]}>{String(item.status || '').toUpperCase()}</Text></Text>
-      <Text style={styles.userEmail}>ETA: {item.eta_minutes != null ? `${item.eta_minutes} min` : '—'}</Text>
-      <Text style={styles.userEmail}>Totale: €{item.total_amount != null ? Number(item.total_amount).toFixed(2) : '0.00'}</Text>
-      {!isDelivered && (
-        <TouchableOpacity style={styles.trackBtn} onPress={() => navigation.navigate('OrderTracking', { orderId: item.id })}>
-          <Text style={styles.trackBtnText}>Traccia</Text>
-        </TouchableOpacity>
-      )}
-    </View>
-  );
-};
-
-const TicketItem = ({ item, onPress }) => {
-  const handlePress = () => {
-    console.log('Ticket cliccato:', item);
-    if (onPress) {
-      onPress(item);
-    }
-  };
-
-  return (
-    <TouchableOpacity style={styles.card} onPress={handlePress}>
-      <Text style={styles.userName}>{item.title}</Text>
-      <Text style={styles.userEmail}>{item.description}</Text>
-    </TouchableOpacity>
-  );
-};
