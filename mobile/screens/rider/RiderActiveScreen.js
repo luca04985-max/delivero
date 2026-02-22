@@ -89,7 +89,7 @@ export default function RiderActiveScreen() {
               <Text style={riderActiveScreenStyles.btnText}>In Viaggio</Text>
             </TouchableOpacity>
           )}
-          {(item.status === 'in_transit' || item.status === 'delivering') && (
+          {item.status === 'in_transit' && (
             <TouchableOpacity style={riderActiveScreenStyles.btnTransit} onPress={() => updateStatus(item.id, 'delivering')}>
               <Text style={riderActiveScreenStyles.btnText}>In Consegna</Text>
             </TouchableOpacity>

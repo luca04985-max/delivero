@@ -9,7 +9,7 @@ export const createPayment = async (req, res) => {
 
     // Verify order exists
     const orderResult = await db.query(
-      'SELECT o.*, u.email FROM orders o JOIN users u ON o.user_id = u.id WHERE o.id = $1 AND o.user_id = $2',
+      'SELECT o.*, u.email FROM orders o JOIN users u ON o.customer_id = u.id WHERE o.id = $1 AND o.customer_id = $2',
       [orderId, userId]
     );
 
@@ -60,7 +60,7 @@ export const confirmOrderPayment = async (req, res) => {
 
     // Update order status
     await db.query(
-      'UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2 AND user_id = $3',
+      'UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2 AND customer_id = $3',
       ['confirmed', orderId, userId]
     );
 
@@ -92,7 +92,7 @@ export const createCashPayment = async (req, res) => {
     const userId = req.user.userId;
 
     const orderResult = await db.query(
-      'SELECT * FROM orders WHERE id = $1 AND user_id = $2',
+      'SELECT * FROM orders WHERE id = $1 AND customer_id = $2',
       [orderId, userId]
     );
 
@@ -108,7 +108,7 @@ export const createCashPayment = async (req, res) => {
 
     // Confirm order (can now be accepted by riders/managers)
     await db.query(
-      'UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2 AND user_id = $3',
+      'UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2 AND customer_id = $3',
       ['confirmed', orderId, userId]
     );
 

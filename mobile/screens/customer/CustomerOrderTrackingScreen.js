@@ -260,18 +260,33 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
         console.warn('📍 Could not load track history', e.message);
       }
 
-      // Set default customer location (use delivery address or fallback)
-      if (!customerLocation && order?.delivery_address) {
-        // For admin, use a reasonable default near the delivery area
-        setCustomerLocation({
-          latitude: 40.7100,  // Default NYC area - can be improved with geocoding
-          longitude: -74.0070,
-        });
-      } else if (!customerLocation) {
-        setCustomerLocation({
-          latitude: 40.7100,
-          longitude: -74.0070,
-        });
+      // Set customer location from delivery coordinates or fallback
+      if (!customerLocation) {
+        // Priority 1: Use exact delivery coordinates if available
+        if (order?.delivery_latitude && order?.delivery_longitude) {
+          setCustomerLocation({
+            latitude: parseFloat(order.delivery_latitude),
+            longitude: parseFloat(order.delivery_longitude),
+          });
+          console.log('📍 Using exact delivery coordinates:', { latitude: order.delivery_latitude, longitude: order.delivery_longitude });
+        }
+        // Priority 2: Use approximate Rome coordinates for delivery address
+        else if (order?.delivery_address) {
+          // Approximate coordinates for Via Milano 456, 00100 Roma
+          setCustomerLocation({
+            latitude: 41.9028,
+            longitude: 12.4964,
+          });
+          console.log('📍 Using approximate Rome coordinates for:', order.delivery_address);
+        }
+        // Priority 3: Use Rome default coordinates
+        else {
+          setCustomerLocation({
+            latitude: 41.9028,
+            longitude: 12.4964,
+          });
+          console.log('📍 Using Rome default coordinates');
+        }
       }
 
       setLoading(false);

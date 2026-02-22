@@ -4,9 +4,9 @@ import {
   TextInput, Alert, ActivityIndicator, RefreshControl, Dimensions
 } from 'react-native';
 import { WebView } from 'react-native-webview';
-import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { makeRequest } from '../../services/api';
+import locationService from '../../services/locationService';
 // Correzione import tema (2 livelli su)
 import { mobileTheme } from '../../theme';
 import { customerHomeScreenStyles } from './styles/CustomerHomeScreenStyles';
@@ -41,19 +41,27 @@ export default function CustomerHomeScreen({ navigation }) {
   };
 
   const requestLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert("GPS disattivato", "Usa la posizione per vedere i servizi a Roma Est.");
-      return;
+    try {
+      console.log('📍 CustomerHomeScreen: Getting GPS location...');
+      const location = await locationService.getCurrentLocation();
+
+      if (location) {
+        setUserLocation(location);
+        setMapRegion({
+          latitude: location.latitude,
+          longitude: location.longitude,
+          latitudeDelta: 0.04,
+          longitudeDelta: 0.04,
+        });
+        console.log('✅ CustomerHomeScreen: GPS location set');
+      } else {
+        console.warn('⚠️ CustomerHomeScreen: No GPS location available');
+        Alert.alert("GPS non disponibile", "Impossibile ottenere la posizione GPS.");
+      }
+    } catch (error) {
+      console.error('❌ CustomerHomeScreen: Error getting location:', error);
+      Alert.alert("Errore GPS", "Impossibile ottenere la posizione GPS.");
     }
-    let loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-    setUserLocation(loc.coords);
-    setMapRegion({
-      latitude: loc.coords.latitude,
-      longitude: loc.coords.longitude,
-      latitudeDelta: 0.04,
-      longitudeDelta: 0.04,
-    });
   };
 
   const loadCategories = async () => {
