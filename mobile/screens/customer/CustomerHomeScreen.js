@@ -40,10 +40,12 @@ export default function CustomerHomeScreen({ navigation }) {
     loadData();
   };
 
-  const requestLocation = async () => {
+  const requestLocation = async (retryCount = 0) => {
+    const maxRetries = 2;
+
     try {
-      console.log('📍 CustomerHomeScreen: Getting GPS location...');
-      const location = await locationService.getCurrentLocation();
+      console.log(`📍 CustomerHomeScreen: Getting GPS location... (attempt ${retryCount + 1}/${maxRetries + 1})`);
+      const location = await locationService.getCurrentLocation(retryCount > 0, 'CustomerHomeScreen');
 
       if (location) {
         setUserLocation(location);
@@ -55,12 +57,54 @@ export default function CustomerHomeScreen({ navigation }) {
         });
         console.log('✅ CustomerHomeScreen: GPS location set');
       } else {
-        console.warn('⚠️ CustomerHomeScreen: No GPS location available');
-        Alert.alert("GPS non disponibile", "Impossibile ottenere la posizione GPS.");
+        if (retryCount < maxRetries) {
+          console.log(`📍 CustomerHomeScreen: GPS failed, retrying in 2 seconds... (${retryCount + 1}/${maxRetries})`);
+          setTimeout(() => requestLocation(retryCount + 1), 2000);
+        } else {
+          console.warn('⚠️ CustomerHomeScreen: No GPS location available after retries');
+          // NON resettare la posizione se il GPS fallisce - lascia quella esistente o null
+          // Se abbiamo già una posizione dal service, usala
+          const existingLocation = locationService.getLocationSync();
+          if (existingLocation) {
+            console.log('✅ CustomerHomeScreen: Using existing location from service');
+            setUserLocation(existingLocation);
+            setMapRegion({
+              latitude: existingLocation.latitude,
+              longitude: existingLocation.longitude,
+              latitudeDelta: 0.04,
+              longitudeDelta: 0.04,
+            });
+          } else {
+            console.log('✅ CustomerHomeScreen: No location available - waiting for GPS');
+            setUserLocation(null);
+            setMapRegion(null);
+          }
+        }
       }
     } catch (error) {
       console.error('❌ CustomerHomeScreen: Error getting location:', error);
-      Alert.alert("Errore GPS", "Impossibile ottenere la posizione GPS.");
+
+      if (retryCount < maxRetries) {
+        console.log(`📍 CustomerHomeScreen: GPS error, retrying in 2 seconds... (${retryCount + 1}/${maxRetries})`);
+        setTimeout(() => requestLocation(retryCount + 1), 2000);
+      } else {
+        // NON resettare la posizione se c'è già una nel service
+        const existingLocation = locationService.getLocationSync();
+        if (existingLocation) {
+          console.log('✅ CustomerHomeScreen: Using existing location after error');
+          setUserLocation(existingLocation);
+          setMapRegion({
+            latitude: existingLocation.latitude,
+            longitude: existingLocation.longitude,
+            latitudeDelta: 0.04,
+            longitudeDelta: 0.04,
+          });
+        } else {
+          console.log('✅ CustomerHomeScreen: No location set after error - waiting for GPS');
+          setUserLocation(null);
+          setMapRegion(null);
+        }
+      }
     }
   };
 

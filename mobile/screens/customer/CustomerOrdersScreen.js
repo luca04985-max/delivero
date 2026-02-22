@@ -191,13 +191,19 @@ export default function CustomerOrdersScreen({ navigation, route }) {
   );
 
   const renderStatusSeparator = (status, count, info, isExpanded) => {
+    // Fallback per status non definiti
+    const safeInfo = info || {
+      label: status.charAt(0).toUpperCase() + status.slice(1),
+      icon: '📋'
+    };
+
     return (
       <TouchableOpacity
         style={customerOrdersScreenStyles.statusSeparator}
         onPress={() => toggleSection(status)} // Chiama la funzione toggle
       >
         <View style={customerOrdersScreenStyles.statusSeparatorContent}>
-          <Text>{info.icon} {info.label} ({count})</Text>
+          <Text>{safeInfo.icon} {safeInfo.label} ({count})</Text>
           {/* Cambia l'icona in base allo stato aperto/chiuso */}
           <Text>{isExpanded ? '🔼' : '🔽'}</Text>
         </View>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import * as Location from 'expo-location';
 import { ordersAPI } from '../services/api';
+import locationService from '../services/locationService';
 
 /**
  * Hook that sends rider GPS location to backend every 5 seconds
@@ -31,58 +31,55 @@ export const useRiderLocationSender = (orderId, riderStatus) => {
 
         const startLocationTracking = async () => {
             try {
-                // Request foreground location permission
-                const { status } = await Location.requestForegroundPermissionsAsync();
-                if (status !== 'granted') {
-                    setError('Location permission denied');
-                    return;
-                }
-
+                console.log('📍 [RiderLocationSender] Starting location tracking for order:', orderId);
                 setLocating(true);
 
                 // Send location immediately first time
                 const getCurrentLocation = async () => {
                     try {
-                        const location = await Location.getCurrentPositionAsync({
-                            accuracy: Location.Accuracy.High,
-                            timeout: 5000
-                        });
+                        console.log('📍 [RiderLocationSender] Getting location for order:', orderId);
+                        const location = await locationService.getCurrentLocation(false, 'RiderLocationSender');
 
-                        const { latitude, longitude } = location.coords;
+                        if (!location) {
+                            console.warn('📍 [RiderLocationSender] No location available for order:', orderId);
+                            return;
+                        }
+
+                        const { latitude, longitude } = location;
 
                         // Calculate ETA based on current speed if available
                         let eta_minutes = null;
-                        if (location.coords.speed !== null && location.coords.speed > 0) {
+                        if (location.speed !== null && location.speed > 0) {
                             // Estimate ETA based on average delivery distance (~5km) and current speed
                             const avgDeliveryDistanceM = 5000;
-                            const speedMS = location.coords.speed;
+                            const speedMS = location.speed;
                             eta_minutes = Math.ceil(avgDeliveryDistanceM / speedMS / 60);
                             eta_minutes = Math.min(eta_minutes, 60); // cap at 60 mins
                         }
 
                         // Send to backend
                         try {
-                            console.log('📍 Sending location for order:', orderId, { latitude, longitude, eta_minutes });
+                            console.log('📍 [RiderLocationSender] Sending location for order:', orderId, { latitude, longitude, eta_minutes });
                             await ordersAPI.updateRiderLocation(orderId, latitude, longitude, eta_minutes);
-                            console.log('✅ Location sent successfully for order:', orderId);
+                            console.log('✅ [RiderLocationSender] Location sent successfully for order:', orderId);
                             lastLocationRef.current = { latitude, longitude };
                             setError(null);
                         } catch (apiError) {
                             // Don't treat "non tracciabile" as an error - it's expected behavior
                             if (apiError.message && apiError.message.includes('non in stato tracciabile')) {
-                                console.log('ℹ️ Order not trackable - stopping location updates');
+                                console.log('ℹ️ [RiderLocationSender] Order not trackable - stopping location updates');
                                 // Clear the interval since order is no longer trackable
                                 if (intervalRef.current) {
                                     clearInterval(intervalRef.current);
                                     intervalRef.current = null;
                                 }
                             } else {
-                                console.warn('❌ Failed to send location:', apiError.message);
+                                console.warn('❌ [RiderLocationSender] Failed to send location:', apiError.message);
                                 setError(apiError.message);
                             }
                         }
                     } catch (e) {
-                        console.warn('Failed to get location:', e.message);
+                        console.warn('📍 [RiderLocationSender] Failed to get location:', e.message);
                         setError('Unable to get current location');
                     }
                 };

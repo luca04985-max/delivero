@@ -26,15 +26,50 @@ export default function CartScreen({ navigation }) {
     // Ottieni posizione corrente quando si apre il checkout
     useEffect(() => {
         if (checkoutVisible) {
-            // Non serve ottenere la posizione qui, locationService ce l'ha già dal login
-            // Usiamo solo la posizione già disponibile
+            // Prima prova a usare la posizione già disponibile
             const cachedLocation = locationService.getLocationSync();
+            console.log('📍 CartScreen: Cache check - cachedLocation:', cachedLocation);
+            console.log('📍 CartScreen: Cache check - service.hasLocation():', locationService.hasLocation());
+            console.log('📍 CartScreen: Cache check - service.currentLocation:', locationService.currentLocation);
+
             if (cachedLocation) {
                 setCurrentLocation(cachedLocation);
                 console.log('📍 CartScreen: Using cached location from service');
+            } else {
+                console.log('📍 CartScreen: No cached location available, trying to get fresh location...');
+                // Se non abbiamo cache, prova a ottenere la posizione attiva con retry
+                tryGetLocationWithRetry();
             }
         }
     }, [checkoutVisible]);
+
+    // Funzione per ottenere posizione con retry
+    const tryGetLocationWithRetry = async (retryCount = 0) => {
+        const maxRetries = 2;
+
+        try {
+            console.log(`📍 CartScreen: Getting location with retry... (attempt ${retryCount + 1}/${maxRetries + 1})`);
+            const location = await getCurrentLocation(false);
+
+            if (location) {
+                console.log('✅ CartScreen: Location obtained with retry');
+                return;
+            }
+
+            if (retryCount < maxRetries) {
+                console.log(`📍 CartScreen: Location failed, retrying in 2 seconds... (${retryCount + 1}/${maxRetries})`);
+                setTimeout(() => tryGetLocationWithRetry(retryCount + 1), 2000);
+            } else {
+                console.log('📍 CartScreen: All location attempts failed, GPS may be disabled');
+            }
+        } catch (error) {
+            console.error('❌ CartScreen: Error in location retry:', error);
+
+            if (retryCount < maxRetries) {
+                setTimeout(() => tryGetLocationWithRetry(retryCount + 1), 2000);
+            }
+        }
+    };
 
     // Ottieni la posizione corrente del cliente (usa locationService)
     const getCurrentLocation = async (showLoading = true) => {
@@ -44,7 +79,7 @@ export default function CartScreen({ navigation }) {
             }
 
             console.log('📍 CartScreen: Getting location from service...');
-            const location = await locationService.getCurrentLocation();
+            const location = await locationService.getCurrentLocation(false, 'CartScreen');
 
             if (location) {
                 setCurrentLocation(location);
@@ -68,7 +103,7 @@ export default function CartScreen({ navigation }) {
     const useCurrentLocationAsAddress = async () => {
         try {
             setLoadingLocation(true);
-            const coords = await getCurrentLocation();
+            const coords = await getCurrentLocation(false); // Non mostrare loading duplicato
 
             if (coords) {
                 // Reverse geocoding per ottenere l'indirizzo dalle coordinate
@@ -82,7 +117,7 @@ export default function CartScreen({ navigation }) {
                         longitude: coords.longitude,
                         displayName: address
                     });
-                    console.log('📍 Used current location as address:', address);
+                    console.log('📍 CartScreen: Used current location as address:', address);
                 } else {
                     // Se reverse geocoding fallisce, usa coordinate grezze
                     const fallbackAddress = `Posizione GPS (${coords.latitude.toFixed(6)}, ${coords.longitude.toFixed(6)})`;
@@ -92,11 +127,11 @@ export default function CartScreen({ navigation }) {
                         longitude: coords.longitude,
                         displayName: fallbackAddress
                     });
-                    console.log('📍 Used GPS coordinates as address:', fallbackAddress);
+                    console.log('📍 CartScreen: Used GPS coordinates as address:', fallbackAddress);
                 }
             }
         } catch (error) {
-            console.error('Error using current location:', error);
+            console.error('❌ CartScreen: Error using current location:', error);
             Alert.alert('Errore', 'Impossibile ottenere la posizione corrente');
         } finally {
             setLoadingLocation(false);
@@ -155,6 +190,44 @@ export default function CartScreen({ navigation }) {
 
     // Funzione per generare HTML della mappa interattiva
     const generateMapHtml = () => {
+        // Se non abbiamo coordinate, mostra mappa vuota con messaggio
+        if (!currentLocation && !mapCoordinates) {
+            return `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="utf-8" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+                    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+                    <style>
+                        body { margin:0; padding:0; background:#f0f0f0; }
+                        #map { position:absolute; top:0; bottom:0; width:100%; height:100%; }
+                        .no-location { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; background:white; padding:20px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
+                    </style>
+                </head>
+                <body>
+                    <div id="map"></div>
+                    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+                    <script>
+                        var map = L.map('map').setView([41.9028, 12.4964], 13);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '© OpenStreetMap contributors'
+                        }).addTo(map);
+                        
+                        // Mostra messaggio che GPS non è disponibile
+                        var noLocationDiv = L.divIcon({
+                            html: '<div class="no-location">📍<br><strong>GPS non disponibile</strong><br><small>Abilita GPS per vedere la tua posizione</small></div>',
+                            iconSize: [200, 100],
+                            className: 'no-location-marker'
+                        });
+                        
+                        L.marker([41.9028, 12.4964], {icon: noLocationDiv}).addTo(map);
+                    </script>
+                </body>
+                </html>
+            `;
+        }
+
         // Usa coordinate geocoded o posizione corrente come fallback
         const centerLat = mapCoordinates?.latitude || currentLocation?.latitude || 41.9028;
         const centerLon = mapCoordinates?.longitude || currentLocation?.longitude || 12.4964;
@@ -430,6 +503,55 @@ export default function CartScreen({ navigation }) {
                                 ) : (
                                     <Text style={{ color: 'white', fontSize: 16 }}>📍</Text>
                                 )}
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* Selezione Metodo di Pagamento */}
+                        <Text style={[styles.summaryLabel, { marginBottom: 15 }]}>Metodo di Pagamento</Text>
+                        <View style={{ flexDirection: 'row', marginBottom: 20 }}>
+                            <TouchableOpacity
+                                style={{
+                                    backgroundColor: paymentMethod === 'cash' ? mobileTheme.colors.primary : '#f0f0f0',
+                                    padding: 15,
+                                    borderRadius: 10,
+                                    flex: 1,
+                                    marginRight: 10,
+                                    borderWidth: 2,
+                                    borderColor: paymentMethod === 'cash' ? mobileTheme.colors.primary : '#e0e0e0'
+                                }}
+                                onPress={() => setPaymentMethod('cash')}
+                            >
+                                <View style={{ alignItems: 'center' }}>
+                                    <Text style={{ fontSize: 24, marginBottom: 5 }}>💵</Text>
+                                    <Text style={{
+                                        color: paymentMethod === 'cash' ? 'white' : mobileTheme.colors.text.primary,
+                                        fontWeight: paymentMethod === 'cash' ? 'bold' : 'normal'
+                                    }}>
+                                        Contanti
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={{
+                                    backgroundColor: paymentMethod === 'card' ? mobileTheme.colors.primary : '#f0f0f0',
+                                    padding: 15,
+                                    borderRadius: 10,
+                                    flex: 1,
+                                    borderWidth: 2,
+                                    borderColor: paymentMethod === 'card' ? mobileTheme.colors.primary : '#e0e0e0'
+                                }}
+                                onPress={() => setPaymentMethod('card')}
+                            >
+                                <View style={{ alignItems: 'center' }}>
+                                    <Text style={{ fontSize: 24, marginBottom: 5 }}>💳</Text>
+                                    <Text style={{
+                                        color: paymentMethod === 'card' ? 'white' : mobileTheme.colors.text.primary,
+                                        fontWeight: paymentMethod === 'card' ? 'bold' : 'normal'
+                                    }}>
+                                        Carta di Credito
+                                    </Text>
+                                </View>
                             </TouchableOpacity>
                         </View>
 
