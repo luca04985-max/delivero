@@ -1,7 +1,6 @@
 import db from '../config/db.js';
 import { emitOrderUpdate, broadcastLocationUpdate, broadcastOrderStatusChange } from '../services/socket.js';
 import { bufferLocationUpdate } from '../services/locationBatcher.js';
-import wsBridge from '../websocket-server.js';
 
 export const getOrders = async (req, res) => {
   try {
@@ -297,13 +296,6 @@ export const updateRiderOrderStatus = async (req, res) => {
 
     // Emit real-time update via WebSocket
     broadcastOrderStatusChange(id, updatedOrder.customer_id, status);
-
-    // Also broadcast to WebSocket bridge clients
-    try {
-      wsBridge.broadcastOrderUpdate(id, updatedOrder);
-    } catch (error) {
-      console.warn('WebSocket bridge broadcast failed:', error.message);
-    }
 
     res.status(200).json({ message: 'Order status updated', order: updatedOrder });
   } catch (error) {
