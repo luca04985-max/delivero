@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { ordersAPI } from '../../services/api';
+import { paymentsAPI } from '../../services/api';
 import { riderActiveScreenStyles } from './styles/RiderActiveScreenStyles';
 import { useToast } from '../../hooks/useToast';
 import { useRiderLocationSender } from '../../hooks/useRiderLocationSender';
@@ -63,6 +64,9 @@ export default function RiderActiveScreen() {
       console.log('🔄 Updated order status:', response);
       showToast(`✅ Stato aggiornato: ${newStatus}`, 'success');
       fetchActiveOrders();
+      if(newStatus==='delivered'){
+        await paymentsAPI.markCashCollected(orderId);
+      }
     } catch (e) {
       console.error('Error updating status:', e);
       showToast('❌ Impossibile aggiornare lo stato', 'error');

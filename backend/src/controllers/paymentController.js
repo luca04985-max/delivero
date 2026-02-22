@@ -106,7 +106,7 @@ export const createCashPayment = async (req, res) => {
     console.log("amount: ", amount);
 
     // Create a cash payment record (due on delivery)
-    const payment = await saveCashPayment(orderId, amount, 'cash_due');
+    const payment = await saveCashPayment(orderId, amount, 'pending');
     console.log("payment: ", payment);
     console.log("payment.rows: ", payment.rows);
     // Confirm order (can now be accepted by riders/managers)
