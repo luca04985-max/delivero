@@ -108,11 +108,10 @@ export const createCashPayment = async (req, res) => {
     // Create a cash payment record (due on delivery)
     const payment = await saveCashPayment(orderId, amount, 'pending');
     console.log("payment: ", payment);
-    console.log("payment.rows: ", payment.rows);
     // Confirm order (can now be accepted by riders/managers)
     await db.query(
       'UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2 AND customer_id = $3',
-      ['confirmed', orderId, userId]
+      ['pending', orderId, userId]
     );
     console.log("Cash payment created");
 
