@@ -22,7 +22,6 @@ import restaurantsRoutes from "./routes/restaurants.js";
 import monitoringRoutes from "./routes/monitoring.js";
 import notificationsRoutes from "./routes/notifications.js";
 import { initializeSocket } from "./services/socket.js";
-import wsBridge from "./websocket-server.js";
 import { authenticateToken } from "./middleware/auth.js";
 
 import db from './config/db.js';
@@ -79,9 +78,6 @@ app.use(generalLimiter);
 
 // Initialize Socket.IO
 initializeSocket(server);
-
-// Initialize WebSocket bridge
-wsBridge.initialize(server);
 
 // Health check endpoint
 app.get('/health', performanceMiddleware.healthCheck());
