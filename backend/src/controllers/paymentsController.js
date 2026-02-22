@@ -1,4 +1,8 @@
 import db from '../config/db.js';
+import Stripe from 'stripe';
+
+// Inizializza Stripe con la chiave segreta dal .env
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Create cash payment record
 export const createCashPayment = async (req, res) => {
@@ -73,43 +77,45 @@ export const markCashCollected = async (req, res) => {
 };
 
 // Create Stripe payment intent
-export const createStripePayment = async (req, res) => {
+export const createPayment = async (req, res) => {
   try {
+    const { orderId } = req.body;
     const userId = req.user?.userId;
     if (!userId) return res.status(401).json({ error: 'Unauthorized' });
-
-    const { orderId } = req.body;
     if (!orderId) {
       return res.status(400).json({ error: 'Order ID is required' });
     }
 
     // Check if order exists and belongs to user
     const orderResult = await db.query(
-      'SELECT id, customer_id, total_amount FROM orders WHERE id = $1',
-      [orderId]
+      'SELECT o.*, u.email FROM orders o JOIN users u ON o.customer_id = u.id WHERE o.id = $1 AND o.customer_id = $2',
+      [orderId, userId]
     );
 
     if (orderResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Order not found' });
+      return res.status(404).json({ message: 'Order not found' });
     }
 
     const order = orderResult.rows[0];
-    if (order.customer_id !== userId) {
-      return res.status(403).json({ error: 'Access denied' });
+    const user = await db.query('SELECT email FROM users WHERE id = $1', [userId]);
+    if (!isStripeConfigured()) {
+      return res.status(501).json({ message: 'Stripe non configurato sul server' });
     }
 
-    // Mock Stripe payment intent (in real implementation, use Stripe SDK)
-    const paymentIntent = {
-      id: `pi_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      order_id: orderId,
-      amount: order.total_amount * 100, // Convert to cents
+    // Crea un payment intent reale con Stripe
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(order.total_amount * 100), // Converti in centesimi
       currency: 'eur',
-      status: 'requires_payment_method',
-      client_secret: `pi_${Date.now()}_secret_${Math.random().toString(36).substr(2, 9)}`,
-      created_at: new Date().toISOString()
-    };
+      metadata: {
+        order_id: orderId.toString(),
+        user_id: userId.toString()
+      },
+      automatic_payment_methods: {
+        enabled: ['card']
+      }
+    });
 
-    // Create payment record
+    // Salva il payment intent nel database
     const paymentResult = await db.query(
       `INSERT INTO payments (order_id, payment_method, amount, status, stripe_payment_id, created_at)
        VALUES ($1, 'stripe', $2, 'pending', $3, CURRENT_TIMESTAMP)
@@ -126,7 +132,7 @@ export const createStripePayment = async (req, res) => {
     res.status(201).json(response);
   } catch (error) {
     console.error('Error creating Stripe payment:', error);
-    res.status(500).json({ error: 'Failed to create Stripe payment' });
+    res.status(500).json({ message: 'Error creating Stripe payment', error: error.message });
   }
 };
 
@@ -141,22 +147,34 @@ export const confirmStripePayment = async (req, res) => {
       return res.status(400).json({ error: 'Order ID and Payment Intent ID are required' });
     }
 
-    // Update payment status to completed
+    // Verifica il payment intent con Stripe
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+
+    if (paymentIntent.status !== 'succeeded') {
+      return res.status(400).json({
+        error: 'Payment not successful',
+        status: paymentIntent.status
+      });
+    }
+
+    // Aggiorna lo stato del pagamento a completed
     const result = await db.query(
       `UPDATE payments 
-       SET status = 'completed', confirmed_at = CURRENT_TIMESTAMP, stripe_payment_id = $1
-       WHERE order_id = $2 AND payment_method = 'stripe'
+       SET status = 'completed', confirmed_at = CURRENT_TIMESTAMP
+       WHERE stripe_payment_id = $1 AND order_id = $2
        RETURNING *`,
       [paymentIntentId, orderId]
     );
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Stripe payment not found' });
-    }
+    // Conferma l'ordine
+    await db.query(
+      'UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2',
+      ['confirmed', orderId]
+    );
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Error confirming Stripe payment:', error);
-    res.status(500).json({ error: 'Failed to confirm Stripe payment' });
+    console.error('Confirm payment error:', error);
+    res.status(500).json({ error: 'Failed to confirm payment' });
   }
 };
