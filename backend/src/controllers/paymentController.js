@@ -90,32 +90,39 @@ export const createCashPayment = async (req, res) => {
   try {
     const { orderId } = req.body;
     const userId = req.user.userId;
-
+    console.log("--------Payment---------------");
     const orderResult = await db.query(
       'SELECT * FROM orders WHERE id = $1 AND customer_id = $2',
       [orderId, userId]
     );
-
+    console.log("orderId: ", orderId, "userId: ", userId);
+    console.log("orderResult: ", orderResult.rows);
     if (orderResult.rows.length === 0) {
       return res.status(404).json({ message: 'Order not found' });
     }
 
     const order = orderResult.rows[0];
     const amount = Number(order.total_amount);
+    console.log("amount: ", amount);
 
     // Create a cash payment record (due on delivery)
     const payment = await saveCashPayment(orderId, amount, 'cash_due');
-
+    console.log("payment: ", payment);
+    console.log("payment.rows: ", payment.rows);
     // Confirm order (can now be accepted by riders/managers)
     await db.query(
       'UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2 AND customer_id = $3',
       ['confirmed', orderId, userId]
     );
+    console.log("Cash payment created");
 
     res.status(201).json({ message: 'Cash payment created', payment });
   } catch (error) {
+    console.error("Error creating cash payment:", error);
     res.status(500).json({ message: 'Error creating cash payment', error: error.message });
   }
+  console.log("-------- Fine -------Payment---------------");
+
 };
 
 export const markCashCollected = async (req, res) => {

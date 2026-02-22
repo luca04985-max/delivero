@@ -48,6 +48,11 @@ export const confirmPayment = async (paymentIntentId) => {
 
 export const savePayment = async (orderId, paymentIntentId, amount, status, paymentMethod = 'card') => {
   try {
+    console.log("paymentIntentId: ", paymentIntentId);
+    console.log("status: ", status);
+    console.log("paymentMethod: ", paymentMethod);
+    console.log("orderId: ", orderId);
+    console.log("amount: ", amount);
     const result = await db.query(
       'INSERT INTO payments (order_id, stripe_payment_id, amount, status, payment_method) VALUES ($1, $2, $3, $4, $5) RETURNING *',
       [orderId, paymentIntentId || null, amount, status, paymentMethod]

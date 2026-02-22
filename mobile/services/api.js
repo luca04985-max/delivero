@@ -348,10 +348,13 @@ export const adminAPI = {
 };
 
 export const paymentsAPI = {
-  createCashPayment: (orderId) => makeRequest('/payments/cash/create', {
-    method: 'POST',
-    body: JSON.stringify({ orderId }),
-  }),
+  createCashPayment: (orderId) => {
+    console.log('🌐 API: Making cash payment request for order:', orderId);
+    return makeRequest('/payments/cash/create', {
+      method: 'POST',
+      body: JSON.stringify({ orderId }),
+    });
+  },
 
   markCashCollected: (orderId) => makeRequest('/payments/cash/collected', {
     method: 'POST',

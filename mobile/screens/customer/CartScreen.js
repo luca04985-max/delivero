@@ -342,9 +342,13 @@ export default function CartScreen({ navigation }) {
             const orderId = created?.order?.id;
 
             if (paymentMethod === 'cash') {
+                console.log('💰 Frontend: Creating cash payment for order:', orderId);
                 await paymentsAPI.createCashPayment(orderId);
+                console.log('✅ Frontend: Cash payment created successfully');
             } else {
+                console.log('💳 Frontend: Creating Stripe payment for order:', orderId);
                 await paymentsAPI.createStripePayment(orderId);
+                console.log('✅ Frontend: Stripe payment created successfully');
             }
 
             clearCart();
@@ -352,6 +356,12 @@ export default function CartScreen({ navigation }) {
             navigation.navigate('OrderTracking', { orderId });
 
         } catch (e) {
+            console.error('❌ Frontend: Error during checkout:', e);
+            console.error('❌ Frontend: Error details:', {
+                message: e.message,
+                paymentMethod: paymentMethod,
+                orderId: orderId
+            });
             Alert.alert('Errore', e.message || 'Riprova più tardi');
         } finally {
             setPlacingOrder(false);
