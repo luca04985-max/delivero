@@ -23,8 +23,9 @@ export default function AdminDashboardScreen({ navigation }) {
   const [orders, setOrders] = useState([]);
   const [users, setUsers] = useState([]);
   const [tickets, setTickets] = useState([]);
-  const [trackingOrders] = useState([]);
+  const [trackingOrders, setTrackingOrders] = useState([]);
   const [expandedStates, setExpandedStates] = useState(new Set(['IN_TRANSIT']));
+  const [expandedSections, setExpandedSections] = useState({});
 
   // Edit States
   const [editingUser, setEditingUser] = useState(null);
@@ -109,6 +110,7 @@ export default function AdminDashboardScreen({ navigation }) {
     setRefreshing(true);
     loadDashboardData();
   };
+
   const toggleStateExpansion = (status) => {
     setExpandedStates(prev => {
       const next = new Set(prev);
@@ -120,6 +122,149 @@ export default function AdminDashboardScreen({ navigation }) {
       return next;
     });
   };
+
+  const toggleSection = (section) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section] // Inverte lo stato: se era chiuso (false/undefined) lo apre (true)
+    }));
+  };
+
+  const renderOrderStatusSeparator = (status, count, info, isExpanded) => {
+    return (
+      <TouchableOpacity
+        style={styles.statusSeparator}
+        onPress={() => toggleSection(status)}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.separatorText}>
+          {info.icon} {info.label} ({count}) {isExpanded ? '🔼' : '🔽'}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderTicketStatusSeparator = (status, count, info, isExpanded) => {
+    return (
+      <TouchableOpacity
+        style={styles.statusSeparator}
+        onPress={() => toggleSection(status)}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.separatorText}>
+          {info.icon} {info.label} ({count}) {isExpanded ? '🔼' : '🔽'}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderOrdersWithSeparators = () => {
+    const statusGroups = {};
+
+    // Raggruppamento ordini per stato
+    orders.forEach(order => {
+      const status = String(order.status || '').toUpperCase();
+      if (!statusGroups[status]) {
+        statusGroups[status] = [];
+      }
+      statusGroups[status].push(order);
+    });
+
+    const statusInfo = {
+      'PENDING': { label: 'In Attesa', icon: '⏳' },
+      'CONFIRMED': { label: 'Confermati', icon: '✅' },
+      'PREPARING': { label: 'In Preparazione', icon: '👨‍🍳' },
+      'READY': { label: 'Pronti', icon: '📦' },
+      'PICKUP': { label: 'Ritiro', icon: '📦' },
+      'IN_TRANSIT': { label: 'In Viaggio', icon: '🚚' },
+      'DELIVERING': { label: 'In Consegna', icon: '🚗' },
+      'DELIVERED': { label: 'Consegnati', icon: '✅' },
+      'CANCELLED': { label: 'Cancellati', icon: '❌' }
+    };
+
+    const result = [];
+
+    // Ciclo sui gruppi di stato
+    Object.keys(statusGroups).forEach(status => {
+      const groupOrders = statusGroups[status];
+      // Controlliamo se questa specifica sezione è espansa
+      const isExpanded = !!expandedSections[status];
+
+      // 1. Aggiungiamo sempre il separatore
+      result.push(
+        <View key={`separator-${status}`}>
+          {renderOrderStatusSeparator(status, groupOrders.length, statusInfo[status] || { label: status, icon: '📋' }, isExpanded)}
+        </View>
+      );
+
+      // 2. Aggiungiamo gli ordini SOLO se la sezione è espansa
+      if (isExpanded) {
+        groupOrders.forEach(order => {
+          result.push(
+            <View key={`order-${order.id}`}>
+              <OrderItem item={order} navigation={navigation} />
+            </View>
+          );
+        });
+      }
+    });
+
+    return result;
+  };
+
+  const renderTicketsWithSeparators = () => {
+    const statusGroups = {};
+
+    // Raggruppamento ticket per stato
+    tickets.forEach(ticket => {
+      const status = String(ticket.ticket_status || ticket.status || '').toUpperCase();
+      if (!statusGroups[status]) {
+        statusGroups[status] = [];
+      }
+      statusGroups[status].push(ticket);
+    });
+
+    const statusInfo = {
+      'OPEN': { label: 'Aperti', icon: '🔓' },
+      'IN_PROGRESS': { label: 'In Corso', icon: '⚙️' },
+      'CLOSED': { label: 'Chiusi', icon: '✅' },
+      'RESOLVED': { label: 'Risolti', icon: '🎯' }
+    };
+
+    const result = [];
+
+    // Ciclo sui gruppi di stato
+    Object.keys(statusGroups).forEach(status => {
+      const groupTickets = statusGroups[status];
+      // Controlliamo se questa specifica sezione è espansa
+      const isExpanded = !!expandedSections[status];
+
+      // 1. Aggiungiamo sempre il separatore
+      result.push(
+        <View key={`separator-${status}`}>
+          {renderTicketStatusSeparator(status, groupTickets.length, statusInfo[status] || { label: status, icon: '📋' }, isExpanded)}
+        </View>
+      );
+
+      // 2. Aggiungiamo i ticket SOLO se la sezione è espansa
+      if (isExpanded) {
+        groupTickets.forEach(ticket => {
+          result.push(
+            <View key={`ticket-${ticket.id}`}>
+              <TicketItem item={ticket} onPress={() => {
+                console.log('Ticket cliccato:', ticket);
+                setSelectedTicket(ticket);
+                console.log('selectedTicket impostato:', ticket);
+              }} />
+            </View>
+          );
+        });
+      }
+    });
+
+    return result;
+  };
+
   const handleUpdateUserRole = async (userId) => {
     try {
       setLoading(true);
@@ -160,9 +305,17 @@ export default function AdminDashboardScreen({ navigation }) {
 
         {loading && !refreshing ? (
           <ActivityIndicator size="large" color="#FF6B00" style={{ marginTop: 50 }} />
+        ) : activeTab === 'orders' || activeTab === 'tickets' ? (
+          <ScrollView
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+            style={styles.content}
+          >
+            {activeTab === 'orders' && renderOrdersWithSeparators()}
+            {activeTab === 'tickets' && renderTicketsWithSeparators()}
+          </ScrollView>
         ) : (
           <FlatList
-            data={activeTab === 'users' ? users : activeTab === 'orders' ? orders : activeTab === 'tickets' ? tickets : activeTab === 'tracking' ? trackingOrders : []}
+            data={activeTab === 'users' ? users : activeTab === 'tracking' ? trackingOrders : []}
             keyExtractor={(item) => item.id.toString()}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             ListHeaderComponent={() => (
@@ -196,45 +349,8 @@ export default function AdminDashboardScreen({ navigation }) {
                 ) : null}
               </View>
             )}
-            renderItem={({ item, index }) => {
+            renderItem={({ item }) => {
               if (activeTab === 'users') return <UserItem item={item} onEdit={(item) => { setEditingUser(item); setEditName(item.name); setEditEmail(item.email); setNewRole(item.role); }} onDelete={handleDeleteUser} currentUser={currentUser} />;
-              if (activeTab === 'orders') {
-                const currentItem = orders[index];
-                const previousItem = index > 0 ? orders[index - 1] : null;
-                const isFirstItem = index === 0;
-
-                const currentStatus = String(currentItem.status || '').toUpperCase();
-                const previousStatus = previousItem ? String(previousItem.status || '').toUpperCase() : null;
-
-                const showSeparator = isFirstItem || (previousStatus !== currentStatus);
-                const isExpanded = expandedStates.has(currentStatus);
-
-                return (
-                  <View>
-                    {showSeparator && (
-                      <TouchableOpacity
-                        style={styles.statusSeparator}
-                        onPress={() => toggleStateExpansion(currentStatus)}
-                        activeOpacity={0.7}
-                      >
-                        <Text style={styles.separatorText}>
-                          {currentStatus} {isExpanded ? ' ▲' : ' ▼'}
-                        </Text>
-                      </TouchableOpacity>
-                    )}
-
-                    {/* Mostra l'item solo se la categoria è espansa */}
-                    {isExpanded && (
-                      <OrderItem item={item} navigation={navigation} />
-                    )}
-                  </View>
-                );
-              }
-              if (activeTab === 'tickets') return <TicketItem item={item} onPress={() => {
-                console.log('Ticket cliccato:', item);
-                setSelectedTicket(item);
-                console.log('selectedTicket impostato:', item);
-              }} />;
               return null;
             }}
           />

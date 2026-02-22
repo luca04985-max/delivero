@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
 import { useCart } from '../../context/CartContext';
+import { brandProductsScreenStyles } from './styles/BrandProductsScreenStyles';
 
 export default function BrandProductsScreen({ route, navigation }) {
   const { brand } = route.params || {};
@@ -89,35 +90,35 @@ export default function BrandProductsScreen({ route, navigation }) {
   };
 
   const renderProduct = ({ item }) => (
-    <TouchableOpacity style={styles.productCard} onPress={() => handleAddToCart(item)}>
-      <View style={styles.productHeader}>
-        <Text style={styles.productEmoji}>{item.image}</Text>
-        <View style={styles.productInfo}>
-          <Text style={styles.productName}>{item.name}</Text>
-          <Text style={styles.productCategory}>{item.category}</Text>
-          <Text style={styles.productUnit}>{item.unit}</Text>
+    <TouchableOpacity style={brandProductsScreenStyles.productCard} onPress={() => handleAddToCart(item)}>
+      <View style={brandProductsScreenStyles.productHeader}>
+        <Text style={brandProductsScreenStyles.productEmoji}>{item.image}</Text>
+        <View style={brandProductsScreenStyles.productInfo}>
+          <Text style={brandProductsScreenStyles.productName}>{item.name}</Text>
+          <Text style={brandProductsScreenStyles.productCategory}>{item.category}</Text>
+          <Text style={brandProductsScreenStyles.productUnit}>{item.unit}</Text>
         </View>
-        <View style={styles.productActions}>
+        <View style={brandProductsScreenStyles.productActions}>
           {item.discount > 0 && (
-            <View style={styles.discountBadge}>
-              <Text style={styles.discountText}>-{item.discount}%</Text>
+            <View style={brandProductsScreenStyles.discountBadge}>
+              <Text style={brandProductsScreenStyles.discountText}>-{item.discount}%</Text>
             </View>
           )}
-          <Text style={styles.productPrice}>€{item.price}</Text>
+          <Text style={brandProductsScreenStyles.productPrice}>€{item.price}</Text>
         </View>
       </View>
-      <View style={styles.productFooter}>
-        <View style={[styles.stockIndicator, { backgroundColor: item.inStock ? '#4CAF50' : '#F44336' }]}>
-          <Text style={styles.stockText}>
+      <View style={brandProductsScreenStyles.productFooter}>
+        <View style={[brandProductsScreenStyles.stockIndicator, { backgroundColor: item.inStock ? '#4CAF50' : '#F44336' }]}>
+          <Text style={brandProductsScreenStyles.stockText}>
             {item.inStock ? '✅ Disponibile' : '❌ Esaurito'}
           </Text>
         </View>
         <TouchableOpacity
-          style={[styles.addButton, { backgroundColor: item.inStock ? '#FF6B00' : '#ccc' }]}
+          style={[brandProductsScreenStyles.addButton, { backgroundColor: item.inStock ? '#FF6B00' : '#ccc' }]}
           onPress={() => handleAddToCart(item)}
           disabled={!item.inStock}
         >
-          <Text style={styles.addButtonText}>🛒 Aggiungi</Text>
+          <Text style={brandProductsScreenStyles.addButtonText}>🛒 Aggiungi</Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -127,21 +128,21 @@ export default function BrandProductsScreen({ route, navigation }) {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={brandProductsScreenStyles.loadingContainer}>
         <ActivityIndicator size="large" color="#0066FF" />
-        <Text style={styles.loadingText}>Caricamento prodotti...</Text>
+        <Text style={brandProductsScreenStyles.loadingText}>Caricamento prodotti...</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{brand?.emoji} {brand?.name}</Text>
-        <Text style={styles.subtitle}>{products.length} prodotti disponibili</Text>
+    <View style={brandProductsScreenStyles.container}>
+      <View style={brandProductsScreenStyles.header}>
+        <Text style={brandProductsScreenStyles.title}>{brand?.emoji} {brand?.name}</Text>
+        <Text style={brandProductsScreenStyles.subtitle}>{products.length} prodotti disponibili</Text>
       </View>
 
-      <View style={styles.filterContainer}>
+      <View style={brandProductsScreenStyles.filterContainer}>
         <FlatList
           data={['Tutti', ...categories]}
           horizontal
@@ -150,20 +151,20 @@ export default function BrandProductsScreen({ route, navigation }) {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={[
-                styles.filterChip,
-                selectedCategory === item && styles.selectedFilter
+                brandProductsScreenStyles.filterChip,
+                selectedCategory === item && brandProductsScreenStyles.selectedFilter
               ]}
               onPress={() => setSelectedCategory(item === 'Tutti' ? null : item)}
             >
               <Text style={[
-                styles.filterText,
-                selectedCategory === item && styles.selectedFilterText
+                brandProductsScreenStyles.filterText,
+                selectedCategory === item && brandProductsScreenStyles.selectedFilterText
               ]}>
                 {item}
               </Text>
             </TouchableOpacity>
           )}
-          contentContainerStyle={styles.filterList}
+          contentContainerStyle={brandProductsScreenStyles.filterList}
         />
       </View>
 
@@ -174,73 +175,9 @@ export default function BrandProductsScreen({ route, navigation }) {
         }
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderProduct}
-        contentContainerStyle={styles.productsList}
+        contentContainerStyle={brandProductsScreenStyles.productsList}
         showsVerticalScrollIndicator={false}
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  header: { padding: 16, backgroundColor: '#f6f6f6', borderBottomWidth: 1, borderBottomColor: '#eee' },
-  title: { fontSize: 20, fontWeight: 'bold' },
-  subtitle: { color: '#666', marginTop: 4 },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { marginTop: 10, fontSize: 16, color: '#666' },
-  filterContainer: { backgroundColor: '#fff', paddingVertical: 10 },
-  filterList: { paddingHorizontal: 15 },
-  filterChip: {
-    backgroundColor: '#f0f0f0',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginRight: 10
-  },
-  selectedFilter: { backgroundColor: '#FF6B00' },
-  filterText: { fontSize: 14, color: '#666' },
-  selectedFilterText: { color: '#fff', fontWeight: '600' },
-  productsList: { padding: 15 },
-  productCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginBottom: 15,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: '#f0f0f0'
-  },
-  productHeader: { flexDirection: 'row', padding: 15, alignItems: 'center' },
-  productEmoji: { fontSize: 30, marginRight: 15 },
-  productInfo: { flex: 1 },
-  productName: { fontSize: 16, fontWeight: 'bold', marginBottom: 4 },
-  productCategory: { fontSize: 12, color: '#666', marginBottom: 2 },
-  productUnit: { fontSize: 12, color: '#999' },
-  productActions: { alignItems: 'flex-end' },
-  discountBadge: {
-    backgroundColor: '#F44336',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 10,
-    marginBottom: 4
-  },
-  discountText: { color: '#fff', fontSize: 10, fontWeight: 'bold' },
-  productPrice: { fontSize: 18, fontWeight: 'bold', color: '#333' },
-  productFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 15,
-    paddingBottom: 15,
-    borderTopWidth: 1,
-    borderTopColor: '#f8f8f8'
-  },
-  stockIndicator: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 },
-  stockText: { fontSize: 10, color: '#fff', fontWeight: '600' },
-  addButton: {
-    backgroundColor: '#FF6B00',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 15
-  },
-  addButtonText: { color: '#fff', fontSize: 12, fontWeight: '600' }
-});

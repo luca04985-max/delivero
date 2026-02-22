@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, Text } from 'react-native';
 import { mobileTheme } from '../theme';
+import { loadingSpinnerStyles } from './styles/LoadingSpinnerStyles';
 
 /**
  * Componente Loading Spinner riutilizzabile
@@ -11,9 +12,9 @@ import { mobileTheme } from '../theme';
  * @param {string} props.message - Messaggio opzionale da mostrare
  * @param {Object} props.style - Stile aggiuntivo per il container
  */
-const LoadingSpinner = ({ 
-  loading = true, 
-  size = 'large', 
+const LoadingSpinner = ({
+  loading = true,
+  size = 'large',
   color = mobileTheme.colors.primary,
   message = '',
   style = {}
@@ -31,40 +32,22 @@ const LoadingSpinner = ({
   };
 
   const spinnerStyle = [
-    styles.container,
+    loadingSpinnerStyles.container,
     style
   ];
 
   return (
     <View style={spinnerStyle}>
-      <ActivityIndicator 
-        size={getSize()} 
+      <ActivityIndicator
+        size={getSize()}
         color={color}
-        style={styles.spinner}
+        style={loadingSpinnerStyles.spinner}
       />
       {message && (
-        <Text style={styles.message}>{message}</Text>
+        <Text style={loadingSpinnerStyles.message}>{message}</Text>
       )}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: mobileTheme.spacing[4],
-  },
-  spinner: {
-    marginBottom: mobileTheme.spacing[3],
-  },
-  message: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.secondary,
-    textAlign: 'center',
-    marginTop: mobileTheme.spacing[2],
-  },
-});
 
 export default LoadingSpinner;

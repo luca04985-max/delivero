@@ -61,7 +61,18 @@ export const useRiderLocationSender = (orderId, riderStatus) => {
                             lastLocationRef.current = { latitude, longitude };
                             setError(null);
                         } catch (apiError) {
-                            console.warn('Failed to send location:', apiError.message);
+                            // Don't treat "non tracciabile" as an error - it's expected behavior
+                            if (apiError.message && apiError.message.includes('non in stato tracciabile')) {
+                                console.log('ℹ️ Order not trackable - stopping location updates');
+                                // Clear the interval since order is no longer trackable
+                                if (intervalRef.current) {
+                                    clearInterval(intervalRef.current);
+                                    intervalRef.current = null;
+                                }
+                            } else {
+                                console.warn('Failed to send location:', apiError.message);
+                                setError(apiError.message);
+                            }
                         }
                     } catch (e) {
                         console.warn('Failed to get location:', e.message);

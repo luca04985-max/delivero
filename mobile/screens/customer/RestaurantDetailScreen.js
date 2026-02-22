@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
-    StyleSheet,
     ScrollView,
     TouchableOpacity,
     FlatList,
     ActivityIndicator,
     Alert,
     Modal,
-    TextInput,
+    Image,
+    TextInput
 } from 'react-native';
+import { restaurantDetailScreenStyles } from './styles/RestaurantDetailScreenStyles';
 import { makeRequest } from '../../services/api';
 import { useCart } from '../../context/CartContext';
 
@@ -92,15 +93,15 @@ export default function RestaurantDetailScreen({ route, navigation }) {
     const renderCategoryTab = ({ item }) => (
         <TouchableOpacity
             style={[
-                styles.categoryTab,
-                selectedCategory === item && styles.categoryTabActive,
+                restaurantDetailScreenStyles.categoryTab,
+                selectedCategory === item && restaurantDetailScreenStyles.categoryTabActive,
             ]}
             onPress={() => setSelectedCategory(item)}
         >
             <Text
                 style={[
-                    styles.categoryTabText,
-                    selectedCategory === item && styles.categoryTabTextActive,
+                    restaurantDetailScreenStyles.categoryTabText,
+                    selectedCategory === item && restaurantDetailScreenStyles.categoryTabTextActive,
                 ]}
             >
                 {item}
@@ -110,23 +111,23 @@ export default function RestaurantDetailScreen({ route, navigation }) {
 
     const renderProductItem = ({ item }) => (
         <TouchableOpacity
-            style={styles.productCard}
+            style={restaurantDetailScreenStyles.productCard}
             onPress={() => openProductModal(item)}
         >
-            <View style={styles.productHeader}>
+            <View style={restaurantDetailScreenStyles.productHeader}>
                 <View style={{ flex: 1 }}>
-                    <Text style={styles.productName}>{item.name}</Text>
-                    <Text style={styles.productDescription}>{item.description}</Text>
+                    <Text style={restaurantDetailScreenStyles.productName}>{item.name}</Text>
+                    <Text style={restaurantDetailScreenStyles.productDescription}>{item.description}</Text>
                 </View>
-                <Text style={styles.productPrice}>€{item.price}</Text>
+                <Text style={restaurantDetailScreenStyles.productPrice}>€{item.price}</Text>
             </View>
 
             {item.allergens && item.allergens.length > 0 && (
-                <Text style={styles.allergens}>⚠️ Contiene: {item.allergens.join(', ')}</Text>
+                <Text style={restaurantDetailScreenStyles.allergens}>⚠️ Contiene: {item.allergens.join(', ')}</Text>
             )}
 
             {item.customizations && item.customizations.length > 0 && (
-                <Text style={styles.customizationHint}>
+                <Text style={restaurantDetailScreenStyles.customizationHint}>
                     ⚙️ {item.customizations.length} personalizzazione disponibili
                 </Text>
             )}
@@ -134,24 +135,24 @@ export default function RestaurantDetailScreen({ route, navigation }) {
     );
 
     const renderCustomization = ({ item }) => (
-        <View style={styles.customizationBlock}>
-            <Text style={styles.customizationLabel}>{item.name}</Text>
+        <View style={restaurantDetailScreenStyles.customizationBlock}>
+            <Text style={restaurantDetailScreenStyles.customizationLabel}>{item.name}</Text>
 
             {item.type === 'radio' && (
-                <View style={styles.customizationOptions}>
+                <View style={restaurantDetailScreenStyles.customizationOptions}>
                     {item.options?.map((option, idx) => (
                         <TouchableOpacity
                             key={idx}
                             style={[
-                                styles.optionButton,
-                                customizationSelections[item.id] === option.name && styles.optionButtonSelected,
+                                restaurantDetailScreenStyles.optionButton,
+                                customizationSelections[item.id] === option.name && restaurantDetailScreenStyles.optionButtonSelected,
                             ]}
                             onPress={() => handleCustomizationChange(item.id, option.name)}
                         >
                             <Text
                                 style={[
-                                    styles.optionText,
-                                    customizationSelections[item.id] === option.name && styles.optionTextSelected,
+                                    restaurantDetailScreenStyles.optionText,
+                                    customizationSelections[item.id] === option.name && restaurantDetailScreenStyles.optionTextSelected,
                                 ]}
                             >
                                 {option.name} {option.price > 0 && `+€${option.price.toFixed(2)}`}
@@ -162,13 +163,13 @@ export default function RestaurantDetailScreen({ route, navigation }) {
             )}
 
             {item.type === 'checkbox' && (
-                <View style={styles.customizationOptions}>
+                <View style={restaurantDetailScreenStyles.customizationOptions}>
                     {item.options?.map((option, idx) => (
                         <TouchableOpacity
                             key={idx}
                             style={[
-                                styles.checkboxButton,
-                                customizationSelections[item.id]?.includes(option.name) && styles.checkboxButtonSelected,
+                                restaurantDetailScreenStyles.checkboxButton,
+                                customizationSelections[item.id]?.includes(option.name) && restaurantDetailScreenStyles.checkboxButtonSelected,
                             ]}
                             onPress={() => {
                                 const selected = customizationSelections[item.id] || [];
@@ -178,7 +179,7 @@ export default function RestaurantDetailScreen({ route, navigation }) {
                                 handleCustomizationChange(item.id, updated);
                             }}
                         >
-                            <Text style={styles.checkboxText}>
+                            <Text style={restaurantDetailScreenStyles.checkboxText}>
                                 {customizationSelections[item.id]?.includes(option.name) ? '☑️' : '☐'} {option.name}
                             </Text>
                         </TouchableOpacity>
@@ -188,7 +189,7 @@ export default function RestaurantDetailScreen({ route, navigation }) {
 
             {item.type === 'text' && (
                 <TextInput
-                    style={styles.textInput}
+                    style={restaurantDetailScreenStyles.textInput}
                     placeholder={`Aggiungi ${item.name.toLowerCase()}`}
                     value={customizationSelections[item.id] || ''}
                     onChangeText={(text) => handleCustomizationChange(item.id, text)}
@@ -199,9 +200,9 @@ export default function RestaurantDetailScreen({ route, navigation }) {
 
     if (loading) {
         return (
-            <View style={styles.loadingContainer}>
+            <View style={restaurantDetailScreenStyles.loadingContainer}>
                 <ActivityIndicator size="large" color="#FF6B00" />
-                <Text style={styles.loadingText}>Caricamento menu...</Text>
+                <Text style={restaurantDetailScreenStyles.loadingText}>Caricamento menu...</Text>
             </View>
         );
     }
@@ -211,12 +212,12 @@ export default function RestaurantDetailScreen({ route, navigation }) {
     ) || [];
 
     return (
-        <View style={styles.container}>
+        <View style={restaurantDetailScreenStyles.container}>
             {/* Header */}
-            <View style={styles.header}>
+            <View style={restaurantDetailScreenStyles.header}>
                 <View style={{ flex: 1, marginLeft: 12 }}>
-                    <Text style={styles.restaurantName}>{restaurantDetail?.name}</Text>
-                    <Text style={styles.restaurantInfo}>
+                    <Text style={restaurantDetailScreenStyles.restaurantName}>{restaurantDetail?.name}</Text>
+                    <Text style={restaurantDetailScreenStyles.restaurantInfo}>
                         ⭐ {typeof restaurantDetail?.rating === 'number' ? restaurantDetail.rating.toFixed(1) : 'N/A'} • ⏱️ {restaurantDetail?.delivery_time}min • 💰 €{typeof restaurantDetail?.delivery_cost === 'number' ? restaurantDetail.delivery_cost.toFixed(2) : '0.00'}
                     </Text>
                 </View>
@@ -229,8 +230,8 @@ export default function RestaurantDetailScreen({ route, navigation }) {
                 keyExtractor={(item, index) => item?.toString() || index.toString()}
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                style={styles.categoriesList}
-                contentContainerStyle={styles.categoriesContent}
+                style={restaurantDetailScreenStyles.categoriesList}
+                contentContainerStyle={restaurantDetailScreenStyles.categoriesContent}
             />
 
             {/* Products */}
@@ -239,11 +240,11 @@ export default function RestaurantDetailScreen({ route, navigation }) {
                 renderItem={renderProductItem}
                 keyExtractor={(item) => item.id.toString()}
                 scrollEnabled={true}
-                style={styles.productsList}
-                contentContainerStyle={styles.productsContent}
+                style={restaurantDetailScreenStyles.productsList}
+                contentContainerStyle={restaurantDetailScreenStyles.productsContent}
                 ListEmptyComponent={
-                    <View style={styles.emptyContainer}>
-                        <Text style={styles.emptyText}>😅 Nessun prodotto in questa categoria</Text>
+                    <View style={restaurantDetailScreenStyles.emptyContainer}>
+                        <Text style={restaurantDetailScreenStyles.emptyText}>😅 Nessun prodotto in questa categoria</Text>
                     </View>
                 }
             />
@@ -255,35 +256,35 @@ export default function RestaurantDetailScreen({ route, navigation }) {
                 animationType="slide"
                 onRequestClose={closeProductModal}
             >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
+                <View style={restaurantDetailScreenStyles.modalContainer}>
+                    <View style={restaurantDetailScreenStyles.modalContent}>
                         {/* Modal Header */}
-                        <View style={styles.modalHeader}>
+                        <View style={restaurantDetailScreenStyles.modalHeader}>
                             <TouchableOpacity onPress={closeProductModal}>
-                                <Text style={styles.closeButton}>✕</Text>
+                                <Text style={restaurantDetailScreenStyles.closeButton}>✕</Text>
                             </TouchableOpacity>
-                            <Text style={styles.modalTitle}>{selectedProduct?.name}</Text>
+                            <Text style={restaurantDetailScreenStyles.modalTitle}>{selectedProduct?.name}</Text>
                             <View style={{ width: 30 }} />
                         </View>
 
-                        <ScrollView style={styles.modalBody}>
+                        <ScrollView style={restaurantDetailScreenStyles.modalBody}>
                             {/* Product Info */}
-                            <Text style={styles.modalDescription}>{selectedProduct?.description}</Text>
-                            <Text style={styles.modalPrice}>
-                                Prezzo: <Text style={styles.priceValue}>€{selectedProduct?.price}</Text>
+                            <Text style={restaurantDetailScreenStyles.modalDescription}>{selectedProduct?.description}</Text>
+                            <Text style={restaurantDetailScreenStyles.modalPrice}>
+                                Prezzo: <Text style={restaurantDetailScreenStyles.priceValue}>€{selectedProduct?.price}</Text>
                             </Text>
 
                             {selectedProduct?.allergens && selectedProduct.allergens.length > 0 && (
-                                <View style={styles.allergenBlock}>
-                                    <Text style={styles.allergenLabel}>⚠️ Contiene allergeni:</Text>
-                                    <Text style={styles.allergenText}>{selectedProduct.allergens.join(', ')}</Text>
+                                <View style={restaurantDetailScreenStyles.allergenBlock}>
+                                    <Text style={restaurantDetailScreenStyles.allergenLabel}>⚠️ Contiene allergeni:</Text>
+                                    <Text style={restaurantDetailScreenStyles.allergenText}>{selectedProduct.allergens.join(', ')}</Text>
                                 </View>
                             )}
 
                             {/* Customizations */}
                             {selectedProduct?.customizations && selectedProduct.customizations.length > 0 && (
-                                <View style={styles.customizationsSection}>
-                                    <Text style={styles.customizationsTitle}>⚙️ Personalizzazioni</Text>
+                                <View style={restaurantDetailScreenStyles.customizationsSection}>
+                                    <Text style={restaurantDetailScreenStyles.customizationsTitle}>⚙️ Personalizzazioni</Text>
                                     <FlatList
                                         data={selectedProduct.customizations}
                                         renderItem={renderCustomization}
@@ -294,10 +295,10 @@ export default function RestaurantDetailScreen({ route, navigation }) {
                             )}
 
                             {/* Notes */}
-                            <View style={styles.notesSection}>
-                                <Text style={styles.notesLabel}>📝 Note (opzionale)</Text>
+                            <View style={restaurantDetailScreenStyles.notesSection}>
+                                <Text style={restaurantDetailScreenStyles.notesLabel}>📝 Note (opzionale)</Text>
                                 <TextInput
-                                    style={styles.notesInput}
+                                    style={restaurantDetailScreenStyles.notesInput}
                                     placeholder="Aggiungi note al tuo ordine..."
                                     multiline
                                     numberOfLines={3}
@@ -308,33 +309,33 @@ export default function RestaurantDetailScreen({ route, navigation }) {
                             </View>
 
                             {/* Quantity Selector */}
-                            <View style={styles.quantitySection}>
-                                <Text style={styles.quantityLabel}>Quantità</Text>
-                                <View style={styles.quantityControls}>
+                            <View style={restaurantDetailScreenStyles.quantitySection}>
+                                <Text style={restaurantDetailScreenStyles.quantityLabel}>Quantità</Text>
+                                <View style={restaurantDetailScreenStyles.quantityControls}>
                                     <TouchableOpacity
-                                        style={styles.quantityButton}
+                                        style={restaurantDetailScreenStyles.quantityButton}
                                         onPress={() => setQuantity(Math.max(1, quantity - 1))}
                                     >
-                                        <Text style={styles.quantityButtonText}>−</Text>
+                                        <Text style={restaurantDetailScreenStyles.quantityButtonText}>−</Text>
                                     </TouchableOpacity>
-                                    <Text style={styles.quantityValue}>{quantity}</Text>
+                                    <Text style={restaurantDetailScreenStyles.quantityValue}>{quantity}</Text>
                                     <TouchableOpacity
-                                        style={styles.quantityButton}
+                                        style={restaurantDetailScreenStyles.quantityButton}
                                         onPress={() => setQuantity(quantity + 1)}
                                     >
-                                        <Text style={styles.quantityButtonText}>+</Text>
+                                        <Text style={restaurantDetailScreenStyles.quantityButtonText}>+</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
                         </ScrollView>
 
                         {/* Add to Cart Button */}
-                        <View style={styles.modalFooter}>
+                        <View style={restaurantDetailScreenStyles.modalFooter}>
                             <TouchableOpacity
-                                style={styles.addToCartButton}
+                                style={restaurantDetailScreenStyles.addToCartButton}
                                 onPress={handleAddToCart}
                             >
-                                <Text style={styles.addToCartText}>
+                                <Text style={restaurantDetailScreenStyles.addToCartText}>
                                     🛒 Aggiungi al carrello • €{(selectedProduct?.price * quantity).toFixed(2)}
                                 </Text>
                             </TouchableOpacity>
@@ -345,339 +346,3 @@ export default function RestaurantDetailScreen({ route, navigation }) {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#f8f8f8',
-    },
-    loadingContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    loadingText: {
-        marginTop: 12,
-        fontSize: 14,
-        color: '#666',
-    },
-    header: {
-        backgroundColor: '#FF6B00',
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        paddingTop: 16,
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    backButton: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#fff',
-    },
-    restaurantName: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#fff',
-    },
-    restaurantInfo: {
-        fontSize: 12,
-        color: '#fff',
-        opacity: 0.9,
-        marginTop: 4,
-    },
-    categoriesList: {
-        backgroundColor: '#fff',
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee',
-        maxHeight: 44,
-    },
-    categoriesContent: {
-        paddingHorizontal: 6,
-        paddingVertical: 4,
-        alignItems: 'center',
-    },
-    categoryTab: {
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        marginHorizontal: 2,
-        borderRadius: 12,
-        backgroundColor: '#f0f0f0',
-        borderWidth: 1,
-        borderColor: '#ddd',
-    },
-    categoryTabActive: {
-        backgroundColor: '#FF6B00',
-        borderColor: '#FF6B00',
-    },
-    categoryTabText: {
-        fontSize: 12,
-        fontWeight: '600',
-        color: '#666',
-    },
-    categoryTabTextActive: {
-        color: '#fff',
-    },
-    productsList: {
-        flex: 1,
-    },
-    productsContent: {
-        padding: 8,
-        paddingBottom: 12,
-    },
-    productCard: {
-        backgroundColor: '#fff',
-        borderRadius: 8,
-        padding: 8,
-        marginBottom: 6,
-        borderWidth: 1,
-        borderColor: '#eee',
-    },
-    productHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        marginBottom: 4,
-    },
-    productName: {
-        fontSize: 13,
-        fontWeight: 'bold',
-        color: '#333',
-    },
-    productDescription: {
-        fontSize: 11,
-        color: '#666',
-        marginTop: 2,
-    },
-    productPrice: {
-        fontSize: 13,
-        fontWeight: 'bold',
-        color: '#FF6B00',
-    },
-    allergens: {
-        fontSize: 10,
-        color: '#d32f2f',
-        marginTop: 6,
-    },
-    customizationHint: {
-        fontSize: 11,
-        color: '#2196f3',
-        marginTop: 4,
-    },
-    emptyContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 40,
-    },
-    emptyText: {
-        fontSize: 16,
-        color: '#999',
-    },
-    modalContainer: {
-        flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-    },
-    modalContent: {
-        flex: 1,
-        backgroundColor: '#fff',
-        marginTop: 100,
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        overflow: 'hidden',
-    },
-    modalHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee',
-    },
-    closeButton: {
-        fontSize: 24,
-        color: '#999',
-        fontWeight: 'bold',
-    },
-    modalTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333',
-        flex: 1,
-        textAlign: 'center',
-    },
-    modalBody: {
-        flex: 1,
-        padding: 16,
-    },
-    modalDescription: {
-        fontSize: 13,
-        color: '#666',
-        marginBottom: 12,
-    },
-    modalPrice: {
-        fontSize: 13,
-        color: '#666',
-        marginBottom: 12,
-    },
-    priceValue: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#FF6B00',
-    },
-    allergenBlock: {
-        backgroundColor: '#ffebee',
-        borderRadius: 8,
-        padding: 10,
-        marginBottom: 12,
-    },
-    allergenLabel: {
-        fontSize: 12,
-        fontWeight: '600',
-        color: '#d32f2f',
-    },
-    allergenText: {
-        fontSize: 11,
-        color: '#d32f2f',
-        marginTop: 4,
-    },
-    customizationsSection: {
-        marginBottom: 16,
-    },
-    customizationsTitle: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 10,
-    },
-    customizationBlock: {
-        marginBottom: 12,
-        paddingBottom: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee',
-    },
-    customizationLabel: {
-        fontSize: 12,
-        fontWeight: '600',
-        color: '#333',
-        marginBottom: 8,
-    },
-    customizationOptions: {
-        flexDirection: 'column',
-        gap: 6,
-    },
-    optionButton: {
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#ddd',
-        backgroundColor: '#f8f8f8',
-    },
-    optionButtonSelected: {
-        borderColor: '#FF6B00',
-        backgroundColor: '#fff3e0',
-    },
-    optionText: {
-        fontSize: 12,
-        color: '#666',
-    },
-    optionTextSelected: {
-        color: '#FF6B00',
-        fontWeight: '600',
-    },
-    checkboxButton: {
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#ddd',
-        backgroundColor: '#f8f8f8',
-    },
-    checkboxButtonSelected: {
-        borderColor: '#FF6B00',
-        backgroundColor: '#fff3e0',
-    },
-    checkboxText: {
-        fontSize: 12,
-        color: '#333',
-    },
-    textInput: {
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        fontSize: 12,
-        backgroundColor: '#f8f8f8',
-    },
-    notesSection: {
-        marginBottom: 16,
-    },
-    notesLabel: {
-        fontSize: 12,
-        fontWeight: '600',
-        color: '#333',
-        marginBottom: 8,
-    },
-    notesInput: {
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        fontSize: 12,
-        backgroundColor: '#f8f8f8',
-        textAlignVertical: 'top',
-    },
-    quantitySection: {
-        marginBottom: 16,
-    },
-    quantityLabel: {
-        fontSize: 12,
-        fontWeight: '600',
-        color: '#333',
-        marginBottom: 8,
-    },
-    quantityControls: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#f8f8f8',
-        borderRadius: 8,
-        width: 120,
-    },
-    quantityButton: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 8,
-    },
-    quantityButtonText: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#FF6B00',
-    },
-    quantityValue: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        color: '#333',
-        minWidth: 40,
-        textAlign: 'center',
-    },
-    modalFooter: {
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        borderTopWidth: 1,
-        borderTopColor: '#eee',
-    },
-    addToCartButton: {
-        backgroundColor: '#FF6B00',
-        borderRadius: 12,
-        paddingVertical: 14,
-        alignItems: 'center',
-    },
-    addToCartText: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        color: '#fff',
-    },
-});

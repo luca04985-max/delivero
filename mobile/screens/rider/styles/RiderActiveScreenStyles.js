@@ -7,6 +7,7 @@ export const riderActiveScreenStyles = StyleSheet.create({
     backgroundColor: mobileTheme.colors.background,
     padding: mobileTheme.spacing[4],
   },
+  // HEADER
   header: {
     marginBottom: mobileTheme.spacing[4],
   },
@@ -14,6 +15,30 @@ export const riderActiveScreenStyles = StyleSheet.create({
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.text.primary,
+  },
+
+  // CONTENT
+  content: {
+    flex: 1,
+    padding: mobileTheme.spacing[4],
+  },
+
+  // STATUS SEPARATORS
+  statusSeparator: {
+    backgroundColor: mobileTheme.colors.white,
+    marginHorizontal: mobileTheme.spacing[4],
+    marginVertical: mobileTheme.spacing[2],
+    borderRadius: mobileTheme.borderRadius.lg,
+    borderLeftWidth: 4,
+    borderLeftColor: mobileTheme.colors.primary,
+    ...mobileTheme.shadows.soft,
+  },
+
+  statusSeparatorContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: mobileTheme.spacing[4],
   },
 
   // ACTIVE ORDER CARD
