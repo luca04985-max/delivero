@@ -8,12 +8,12 @@ import db from '../src/config/db.js';
 
 const ensureOrderTrackingColumns = async () => {
   console.log('🔧 Verifying all database tables and columns...');
-  
+
   // Define all table columns from schema
   const tableColumns = {
     users: [
       'email VARCHAR(255) NOT NULL',
-      'password VARCHAR(255) NOT NULL', 
+      'password VARCHAR(255) NOT NULL',
       'name VARCHAR(255) NOT NULL',
       'role VARCHAR(50) DEFAULT \'customer\'',
       'phone VARCHAR(20)',
@@ -101,7 +101,7 @@ const ensureOrderTrackingColumns = async () => {
       'payment_method VARCHAR(50) NOT NULL',
       'amount NUMERIC(10,2) NOT NULL',
       'status VARCHAR(50) DEFAULT \'pending\'',
-      'stripe_payment_intent_id TEXT',
+      'stripe_payment_id TEXT',
       'collected_at TIMESTAMP',
       'collected_by INTEGER',
       'confirmed_at TIMESTAMP',
@@ -162,7 +162,7 @@ const ensureOrderTrackingColumns = async () => {
   // Check each table and add missing columns
   for (const [tableName, columns] of Object.entries(tableColumns)) {
     console.log(`🔍 Checking table: ${tableName}`);
-    
+
     for (const column of columns) {
       const [colDef] = column.split(' ');
       try {
@@ -173,7 +173,7 @@ const ensureOrderTrackingColumns = async () => {
       }
     }
   }
-  
+
   console.log('✅ All table columns verified successfully!');
 };
 

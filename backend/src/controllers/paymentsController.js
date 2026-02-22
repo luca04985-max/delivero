@@ -15,20 +15,29 @@ export const createCashPayment = async (req, res) => {
       return res.status(400).json({ error: 'Order ID is required' });
     }
 
+    console.log(' Creating cash payment for order:', orderId, 'userId:', userId);
+
     // Check if order exists and belongs to user
     const orderResult = await db.query(
-      'SELECT id, customer_id, total_amount FROM orders WHERE id = $1',
-      [orderId]
+      'SELECT id, customer_id, total_amount FROM orders WHERE id = $1 AND customer_id = $2',
+      [orderId, userId]
     );
 
     if (orderResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Order not found' });
+      console.log(' Order not found for cash payment:', orderId);
+      return res.status(404).json({ message: 'Order not found' });
     }
 
     const order = orderResult.rows[0];
     if (order.customer_id !== userId) {
-      return res.status(403).json({ error: 'Access denied' });
+      console.log(' Access denied for cash payment - order belongs to different user');
+      return res.status(403).json({ message: 'Access denied' });
     }
+
+    console.log(' Order found for cash payment:', { id: order.id, customer_id: order.customer_id, total_amount: order.total_amount });
+
+    const amount = Number(order.total_amount);
+    console.log(' Creating cash payment record with amount:', amount);
 
     // Create cash payment record
     const paymentResult = await db.query(
@@ -38,9 +47,11 @@ export const createCashPayment = async (req, res) => {
       [orderId, order.total_amount]
     );
 
+    console.log(' Cash payment record created:', paymentResult.rows[0]);
+
     res.status(201).json(paymentResult.rows[0]);
   } catch (error) {
-    console.error('Error creating cash payment:', error);
+    console.error(' Error creating cash payment:', error);
     res.status(500).json({ error: 'Failed to create cash payment' });
   }
 };

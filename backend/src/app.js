@@ -25,9 +25,21 @@ import { initializeSocket } from "./services/socket.js";
 import wsBridge from "./websocket-server.js";
 import { authenticateToken } from "./middleware/auth.js";
 
+import db from './config/db.js';
+import { runMigrations } from './config/migrate.js';
+
 dotenv.config();
 
 const app = express();
+
+// Run migrations before starting the server
+runMigrations().then(() => {
+  console.log('🗄️ Database migrations completed');
+}).catch(err => {
+  console.error('❌ Migration failed:', err);
+  process.exit(1);
+});
+
 const server = http.createServer(app);
 
 // Initialize performance monitoring

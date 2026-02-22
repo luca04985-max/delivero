@@ -125,28 +125,6 @@ CREATE INDEX IF NOT EXISTS idx_menu_items_category ON menu_items(category_id);
 CREATE INDEX IF NOT EXISTS idx_reviews_restaurant ON reviews(restaurant_id);
 CREATE INDEX IF NOT EXISTS idx_reviews_verified ON reviews(is_verified);
 
--- ========== NEW SERVICES TABLES ==========
-
--- BILL PAYMENTS SERVICE TABLE
-CREATE TABLE IF NOT EXISTS bill_payments (
-  id SERIAL PRIMARY KEY,
-  bill_id INTEGER NOT NULL REFERENCES bills(id),
-  user_id INTEGER NOT NULL REFERENCES users(id),
-  rider_id INTEGER REFERENCES users(id),
-  payment_method VARCHAR(50) NOT NULL, -- 'cash' or 'prepaid'
-  amount DECIMAL(10, 2) NOT NULL,
-  barcode_image_url VARCHAR(500),
-  qr_code_image_url VARCHAR(500),
-  status VARCHAR(50) DEFAULT 'pending', -- pending, driver_assigned, paid, completed
-  rider_payment_status VARCHAR(50), -- pending, collected, submitted
-  notes TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- PHARMACIES TABLE
-CREATE TABLE IF NOT EXISTS pharmacies (
-  id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
