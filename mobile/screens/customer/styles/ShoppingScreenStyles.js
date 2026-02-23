@@ -1,8 +1,10 @@
 import { StyleSheet, Platform } from 'react-native';
-import { mobileTheme } from '../../../theme';
+import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
+import { unifiedStyles } from '../../../theme/UnifiedStyles';
 import { sharedHeaderStyles } from './SharedHeaderStyles';
 
 export const shoppingScreenStyles = StyleSheet.create({
+  ...unifiedStyles,
   container: {
     flex: 1,
     backgroundColor: mobileTheme.colors.background // Usiamo il nuovo grigio azzurrato pulito
@@ -36,7 +38,7 @@ export const shoppingScreenStyles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: mobileTheme.typography.fontSize.xl,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.text.primary,
     paddingHorizontal: mobileTheme.spacing[4],
     marginBottom: mobileTheme.spacing[4],
@@ -66,7 +68,7 @@ export const shoppingScreenStyles = StyleSheet.create({
   categoryName: {
     color: mobileTheme.colors.text.primary,
     fontSize: mobileTheme.typography.fontSize.xs,
-    fontWeight: mobileTheme.typography.fontWeight.semibold,
+    fontWeight: FONT_WEIGHTS.semibold,
     textAlign: 'center'
   },
 
@@ -98,7 +100,7 @@ export const shoppingScreenStyles = StyleSheet.create({
   },
   brandName: {
     fontSize: mobileTheme.typography.fontSize.lg,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.text.primary,
     marginBottom: 2
   },
@@ -120,7 +122,7 @@ export const shoppingScreenStyles = StyleSheet.create({
   deliveryText: {
     color: mobileTheme.colors.primary,
     fontSize: 10,
-    fontWeight: 'bold'
+    fontWeight: FONT_WEIGHTS.bold
   }
 });
 

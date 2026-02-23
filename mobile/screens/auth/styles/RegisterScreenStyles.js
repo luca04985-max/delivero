@@ -1,128 +1,225 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
+import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
+import { unifiedStyles } from '../../../theme/UnifiedStyles';
 
-const RegisterScreenStyles = StyleSheet.create({
+export const RegisterScreenStyles = StyleSheet.create({
+  ...unifiedStyles,
+
   container: {
-    flexGrow: 1,
-    backgroundColor: '#fff',
-    padding: 20,
+    flex: 1,
+    backgroundColor: mobileTheme.colors.background,
+    padding: mobileTheme.spacing[5],
     justifyContent: 'center',
   },
+
   header: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: mobileTheme.spacing[6],
   },
+
   logo: {
-    fontSize: 50,
-    marginBottom: 10,
+    fontSize: mobileTheme.typography.fontSize['4xl'],
+    marginBottom: mobileTheme.spacing[3],
+    color: mobileTheme.colors.primary,
+    fontWeight: FONT_WEIGHTS.black,
   },
+
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: mobileTheme.typography.fontSize.xl,
+    fontWeight: FONT_WEIGHTS.bold,
+    color: mobileTheme.colors.text.primary,
+    marginBottom: mobileTheme.spacing[2],
     textAlign: 'center',
   },
+
+  subtitle: {
+    fontSize: mobileTheme.typography.fontSize.base,
+    color: mobileTheme.colors.text.secondary,
+    textAlign: 'center',
+    marginBottom: mobileTheme.spacing[6],
+  },
+
   form: {
-    marginBottom: 30,
+    width: '100%',
+    maxWidth: 320,
   },
+
   inputGroup: {
-    marginBottom: 20,
+    marginBottom: mobileTheme.spacing[4],
   },
+
   label: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#333',
-    marginBottom: 8,
+    fontSize: mobileTheme.typography.fontSize.sm,
+    fontWeight: FONT_WEIGHTS.medium,
+    color: mobileTheme.colors.text.primary,
+    marginBottom: mobileTheme.spacing[2],
   },
+
+  inputContainer: {
+    marginBottom: mobileTheme.spacing[4],
+  },
+
   input: {
+    backgroundColor: mobileTheme.colors.white,
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 15,
-    fontSize: 16,
-    backgroundColor: '#f9f9f9',
+    borderColor: mobileTheme.colors.border,
+    borderRadius: mobileTheme.borderRadius.md,
+    padding: mobileTheme.spacing[4],
+    fontSize: mobileTheme.typography.fontSize.base,
+    color: mobileTheme.colors.text.primary,
+    ...mobileTheme.shadows.sm,
   },
+
   inputFocused: {
-    borderColor: '#007AFF',
-    backgroundColor: '#fff',
+    borderColor: mobileTheme.colors.primary,
+    ...mobileTheme.shadows.md,
   },
-  inputError: {
-    borderColor: '#FF3B30',
+
+  pickerContainer: {
+    backgroundColor: mobileTheme.colors.white,
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.border,
+    borderRadius: mobileTheme.borderRadius.md,
+    ...mobileTheme.shadows.sm,
   },
-  errorText: {
-    color: '#FF3B30',
-    fontSize: 14,
-    marginTop: 5,
+
+  picker: {
+    height: 50,
+    color: mobileTheme.colors.text.primary,
   },
+
+  roleSelector: {
+    marginBottom: mobileTheme.spacing[4],
+  },
+
+  roleButton: {
+    backgroundColor: mobileTheme.colors.white,
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.border,
+    borderRadius: mobileTheme.borderRadius.md,
+    padding: mobileTheme.spacing[4],
+    marginBottom: mobileTheme.spacing[2],
+    flexDirection: 'row',
+    alignItems: 'center',
+    ...mobileTheme.shadows.sm,
+  },
+
+  roleButtonSelected: {
+    backgroundColor: mobileTheme.colors.primary,
+    borderColor: mobileTheme.colors.primary,
+  },
+
+  roleButtonText: {
+    fontSize: mobileTheme.typography.fontSize.base,
+    color: mobileTheme.colors.text.primary,
+    fontWeight: FONT_WEIGHTS.medium,
+    flex: 1,
+  },
+
+  roleButtonSelectedText: {
+    color: mobileTheme.colors.white,
+    fontWeight: FONT_WEIGHTS.bold,
+  },
+
   button: {
-    backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 8,
+    backgroundColor: mobileTheme.colors.primary,
+    paddingVertical: mobileTheme.spacing[4],
+    paddingHorizontal: mobileTheme.spacing[6],
+    borderRadius: mobileTheme.borderRadius.md,
     alignItems: 'center',
-    marginBottom: 20,
+    marginTop: mobileTheme.spacing[4],
+    ...mobileTheme.shadows.medium,
   },
+
   buttonDisabled: {
-    backgroundColor: '#ccc',
+    backgroundColor: mobileTheme.colors.text.tertiary,
+    ...mobileTheme.shadows.none,
   },
+
   buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: mobileTheme.colors.white,
+    fontSize: mobileTheme.typography.fontSize.base,
+    fontWeight: FONT_WEIGHTS.bold,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
-  linkButton: {
-    alignItems: 'center',
-    padding: 10,
-  },
-  linkText: {
-    color: '#007AFF',
-    fontSize: 14,
-  },
-  linkBold: {
-    fontWeight: 'bold',
-  },
+
   divider: {
     height: 1,
-    backgroundColor: '#eee',
-    marginVertical: 20,
+    backgroundColor: mobileTheme.colors.border,
+    marginVertical: mobileTheme.spacing[4],
   },
+
+  linkButton: {
+    alignItems: 'center',
+    marginTop: mobileTheme.spacing[4],
+  },
+
+  linkText: {
+    color: mobileTheme.colors.text.secondary,
+    fontSize: mobileTheme.typography.fontSize.sm,
+  },
+
+  linkBold: {
+    color: mobileTheme.colors.primary,
+    fontWeight: FONT_WEIGHTS.bold,
+  },
+
   info: {
-    backgroundColor: '#f0f8ff',
-    padding: 15,
-    borderRadius: 8,
-    marginTop: 20,
+    backgroundColor: mobileTheme.colors.infoBg,
+    padding: mobileTheme.spacing[4],
+    borderRadius: mobileTheme.borderRadius.md,
+    marginTop: mobileTheme.spacing[4],
   },
-  infoTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#007AFF',
-    marginBottom: 10,
-  },
+
   infoText: {
-    fontSize: 14,
-    color: '#333',
-    marginBottom: 5,
+    color: mobileTheme.colors.info,
+    fontSize: mobileTheme.typography.fontSize.sm,
+    marginBottom: mobileTheme.spacing[1],
   },
+
   toast: {
     position: 'absolute',
     top: 50,
     left: 20,
     right: 20,
-    backgroundColor: '#FF3B30',
-    padding: 15,
-    borderRadius: 8,
-    zIndex: 1000,
+    padding: mobileTheme.spacing[4],
+    borderRadius: mobileTheme.borderRadius.md,
+    ...mobileTheme.shadows.lg,
   },
+
   toastSuccess: {
-    backgroundColor: '#34C759',
+    backgroundColor: mobileTheme.colors.success,
   },
+
+  toastWarning: {
+    backgroundColor: mobileTheme.colors.warning,
+  },
+
+  toastError: {
+    backgroundColor: mobileTheme.colors.error,
+  },
+
   toastText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '500',
+    color: mobileTheme.colors.white,
+    fontSize: mobileTheme.typography.fontSize.sm,
+    fontWeight: FONT_WEIGHTS.medium,
+    textAlign: 'center',
+  },
+
+  login: {
+    alignItems: 'center',
+    marginTop: mobileTheme.spacing[6],
+  },
+
+  loginText: {
+    color: mobileTheme.colors.text.secondary,
+    fontSize: mobileTheme.typography.fontSize.sm,
+  },
+
+  loginLink: {
+    color: mobileTheme.colors.primary,
+    fontWeight: FONT_WEIGHTS.bold,
   },
 });
 

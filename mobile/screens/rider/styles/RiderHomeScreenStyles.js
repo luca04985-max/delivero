@@ -1,7 +1,9 @@
 import { StyleSheet, Platform } from 'react-native';
-import { mobileTheme } from '../../../theme';
+import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
+import { unifiedStyles } from '../../../theme/UnifiedStyles';
 
 export const riderHomeScreenStyles = StyleSheet.create({
+  ...unifiedStyles,
   container: {
     flex: 1,
     backgroundColor: mobileTheme.colors.background, // Sfondo grigio azzurrato pulito
@@ -19,7 +21,7 @@ export const riderHomeScreenStyles = StyleSheet.create({
   headerTitle: {
     color: mobileTheme.colors.white,
     fontSize: mobileTheme.typography.fontSize['2xl'],
-    fontWeight: mobileTheme.typography.fontWeight.black,
+    fontWeight: FONT_WEIGHTS.black,
     letterSpacing: -0.5,
   },
 
@@ -56,7 +58,7 @@ export const riderHomeScreenStyles = StyleSheet.create({
   },
   address: {
     fontSize: mobileTheme.typography.fontSize.base,
-    fontWeight: mobileTheme.typography.fontWeight.semibold,
+    fontWeight: FONT_WEIGHTS.black,
     color: mobileTheme.colors.text.primary,
     lineHeight: 22,
   },
@@ -72,7 +74,7 @@ export const riderHomeScreenStyles = StyleSheet.create({
   },
   payout: {
     fontSize: mobileTheme.typography.fontSize.sm,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.success,
   },
 
@@ -88,7 +90,7 @@ export const riderHomeScreenStyles = StyleSheet.create({
   },
   acceptBtnText: {
     color: mobileTheme.colors.white,
-    fontWeight: mobileTheme.typography.fontWeight.black,
+    fontWeight: FONT_WEIGHTS.black,
     fontSize: mobileTheme.typography.fontSize.base,
     textTransform: 'uppercase',
     letterSpacing: 1,
@@ -110,7 +112,7 @@ export const riderHomeScreenStyles = StyleSheet.create({
   statusText: {
     color: mobileTheme.colors.text.tertiary,
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: FONT_WEIGHTS.semibold
   }
 });
 

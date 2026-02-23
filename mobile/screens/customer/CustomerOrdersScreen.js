@@ -78,7 +78,7 @@ export default function CustomerOrdersScreen({ navigation, route }) {
   };
 
   const renderOrder = ({ item }) => (
-    <View style={customerOrdersScreenStyles.orderCard}>
+    <View style={customerOrdersScreenStyles.card}>
       <View style={customerOrdersScreenStyles.orderHeader}>
         <Text style={customerOrdersScreenStyles.orderId}>Ordine #{item.id.toString().slice(-5)}</Text>
         <View style={customerOrdersScreenStyles.orderStatus}>

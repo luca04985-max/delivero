@@ -8,6 +8,21 @@ import { orderTrackingLiveScreenStyles } from './styles/OrderTrackingLiveScreenS
 
 const SOCKET_URL = 'https://delivero-gyjx.onrender.com';
 
+// Funzione per tradurre gli stati in italiano
+const translateStatus = (status) => {
+    const statusMap = {
+        'pending': 'In attesa',
+        'confirmed': 'Confermato',
+        'preparing': 'In preparazione',
+        'ready': 'Pronto',
+        'picked_up': 'Ritirato',
+        'in_transit': 'In viaggio',
+        'delivered': 'Consegnato',
+        'cancelled': 'Annullato'
+    };
+    return statusMap[status] || status || 'In preparazione';
+};
+
 export default function OrderTrackingLiveScreen({ route }) {
     const { orderId } = route.params || {}; // Get orderId from navigation params
     const [riders, setRiders] = useState({});
@@ -448,7 +463,7 @@ export default function OrderTrackingLiveScreen({ route }) {
                     <View style={orderTrackingLiveScreenStyles.etaRow}>
                         <Text style={orderTrackingLiveScreenStyles.etaLabel}>Stato:</Text>
                         <Text style={orderTrackingLiveScreenStyles.etaValue}>
-                            {Object.values(riders)[0]?.status || 'In preparazione'}
+                            {translateStatus(Object.values(riders)[0]?.status)}
                         </Text>
                     </View>
                     <View style={orderTrackingLiveScreenStyles.etaRow}>
