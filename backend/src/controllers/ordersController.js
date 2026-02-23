@@ -400,14 +400,6 @@ export const trackOrder = async (req, res) => {
 
     const result = await db.query(query, queryParams);
 
-    if (result.rows.length > 0) {
-      console.log('🔍 TrackOrder - Result data keys:', Object.keys(result.rows[0]));
-      console.log('🔍 TrackOrder - Delivery coords:', {
-        lat: result.rows[0].delivery_latitude,
-        lon: result.rows[0].delivery_longitude
-      });
-    }
-
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'Ordine non trovato o non autorizzato' });
     }
