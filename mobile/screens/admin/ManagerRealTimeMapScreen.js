@@ -69,6 +69,20 @@ export default function ManagerRealTimeMapScreen() {
             const nextCount = Object.keys(next).length;
             console.log('[ManagerRealTimeMap] final riders count:', nextCount);
             console.log('[ManagerRealTimeMap] riders data:', next);
+
+            // Debug dettagliato per ogni rider
+            Object.values(next).forEach(rider => {
+                console.log(`[ManagerRealTimeMap] Rider #${rider.orderId}:`, {
+                    lat: rider.lat,
+                    lng: rider.lng,
+                    hasDeliveryCoords: !!(rider.delivery_latitude && rider.delivery_longitude),
+                    delivery_lat: rider.delivery_latitude,
+                    delivery_lon: rider.delivery_longitude,
+                    status: rider.status,
+                    eta: rider.eta_minutes
+                });
+            });
+
             if (nextCount > 0) {
                 console.log('[ManagerRealTimeMap] setting riders state...');
                 setRiders(prev => {
@@ -253,25 +267,41 @@ export default function ManagerRealTimeMapScreen() {
 
             if (r.delivery_latitude && r.delivery_longitude) {
                 return `
-                    L.Routing.control({
-                        waypoints: [
-                            L.latLng(${r.lat}, ${r.lng}),
-                            L.latLng(${r.delivery_latitude}, ${r.delivery_longitude})
-                        ],
-                        routeWhileDragging: false,
-                        addWaypoints: false,
-                        createMarker: function() { return null; },
-                        lineOptions: {
-                            styles: [{color: '#FF6B35', weight: 4, opacity: 0.8}]
-                        }
-                    }).addTo(map);
+                    // Prova routing con strade reali
+                    try {
+                        L.Routing.control({
+                            waypoints: [
+                                L.latLng(${r.lat}, ${r.lng}),
+                                L.latLng(${r.delivery_latitude}, ${r.delivery_longitude})
+                            ],
+                            routeWhileDragging: false,
+                            addWaypoints: false,
+                            createMarker: function() { return null; },
+                            lineOptions: {
+                                styles: [{color: '#FF6B35', weight: 4, opacity: 0.8}]
+                            }
+                        }).addTo(map);
+                        console.log('🛣️ Admin routing loaded successfully for order', r.orderId);
+                    } catch (error) {
+                        console.log('❌ Admin routing failed for order', r.orderId, 'using fallback line:', error);
+                        // Fallback: linea retta se routing fallisce
+                        L.polyline([
+                            [${r.lat}, ${r.lng}],
+                            [${r.delivery_latitude}, ${r.delivery_longitude}]
+                        ], {
+                            color: '#FF6B35',
+                            weight: 4,
+                            opacity: 0.8,
+                            dashArray: '10, 5'
+                        }).addTo(map);
+                    }
                 `;
             } else {
-                // Fallback: linea retta se non ci sono coordinate delivery
+                // Fallback: linea retta tratteggiata se non ci sono coordinate delivery
                 return `
                     L.polyline([
                         [${r.lat}, ${r.lng}],
-                        [${r.lat + 0.01}, ${r.lng + 0.01}]
+                        [${r.lat + 0.005}, ${r.lng + 0.005}]
                     ], {
                         color: '#FF6B35',
                         weight: 4,

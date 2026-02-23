@@ -109,8 +109,7 @@ export default function OrderTrackingLiveScreen({ route }) {
 
         const riderMarker = riderLocation ? `
             L.marker([${riderLocation.latitude}, ${riderLocation.longitude}])
-                .addTo(map)
-                .bindPopup('<b>Il tuo Rider</b><br/>Stato: ${order?.status || 'In viaggio'}<br/>ETA: ${order?.eta_minutes || '--'} min');
+                .addTo(map);
         ` : '';
 
         console.log('🗺️ Map HTML generation - riderMarker exists:', !!riderMarker);
@@ -118,8 +117,7 @@ export default function OrderTrackingLiveScreen({ route }) {
         // Aggiungi marker customer se disponibili
         const customerMarker = order?.delivery_latitude && order?.delivery_longitude ? `
             L.marker([${order.delivery_latitude}, ${order.delivery_longitude}])
-                .addTo(map)
-                .bindPopup('<b>Destinazione</b><br/>${order.delivery_address}');
+                .addTo(map);
         ` : '';
 
         console.log('🗺️ Map HTML generation - customerMarker exists:', !!customerMarker);
@@ -171,18 +169,34 @@ export default function OrderTrackingLiveScreen({ route }) {
                     
                     // Aggiungi routing con strade reali ma senza popup e indicazioni
                     ${riderLocation && order?.delivery_latitude && order?.delivery_longitude ? `
-                        L.Routing.control({
-                            waypoints: [
-                                L.latLng(${riderLocation.latitude}, ${riderLocation.longitude}),
-                                L.latLng(${order.delivery_latitude}, ${order.delivery_longitude})
-                            ],
-                            routeWhileDragging: false,
-                            addWaypoints: false,
-                            createMarker: function() { return null; },
-                            lineOptions: {
-                                styles: [{color: '#FF6B35', weight: 6, opacity: 1.0}]
-                            }
-                        }).addTo(map);
+                        // Prova routing con strade reali
+                        try {
+                            L.Routing.control({
+                                waypoints: [
+                                    L.latLng(${riderLocation.latitude}, ${riderLocation.longitude}),
+                                    L.latLng(${order.delivery_latitude}, ${order.delivery_longitude})
+                                ],
+                                routeWhileDragging: false,
+                                addWaypoints: false,
+                                createMarker: function() { return null; },
+                                lineOptions: {
+                                    styles: [{color: '#FF6B35', weight: 6, opacity: 1.0}]
+                                }
+                            }).addTo(map);
+                            console.log('🛣️ Customer routing loaded successfully');
+                        } catch (error) {
+                            console.log('❌ Customer routing failed, using fallback line:', error);
+                            // Fallback: linea retta se routing fallisce
+                            L.polyline([
+                                [${riderLocation.latitude}, ${riderLocation.longitude}],
+                                [${order.delivery_latitude}, ${order.delivery_longitude}]
+                            ], {
+                                color: '#FF6B35',
+                                weight: 6,
+                                opacity: 1.0,
+                                dashArray: '10, 5'
+                            }).addTo(map);
+                        }
                     ` : ''}
                     
                     // Funzione per aggiornare il centro quando il rider si muove
