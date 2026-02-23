@@ -150,7 +150,7 @@ export default function AdminDashboardOrders({ navigation }) {
         </View>
 
         {IN_TRANSIT && (
-          <TouchableOpacity style={styles.trackButton} onPress={() => navigation.navigate('ManagerRealTimeMap')}>
+          <TouchableOpacity style={styles.trackButton} onPress={() => navigation.navigate('ManagerRealTimeMap', { orderId: item.id })}>
             <Text style={styles.trackButtonText}>Traccia</Text>
           </TouchableOpacity>
         )}

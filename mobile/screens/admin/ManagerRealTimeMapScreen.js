@@ -8,7 +8,8 @@ import { managerRealTimeMapScreenStyles } from './styles/ManagerRealTimeMapScree
 
 const SOCKET_URL = 'https://delivero-gyjx.onrender.com';
 
-export default function ManagerRealTimeMapScreen() {
+export default function ManagerRealTimeMapScreen({ route }) {
+    const { orderId } = route.params || {}; // Get orderId from navigation params
     const [riders, setRiders] = useState({});
     const [loading, setLoading] = useState(true);
     const [mapKey, setMapKey] = useState(0); // Force WebView remount
@@ -22,6 +23,52 @@ export default function ManagerRealTimeMapScreen() {
     const loadActiveOrdersFallback = async () => {
         try {
             console.log('[ManagerRealTimeMap] === STARTING FALLBACK FETCH ===');
+
+            // If orderId is specified, fetch only that order
+            if (orderId) {
+                console.log('[ManagerRealTimeMap] fetching single order:', orderId);
+                const data = await makeRequest(`/orders/active/all`, { method: 'GET' });
+                const list = Array.isArray(data) ? data : (data?.data || []);
+                const targetOrder = list.find(o => String(o.id) === String(orderId));
+
+                if (targetOrder) {
+                    console.log('[ManagerRealTimeMap] found target order:', targetOrder);
+                    const next = {};
+                    const { rider_latitude, rider_longitude } = targetOrder;
+
+                    if (rider_latitude != null && rider_longitude != null) {
+                        const lat = parseFloat(rider_latitude);
+                        const lng = parseFloat(rider_longitude);
+
+                        if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+                            console.log('[ManagerRealTimeMap] invalid coords for order:', orderId);
+                            setLoading(false);
+                            return;
+                        }
+
+                        next[String(orderId)] = {
+                            orderId: targetOrder.id,
+                            lat,
+                            lng,
+                            eta_minutes: targetOrder.eta_minutes,
+                            status: targetOrder.status,
+                            delivery_latitude: targetOrder.delivery_latitude,
+                            delivery_longitude: targetOrder.delivery_longitude,
+                            customer_id: targetOrder.customer_id,
+                            restaurant_id: targetOrder.restaurant_id,
+                        };
+
+                        console.log('[ManagerRealTimeMap] added single rider for order:', orderId);
+                        setRiders(next);
+                    } else {
+                        console.log('[ManagerRealTimeMap] no rider coords for order:', orderId);
+                    }
+                    setLoading(false);
+                    return;
+                }
+            }
+
+            // Otherwise, fetch all orders (default behavior)
             console.log('[ManagerRealTimeMap] fallback fetch /orders/active/all');
             const data = await makeRequest('/orders/active/all', { method: 'GET' });
             console.log('[ManagerRealTimeMap] raw response:', data);
@@ -32,6 +79,7 @@ export default function ManagerRealTimeMapScreen() {
                 console.log('[ManagerRealTimeMap] first item:', list[0]);
             }
 
+            // Process all orders (only if no specific orderId)
             const next = {};
             for (const o of list) {
                 console.log('[ManagerRealTimeMap] processing order:', o);
@@ -239,6 +287,8 @@ export default function ManagerRealTimeMapScreen() {
 
         console.log('[ManagerRealTimeMap] generating HTML with', riderPositions.length, 'riders');
         console.log('[ManagerRealTimeMap] map center:', centerLat, centerLon, 'zoom:', zoomLevel);
+        console.log('[ManagerRealTimeMap] HTML length:', generateMapHtml().length);
+        console.log('[ManagerRealTimeMap] HTML preview:', generateMapHtml().substring(0, 200) + '...');
 
         // Marker per ogni rider (senza popup)
         const riderMarkers = riderPositions.map(r => `

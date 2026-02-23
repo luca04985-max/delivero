@@ -568,7 +568,20 @@ export const getActiveOrders = async (req, res) => {
         delivery_lat: result.rows[0].delivery_latitude,
         delivery_lon: result.rows[0].delivery_longitude,
         rider_lat: result.rows[0].rider_latitude,
-        rider_lon: result.rows[0].rider_longitude
+        rider_lon: result.rows[0].rider_longitude,
+        rider_id: result.rows[0].rider_id
+      });
+
+      // Debug dettagliato per tutti gli ordini
+      result.rows.forEach((order, index) => {
+        console.log(`🔍 Order ${index + 1}:`, {
+          id: order.id,
+          rider_id: order.rider_id,
+          rider_lat: order.rider_latitude,
+          rider_lon: order.rider_longitude,
+          delivery_lat: order.delivery_latitude,
+          delivery_lon: order.delivery_longitude
+        });
       });
     }
 
