@@ -601,6 +601,8 @@ export const getActiveOrders = async (req, res) => {
         o.rider_id,
         o.customer_id,
         o.delivery_address,
+        o.delivery_latitude,
+        o.delivery_longitude,
         o.rider_latitude,
         o.rider_longitude,
         o.eta_minutes,

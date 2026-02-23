@@ -42,6 +42,12 @@ export default function ManagerRealTimeMapScreen() {
                 const lat = parseFloat(o.rider_latitude);
                 const lng = parseFloat(o.rider_longitude);
                 console.log('[ManagerRealTimeMap] parsed coords:', lat, lng);
+                console.log('[ManagerRealTimeMap] delivery coords available:', {
+                    delivery_lat: o.delivery_latitude,
+                    delivery_lon: o.delivery_longitude,
+                    customer_id: o.customer_id,
+                    restaurant_id: o.restaurant_id
+                });
                 if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
                     console.log('[ManagerRealTimeMap] skipping order - invalid coords:', o.id);
                     continue;
@@ -52,6 +58,10 @@ export default function ManagerRealTimeMapScreen() {
                     lng,
                     eta_minutes: o.eta_minutes,
                     status: o.status,
+                    delivery_latitude: o.delivery_latitude,
+                    delivery_longitude: o.delivery_longitude,
+                    customer_id: o.customer_id,
+                    restaurant_id: o.restaurant_id,
                 };
                 console.log('[ManagerRealTimeMap] added rider for order:', o.id);
             }
@@ -145,6 +155,10 @@ export default function ManagerRealTimeMapScreen() {
                             lng,
                             eta_minutes: data?.eta_minutes,
                             status: data?.status,
+                            delivery_latitude: data?.delivery_latitude,
+                            delivery_longitude: data?.delivery_longitude,
+                            customer_id: data?.customer_id,
+                            restaurant_id: data?.restaurant_id,
                         }
                     }));
                     setLoading(false);
@@ -203,23 +217,71 @@ export default function ManagerRealTimeMapScreen() {
         return <View style={managerRealTimeMapScreenStyles.center}><Text>Usa la Dashboard Web per la mappa interattiva</Text></View>;
     }
 
-    // Generate HTML for OpenStreetMap with markers
+    // Generate HTML for OpenStreetMap with riders tracking
     const generateMapHtml = () => {
-        // Add a visible test marker
-        const testMarker = `
-            L.marker([41.880025, 12.67594])
-                .addTo(map)
-                .bindPopup('<b>TEST - Centro Roma</b><br/>Dovresti vedere questo!')
-                .openPopup();
-        `;
+        // Calcola il centro basato sulla posizione dei rider
+        const riderPositions = Object.values(riders);
+        let centerLat = 41.880025; // Default Roma
+        let centerLon = 12.67594;
+        let zoomLevel = 13;
 
-        const riderMarkers = Object.values(riders).map(r => `
+        if (riderPositions.length > 0) {
+            // Calcola il centro medio di tutti i rider
+            const avgLat = riderPositions.reduce((sum, r) => sum + r.lat, 0) / riderPositions.length;
+            const avgLon = riderPositions.reduce((sum, r) => sum + r.lng, 0) / riderPositions.length;
+            centerLat = avgLat;
+            centerLon = avgLon;
+            zoomLevel = 14; // Zoom più ravvicinato se ci sono rider
+        }
+
+        console.log('[ManagerRealTimeMap] generating HTML with', riderPositions.length, 'riders');
+        console.log('[ManagerRealTimeMap] map center:', centerLat, centerLon, 'zoom:', zoomLevel);
+
+        // Marker per ogni rider (senza popup)
+        const riderMarkers = riderPositions.map(r => `
             L.marker([${r.lat}, ${r.lng}])
-                .addTo(map)
-                .bindPopup('<b>Ordine #${r.orderId}</b><br/>Stato: ${r.status || '—'}<br/>ETA: ${r.eta_minutes != null ? r.eta_minutes + ' min' : '—'}');
+                .addTo(map);
         `).join('\n');
 
-        console.log('[ManagerRealTimeMap] generating HTML with', Object.values(riders).length, 'riders');
+        // Aggiungi percorsi per ogni rider verso la sua destinazione
+        const routes = riderPositions.map(r => {
+            console.log('[ManagerRealTimeMap] Processing rider routes for order', r.orderId, {
+                hasDeliveryCoords: !!(r.delivery_latitude && r.delivery_longitude),
+                delivery_lat: r.delivery_latitude,
+                delivery_lon: r.delivery_longitude
+            });
+
+            if (r.delivery_latitude && r.delivery_longitude) {
+                return `
+                    L.Routing.control({
+                        waypoints: [
+                            L.latLng(${r.lat}, ${r.lng}),
+                            L.latLng(${r.delivery_latitude}, ${r.delivery_longitude})
+                        ],
+                        routeWhileDragging: false,
+                        addWaypoints: false,
+                        createMarker: function() { return null; },
+                        lineOptions: {
+                            styles: [{color: '#FF6B35', weight: 4, opacity: 0.8}]
+                        }
+                    }).addTo(map);
+                `;
+            } else {
+                // Fallback: linea retta se non ci sono coordinate delivery
+                return `
+                    L.polyline([
+                        [${r.lat}, ${r.lng}],
+                        [${r.lat + 0.01}, ${r.lng + 0.01}]
+                    ], {
+                        color: '#FF6B35',
+                        weight: 4,
+                        opacity: 0.6,
+                        dashArray: '5, 10'
+                    }).addTo(map);
+                `;
+            }
+            return '';
+        }).join('\n');
 
         return `
             <!DOCTYPE html>
@@ -228,6 +290,7 @@ export default function ManagerRealTimeMapScreen() {
                 <meta charset="utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
                 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+                <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
                 <style>
                     body { margin:0; padding:0; }
                     #map { position:absolute; top:0; bottom:0; width:100%; height:100%; }
@@ -235,26 +298,38 @@ export default function ManagerRealTimeMapScreen() {
                         position: absolute;
                         top: 10px;
                         left: 10px;
-                        background: white;
-                        padding: 5px;
-                        border-radius: 5px;
+                        background: rgba(255, 255, 255, 0.9);
+                        padding: 8px 12px;
+                        border-radius: 8px;
                         z-index: 1000;
-                        font-size: 12px;
+                        font-size: 14px;
+                        font-weight: bold;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                    }
+                    /* Nascondi i testi delle indicazioni stradali */
+                    .leaflet-routing-container {
+                        display: none !important;
                     }
                 </style>
             </head>
             <body>
-                <div class="debug-info">Riders: ${Object.values(riders).length}</div>
+                <div class="debug-info">🏍 Riders Attivi: ${riderPositions.length}</div>
                 <div id="map"></div>
                 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+                <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
                 <script>
-                    var map = L.map('map').setView([41.880025, 12.67594], 13);
+                    var map = L.map('map').setView([${centerLat}, ${centerLon}], ${zoomLevel});
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                         attribution: 'OpenStreetMap contributors'
                     }).addTo(map);
-                    ${testMarker}
+                    
+                    // Aggiungi marker rider (senza popup)
                     ${riderMarkers}
-                    console.log('Map loaded with ' + Object.values(${JSON.stringify(riders)}).length + ' riders');
+                    
+                    // Aggiungi percorsi verso destinazioni
+                    ${routes}
+                    
+                    console.log('Manager map loaded with ' + ${riderPositions.length} + ' riders');
                     
                     // Force map refresh after 1 second
                     setTimeout(function() {

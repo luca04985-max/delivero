@@ -22,6 +22,48 @@ export default function OrderTrackingLiveScreen({ route }) {
         return () => clearInterval(interval);
     }, []);
 
+    // Calcola ETA fallback basato sulla distanza se non disponibile dal backend
+    const calculateFallbackETA = () => {
+        if (order?.eta_minutes) {
+            return order.eta_minutes;
+        }
+
+        // Se abbiamo coordinate rider e delivery, calcola ETA stimato
+        if (riderLocation && order?.delivery_latitude && order?.delivery_longitude) {
+            const distance = calculateDistance(
+                riderLocation.latitude,
+                riderLocation.longitude,
+                parseFloat(order.delivery_latitude),
+                parseFloat(order.delivery_longitude)
+            );
+
+            // Velocità media urbana: 25 km/h = 416.67 m/min
+            const avgSpeedMPerMin = 416.67;
+            const etaMinutes = Math.ceil(distance / avgSpeedMPerMin);
+
+            console.log('📍 Calculated fallback ETA:', etaMinutes, 'minutes for distance:', distance, 'meters');
+            return etaMinutes;
+        }
+
+        return '--';
+    };
+
+    // Funzione per calcolare la distanza (Haversine)
+    const calculateDistance = (lat1, lon1, lat2, lon2) => {
+        const R = 6371e3; // Earth's radius in meters
+        const φ1 = lat1 * Math.PI / 180;
+        const φ2 = lat2 * Math.PI / 180;
+        const Δφ = (lat2 - lat1) * Math.PI / 180;
+        const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+        const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c; // Distance in meters
+    };
+
     const fetchTrackingData = async () => {
         try {
             console.log('📍 Customer fetching tracking data for order:', orderId);
@@ -52,8 +94,12 @@ export default function OrderTrackingLiveScreen({ route }) {
 
     // Generate HTML for OpenStreetMap with rider tracking
     const generateTrackingMapHtml = () => {
+        // Centro sulla posizione del rider, con fallback su Roma
         const centerLat = riderLocation?.latitude || 41.880025;
         const centerLon = riderLocation?.longitude || 12.67594;
+
+        // Zoom più ravvicinato se abbiamo coordinate rider
+        const zoomLevel = riderLocation ? 16 : 15;
 
         console.log('🗺️ Map HTML generation - riderLocation:', riderLocation);
         console.log('🗺️ Map HTML generation - order delivery coords:', {
@@ -78,69 +124,53 @@ export default function OrderTrackingLiveScreen({ route }) {
 
         console.log('🗺️ Map HTML generation - customerMarker exists:', !!customerMarker);
 
-        // Aggiungi percorso tra rider e customer (fallback linea retta + routing)
-        const routePolyline = riderLocation && order?.delivery_latitude && order?.delivery_longitude ? `
-            // Fallback: linea retta sempre visibile
-            L.polyline([
-                [${riderLocation.latitude}, ${riderLocation.longitude}],
-                [${order.delivery_latitude}, ${order.delivery_longitude}]
-            ], {
-                color: '#FF6B35',
-                weight: 4,
-                opacity: 0.6,
-                dashArray: '5, 10'
-            }).addTo(map);
-            
-            // Prova routing con strada reale
-            try {
-                L.Routing.control({
-                    waypoints: [
-                        L.latLng(${riderLocation.latitude}, ${riderLocation.longitude}),
-                        L.latLng(${order.delivery_latitude}, ${order.delivery_longitude})
-                    ],
-                    routeWhileDragging: false,
-                    addWaypoints: false,
-                    createMarker: function() { return null; },
-                    lineOptions: {
-                        styles: [{color: '#FF6B35', weight: 6, opacity: 1.0}]
-                    }
-                }).addTo(map);
-                console.log('🛣️ Routing loaded successfully');
-            } catch (error) {
-                console.log('❌ Routing failed, using fallback line:', error);
-            }
-        ` : '';
+        // Aggiungi percorso tra rider e customer (solo routing con strade reali)
+        const routePolyline = ''; // Rimuovo linea retta, uso solo routing
 
         console.log('🗺️ Map HTML generation - routePolyline exists:', !!routePolyline);
 
-        return `
-            < !DOCTYPE html>
-                <html>
-                    <head>
-                        <meta charset="utf-8" />
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-                        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-                        <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
-                        <style>
-                            body {margin:0; padding:0; }
-                            #map {position:absolute; top:0; bottom:0; width:100%; height:100%; }
-                        </style>
-                    </head>
-                    <body>
-                        <div id="map"></div>
-                        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-                        <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-                        <script>
-                            var map = L.map('map').setView([${centerLat}, ${centerLon}], 15);
-                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                attribution: ' OpenStreetMap contributors'
-                    }).addTo(map);
-                            ${riderMarker}
-                            ${customerMarker}
-                            ${routePolyline}
+        // Funzione per aggiornare il centro della mappa quando il rider si muove
+        const updateMapCenter = `
+            function updateMapCenter() {
+                if (window.currentRiderLocation) {
+                    map.setView([window.currentRiderLocation.latitude, window.currentRiderLocation.longitude], 16);
+                    console.log('🗺️ Map centered on rider:', window.currentRiderLocation);
+                }
+            }
+        `;
 
-                    // Aggiungi routing con strada reale
-                            ${riderLocation && order?.delivery_latitude && order?.delivery_longitude ? `
+        return `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+                <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+                <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+                <style>
+                    body { margin:0; padding:0; }
+                    #map { position:absolute; top:0; bottom:0; width:100%; height:100%; }
+                    /* Nascondi i testi delle indicazioni stradali */
+                    .leaflet-routing-container {
+                        display: none !important;
+                    }
+                </style>
+            </head>
+            <body>
+                <div id="map"></div>
+                <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+                <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+                <script>
+                    var map = L.map('map').setView([${centerLat}, ${centerLon}], ${zoomLevel});
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: ' OpenStreetMap contributors'
+                    }).addTo(map);
+                    ${riderMarker}
+                    ${customerMarker}
+                    ${routePolyline}
+                    
+                    // Aggiungi routing con strade reali ma senza popup e indicazioni
+                    ${riderLocation && order?.delivery_latitude && order?.delivery_longitude ? `
                         L.Routing.control({
                             waypoints: [
                                 L.latLng(${riderLocation.latitude}, ${riderLocation.longitude}),
@@ -154,9 +184,15 @@ export default function OrderTrackingLiveScreen({ route }) {
                             }
                         }).addTo(map);
                     ` : ''}
-                        </script>
-                    </body>
-                </html>
+                    
+                    // Funzione per aggiornare il centro quando il rider si muove
+                    ${updateMapCenter}
+                    
+                    // Salva la posizione corrente del rider per aggiornamenti futuri
+                    window.currentRiderLocation = ${riderLocation ? JSON.stringify(riderLocation) : null};
+                </script>
+            </body>
+            </html>
         `;
     };
 
@@ -172,7 +208,7 @@ export default function OrderTrackingLiveScreen({ route }) {
             />
             <View style={orderTrackingLiveScreenStyles.infoBox}>
                 <Text style={orderTrackingLiveScreenStyles.statusText}>Stato: {order?.status || 'In caricamento...'}</Text>
-                <Text>Consegna stimata: {order?.eta_minutes || '--'} min</Text>
+                <Text>Consegna stimata: {calculateFallbackETA()} min</Text>
             </View>
         </View>
     );
