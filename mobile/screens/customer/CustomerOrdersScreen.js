@@ -7,7 +7,7 @@ export default function CustomerOrdersScreen({ navigation, route }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [activeTab, setActiveTab] = useState('all'); // 'all', 'pending', 'preparing', 'delivering', 'delivered', 'cancelled'
+  const [activeTab, setActiveTab] = useState('all'); // 'all', 'pending', 'preparing', 'in_transit', 'delivered', 'cancelled'
   const [userRole, setUserRole] = useState(null);
   const [selectMode, setSelectMode] = useState(route.params?.selectMode || false); // Modalità selezione ordine
   // Aggiungi questa riga insieme agli altri useState
@@ -87,7 +87,7 @@ export default function CustomerOrdersScreen({ navigation, route }) {
             {item.status === 'accepted' && '✓ ACCETTATO'}
             {item.status === 'preparing' && '👨‍🍳 IN PREPARAZIONE'}
             {item.status === 'pickup' && '📦 PRONTO PER RITIRO'}
-            {item.status === 'delivering' && '🚗 IN CONSEGNA'}
+            {item.status === 'in_transit' && '🚗 IN VIAGGIO'}
             {item.status === 'delivered' && '✅ CONSEGNATO'}
             {item.status === 'cancelled' && '❌ CANCELLATO'}
           </Text>
@@ -156,7 +156,7 @@ export default function CustomerOrdersScreen({ navigation, route }) {
             </TouchableOpacity>
           )}
         </View>
-      ) : item.status === 'delivering' || item.status === 'in_transit'? (
+      ) : item.status === 'in_transit' ? (
         <View style={customerOrdersScreenStyles.buttonRow}>
           <TouchableOpacity
             style={customerOrdersScreenStyles.trackButton}
@@ -227,7 +227,7 @@ export default function CustomerOrdersScreen({ navigation, route }) {
       accepted: { label: 'Accettati', icon: '✓' },
       preparing: { label: 'In Preparazione', icon: '👨‍🍳' },
       pickup: { label: 'Pronti', icon: '📦' },
-      delivering: { label: 'In Consegna', icon: '🚗' },
+      in_transit: { label: 'In Viaggio', icon: '🚗' },
       delivered: { label: 'Consegnati', icon: '✅' },
       cancelled: { label: 'Cancellati', icon: '❌' }
     };

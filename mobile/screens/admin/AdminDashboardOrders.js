@@ -87,7 +87,6 @@ export default function AdminDashboardOrders({ navigation }) {
       'ready': { label: 'Pronti', icon: '📦' },
       'pickup': { label: 'Ritiro', icon: '📦' },
       'in_transit': { label: 'In Viaggio', icon: '🚚' },
-      'delivering': { label: 'In Consegna', icon: '🚗' },
       'delivered': { label: 'Consegnati', icon: '✅' },
       'cancelled': { label: 'Cancellati', icon: '❌' }
     };
@@ -120,7 +119,6 @@ export default function AdminDashboardOrders({ navigation }) {
 
   const renderOrder = ({ item }) => {
     const isDelivered = String(item.status || '').toUpperCase() === 'DELIVERED';
-    const DELIVERING = String(item.status || '').toUpperCase() === 'DELIVERING';
     const IN_TRANSIT = String(item.status || '').toUpperCase() === 'IN_TRANSIT';
 
     return (
@@ -141,7 +139,6 @@ export default function AdminDashboardOrders({ navigation }) {
               {item.status === 'ready' && '📦 PRONTO'}
               {item.status === 'pickup' && '📦 RITIRO'}
               {item.status === 'in_transit' && '🚚 IN VIAGGIO'}
-              {item.status === 'delivering' && '🚗 IN CONSEGNA'}
               {item.status === 'delivered' && '✅ CONSEGNATO'}
               {item.status === 'cancelled' && '❌ CANCELLATO'}
             </Text>
@@ -152,7 +149,7 @@ export default function AdminDashboardOrders({ navigation }) {
           <Text style={styles.orderTotal}>€{item.total_amount != null ? Number(item.total_amount).toFixed(2) : '0.00'}</Text>
         </View>
 
-        {(IN_TRANSIT || DELIVERING) && (
+        {IN_TRANSIT && (
           <TouchableOpacity style={styles.trackButton} onPress={() => navigation.navigate('ManagerRealTimeMap')}>
             <Text style={styles.trackButtonText}>Traccia</Text>
           </TouchableOpacity>

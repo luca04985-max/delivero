@@ -104,7 +104,7 @@ export const getMyActiveOrderLocation = async (req, res) => {
       `SELECT rl.*, o.id as order_id, o.status as order_status, o.customer_id
        FROM rider_locations rl
        LEFT JOIN orders o ON rl.order_id = o.id
-       WHERE rl.rider_id = $1 AND o.status IN ('accepted', 'preparing', 'delivering')
+       WHERE rl.rider_id = $1 AND o.status IN ('accepted', 'preparing', 'in_transit')
        ORDER BY rl.timestamp DESC
        LIMIT 1`,
       [userId]

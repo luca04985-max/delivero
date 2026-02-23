@@ -244,7 +244,7 @@ export const getActiveRiderOrders = async (req, res) => {
 
     const result = await db.query(
       `SELECT * FROM orders 
-       WHERE rider_id = $1 AND status IN ('accepted', 'pickup', 'in_transit', 'delivering', 'delivered') 
+       WHERE rider_id = $1 AND status IN ('accepted', 'pickup', 'in_transit', 'delivered') 
        ORDER BY updated_at DESC`,
       [riderId]
     );
@@ -315,7 +315,7 @@ export const updateRiderOrderStatus = async (req, res) => {
     console.log('🔍 UpdateRiderOrderStatus - Order exists, proceeding with update...');
 
     // Validate status transitions for riders
-    const validStatuses = ['accepted', 'pickup', 'in_transit', 'delivering', 'delivered'];
+    const validStatuses = ['accepted', 'pickup', 'in_transit', 'delivered'];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ message: 'Invalid status for rider' });
     }
@@ -479,7 +479,7 @@ export const updateRiderLocation = async (req, res) => {
     }
     const order = orderRes.rows[0];
 
-    if (!['accepted', 'pickup', 'in_transit', 'delivering'].includes(order.status)) {
+    if (!['accepted', 'pickup', 'in_transit'].includes(order.status)) {
       console.log('ℹ️ Order not in trackable status:', order.status);
       return res.status(200).json({
         message: 'Ordine non in stato tracciabile',
@@ -616,7 +616,7 @@ export const getActiveOrders = async (req, res) => {
        FROM orders o
        LEFT JOIN users u ON o.rider_id = u.id
        LEFT JOIN users c ON o.customer_id = c.id
-       WHERE o.status IN ('pending', 'accepted', 'pickup', 'in_transit', 'delivering')
+       WHERE o.status IN ('pending', 'accepted', 'pickup', 'in_transit')
        ORDER BY o.created_at DESC`,
       []
     );

@@ -55,7 +55,7 @@ export default function OrderSelectionScreen({ navigation, route }) {
       case 'accepted': return '#2196F3';
       case 'preparing': return '#9C27B0';
       case 'pickup': return '#FF5722';
-      case 'delivering': return '#4CAF50';
+      case 'in_transit': return '#4CAF50';
       case 'delivered': return '#607D8B';
       case 'cancelled': return '#F44336';
       default: return '#999';
@@ -75,7 +75,7 @@ export default function OrderSelectionScreen({ navigation, route }) {
             {item.status === 'accepted' && '✓ ACCETTATO'}
             {item.status === 'preparing' && '👨‍🍳 IN PREPARAZIONE'}
             {item.status === 'pickup' && '📦 PRONTO PER RITIRO'}
-            {item.status === 'delivering' && '🚗 IN CONSEGNA'}
+            {item.status === 'in_transit' && '🚗 IN CONSEGNA'}
             {item.status === 'delivered' && '✅ CONSEGNATO'}
             {item.status === 'cancelled' && '❌ CANCELLATO'}
           </Text>
@@ -173,7 +173,7 @@ export default function OrderSelectionScreen({ navigation, route }) {
       accepted: { label: 'Accettati', icon: '✓' },
       preparing: { label: 'In Preparazione', icon: '👨‍🍳' },
       pickup: { label: 'Pronti', icon: '📦' },
-      delivering: { label: 'In Consegna', icon: '🚗' },
+      in_transit: { label: 'In Consegna', icon: '🚗' },
       delivered: { label: 'Consegnati', icon: '✅' },
       cancelled: { label: 'Cancellati', icon: '❌' }
     };

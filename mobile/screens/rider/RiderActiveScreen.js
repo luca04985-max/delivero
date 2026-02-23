@@ -94,11 +94,6 @@ export default function RiderActiveScreen() {
             </TouchableOpacity>
           )}
           {item.status === 'in_transit' && (
-            <TouchableOpacity style={riderActiveScreenStyles.btnTransit} onPress={() => updateStatus(item.id, 'delivering')}>
-              <Text style={riderActiveScreenStyles.btnText}>In Consegna</Text>
-            </TouchableOpacity>
-          )}
-          {item.status !== 'delivered' && item.status !== 'in_transit' && (
             <TouchableOpacity style={riderActiveScreenStyles.btnComplete} onPress={() => updateStatus(item.id, 'delivered')}>
               <Text style={riderActiveScreenStyles.btnText}>Consegnato ✅</Text>
             </TouchableOpacity>
@@ -138,7 +133,6 @@ export default function RiderActiveScreen() {
       accepted: { label: 'Accettati', icon: '📋' },
       pickup: { label: 'Ritirati', icon: '📦' },
       in_transit: { label: 'In Viaggio', icon: '🚚' },
-      delivering: { label: 'In Consegna', icon: '🚗' },
       delivered: { label: 'Consegnati', icon: '✅' }
     };
 

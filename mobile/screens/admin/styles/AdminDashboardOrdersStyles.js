@@ -66,10 +66,7 @@ export const adminDashboardOrderStyles = StyleSheet.create({
     backgroundColor: mobileTheme.colors.infoBg,
     color: mobileTheme.colors.info,
   },
-  statusDelivering: {
-    backgroundColor: mobileTheme.colors.primaryBg,
-    color: mobileTheme.colors.primary,
-  },
+  // Rimuovo statusDelivering - ora usa in_transit
   statusDelivered: {
     backgroundColor: mobileTheme.colors.successBg,
     color: mobileTheme.colors.success,

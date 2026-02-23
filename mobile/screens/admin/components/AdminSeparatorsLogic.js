@@ -94,7 +94,6 @@ export const useAdminRenderWithSeparators = (expandedSections, renderOrder, rend
       'READY': { label: 'Pronti', icon: '📦' },
       'PICKUP': { label: 'Ritiro', icon: '📦' },
       'IN_TRANSIT': { label: 'In Viaggio', icon: '🚚' },
-      'DELIVERING': { label: 'In Consegna', icon: '🚗' },
       'DELIVERED': { label: 'Consegnati', icon: '✅' },
       'CANCELLED': { label: 'Cancellati', icon: '❌' }
     };

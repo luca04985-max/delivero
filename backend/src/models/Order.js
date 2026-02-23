@@ -85,7 +85,7 @@ export const getUserOrders = async (userId, limit = 10, offset = 0) => {
 // Update order status
 export const updateOrderStatus = async (orderId, status) => {
   try {
-    const validStatuses = ['pending', 'confirmed', 'preparing', 'ready', 'delivering', 'delivered', 'cancelled'];
+    const validStatuses = ['pending', 'confirmed', 'preparing', 'ready', 'in_transit', 'delivered', 'cancelled'];
 
     if (!validStatuses.includes(status)) {
       throw new Error('Stato ordine non valido');
@@ -110,7 +110,7 @@ export const assignRiderToOrder = async (orderId, riderId) => {
   try {
     const result = await pool.query(
       `UPDATE orders 
-       SET rider_id = $1, status = 'delivering', updated_at = CURRENT_TIMESTAMP
+       SET rider_id = $1, status = 'in_transit', updated_at = CURRENT_TIMESTAMP
        WHERE id = $2
        RETURNING *`,
       [riderId, orderId]
