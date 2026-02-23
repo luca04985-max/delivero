@@ -616,7 +616,7 @@ export const getActiveOrders = async (req, res) => {
        FROM orders o
        LEFT JOIN users u ON o.rider_id = u.id
        LEFT JOIN users c ON o.customer_id = c.id
-       WHERE o.status IN ('pending', 'accepted', 'pickup', 'in_transit')
+       WHERE o.status IN ('pending', 'accepted', 'pickup', 'in_transit', 'delivering')
        ORDER BY o.created_at DESC`,
       []
     );

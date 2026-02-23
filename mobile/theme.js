@@ -77,4 +77,13 @@ export const mobileTheme = {
   }
 };
 
+// Mapping diretto per compatibilità React Native
+export const FONT_WEIGHTS = {
+  normal: '400',
+  medium: '500',
+  semibold: '600',
+  bold: '700',
+  black: '900'
+};
+
 export default mobileTheme;

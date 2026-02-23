@@ -1,5 +1,5 @@
 import { StyleSheet, Platform } from 'react-native';
-import { mobileTheme } from '../../../theme';
+import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
 
 export const AdminDashboardScreenStyles = StyleSheet.create({
@@ -41,7 +41,7 @@ export const AdminDashboardScreenStyles = StyleSheet.create({
   },
   activeTabText: {
     color: mobileTheme.colors.primary,
-    fontWeight: mobileTheme.typography.fontWeight.bold
+    fontWeight: FONT_WEIGHTS.bold
   },
 
   // SECTION STYLES (per Stats, Finance, Metrics)
@@ -55,13 +55,13 @@ export const AdminDashboardScreenStyles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: mobileTheme.typography.fontSize.lg,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.text.primary,
     marginBottom: mobileTheme.spacing[3],
   },
   sectionValue: {
     fontSize: mobileTheme.typography.fontSize['2xl'],
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.primary,
     marginBottom: mobileTheme.spacing[2],
   },
@@ -91,7 +91,7 @@ export const AdminDashboardScreenStyles = StyleSheet.create({
   monthValue: {
     fontSize: mobileTheme.typography.fontSize.md,
     color: mobileTheme.colors.primary,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
   },
   monthOrders: {
     fontSize: mobileTheme.typography.fontSize.sm,
@@ -185,7 +185,7 @@ export const AdminDashboardScreenStyles = StyleSheet.create({
   },
   priorityText: {
     fontSize: mobileTheme.typography.fontSize.xs,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.white,
   },
 

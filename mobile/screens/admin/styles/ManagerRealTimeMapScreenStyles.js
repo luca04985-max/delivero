@@ -1,5 +1,5 @@
 import { StyleSheet, Platform } from 'react-native';
-import { mobileTheme } from '../../../theme';
+import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
 
 export const managerRealTimeMapScreenStyles = StyleSheet.create({
   container: {
@@ -54,7 +54,7 @@ export const managerRealTimeMapScreenStyles = StyleSheet.create({
   },
   riderName: {
     fontSize: mobileTheme.typography.fontSize.base,
-    fontWeight: mobileTheme.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.text.primary,
   },
   statusIndicator: {
@@ -79,7 +79,7 @@ export const managerRealTimeMapScreenStyles = StyleSheet.create({
   },
   loadingText: {
     fontSize: mobileTheme.typography.fontSize.base,
-    fontWeight: mobileTheme.fontWeight.semibold,
+    fontWeight: '600',
     color: mobileTheme.colors.text.secondary,
     marginTop: mobileTheme.spacing[4],
     letterSpacing: 1,

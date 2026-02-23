@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { mobileTheme } from '../../../theme';
+import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
 
 export const adminDashboardTicketsStyles = StyleSheet.create({
@@ -71,13 +71,13 @@ export const adminDashboardTicketsStyles = StyleSheet.create({
   orderLabel: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.primary,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     marginBottom: mobileTheme.spacing[1],
   },
   orderId: {
     fontSize: mobileTheme.typography.fontSize.md,
     color: mobileTheme.colors.text,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
   },
 
   // User info
@@ -92,7 +92,7 @@ export const adminDashboardTicketsStyles = StyleSheet.create({
   },
   userName: {
     fontSize: mobileTheme.typography.fontSize.base,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.text.primary,
   },
   userEmail: {
@@ -110,7 +110,7 @@ export const adminDashboardTicketsStyles = StyleSheet.create({
   },
   priorityText: {
     fontSize: mobileTheme.typography.fontSize.xs,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.white,
     textTransform: 'uppercase',
   },

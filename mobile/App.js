@@ -40,6 +40,7 @@ import RiderTicketsScreen from './screens/rider/RiderTicketsScreen';
 import AdminDashboardScreen from './screens/admin/AdminDashboardScreen';
 import { ActivityIndicator, View, Text, TouchableOpacity } from 'react-native';
 import AdminDashboardTickets from './screens/admin/AdminDashboardTickets';
+import ManagerRealTimeMapScreen from './screens/admin/ManagerRealTimeMapScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -74,7 +75,7 @@ function CustomerTabs({ onLogout, user }) {
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
-          fontWeight: 'bold',
+          fontWeight: '700',
         },
       }}
     >
@@ -87,7 +88,7 @@ function CustomerTabs({ onLogout, user }) {
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🏠</Text>,
           headerRight: () => (
             <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
             </TouchableOpacity>
           ),
         }}
@@ -101,7 +102,7 @@ function CustomerTabs({ onLogout, user }) {
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🍽️</Text>,
           headerRight: () => (
             <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
             </TouchableOpacity>
           ),
         }}
@@ -115,7 +116,7 @@ function CustomerTabs({ onLogout, user }) {
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🛍️</Text>,
           headerRight: () => (
             <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
             </TouchableOpacity>
           ),
         }}
@@ -129,7 +130,7 @@ function CustomerTabs({ onLogout, user }) {
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🛒</Text>,
           headerRight: () => (
             <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
             </TouchableOpacity>
           ),
           tabBarBadge: cart?.itemCount > 0 ? cart.itemCount : null,
@@ -144,7 +145,7 @@ function CustomerTabs({ onLogout, user }) {
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>📦</Text>,
           headerRight: () => (
             <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
             </TouchableOpacity>
           ),
         }}
@@ -158,7 +159,7 @@ function CustomerTabs({ onLogout, user }) {
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🎫</Text>,
           headerRight: () => (
             <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
             </TouchableOpacity>
           ),
         }}
@@ -191,7 +192,7 @@ function CustomerStack({ onLogout, user }) {
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
-            fontWeight: 'bold',
+            fontWeight: '700',
           },
         }}
       />
@@ -205,7 +206,7 @@ function CustomerStack({ onLogout, user }) {
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
-            fontWeight: 'bold',
+            fontWeight: '700',
           },
         }}
       />
@@ -219,7 +220,7 @@ function CustomerStack({ onLogout, user }) {
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
-            fontWeight: 'bold',
+            fontWeight: '700',
           },
         }}
       />
@@ -233,7 +234,7 @@ function CustomerStack({ onLogout, user }) {
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
-            fontWeight: 'bold',
+            fontWeight: '700',
           },
         }}
       />
@@ -247,7 +248,7 @@ function CustomerStack({ onLogout, user }) {
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
-            fontWeight: 'bold',
+            fontWeight: '700',
           },
         }}
       />
@@ -261,7 +262,7 @@ function CustomerStack({ onLogout, user }) {
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
-            fontWeight: 'bold',
+            fontWeight: '700',
           },
         }}
       />
@@ -282,7 +283,7 @@ function RiderStack({ onLogout, user }) {
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
-          fontWeight: 'bold',
+          fontWeight: '700',
         },
       }}
     >
@@ -295,7 +296,7 @@ function RiderStack({ onLogout, user }) {
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>📦</Text>,
           headerRight: () => (
             <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
             </TouchableOpacity>
           ),
         }}
@@ -309,7 +310,7 @@ function RiderStack({ onLogout, user }) {
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🚚</Text>,
           headerRight: () => (
             <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
             </TouchableOpacity>
           ),
         }}
@@ -323,7 +324,7 @@ function RiderStack({ onLogout, user }) {
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🎫</Text>,
           headerRight: () => (
             <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
             </TouchableOpacity>
           ),
         }}
@@ -351,7 +352,7 @@ function RiderStackWithScreens({ onLogout, user }) {
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
-            fontWeight: 'bold',
+            fontWeight: '700',
           },
         }}
       />
@@ -365,7 +366,7 @@ function RiderStackWithScreens({ onLogout, user }) {
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
-            fontWeight: 'bold',
+            fontWeight: '700',
           },
         }}
       />
@@ -384,7 +385,7 @@ function ManagerStack({ token, user, onLogout }) {
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
-          fontWeight: 'bold',
+          fontWeight: '700',
         },
       }}
     >
@@ -395,7 +396,7 @@ function ManagerStack({ token, user, onLogout }) {
           title: user?.name || 'Admin Dashboard',
           headerRight: () => (
             <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
             </TouchableOpacity>
           ),
         }}
@@ -408,7 +409,7 @@ function ManagerStack({ token, user, onLogout }) {
           title: user?.name || 'Tickets',
           headerRight: () => (
             <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
             </TouchableOpacity>
           ),
         }}
@@ -421,7 +422,20 @@ function ManagerStack({ token, user, onLogout }) {
           title: user?.name || 'Tracciamento Ordine',
           headerRight: () => (
             <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#fff' }}>Logout</Text>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
+            </TouchableOpacity>
+          ),
+        }}
+        initialParams={{ token }}
+      />
+      <Stack.Screen
+        name="ManagerRealTimeMap"
+        component={ManagerRealTimeMapScreen}
+        options={{
+          title: user?.name || 'Mappa Real-Time',
+          headerRight: () => (
+            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
             </TouchableOpacity>
           ),
         }}

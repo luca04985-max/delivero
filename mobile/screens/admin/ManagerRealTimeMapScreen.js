@@ -4,7 +4,6 @@ import { WebView } from 'react-native-webview';
 import { io } from 'socket.io-client';
 import { makeRequest } from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Location from 'expo-location';
 import { managerRealTimeMapScreenStyles } from './styles/ManagerRealTimeMapScreenStyles';
 
 const SOCKET_URL = 'https://delivero-gyjx.onrender.com';
@@ -22,6 +21,7 @@ export default function ManagerRealTimeMapScreen() {
 
     const loadActiveOrdersFallback = async () => {
         try {
+            console.log('[ManagerRealTimeMap] === STARTING FALLBACK FETCH ===');
             console.log('[ManagerRealTimeMap] fallback fetch /orders/active/all');
             const data = await makeRequest('/orders/active/all', { method: 'GET' });
             console.log('[ManagerRealTimeMap] raw response:', data);
@@ -205,32 +205,13 @@ export default function ManagerRealTimeMapScreen() {
         };
     }, []);
 
-    useEffect(() => {
-        const loadMyLocation = async () => {
-            try {
-                const { status } = await Location.requestForegroundPermissionsAsync();
-                console.log('[ManagerRealTimeMap] location permission', status);
-                if (status !== 'granted') return;
-                const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
-                console.log('[ManagerRealTimeMap] my location', loc?.coords);
-                setMapRegion(prev => ({
-                    ...prev,
-                    latitude: loc.coords.latitude,
-                    longitude: loc.coords.longitude,
-                }));
-            } catch (e) {
-                console.log('[ManagerRealTimeMap] location error', e?.message || e);
-                // keep fallback
-            }
-        };
-        if (Platform.OS !== 'web') {
-            loadMyLocation();
-        }
-    }, []);
+    // Temporaneamente disabilitato per test
+    // if (Platform.OS === 'web') {
+    //     console.log('[ManagerRealTimeMap] PLATFORM IS WEB - showing web message');
+    //     return <View style={managerRealTimeMapScreenStyles.center}><Text>Usa la Dashboard Web per la mappa interattiva</Text></View>;
+    // }
 
-    if (Platform.OS === 'web') {
-        return <View style={managerRealTimeMapScreenStyles.center}><Text>Usa la Dashboard Web per la mappa interattiva</Text></View>;
-    }
+    console.log('[ManagerRealTimeMap] PLATFORM IS MOBILE - rendering map');
 
     // Generate HTML for OpenStreetMap with riders tracking
     const generateMapHtml = () => {
@@ -260,40 +241,21 @@ export default function ManagerRealTimeMapScreen() {
 
         // Aggiungi percorsi per ogni rider verso la sua destinazione
         const routes = riderPositions.map(r => {
-            console.log('[ManagerRealTimeMap] Processing rider routes for order', r.orderId, {
-                hasDeliveryCoords: !!(r.delivery_latitude && r.delivery_longitude),
-                delivery_lat: r.delivery_latitude,
-                delivery_lon: r.delivery_longitude
-            });
+            // Se non ci sono coordinate delivery, usa coordinate di fallback basate sulla posizione rider
+            const deliveryLat = r.delivery_latitude || (r.lat + 0.01);
+            const deliveryLon = r.delivery_longitude || (r.lng + 0.01);
 
-            if (r.delivery_latitude && r.delivery_longitude) {
-                return `
-                    // Test semplice polyline invece di routing
-                    L.polyline([
-                        [${r.lat}, ${r.lng}],
-                        [${r.delivery_latitude}, ${r.delivery_longitude}]
-                    ], {
-                        color: '#FF6B35',
-                        weight: 4,
-                        opacity: 0.8,
-                        smoothFactor: 1
-                    }).addTo(map);
-                    console.log('🛣️ Admin polyline added for order', ${r.orderId});
-                `;
-            } else {
-                return `
-                    L.polyline([
-                        [${r.lat}, ${r.lng}],
-                        [${r.lat + 0.005}, ${r.lng + 0.005}]
-                    ], {
-                        color: '#FF6B35',
-                        weight: 4,
-                        opacity: 0.6,
-                        dashArray: '5, 10'
-                    }).addTo(map);
-                `;
-            }
-            return '';
+            return `
+                L.polyline([
+                    [${r.lat}, ${r.lng}],
+                    [${deliveryLat}, ${deliveryLon}]
+                ], {
+                    color: '#FF6B35',
+                    weight: 4,
+                    opacity: 0.8,
+                    smoothFactor: 1
+                }).addTo(map);
+            `;
         }).join('\n');
 
         return `
@@ -332,11 +294,6 @@ export default function ManagerRealTimeMapScreen() {
                 <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
                 <script>
                     console.log('🗺️ Admin map initializing...');
-                    console.log('🗺️ Available libraries:', {
-                        L: typeof L !== 'undefined',
-                        Routing: typeof L.Routing !== 'undefined'
-                    });
-                    
                     var map = L.map('map').setView([${centerLat}, ${centerLon}], ${zoomLevel});
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                         attribution: 'OpenStreetMap contributors'
@@ -350,29 +307,28 @@ export default function ManagerRealTimeMapScreen() {
                     
                     // Debug finale
                     console.log('🗺️ Admin map loaded with ' + ${riderPositions.length} + ' riders');
-                    console.log('🗺️ Map center set to:', [${centerLat}, ${centerLon}]);
                     
                     // Force map refresh after 1 second
                     setTimeout(function() {
                         map.invalidateSize();
-                        console.log('🗺️ Map size invalidated');
                     }, 1000);
                 </script>
             </body>
             </html>
-        };
+        `;
 
-    return (
-        <View style={managerRealTimeMapScreenStyles.container}>
-            <WebView
-                key={mapKey} // Force complete remount when riders change
-                style={managerRealTimeMapScreenStyles.map}
-                source={{ html: generateMapHtml() }}
-                javaScriptEnabled={true}
-                domStorageEnabled={true}
-                startInLoadingState={true}
-                renderLoading={() => <ActivityIndicator style={managerRealTimeMapScreenStyles.loader} size="large" />}
-            />
-        </View>
-    );
+        return (
+            <View style={managerRealTimeMapScreenStyles.container}>
+                <WebView
+                    key={mapKey} // Force complete remount when riders change
+                    style={managerRealTimeMapScreenStyles.map}
+                    source={{ html: generateMapHtml() }}
+                    javaScriptEnabled={true}
+                    domStorageEnabled={true}
+                    startInLoadingState={true}
+                    renderLoading={() => <ActivityIndicator style={managerRealTimeMapScreenStyles.loader} size="large" />}
+                />
+            </View>
+        );
+    }
 }

@@ -4,6 +4,15 @@ import { mobileTheme } from '../theme';
 // STILI UNIFICATI PER TUTTI GLI SCHERMI
 // Basati su: CustomerOrdersScreen, CustomerHomeScreen, TicketDetailScreen, RiderActiveScreen
 
+// Mapping diretto per evitare problemi con React Native
+const FONT_WEIGHTS = {
+  normal: '400',
+  medium: '500',
+  semibold: '600',
+  bold: '700',
+  black: '900'
+};
+
 export const unifiedStyles = StyleSheet.create({
   // CONTAINER BASE
   container: {
@@ -66,7 +75,7 @@ export const unifiedStyles = StyleSheet.create({
   },
   activeTabText: {
     color: mobileTheme.colors.primary,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
   },
 
   // CONTENT BASE
@@ -113,12 +122,12 @@ export const unifiedStyles = StyleSheet.create({
   },
   orderId: {
     fontSize: mobileTheme.typography.fontSize.sm,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.text.secondary,
   },
   ticketId: {
     fontSize: mobileTheme.typography.fontSize.lg,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.text.primary,
   },
 
@@ -137,13 +146,13 @@ export const unifiedStyles = StyleSheet.create({
   },
   statusText: {
     fontSize: mobileTheme.typography.fontSize.xs,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.warning,
     textTransform: 'uppercase',
   },
   orderStatusText: {
     fontSize: mobileTheme.typography.fontSize.xs,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.success,
     textTransform: 'uppercase',
   },
@@ -159,12 +168,12 @@ export const unifiedStyles = StyleSheet.create({
   },
   orderTotal: {
     fontSize: mobileTheme.typography.fontSize.lg,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.primary,
   },
   ticketTitle: {
     fontSize: mobileTheme.typography.fontSize.lg,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.text.primary,
     marginBottom: mobileTheme.spacing[2],
     flex: 1,
@@ -221,7 +230,7 @@ export const unifiedStyles = StyleSheet.create({
   },
   statusSeparatorCount: {
     fontSize: mobileTheme.typography.fontSize.md,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.primary,
     marginRight: mobileTheme.spacing[2],
     backgroundColor: mobileTheme.colors.background,
@@ -234,7 +243,7 @@ export const unifiedStyles = StyleSheet.create({
   statusSeparatorToggle: {
     fontSize: mobileTheme.typography.fontSize.md,
     color: mobileTheme.colors.white,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
   },
 
   // BUTTONS UNIFICATI
@@ -248,7 +257,7 @@ export const unifiedStyles = StyleSheet.create({
   },
   buttonText: {
     fontSize: mobileTheme.typography.fontSize.sm,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.white,
     textTransform: 'uppercase',
     letterSpacing: 1,
@@ -264,7 +273,7 @@ export const unifiedStyles = StyleSheet.create({
   },
   trackButtonText: {
     fontSize: mobileTheme.typography.fontSize.sm,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.white,
     textTransform: 'uppercase',
     letterSpacing: 1,
@@ -338,7 +347,7 @@ export const unifiedStyles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: mobileTheme.typography.fontSize.lg,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.text.primary,
     marginBottom: mobileTheme.spacing[4],
     textAlign: 'center',
@@ -354,7 +363,7 @@ export const unifiedStyles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: mobileTheme.typography.fontSize.lg,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.text.primary,
     marginBottom: mobileTheme.spacing[3],
   },
@@ -372,7 +381,7 @@ export const unifiedStyles = StyleSheet.create({
   },
   statValue: {
     fontSize: 28,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.secondary,
   },
   statLabel: {
@@ -386,7 +395,7 @@ export const unifiedStyles = StyleSheet.create({
   // USER ELEMENTS (come AdminDashboardScreen)
   userName: {
     fontSize: mobileTheme.typography.fontSize.lg,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.text.primary,
     marginBottom: mobileTheme.spacing[1],
   },

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { mobileTheme } from '../../../theme';
+import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
 
 export const adminDashboardOrderStyles = StyleSheet.create({
@@ -38,7 +38,7 @@ export const adminDashboardOrderStyles = StyleSheet.create({
   },
   tabTextActive: {
     color: mobileTheme.colors.white,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
   },
 
   // Order status colors
@@ -111,7 +111,7 @@ export const adminDashboardOrderStyles = StyleSheet.create({
   },
   restaurantName: {
     fontSize: mobileTheme.typography.fontSize.base,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.text.primary,
     marginBottom: mobileTheme.spacing[1],
   },
@@ -147,7 +147,7 @@ export const adminDashboardOrderStyles = StyleSheet.create({
   },
   itemPrice: {
     fontSize: mobileTheme.typography.fontSize.sm,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.text.secondary,
   },
 
@@ -162,7 +162,7 @@ export const adminDashboardOrderStyles = StyleSheet.create({
   },
   specialNotesTitle: {
     fontSize: mobileTheme.typography.fontSize.sm,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.warning,
     marginBottom: mobileTheme.spacing[1],
   },
@@ -204,7 +204,7 @@ export const adminDashboardOrderStyles = StyleSheet.create({
   },
   trackButtonText: {
     fontSize: mobileTheme.typography.fontSize.sm,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.white,
     textTransform: 'uppercase',
     letterSpacing: 1,
