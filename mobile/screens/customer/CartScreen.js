@@ -574,7 +574,7 @@ export default function CartScreen({ navigation }) {
                             onPress={confirmCheckout}
                             disabled={placingOrder}
                         >
-                            {placingOrder ? <ActivityIndicator color="white" /> : <Text style={styles.checkoutButtonText}>Conferma e Paga</Text>}
+                            {placingOrder ? <ActivityIndicator color="white" /> : paymentMethod === 'card' ? <Text style={styles.checkoutButtonText}>Conferma e Paga</Text> : <Text style={styles.checkoutButtonText}>Conferma</Text>}
                         </TouchableOpacity>
 
                         <TouchableOpacity onPress={() => setCheckoutVisible(false)} style={{ marginTop: 20 }}>

@@ -62,9 +62,6 @@ export default function RiderHomeScreen({ navigation }) {
       <View style={riderHomeScreenStyles.textGroup}>
         <Text style={riderHomeScreenStyles.address}>Da: {item.pickup_address || 'Punto Ritiro'}</Text>
         <Text style={riderHomeScreenStyles.address}>A: {item.delivery_address}</Text>
-        <View style={riderHomeScreenStyles.payoutContainer}>
-          <Text style={riderHomeScreenStyles.payout}>€{item.rider_payout || '5.00'}</Text>
-        </View>
       </View>
       <TouchableOpacity style={riderHomeScreenStyles.acceptBtn} onPress={() => handleAcceptOrder(item.id)}>
         <Text style={riderHomeScreenStyles.acceptBtnText}>ACCETTA</Text>
