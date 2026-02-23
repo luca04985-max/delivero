@@ -269,7 +269,7 @@ export const updateRiderOrderStatus = async (req, res) => {
     console.log('🔍 UpdateRiderOrderStatus - Order exists, proceeding with update...');
 
     // Validate status transitions for riders
-    const validStatuses = ['accepted', 'pickup', 'in_transit', 'delivered'];
+    const validStatuses = ['accepted', 'pickup', 'in_transit', 'delivering', 'delivered'];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ message: 'Invalid status for rider' });
     }

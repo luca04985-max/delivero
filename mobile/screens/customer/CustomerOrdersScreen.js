@@ -156,7 +156,7 @@ export default function CustomerOrdersScreen({ navigation, route }) {
             </TouchableOpacity>
           )}
         </View>
-      ) : item.status === 'delivering' ? (
+      ) : item.status === 'delivering' || item.status === 'in_transit'? (
         <View style={customerOrdersScreenStyles.buttonRow}>
           <TouchableOpacity
             style={customerOrdersScreenStyles.trackButton}
