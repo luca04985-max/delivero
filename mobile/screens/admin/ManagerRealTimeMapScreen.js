@@ -36,6 +36,13 @@ export default function ManagerRealTimeMapScreen() {
             for (const o of list) {
                 console.log('[ManagerRealTimeMap] processing order:', o);
                 console.log('[ManagerRealTimeMap] FULL ORDER DATA:', JSON.stringify(o, null, 2));
+                console.log('[ManagerRealTimeMap] AVAILABLE FIELDS:', Object.keys(o));
+                console.log('[ManagerRealTimeMap] RIDER COORDS CHECK:', {
+                    rider_latitude: o?.rider_latitude,
+                    rider_longitude: o?.rider_longitude,
+                    delivery_latitude: o?.delivery_latitude,
+                    delivery_longitude: o?.delivery_longitude
+                });
                 if (o?.rider_latitude == null || o?.rider_longitude == null) {
                     console.log('[ManagerRealTimeMap] skipping order - missing coords:', o.id);
                     continue;
