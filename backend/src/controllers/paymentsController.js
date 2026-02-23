@@ -15,8 +15,6 @@ export const createCashPayment = async (req, res) => {
       return res.status(400).json({ error: 'Order ID is required' });
     }
 
-    console.log(' Creating cash payment for order:', orderId, 'userId:', userId);
-
     // Check if order exists and belongs to user
     const orderResult = await db.query(
       'SELECT id, customer_id, total_amount FROM orders WHERE id = $1 AND customer_id = $2',
@@ -24,27 +22,13 @@ export const createCashPayment = async (req, res) => {
     );
 
     if (orderResult.rows.length === 0) {
-      console.log(' Order not found for cash payment:', orderId);
       return res.status(404).json({ message: 'Order not found' });
     }
 
     const order = orderResult.rows[0];
     if (order.customer_id !== userId) {
-      console.log(' Access denied for cash payment - order belongs to different user');
       return res.status(403).json({ message: 'Access denied' });
     }
-
-    console.log(' Order found for cash payment:', { id: order.id, customer_id: order.customer_id, total_amount: order.total_amount });
-
-    const amount = Number(order.total_amount);
-    console.log('💰 Creating cash payment record with amount:', amount);
-    console.log('📋 Payment data being inserted:', {
-      order_id: orderId,
-      payment_method: 'cash',
-      amount: amount,
-      status: 'pending'
-    });
-
     // Create cash payment record
     const paymentResult = await db.query(
       `INSERT INTO payments (order_id, payment_method, amount, status, created_at)
@@ -53,7 +37,6 @@ export const createCashPayment = async (req, res) => {
       [orderId, order.total_amount]
     );
 
-    console.log(' Cash payment record created:', paymentResult.rows[0]);
 
     res.status(201).json(paymentResult.rows[0]);
   } catch (error) {
@@ -69,11 +52,6 @@ export const createCashPayment = async (req, res) => {
 
     // Log specifico per constraint violation
     if (error.constraint === 'payments_status_check') {
-      console.error('🚨 PAYMENTS_STATUS_CHECK VIOLATION!');
-      console.error('📋 Attempted values:', {
-        payment_method: 'cash',
-        status: 'pending'
-      });
       console.error('🔍 Expected values for status constraint: pending, processing, completed, failed, refunded');
     }
 
@@ -111,7 +89,6 @@ export const markCashCollected = async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Error marking cash collected:', error);
     res.status(500).json({ error: 'Failed to mark cash as collected' });
   }
 };
@@ -171,7 +148,6 @@ export const createPayment = async (req, res) => {
 
     res.status(201).json(response);
   } catch (error) {
-    console.error('Error creating Stripe payment:', error);
     res.status(500).json({ message: 'Error creating Stripe payment', error: error.message });
   }
 };
@@ -214,7 +190,6 @@ export const confirmStripePayment = async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Confirm payment error:', error);
     res.status(500).json({ error: 'Failed to confirm payment' });
   }
 };
