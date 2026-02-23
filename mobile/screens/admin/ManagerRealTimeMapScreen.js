@@ -35,6 +35,7 @@ export default function ManagerRealTimeMapScreen() {
             const next = {};
             for (const o of list) {
                 console.log('[ManagerRealTimeMap] processing order:', o);
+                console.log('[ManagerRealTimeMap] FULL ORDER DATA:', JSON.stringify(o, null, 2));
                 if (o?.rider_latitude == null || o?.rider_longitude == null) {
                     console.log('[ManagerRealTimeMap] skipping order - missing coords:', o.id);
                     continue;
@@ -267,37 +268,19 @@ export default function ManagerRealTimeMapScreen() {
 
             if (r.delivery_latitude && r.delivery_longitude) {
                 return `
-                    // Prova routing con strade reali
-                    try {
-                        L.Routing.control({
-                            waypoints: [
-                                L.latLng(${r.lat}, ${r.lng}),
-                                L.latLng(${r.delivery_latitude}, ${r.delivery_longitude})
-                            ],
-                            routeWhileDragging: false,
-                            addWaypoints: false,
-                            createMarker: function() { return null; },
-                            lineOptions: {
-                                styles: [{color: '#FF6B35', weight: 4, opacity: 0.8}]
-                            }
-                        }).addTo(map);
-                        console.log('🛣️ Admin routing loaded successfully for order', r.orderId);
-                    } catch (error) {
-                        console.log('❌ Admin routing failed for order', r.orderId, 'using fallback line:', error);
-                        // Fallback: linea retta se routing fallisce
-                        L.polyline([
-                            [${r.lat}, ${r.lng}],
-                            [${r.delivery_latitude}, ${r.delivery_longitude}]
-                        ], {
-                            color: '#FF6B35',
-                            weight: 4,
-                            opacity: 0.8,
-                            dashArray: '10, 5'
-                        }).addTo(map);
-                    }
+                    // Test semplice polyline invece di routing
+                    L.polyline([
+                        [${r.lat}, ${r.lng}],
+                        [${r.delivery_latitude}, ${r.delivery_longitude}]
+                    ], {
+                        color: '#FF6B35',
+                        weight: 4,
+                        opacity: 0.8,
+                        smoothFactor: 1
+                    }).addTo(map);
+                    console.log('🛣️ Admin polyline added for order', ${r.orderId});
                 `;
             } else {
-                // Fallback: linea retta tratteggiata se non ci sono coordinate delivery
                 return `
                     L.polyline([
                         [${r.lat}, ${r.lng}],
@@ -348,6 +331,12 @@ export default function ManagerRealTimeMapScreen() {
                 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
                 <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
                 <script>
+                    console.log('🗺️ Admin map initializing...');
+                    console.log('🗺️ Available libraries:', {
+                        L: typeof L !== 'undefined',
+                        Routing: typeof L.Routing !== 'undefined'
+                    });
+                    
                     var map = L.map('map').setView([${centerLat}, ${centerLon}], ${zoomLevel});
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                         attribution: 'OpenStreetMap contributors'
@@ -359,17 +348,19 @@ export default function ManagerRealTimeMapScreen() {
                     // Aggiungi percorsi verso destinazioni
                     ${routes}
                     
-                    console.log('Manager map loaded with ' + ${riderPositions.length} + ' riders');
+                    // Debug finale
+                    console.log('🗺️ Admin map loaded with ' + ${riderPositions.length} + ' riders');
+                    console.log('🗺️ Map center set to:', [${centerLat}, ${centerLon}]);
                     
                     // Force map refresh after 1 second
                     setTimeout(function() {
                         map.invalidateSize();
+                        console.log('🗺️ Map size invalidated');
                     }, 1000);
                 </script>
             </body>
             </html>
-        `;
-    };
+        };
 
     return (
         <View style={managerRealTimeMapScreenStyles.container}>

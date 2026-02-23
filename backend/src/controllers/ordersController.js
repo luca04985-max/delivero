@@ -594,6 +594,7 @@ export const getTrackHistory = async (req, res) => {
 // Get all active orders (for manager dashboard)
 export const getActiveOrders = async (req, res) => {
   try {
+    console.log('🔍 GetActiveOrders - Query executed for manager:', req.user?.email);
     const result = await db.query(
       `SELECT 
         o.id,
@@ -619,6 +620,17 @@ export const getActiveOrders = async (req, res) => {
        ORDER BY o.created_at DESC`,
       []
     );
+
+    console.log('🔍 GetActiveOrders - Result rows:', result.rows.length);
+    if (result.rows.length > 0) {
+      console.log('🔍 GetActiveOrders - First order delivery coords:', {
+        id: result.rows[0].id,
+        delivery_lat: result.rows[0].delivery_latitude,
+        delivery_lon: result.rows[0].delivery_longitude,
+        rider_lat: result.rows[0].rider_latitude,
+        rider_lon: result.rows[0].rider_longitude
+      });
+    }
 
     res.status(200).json(result.rows);
   } catch (error) {
