@@ -318,6 +318,7 @@ export default function CartScreen({ navigation }) {
                         delivery_latitude: geocodedCoords.latitude,
                         delivery_longitude: geocodedCoords.longitude
                     };
+                    console.log('🗺️ Geocoded coordinates found:', finalCoords);
                 }
             }
 
@@ -338,8 +339,21 @@ export default function CartScreen({ navigation }) {
                 ...finalCoords,
             };
 
+            console.log('📦 Creating order with coordinates:', finalCoords);
+
             const created = await ordersAPI.create(orderPayload);
             const orderId = created?.order?.id;
+
+            // Se abbiamo trovato coordinate con geocoding dopo la creazione, aggiornale
+            if (orderId && finalCoords && (!created?.order?.delivery_latitude || !created?.order?.delivery_longitude)) {
+                try {
+                    console.log('🔄 Updating delivery coordinates for order:', orderId);
+                    await ordersAPI.updateDeliveryCoordinates(orderId, finalCoords.delivery_latitude, finalCoords.delivery_longitude);
+                    console.log('✅ Delivery coordinates updated successfully');
+                } catch (updateError) {
+                    console.warn('⚠️ Failed to update delivery coordinates:', updateError);
+                }
+            }
 
             if (paymentMethod === 'cash') {
                 console.log('💰 Frontend: Creating cash payment for order:', orderId);

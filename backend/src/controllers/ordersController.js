@@ -121,6 +121,52 @@ export const createOrder = async (req, res) => {
   }
 };
 
+// Update delivery coordinates (for geocoding updates)
+export const updateDeliveryCoordinates = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { delivery_latitude, delivery_longitude } = req.body;
+    const userId = req.user.userId;
+    const userRole = req.user.role;
+
+    console.log('🗺️ Updating delivery coordinates for order:', id);
+    console.log('🗺️ New coordinates:', { delivery_latitude, delivery_longitude });
+
+    // Verify user owns this order (customer only)
+    if (userRole !== 'customer') {
+      return res.status(403).json({ message: 'Solo i customer possono aggiornare le coordinate di consegna' });
+    }
+
+    const orderCheck = await db.query(
+      'SELECT id, customer_id FROM orders WHERE id = $1 AND customer_id = $2',
+      [id, userId]
+    );
+
+    if (orderCheck.rows.length === 0) {
+      return res.status(404).json({ message: 'Ordine non trovato o non autorizzato' });
+    }
+
+    // Update delivery coordinates
+    const result = await db.query(
+      'UPDATE orders SET delivery_latitude = $1, delivery_longitude = $2, updated_at = NOW() WHERE id = $3 RETURNING *',
+      [delivery_latitude, delivery_longitude, id]
+    );
+
+    console.log('✅ Delivery coordinates updated:', result.rows[0]);
+
+    res.status(200).json({
+      message: 'Coordinate di consegna aggiornate',
+      order: result.rows[0]
+    });
+  } catch (error) {
+    console.error('❌ Error updating delivery coordinates:', error);
+    res.status(500).json({
+      message: 'Errore nell\'aggiornamento delle coordinate',
+      error: error.message
+    });
+  }
+};
+
 export const updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -365,7 +411,7 @@ export const trackOrder = async (req, res) => {
     const userRole = req.user.role;
 
     // Customer can see their own orders, riders can see orders they're assigned to
-    let query = 'SELECT id, status, rider_id, delivery_address, created_at, updated_at, rider_latitude, rider_longitude, eta_minutes, received_at, customer_id, total_amount, items FROM orders WHERE id = $1';
+    let query = 'SELECT id, status, rider_id, delivery_address, delivery_latitude, delivery_longitude, created_at, updated_at, rider_latitude, rider_longitude, eta_minutes, received_at, customer_id, total_amount, items FROM orders WHERE id = $1';
     let queryParams = [id];
 
     if (userRole === 'customer') {
@@ -381,6 +427,17 @@ export const trackOrder = async (req, res) => {
     }
 
     const result = await db.query(query, queryParams);
+
+    console.log('🔍 TrackOrder - Query executed:', query);
+    console.log('🔍 TrackOrder - Query params:', queryParams);
+    console.log('🔍 TrackOrder - Result rows:', result.rows.length);
+    if (result.rows.length > 0) {
+      console.log('🔍 TrackOrder - Result data keys:', Object.keys(result.rows[0]));
+      console.log('🔍 TrackOrder - Delivery coords:', {
+        lat: result.rows[0].delivery_latitude,
+        lon: result.rows[0].delivery_longitude
+      });
+    }
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'Ordine non trovato o non autorizzato' });

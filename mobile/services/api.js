@@ -211,6 +211,12 @@ export const ordersAPI = {
   trackOrder: async (id) => {
     return makeRequest(`/orders/${id}/track`, { method: 'GET' });
   },
+  updateDeliveryCoordinates: async (id, delivery_latitude, delivery_longitude) => {
+    return makeRequest(`/orders/${id}/delivery-coordinates`, {
+      method: 'PUT',
+      body: JSON.stringify({ delivery_latitude, delivery_longitude }),
+    });
+  },
   cancelOrder: async (id) => {
     return makeRequest(`/orders/${id}/cancel`, { method: 'PUT' });
   },

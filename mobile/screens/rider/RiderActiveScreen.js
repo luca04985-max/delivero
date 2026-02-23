@@ -64,7 +64,7 @@ export default function RiderActiveScreen() {
       console.log('🔄 Updated order status:', response);
       showToast(`✅ Stato aggiornato: ${newStatus}`, 'success');
       fetchActiveOrders();
-      if(newStatus==='delivered'){
+      if (newStatus === 'delivered') {
         await paymentsAPI.markCashCollected(orderId);
       }
     } catch (e) {
@@ -98,7 +98,7 @@ export default function RiderActiveScreen() {
               <Text style={riderActiveScreenStyles.btnText}>In Consegna</Text>
             </TouchableOpacity>
           )}
-          {item.status !== 'delivered' && (
+          {item.status !== 'delivered' && item.status !== 'in_transit' && (
             <TouchableOpacity style={riderActiveScreenStyles.btnComplete} onPress={() => updateStatus(item.id, 'delivered')}>
               <Text style={riderActiveScreenStyles.btnText}>Consegnato ✅</Text>
             </TouchableOpacity>

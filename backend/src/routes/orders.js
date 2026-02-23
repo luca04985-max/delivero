@@ -14,7 +14,8 @@ import {
   trackOrder,
   getTrackHistory,
   updateRiderLocation,
-  getActiveOrders
+  getActiveOrders,
+  updateDeliveryCoordinates
 } from '../controllers/ordersController.js';
 import { authenticateToken } from '../middleware/auth.js';
 
@@ -37,6 +38,7 @@ router.get('/:id/track', authenticateToken, trackOrder);
 router.get('/:id/track-history', authenticateToken, getTrackHistory);
 router.post('/:id/location', authenticateToken, updateRiderLocation);
 router.put('/:id/rider-status', authenticateToken, updateRiderOrderStatus);
+router.put('/:id/delivery-coordinates', authenticateToken, updateDeliveryCoordinates);
 
 // Generic order endpoints (these come AFTER specific ones)
 router.get('/:id', authenticateToken, getOrderById);
