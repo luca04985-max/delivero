@@ -1,76 +1,121 @@
-import { StyleSheet } from 'react-native';
-import { mobileTheme } from '../../../theme';
+import { StyleSheet, Platform } from 'react-native';
+import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
 
 export const orderTrackingLiveScreenStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: mobileTheme.colors.background,
+    backgroundColor: mobileTheme.colors.secondary, // Navy profondo per il caricamento
   },
-  
-  // INLINE STYLES FROM OrderTrackingLiveScreen.js
-  infoBox: {
+  map: {
+    width: '100%',
+    height: '100%',
+  },
+
+  // OVERLAY CONTROLS (Pulsanti che galleggiano sulla mappa)
+  overlayContainer: {
     position: 'absolute',
-    bottom: mobileTheme.spacing[5],
-    left: mobileTheme.spacing[5],
-    right: mobileTheme.spacing[5],
+    top: Platform.OS === 'ios' ? 60 : 40,
+    right: mobileTheme.spacing[4],
+    gap: mobileTheme.spacing[3],
+  },
+  mapButton: {
     backgroundColor: mobileTheme.colors.white,
-    padding: mobileTheme.spacing[5],
-    borderRadius: mobileTheme.borderRadius.lg,
+    width: 45,
+    height: 45,
+    borderRadius: mobileTheme.borderRadius.md,
+    justifyContent: 'center',
+    alignItems: 'center',
     ...mobileTheme.shadows.medium,
   },
-  statusText: {
-    fontSize: mobileTheme.typography.fontSize.lg,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
-    marginBottom: mobileTheme.spacing[3],
-  },
-  mapLoader: {
+
+  // RIDER INFO CARD (La scheda che appare in basso quando selezioni un rider)
+  riderCard: {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    bottom: 30,
+    left: mobileTheme.spacing[4],
+    right: mobileTheme.spacing[4],
+    backgroundColor: mobileTheme.colors.white,
+    padding: mobileTheme.spacing[4],
+    borderRadius: mobileTheme.borderRadius.xl,
+    flexDirection: 'row',
+    alignItems: 'center',
+    ...mobileTheme.shadows.xxl, // Ombra molto profonda per distacco netto
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.border,
+  },
+  riderAvatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: mobileTheme.colors.primarySoft,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: mobileTheme.spacing[4],
+  },
+  riderName: {
+    fontSize: mobileTheme.typography.fontSize.base,
+    fontWeight: FONT_WEIGHTS.bold,
+    color: mobileTheme.colors.text.primary,
+  },
+  statusIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 2,
+  },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: mobileTheme.colors.success,
+    marginRight: 6,
+  },
+
+  // LOADING STATE
+  center: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: mobileTheme.colors.background,
   },
   loadingText: {
     fontSize: mobileTheme.typography.fontSize.base,
+    fontWeight: '600',
     color: mobileTheme.colors.text.secondary,
-    marginTop: mobileTheme.spacing[3],
+    marginTop: mobileTheme.spacing[4],
+    letterSpacing: 1,
+    textTransform: 'uppercase',
   },
-  
-  // MAP CONTAINER
-  mapContainer: {
+  loader: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: mobileTheme.colors.secondary,
   },
-  map: {
-    flex: 1,
+
+  // ETA INFO BOX
+  etaInfoBox: {
+    position: 'absolute',
+    bottom: mobileTheme.spacing[4],
+    left: mobileTheme.spacing[4],
+    right: mobileTheme.spacing[4],
+    backgroundColor: mobileTheme.colors.white,
+    padding: mobileTheme.spacing[4],
+    borderRadius: mobileTheme.borderRadius.xl,
+    ...mobileTheme.shadows.xxl,
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.border,
   },
-  
-  // STATUS INFO
-  statusContainer: {
-    marginBottom: mobileTheme.spacing[3],
+  etaHeader: {
+    fontSize: mobileTheme.typography.fontSize.lg,
+    fontWeight: FONT_WEIGHTS.bold,
+    color: mobileTheme.colors.primary,
+    marginBottom: mobileTheme.spacing[2],
   },
-  statusLabel: {
-    fontSize: mobileTheme.typography.fontSize.sm,
-    color: mobileTheme.colors.text.secondary,
-    marginBottom: mobileTheme.spacing[1],
-  },
-  statusValue: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    fontWeight: mobileTheme.typography.fontWeight.semibold,
-    color: mobileTheme.colors.text.primary,
-  },
-  
-  // ETA INFO
-  etaContainer: {
+  etaRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: mobileTheme.spacing[3],
-    borderTopWidth: 1,
-    borderTopColor: mobileTheme.colors.border,
+    marginBottom: mobileTheme.spacing[2],
   },
   etaLabel: {
     fontSize: mobileTheme.typography.fontSize.sm,
@@ -78,89 +123,27 @@ export const orderTrackingLiveScreenStyles = StyleSheet.create({
   },
   etaValue: {
     fontSize: mobileTheme.typography.fontSize.base,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
-  },
-  
-  // DELIVERY ADDRESS
-  addressContainer: {
-    marginBottom: mobileTheme.spacing[3],
-  },
-  addressLabel: {
-    fontSize: mobileTheme.typography.fontSize.sm,
-    color: mobileTheme.colors.text.secondary,
-    marginBottom: mobileTheme.spacing[1],
-  },
-  addressText: {
-    fontSize: mobileTheme.typography.fontSize.base,
+    fontWeight: FONT_WEIGHTS.semibold,
     color: mobileTheme.colors.text.primary,
-    lineHeight: 20,
   },
-  
-  // RIDER INFO
-  riderContainer: {
+  etaStatus: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: mobileTheme.spacing[3],
+    paddingTop: mobileTheme.spacing[2],
+    borderTopWidth: 1,
+    borderTopColor: mobileTheme.colors.border,
   },
-  riderAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: mobileTheme.colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: mobileTheme.spacing[3],
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: mobileTheme.colors.success,
+    marginRight: mobileTheme.spacing[2],
   },
-  riderAvatarText: {
-    color: mobileTheme.colors.white,
-    fontSize: mobileTheme.typography.fontSize.base,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
-  },
-  riderInfo: {
-    flex: 1,
-  },
-  riderName: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    fontWeight: mobileTheme.typography.fontWeight.semibold,
-    color: mobileTheme.colors.text.primary,
-  },
-  riderStatus: {
+  statusText: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
-  },
-  
-  // ERROR STATE
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: mobileTheme.spacing[5],
-  },
-  errorText: {
-    fontSize: mobileTheme.typography.fontSize.lg,
-    color: mobileTheme.colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: mobileTheme.spacing[3],
-  },
-  errorSubtext: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.tertiary,
-    textAlign: 'center',
-    fontStyle: 'italic',
-  },
-  retryButton: {
-    backgroundColor: mobileTheme.colors.primary,
-    paddingHorizontal: mobileTheme.spacing[6],
-    paddingVertical: mobileTheme.spacing[3],
-    borderRadius: mobileTheme.borderRadius.md,
-    ...mobileTheme.shadows.sm,
-  },
-  retryButtonText: {
-    color: mobileTheme.colors.white,
-    fontSize: mobileTheme.typography.fontSize.base,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
-  },
+  }
 });
 
 export default orderTrackingLiveScreenStyles;
