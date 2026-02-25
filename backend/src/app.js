@@ -18,6 +18,7 @@ import medicalTransportsRoutes from './routes/medicalTransports.js';
 import documentPickupsRoutes from './routes/documentPickups.js';
 import ticketsRoutes from './routes/tickets.js';
 import restaurantsRoutes from './routes/restaurants.js';
+import userAddressesRoutes from './routes/userAddresses.js';
 // monitoring, notifications, analytics, bills and billPayments routes
 // removed: not referenced by mobile frontend
 import { initializeSocket } from './services/socket.js';
@@ -92,6 +93,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/pharmacies', pharmaciesRoutes);
 app.use('/api/document-pickups', documentPickupsRoutes);
 app.use('/api/tickets', ticketsRoutes);
+app.use('/api/user/addresses', userAddressesRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

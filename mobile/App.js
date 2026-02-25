@@ -126,15 +126,7 @@ function CustomerTabs({ user }) {
           tabBarBadge: cart?.itemCount > 0 ? cart.itemCount : null,
         }}
       />
-      <Tab.Screen
-        name="Orders"
-        component={CustomerOrdersScreen}
-        options={{
-          title: user?.name || 'Ordini',
-          tabBarLabel: '📦 Ordini',
-          tabBarIcon: () => <Text style={{ fontSize: 20 }}>📦</Text>,
-        }}
-      />
+      {/* Orders moved to stack: accessible from Profile -> "I miei ordini" */}
     </Tab.Navigator>
   );
 }
@@ -157,6 +149,16 @@ function CustomerStack({ onLogout, user }) {
         name="CustomerTabs"
         children={() => <CustomerTabs user={user} />}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Orders"
+        component={CustomerOrdersScreen}
+        options={{
+          title: 'I miei ordini',
+          headerStyle: { backgroundColor: '#FF6B00' },
+          headerTintColor: '#fff',
+          headerTitleStyle: { fontWeight: '700' },
+        }}
       />
       <Stack.Screen
         name="Profile"

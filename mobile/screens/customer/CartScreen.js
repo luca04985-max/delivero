@@ -394,6 +394,76 @@ export default function CartScreen({ navigation }) {
         }
       }
 
+      // If we have coordinates and an address, ask the user if they want to save it
+      if (finalCoords && deliveryAddress && deliveryAddress.trim()) {
+        try {
+          const exists = (savedAddresses || []).some(a => {
+            // consider equal if same displayName or very close coordinates
+            if (!a) return false;
+            if (a.displayName && a.displayName === deliveryAddress.trim()) return true;
+            if (a.latitude && a.longitude) {
+              const latDiff = Math.abs(Number(a.latitude) - Number(finalCoords.delivery_latitude || 0));
+              const lonDiff = Math.abs(Number(a.longitude) - Number(finalCoords.delivery_longitude || 0));
+              return latDiff < 0.0005 && lonDiff < 0.0005;
+            }
+            return false;
+          });
+
+          if (!exists) {
+            Alert.alert(
+              'Salvare indirizzo?',
+              'Vuoi salvare questo indirizzo tra quelli utilizzati di frequente?',
+              [
+                { text: 'No', style: 'cancel' },
+                {
+                  text: 'Sì',
+                  onPress: async () => {
+                    try {
+                      // Try save to server first
+                      try {
+                        const payload = {
+                          label: deliveryAddress.trim(),
+                          displayName: deliveryAddress.trim(),
+                          latitude: finalCoords.delivery_latitude || null,
+                          longitude: finalCoords.delivery_longitude || null,
+                        };
+                        const saved = await userAPI.saveAddress(payload);
+                        const next = [saved, ...(savedAddresses || [])];
+                        setSavedAddresses(next);
+                        // keep a local cache as fallback
+                        await AsyncStorage.setItem('saved_addresses_v1', JSON.stringify(next));
+                        showToast('Indirizzo salvato', 'success');
+                        return;
+                      } catch (serverErr) {
+                        console.warn('Server save failed, falling back to local storage', serverErr);
+                      }
+
+                      // Fallback: persist locally
+                      const newAddr = {
+                        id: Date.now().toString(),
+                        label: deliveryAddress.trim(),
+                        displayName: deliveryAddress.trim(),
+                        latitude: finalCoords.delivery_latitude || null,
+                        longitude: finalCoords.delivery_longitude || null,
+                      };
+                      const next = [newAddr, ...(savedAddresses || [])];
+                      setSavedAddresses(next);
+                      await AsyncStorage.setItem('saved_addresses_v1', JSON.stringify(next));
+                      showToast('Indirizzo salvato (locale)', 'success');
+                    } catch (err) {
+                      console.warn('Failed to persist address', err);
+                      showToast('Impossibile salvare l\'indirizzo', 'error');
+                    }
+                  },
+                },
+              ],
+            );
+          }
+        } catch (e) {
+          console.warn('Error checking/saving address', e);
+        }
+      }
+
       const orderPayload = {
         restaurantId: cart.restaurantId,
         items: cart.items,

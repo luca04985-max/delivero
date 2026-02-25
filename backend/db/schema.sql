@@ -122,6 +122,17 @@ CREATE TABLE IF NOT EXISTS customer_cards (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Customer saved addresses
+CREATE TABLE IF NOT EXISTS customer_addresses (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER,
+  label VARCHAR(255),
+  display_name VARCHAR(255),
+  latitude NUMERIC(10,8),
+  longitude NUMERIC(11,8),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Tickets
 CREATE TABLE IF NOT EXISTS tickets (
   id SERIAL PRIMARY KEY,

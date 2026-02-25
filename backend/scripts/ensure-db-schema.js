@@ -115,6 +115,22 @@ const ensureOrderTrackingColumns = async () => {
       'created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
       'updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP'
     ],
+    customer_cards: [
+      'user_id INTEGER REFERENCES users(id)',
+      'token TEXT UNIQUE NOT NULL',
+      'masked VARCHAR(64)',
+      'last4 VARCHAR(4)',
+      'brand VARCHAR(32)',
+      'created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP'
+    ],
+    customer_addresses: [
+      'user_id INTEGER REFERENCES users(id)',
+      'label VARCHAR(255)',
+      'display_name VARCHAR(255)',
+      'latitude NUMERIC(10,8)',
+      'longitude NUMERIC(11,8)',
+      'created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP'
+    ],
     tickets: [
       'user_id INTEGER',
       'type VARCHAR(50) NOT NULL',

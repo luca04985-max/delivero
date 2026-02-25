@@ -322,6 +322,11 @@ export const userAPI = {
       method: 'PUT',
       body: JSON.stringify({ push_token: token }),
     }),
+  // Addresses
+  getAddresses: async () => makeRequest('/user/addresses', { method: 'GET' }),
+  saveAddress: async data =>
+    makeRequest('/user/addresses', { method: 'POST', body: JSON.stringify(data) }),
+  deleteAddress: async id => makeRequest(`/user/addresses/${id}`, { method: 'DELETE' }),
 };
 
 export const adminAPI = {
