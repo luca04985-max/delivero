@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, RefreshControl, ActivityIndicator, Alert, ScrollView, Modal, TextInput } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  RefreshControl,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  Modal,
+  TextInput,
+} from 'react-native';
 import { adminAPI } from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { adminDashboardUsersStyles as styles } from './styles/AdminDashboardUsersStyles';
@@ -11,14 +22,14 @@ export default function AdminDashboardUsers({ navigation }) {
   const [expandedSections, setExpandedSections] = useState({});
   const [currentUser, setCurrentUser] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
-  const [newRole, setNewRole] = useState("");
-  const [editName, setEditName] = useState("");
-  const [editEmail, setEditEmail] = useState("");
+  const [newRole, setNewRole] = useState('');
+  const [editName, setEditName] = useState('');
+  const [editEmail, setEditEmail] = useState('');
 
-  const toggleSection = (section) => {
+  const toggleSection = section => {
     setExpandedSections(prev => ({
       ...prev,
-      [section]: !prev[section]
+      [section]: !prev[section],
     }));
   };
 
@@ -27,7 +38,7 @@ export default function AdminDashboardUsers({ navigation }) {
       const data = await adminAPI.getAllUsers();
       setUsers(Array.isArray(data) ? data : data.data || []);
     } catch (e) {
-      Alert.alert("Errore", "Non ho potuto caricare tutti gli utenti.");
+      Alert.alert('Errore', 'Non ho potuto caricare tutti gli utenti.');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -59,20 +70,12 @@ export default function AdminDashboardUsers({ navigation }) {
       >
         <View style={styles.statusSeparatorContent}>
           <View style={styles.statusSeparatorLeft}>
-            <Text style={styles.statusSeparatorIcon}>
-              {roleInfo.icon}
-            </Text>
-            <Text style={styles.statusSeparatorTitle}>
-              {roleInfo.label}
-            </Text>
+            <Text style={styles.statusSeparatorIcon}>{roleInfo.icon}</Text>
+            <Text style={styles.statusSeparatorTitle}>{roleInfo.label}</Text>
           </View>
           <View style={styles.statusSeparatorRight}>
-            <Text style={styles.statusSeparatorCount}>
-              {count}
-            </Text>
-            <Text style={styles.statusSeparatorToggle}>
-              {isExpanded ? '🔼' : '🔽'}
-            </Text>
+            <Text style={styles.statusSeparatorCount}>{count}</Text>
+            <Text style={styles.statusSeparatorToggle}>{isExpanded ? '🔼' : '🔽'}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -93,10 +96,10 @@ export default function AdminDashboardUsers({ navigation }) {
     });
 
     const roleInfo = {
-      'customer': { label: 'Clienti', icon: '👤' },
-      'rider': { label: 'Rider', icon: '🚴' },
-      'manager': { label: 'Manager', icon: '👨‍💼' },
-      'admin': { label: 'Admin', icon: '👑' }
+      customer: { label: 'Clienti', icon: '👤' },
+      rider: { label: 'Rider', icon: '🚴' },
+      manager: { label: 'Manager', icon: '👨‍💼' },
+      admin: { label: 'Admin', icon: '👑' },
     };
 
     const result = [];
@@ -107,17 +110,18 @@ export default function AdminDashboardUsers({ navigation }) {
 
       result.push(
         <View key={`separator-${role}`}>
-          {renderRoleSeparator(role, groupUsers.length, roleInfo[role] || { label: role, icon: '👤' }, isExpanded)}
-        </View>
+          {renderRoleSeparator(
+            role,
+            groupUsers.length,
+            roleInfo[role] || { label: role, icon: '👤' },
+            isExpanded,
+          )}
+        </View>,
       );
 
       if (isExpanded) {
         groupUsers.forEach(user => {
-          result.push(
-            <View key={`user-${user.id}`}>
-              {renderUser({ item: user })}
-            </View>
-          );
+          result.push(<View key={`user-${user.id}`}>{renderUser({ item: user })}</View>);
         });
       }
     });
@@ -130,7 +134,9 @@ export default function AdminDashboardUsers({ navigation }) {
     return (
       <View style={styles.card}>
         <Text style={styles.userName}>{item.name}</Text>
-        <Text style={styles.userEmail}>{item.email} - <Text style={{ color: '#FF6B00' }}>{item.role}</Text></Text>
+        <Text style={styles.userEmail}>
+          {item.email} - <Text style={{ color: '#FF6B00' }}>{item.role}</Text>
+        </Text>
 
         <View style={styles.userActions}>
           <TouchableOpacity
@@ -151,39 +157,41 @@ export default function AdminDashboardUsers({ navigation }) {
             style={[styles.btnDelete, isSelf && styles.btnDisabled]}
             disabled={isSelf}
           >
-            <Text style={styles.buttonText}>{isSelf ? "Can't Delete Self" : "Elimina"}</Text>
+            <Text style={styles.buttonText}>{isSelf ? "Can't Delete Self" : 'Elimina'}</Text>
           </TouchableOpacity>
         </View>
       </View>
     );
   };
 
-  const handleUpdateUserRole = async (userId) => {
+  const handleUpdateUserRole = async userId => {
     try {
       setLoading(true);
       await adminAPI.updateUser(userId, { name: editName, email: editEmail, role: newRole });
       setEditingUser(null);
       fetchUsers();
     } catch (err) {
-      Alert.alert("Errore", err?.message || 'Errore aggiornamento utente');
+      Alert.alert('Errore', err?.message || 'Errore aggiornamento utente');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDeleteUser = (userId) => {
+  const handleDeleteUser = userId => {
     if (currentUser?.id && String(currentUser.id) === String(userId)) {
       Alert.alert('Operazione non consentita', 'Non puoi eliminare il tuo account.');
       return;
     }
-    Alert.alert("Attenzione", "Eliminare definitivamente l'utente?", [
-      { text: "Annulla", style: "cancel" },
+    Alert.alert('Attenzione', "Eliminare definitivamente l'utente?", [
+      { text: 'Annulla', style: 'cancel' },
       {
-        text: "Elimina", style: "destructive", onPress: async () => {
+        text: 'Elimina',
+        style: 'destructive',
+        onPress: async () => {
           await adminAPI.deleteUser(userId);
           fetchUsers();
-        }
-      }
+        },
+      },
     ]);
   };
 
@@ -240,11 +248,7 @@ export default function AdminDashboardUsers({ navigation }) {
             <View style={styles.editRow}>
               <View style={styles.editField}>
                 <Text style={styles.fieldLabel}>Nome:</Text>
-                <TextInput
-                  style={styles.textInput}
-                  value={editName}
-                  onChangeText={setEditName}
-                />
+                <TextInput style={styles.textInput} value={editName} onChangeText={setEditName} />
               </View>
             </View>
 
@@ -265,19 +269,18 @@ export default function AdminDashboardUsers({ navigation }) {
               <View style={styles.editField}>
                 <Text style={styles.fieldLabel}>Ruolo:</Text>
                 <View style={styles.roleButtons}>
-                  {['customer', 'rider', 'manager', 'admin'].map((role) => (
+                  {['customer', 'rider', 'manager', 'admin'].map(role => (
                     <TouchableOpacity
                       key={role}
-                      style={[
-                        styles.roleButton,
-                        newRole === role && styles.roleButtonSelected
-                      ]}
+                      style={[styles.roleButton, newRole === role && styles.roleButtonSelected]}
                       onPress={() => setNewRole(role)}
                     >
-                      <Text style={[
-                        styles.roleButtonText,
-                        newRole === role && styles.roleButtonTextSelected
-                      ]}>
+                      <Text
+                        style={[
+                          styles.roleButtonText,
+                          newRole === role && styles.roleButtonTextSelected,
+                        ]}
+                      >
                         {role.charAt(0).toUpperCase() + role.slice(1)}
                       </Text>
                     </TouchableOpacity>

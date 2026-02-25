@@ -2,10 +2,10 @@ import { View, Text, TouchableOpacity } from 'react-native';
 
 // Logica per i separatori espandibili
 export const useAdminSeparators = (expandedSections, setExpandedSections) => {
-  const toggleSection = (section) => {
+  const toggleSection = section => {
     setExpandedSections(prev => ({
       ...prev,
-      [section]: !prev[section]
+      [section]: !prev[section],
     }));
   };
 
@@ -70,12 +70,17 @@ export const useAdminSeparators = (expandedSections, setExpandedSections) => {
     toggleSection,
     renderOrderStatusSeparator,
     renderTicketStatusSeparator,
-    renderUserRoleSeparator
+    renderUserRoleSeparator,
   };
 };
 
 // Logica per il rendering con separatori
-export const useAdminRenderWithSeparators = (expandedSections, renderOrder, renderTicket, renderUser) => {
+export const useAdminRenderWithSeparators = (
+  expandedSections,
+  renderOrder,
+  renderTicket,
+  renderUser,
+) => {
   const renderOrdersWithSeparators = (orders, renderOrderStatusSeparator, styles) => {
     const statusGroups = {};
 
@@ -88,14 +93,14 @@ export const useAdminRenderWithSeparators = (expandedSections, renderOrder, rend
     });
 
     const statusInfo = {
-      'PENDING': { label: 'In Attesa', icon: '⏳' },
-      'CONFIRMED': { label: 'Confermati', icon: '✅' },
-      'PREPARING': { label: 'In Preparazione', icon: '👨‍🍳' },
-      'READY': { label: 'Pronti', icon: '📦' },
-      'PICKUP': { label: 'Ritiro', icon: '📦' },
-      'IN_TRANSIT': { label: 'In Viaggio', icon: '🚚' },
-      'DELIVERED': { label: 'Consegnati', icon: '✅' },
-      'CANCELLED': { label: 'Cancellati', icon: '❌' }
+      PENDING: { label: 'In Attesa', icon: '⏳' },
+      CONFIRMED: { label: 'Confermati', icon: '✅' },
+      PREPARING: { label: 'In Preparazione', icon: '👨‍🍳' },
+      READY: { label: 'Pronti', icon: '📦' },
+      PICKUP: { label: 'Ritiro', icon: '📦' },
+      IN_TRANSIT: { label: 'In Viaggio', icon: '🚚' },
+      DELIVERED: { label: 'Consegnati', icon: '✅' },
+      CANCELLED: { label: 'Cancellati', icon: '❌' },
     };
 
     const result = [];
@@ -106,17 +111,19 @@ export const useAdminRenderWithSeparators = (expandedSections, renderOrder, rend
 
       result.push(
         <View key={`separator-${status}`}>
-          {renderOrderStatusSeparator(status, groupOrders.length, statusInfo[status] || { label: status, icon: '📋' }, isExpanded, styles)}
-        </View>
+          {renderOrderStatusSeparator(
+            status,
+            groupOrders.length,
+            statusInfo[status] || { label: status, icon: '📋' },
+            isExpanded,
+            styles,
+          )}
+        </View>,
       );
 
       if (isExpanded) {
         groupOrders.forEach(order => {
-          result.push(
-            <View key={`order-${order.id}`}>
-              {renderOrder({ item: order })}
-            </View>
-          );
+          result.push(<View key={`order-${order.id}`}>{renderOrder({ item: order })}</View>);
         });
       }
     });
@@ -136,10 +143,10 @@ export const useAdminRenderWithSeparators = (expandedSections, renderOrder, rend
     });
 
     const statusInfo = {
-      'OPEN': { label: 'Aperti', icon: '🔓' },
-      'IN_PROGRESS': { label: 'In Corso', icon: '⚙️' },
-      'CLOSED': { label: 'Chiusi', icon: '✅' },
-      'RESOLVED': { label: 'Risolti', icon: '🎯' }
+      OPEN: { label: 'Aperti', icon: '🔓' },
+      IN_PROGRESS: { label: 'In Corso', icon: '⚙️' },
+      CLOSED: { label: 'Chiusi', icon: '✅' },
+      RESOLVED: { label: 'Risolti', icon: '🎯' },
     };
 
     const result = [];
@@ -150,17 +157,19 @@ export const useAdminRenderWithSeparators = (expandedSections, renderOrder, rend
 
       result.push(
         <View key={`separator-${status}`}>
-          {renderTicketStatusSeparator(status, groupTickets.length, statusInfo[status] || { label: status, icon: '📋' }, isExpanded, styles)}
-        </View>
+          {renderTicketStatusSeparator(
+            status,
+            groupTickets.length,
+            statusInfo[status] || { label: status, icon: '📋' },
+            isExpanded,
+            styles,
+          )}
+        </View>,
       );
 
       if (isExpanded) {
         groupTickets.forEach(ticket => {
-          result.push(
-            <View key={`ticket-${ticket.id}`}>
-              {renderTicket({ item: ticket })}
-            </View>
-          );
+          result.push(<View key={`ticket-${ticket.id}`}>{renderTicket({ item: ticket })}</View>);
         });
       }
     });
@@ -180,10 +189,10 @@ export const useAdminRenderWithSeparators = (expandedSections, renderOrder, rend
     });
 
     const roleInfo = {
-      'CUSTOMER': { label: 'Clienti', icon: '👤' },
-      'RIDER': { label: 'Rider', icon: '🚴' },
-      'MANAGER': { label: 'Manager', icon: '👨‍💼' },
-      'ADMIN': { label: 'Admin', icon: '👑' }
+      CUSTOMER: { label: 'Clienti', icon: '👤' },
+      RIDER: { label: 'Rider', icon: '🚴' },
+      MANAGER: { label: 'Manager', icon: '👨‍💼' },
+      ADMIN: { label: 'Admin', icon: '👑' },
     };
 
     const result = [];
@@ -194,17 +203,19 @@ export const useAdminRenderWithSeparators = (expandedSections, renderOrder, rend
 
       result.push(
         <View key={`separator-${role}`}>
-          {renderUserRoleSeparator(role, groupUsers.length, roleInfo[role] || { label: role, icon: '👤' }, isExpanded, styles)}
-        </View>
+          {renderUserRoleSeparator(
+            role,
+            groupUsers.length,
+            roleInfo[role] || { label: role, icon: '👤' },
+            isExpanded,
+            styles,
+          )}
+        </View>,
       );
 
       if (isExpanded) {
         groupUsers.forEach(user => {
-          result.push(
-            <View key={`user-${user.id}`}>
-              {renderUser({ item: user })}
-            </View>
-          );
+          result.push(<View key={`user-${user.id}`}>{renderUser({ item: user })}</View>);
         });
       }
     });
@@ -215,6 +226,6 @@ export const useAdminRenderWithSeparators = (expandedSections, renderOrder, rend
   return {
     renderOrdersWithSeparators,
     renderTicketsWithSeparators,
-    renderUsersWithSeparators
+    renderUsersWithSeparators,
   };
 };

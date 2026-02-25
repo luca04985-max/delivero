@@ -15,19 +15,19 @@ export const sharedCategoryStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: mobileTheme.colors.border,
   },
-  
+
   // CATEGORY CARD ACTIVE - Stile per categoria selezionata
   categoryCardActive: {
     backgroundColor: mobileTheme.colors.primary,
     borderColor: mobileTheme.colors.primary,
   },
-  
+
   // CATEGORY EMOJI - Stile per l'emoji della categoria
   categoryEmoji: {
     fontSize: 32,
     marginBottom: mobileTheme.spacing[2],
   },
-  
+
   // CATEGORY NAME - Stile per il nome della categoria
   categoryName: {
     fontSize: mobileTheme.typography.fontSize.xs,
@@ -35,7 +35,7 @@ export const sharedCategoryStyles = StyleSheet.create({
     color: mobileTheme.colors.text.primary,
     textAlign: 'center',
   },
-  
+
   // CATEGORY BUTTON - Stile per pulsante categoria (alternativo)
   categoryButton: {
     backgroundColor: mobileTheme.colors.background,
@@ -46,20 +46,20 @@ export const sharedCategoryStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: mobileTheme.colors.border,
   },
-  
+
   // CATEGORY BUTTON ACTIVE - Stile per pulsante categoria attivo
   categoryButtonActive: {
     backgroundColor: mobileTheme.colors.primary,
     borderColor: mobileTheme.colors.primary,
   },
-  
+
   // CATEGORY BUTTON TEXT - Testo pulsante categoria
   categoryButtonText: {
     fontSize: mobileTheme.typography.fontSize.sm,
     fontWeight: mobileTheme.typography.fontWeight.medium,
     color: mobileTheme.colors.text.secondary,
   },
-  
+
   // CATEGORY BUTTON TEXT ACTIVE - Testo pulsante categoria attivo
   categoryButtonTextActive: {
     color: mobileTheme.colors.white,

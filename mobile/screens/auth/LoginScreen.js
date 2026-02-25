@@ -37,22 +37,20 @@ export default function LoginScreen({ navigation }) {
     try {
       // Add timeout for Render cold start handling
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Server slow to respond - try again')), 45000)
+        setTimeout(() => reject(new Error('Server slow to respond - try again')), 45000),
       );
 
-      const response = await Promise.race([
-        authAPI.login(email, password),
-        timeoutPromise
-      ]);
+      const response = await Promise.race([authAPI.login(email, password), timeoutPromise]);
 
       // Breve pausa per permettere al listener di AsyncStorage di rilevare il cambio
       setTimeout(() => {
         showToast(`✅ Benvenuto ${response.user.name}!`, 'success');
       }, 100);
     } catch (error) {
-      const message = error.message === 'Server slow to respond - try again'
-        ? 'Server in avvio, riprova tra 30 secondi (Render cold start)'
-        : error.message || 'Credenziali non valide';
+      const message =
+        error.message === 'Server slow to respond - try again'
+          ? 'Server in avvio, riprova tra 30 secondi (Render cold start)'
+          : error.message || 'Credenziali non valide';
       showToast(`❌ ${message}`, 'error');
     } finally {
       setLoading(false);
@@ -144,9 +142,15 @@ export default function LoginScreen({ navigation }) {
           {/* Info */}
           <View style={LoginScreenStyles.info}>
             <Text style={LoginScreenStyles.infoTitle}>💡 Demo Account</Text>
-            <Text style={LoginScreenStyles.infoText}>👤 Customer: demo.customer@delivero.local / 123456</Text>
-            <Text style={LoginScreenStyles.infoText}>🚗 Rider: demo.rider@delivero.local / 123456</Text>
-            <Text style={LoginScreenStyles.infoText}>👨‍💼 Manager: demo.manager@delivero.local / 123456</Text>
+            <Text style={LoginScreenStyles.infoText}>
+              👤 Customer: demo.customer@delivero.local / 123456
+            </Text>
+            <Text style={LoginScreenStyles.infoText}>
+              🚗 Rider: demo.rider@delivero.local / 123456
+            </Text>
+            <Text style={LoginScreenStyles.infoText}>
+              👨‍💼 Manager: demo.manager@delivero.local / 123456
+            </Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

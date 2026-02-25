@@ -66,7 +66,9 @@ export default function AdminFinance({ navigation }) {
             {/* Revenue Section */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Incasso Totale</Text>
-              <Text style={styles.sectionValue}>€{Number(finance.totalRevenue || 0).toFixed(2)}</Text>
+              <Text style={styles.sectionValue}>
+                €{Number(finance.totalRevenue || 0).toFixed(2)}
+              </Text>
               <Text style={styles.sectionSubtext}>Periodo: {finance.period || 'N/D'}</Text>
             </View>
 
@@ -74,7 +76,9 @@ export default function AdminFinance({ navigation }) {
             {finance.ordersRevenue && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Incasso Ordini</Text>
-                <Text style={styles.sectionValue}>€{Number(finance.ordersRevenue || 0).toFixed(2)}</Text>
+                <Text style={styles.sectionValue}>
+                  €{Number(finance.ordersRevenue || 0).toFixed(2)}
+                </Text>
                 <Text style={styles.sectionSubtext}>Ordini completati</Text>
               </View>
             )}
@@ -83,8 +87,10 @@ export default function AdminFinance({ navigation }) {
             {finance.serviceRevenue && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Incasso Servizi</Text>
-                <Text style={styles.sectionValue}>€{Number(finance.serviceRevenue || 0).toFixed(2)}</Text>
-                <Text style={sectionSubtext}>Servizi aggiuntivi</Text>
+                <Text style={styles.sectionValue}>
+                  €{Number(finance.serviceRevenue || 0).toFixed(2)}
+                </Text>
+                <Text style={styles.sectionSubtext}>Servizi aggiuntivi</Text>
               </View>
             )}
 

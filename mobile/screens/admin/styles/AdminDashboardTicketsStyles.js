@@ -5,82 +5,91 @@ import { unifiedStyles } from '../../../theme/UnifiedStyles';
 export const adminDashboardTicketsStyles = StyleSheet.create({
   ...unifiedStyles,
 
-  // Tickets specific styles
+  // ticketsContainer: wrapper lista ticket
   ticketsContainer: {
     padding: mobileTheme.spacing[4],
   },
 
-  // Ticket status colors
+  // statusOpen: ticket aperto
   statusOpen: {
     backgroundColor: mobileTheme.colors.successBg,
     color: mobileTheme.colors.success,
   },
+  // statusInProgress: ticket in lavorazione
   statusInProgress: {
     backgroundColor: mobileTheme.colors.warningBg,
     color: mobileTheme.colors.warning,
   },
+  // statusClosed: ticket chiuso
   statusClosed: {
     backgroundColor: mobileTheme.colors.text.tertiary,
     color: mobileTheme.colors.text.secondary,
   },
+  // statusResolved: ticket risolto
   statusResolved: {
-    backgroundColor: mobileTheme.colors.primaryBg,
+    backgroundColor: mobileTheme.colors.primarySoft,
     color: mobileTheme.colors.primary,
   },
 
-  // Priority colors
+  // priorityHigh: priorità alta
   priorityHigh: {
     backgroundColor: mobileTheme.colors.errorBg,
     color: mobileTheme.colors.error,
   },
+  // priorityMedium: priorità media
   priorityMedium: {
     backgroundColor: mobileTheme.colors.warningBg,
     color: mobileTheme.colors.warning,
   },
+  // priorityLow: priorità bassa
   priorityLow: {
-    backgroundColor: mobileTheme.colors.infoBg,
-    color: mobileTheme.colors.info,
+    backgroundColor: mobileTheme.colors.primarySoft,
+    color: mobileTheme.colors.primary,
   },
 
-  // Ticket details
+  // ticketMeta: riga meta (tipo/data)
   ticketMeta: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: mobileTheme.spacing[2],
   },
+  // ticketType: tipo ticket
   ticketType: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
     fontWeight: mobileTheme.typography.fontWeight.medium,
   },
+  // ticketDate: data ticket
   ticketDate: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.tertiary,
   },
 
-  // Order info in ticket
+  // orderInfo: riepilogo ordine nel ticket
   orderInfo: {
-    backgroundColor: mobileTheme.colors.primaryLight,
+    backgroundColor: mobileTheme.colors.primarySoft,
     padding: mobileTheme.spacing[3],
     borderRadius: mobileTheme.borderRadius.md,
     marginBottom: mobileTheme.spacing[3],
     borderLeftWidth: 3,
     borderLeftColor: mobileTheme.colors.primary,
   },
+  // orderLabel: label ordine
   orderLabel: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.primary,
     fontWeight: FONT_WEIGHTS.bold,
     marginBottom: mobileTheme.spacing[1],
   },
+  // orderId: id ordine
   orderId: {
     fontSize: mobileTheme.typography.fontSize.md,
-    color: mobileTheme.colors.text,
+    color: mobileTheme.colors.text.primary,
     fontWeight: FONT_WEIGHTS.bold,
   },
 
-  // User info
+  // userInfo: info utente
   userInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -90,17 +99,19 @@ export const adminDashboardTicketsStyles = StyleSheet.create({
     backgroundColor: mobileTheme.colors.background,
     borderRadius: mobileTheme.borderRadius.md,
   },
+  // userName: nome utente
   userName: {
     fontSize: mobileTheme.typography.fontSize.base,
     fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.text.primary,
   },
+  // userEmail: email utente
   userEmail: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
   },
 
-  // Priority badge
+  // priorityBadge: badge priorità
   priorityBadge: {
     paddingHorizontal: mobileTheme.spacing[2],
     paddingVertical: mobileTheme.spacing[1],
@@ -108,6 +119,7 @@ export const adminDashboardTicketsStyles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginBottom: mobileTheme.spacing[2],
   },
+  // priorityText: testo badge priorità
   priorityText: {
     fontSize: mobileTheme.typography.fontSize.xs,
     fontWeight: FONT_WEIGHTS.bold,
@@ -115,23 +127,25 @@ export const adminDashboardTicketsStyles = StyleSheet.create({
     textTransform: 'uppercase',
   },
 
-  // Description
+  // descriptionContainer: contenitore descrizione
   descriptionContainer: {
     marginBottom: mobileTheme.spacing[3],
   },
+  // descriptionText: testo descrizione
   descriptionText: {
     fontSize: mobileTheme.typography.fontSize.base,
     color: mobileTheme.colors.text.primary,
     lineHeight: 22,
   },
 
-  // Actions
+  // actionsContainer: barra azioni
   actionsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: mobileTheme.spacing[3],
   },
+  // actionButton: pulsante azione
   actionButton: {
     backgroundColor: mobileTheme.colors.background,
     borderWidth: 1,
@@ -142,38 +156,44 @@ export const adminDashboardTicketsStyles = StyleSheet.create({
     alignItems: 'center',
     minWidth: 80,
   },
+  // actionButtonText: testo azione
   actionButtonText: {
     fontSize: mobileTheme.typography.fontSize.sm,
     fontWeight: mobileTheme.typography.fontWeight.medium,
     color: mobileTheme.colors.text.primary,
   },
 
-  // Status indicators
+  // statusIndicator: indicatore stato
   statusIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: mobileTheme.spacing[2],
   },
+  // statusDot: pallino stato base
   statusDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
     marginRight: mobileTheme.spacing[2],
   },
+  // statusDotOpen: pallino stato aperto
   statusDotOpen: {
     backgroundColor: mobileTheme.colors.success,
   },
+  // statusDotInProgress: pallino stato in corso
   statusDotInProgress: {
     backgroundColor: mobileTheme.colors.warning,
   },
+  // statusDotClosed: pallino stato chiuso
   statusDotClosed: {
     backgroundColor: mobileTheme.colors.text.tertiary,
   },
+  // statusDotResolved: pallino stato risolto
   statusDotResolved: {
     backgroundColor: mobileTheme.colors.primary,
   },
 
-  // Timestamps
+  // timestampContainer: riga timestamp
   timestampContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -183,47 +203,28 @@ export const adminDashboardTicketsStyles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: mobileTheme.colors.border,
   },
+  // timestamp: testo timestamp
   timestamp: {
     fontSize: mobileTheme.typography.fontSize.xs,
     color: mobileTheme.colors.text.tertiary,
   },
+  // createdTimestamp: timestamp creazione
   createdTimestamp: {
     fontSize: mobileTheme.typography.fontSize.xs,
     color: mobileTheme.colors.text.tertiary,
   },
 
-  // Empty state
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: mobileTheme.spacing[5],
-    marginTop: mobileTheme.spacing[8],
-  },
-  emptyText: {
-    fontSize: mobileTheme.typography.fontSize.lg,
-    color: mobileTheme.colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: mobileTheme.spacing[2],
-  },
-  emptySubtext: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.tertiary,
-    textAlign: 'center',
-  },
+  // emptyContainer: stato vuoto ticket
+  emptyContainer: unifiedStyles.emptyContainer,
+  // emptyText: testo stato vuoto
+  emptyText: unifiedStyles.emptyText,
+  // emptySubtext: sottotesto stato vuoto
+  emptySubtext: unifiedStyles.emptySubtext,
 
-  // Loading state
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: mobileTheme.spacing[8],
-  },
-  loadingText: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.secondary,
-    marginTop: mobileTheme.spacing[4],
-  },
+  // loadingContainer: stato loading
+  loadingContainer: unifiedStyles.loadingContainer,
+  // loadingText: testo loading
+  loadingText: unifiedStyles.loadingText,
 });
 
 export default adminDashboardTicketsStyles;

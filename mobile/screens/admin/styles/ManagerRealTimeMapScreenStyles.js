@@ -1,23 +1,28 @@
 import { StyleSheet, Platform } from 'react-native';
 import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
+import { unifiedStyles } from '../../../theme/UnifiedStyles';
 
 export const managerRealTimeMapScreenStyles = StyleSheet.create({
+  // container: wrapper principale (sfondo mappa)
   container: {
     flex: 1,
     backgroundColor: mobileTheme.colors.secondary, // Navy profondo per il caricamento
   },
+  // map: mappa full screen
   map: {
     width: '100%',
     height: '100%',
   },
 
   // OVERLAY CONTROLS (Pulsanti che galleggiano sulla mappa)
+  // overlayContainer: area pulsanti flottanti
   overlayContainer: {
     position: 'absolute',
     top: Platform.OS === 'ios' ? 60 : 40,
     right: mobileTheme.spacing[4],
     gap: mobileTheme.spacing[3],
   },
+  // mapButton: pulsante overlay
   mapButton: {
     backgroundColor: mobileTheme.colors.white,
     width: 45,
@@ -29,6 +34,7 @@ export const managerRealTimeMapScreenStyles = StyleSheet.create({
   },
 
   // RIDER INFO CARD (La scheda che appare in basso quando selezioni un rider)
+  // riderCard: card info rider in basso
   riderCard: {
     position: 'absolute',
     bottom: 30,
@@ -43,6 +49,7 @@ export const managerRealTimeMapScreenStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: mobileTheme.colors.border,
   },
+  // riderAvatar: avatar rider
   riderAvatar: {
     width: 50,
     height: 50,
@@ -52,16 +59,19 @@ export const managerRealTimeMapScreenStyles = StyleSheet.create({
     alignItems: 'center',
     marginRight: mobileTheme.spacing[4],
   },
+  // riderName: nome rider
   riderName: {
     fontSize: mobileTheme.typography.fontSize.base,
     fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.text.primary,
   },
+  // statusIndicator: stato rider
   statusIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 2,
   },
+  // statusDot: pallino stato
   statusDot: {
     width: 8,
     height: 8,
@@ -70,21 +80,18 @@ export const managerRealTimeMapScreenStyles = StyleSheet.create({
     marginRight: 6,
   },
 
-  // LOADING STATE
+  // center: stato loading su fondo chiaro
   center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    ...unifiedStyles.loadingContainer,
     backgroundColor: mobileTheme.colors.background,
   },
+  // loadingText: testo loading
   loadingText: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    fontWeight: '600',
-    color: mobileTheme.colors.text.secondary,
-    marginTop: mobileTheme.spacing[4],
+    ...unifiedStyles.loadingText,
+    fontWeight: FONT_WEIGHTS.semibold,
     letterSpacing: 1,
     textTransform: 'uppercase',
-  }
+  },
 });
 
 export default managerRealTimeMapScreenStyles;

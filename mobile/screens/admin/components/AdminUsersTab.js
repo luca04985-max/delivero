@@ -1,19 +1,19 @@
 import React from 'react';
 import { View, ScrollView, RefreshControl, Text, TouchableOpacity, Alert } from 'react-native';
-import { adminDashboardScreenStyles as styles } from '../styles/AdminDashboardScreenStyles';
+import { AdminDashboardScreenStyles as styles } from '../styles/AdminDashboardScreenStyles';
 
-const AdminUsersTab = ({ 
-  users, 
-  expandedSections, 
-  toggleSection, 
-  renderUserRoleSeparator, 
+const AdminUsersTab = ({
+  users,
+  expandedSections,
+  toggleSection,
+  renderUserRoleSeparator,
   renderUsersWithSeparators,
   loading,
   refreshing,
   onRefresh,
   currentUser,
   onEditUser,
-  onDeleteUser
+  onDeleteUser,
 }) => {
   return (
     <ScrollView

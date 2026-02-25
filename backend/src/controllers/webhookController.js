@@ -1,5 +1,4 @@
 import Stripe from 'stripe';
-import express from 'express';
 import db from '../config/db.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -18,7 +17,7 @@ export const stripeWebhook = async (req, res) => {
 
   // Gestisci gli eventi webhook
   switch (event.type) {
-    case 'payment_intent.succeeded':
+    case 'payment_intent.succeeded': {
       const paymentIntent = event.data.object;
       console.log('💳 Payment succeeded:', paymentIntent.id);
 
@@ -26,15 +25,15 @@ export const stripeWebhook = async (req, res) => {
       try {
         await db.query(
           'UPDATE payments SET status = $1, confirmed_at = CURRENT_TIMESTAMP WHERE stripe_payment_id = $2',
-          ['completed', paymentIntent.id]
+          ['completed', paymentIntent.id],
         );
 
         // Aggiorna lo stato dell'ordine a confirmed
         if (paymentIntent.metadata?.order_id) {
-          await db.query(
-            'UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2',
-            ['confirmed', paymentIntent.metadata.order_id]
-          );
+          await db.query('UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2', [
+            'confirmed',
+            paymentIntent.metadata.order_id,
+          ]);
         }
 
         console.log('✅ Payment completed and order confirmed');
@@ -42,6 +41,7 @@ export const stripeWebhook = async (req, res) => {
         console.error('Database update error:', dbError);
       }
       break;
+    }
 
     case 'payment_intent.payment_failed':
       console.log('❌ Payment failed:', event.data.object.id);

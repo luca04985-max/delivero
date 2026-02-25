@@ -17,10 +17,10 @@ export default function RiderDashboard({ user }) {
           setUserLocation({
             lat: position.coords.latitude,
             lng: position.coords.longitude,
-            accuracy: position.coords.accuracy
+            accuracy: position.coords.accuracy,
           });
         },
-        error => console.error('Errore geolocalizzazione:', error)
+        error => console.error('Errore geolocalizzazione:', error),
       );
     }
 
@@ -44,13 +44,13 @@ export default function RiderDashboard({ user }) {
     }
   };
 
-  const calculateDistance = (order) => {
+  const calculateDistance = order => {
     // 1. Verifica la posizione dell'utente (Rider)
     // Assicurati che userLocation abbia .latitude e .longitude (non .lat e .lng)
     const lat1 = userLocation?.latitude || userLocation?.lat;
     const lon1 = userLocation?.longitude || userLocation?.lng;
 
-    if (!lat1 || !lon1) return "??";
+    if (!lat1 || !lon1) return '??';
 
     // 2. Verifica le coordinate dell'ordine (Database)
     // Controlliamo tutte le possibili varianti di nome per sicurezza
@@ -58,16 +58,18 @@ export default function RiderDashboard({ user }) {
     const lon2 = order.longitude || order.delivery_lng || order.rider_longitude;
 
     // Se l'ordine non ha coordinate nel DB, non inventarle (o ritorna null)
-    if (!lat2 || !lon2) return "N/A";
+    if (!lat2 || !lon2) return 'N/A';
 
     const R = 6371; // Raggio della terra in km
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
 
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = R * c;
@@ -75,16 +77,16 @@ export default function RiderDashboard({ user }) {
     return distance.toFixed(1); // Restituisce es. "0.5"
   };
 
-  const handleAcceptOrder = async (orderId) => {
+  const handleAcceptOrder = async orderId => {
     try {
       await ordersAPI.updateStatus(orderId, 'accepted', { rider_id: user.id });
       fetchOrders();
     } catch (err) {
-      alert('Errore nell\'accettazione ordine');
+      alert("Errore nell'accettazione ordine");
     }
   };
 
-  const handleCompleteOrder = async (orderId) => {
+  const handleCompleteOrder = async orderId => {
     try {
       await ordersAPI.updateStatus(orderId, 'completed');
       fetchOrders();
@@ -109,9 +111,16 @@ export default function RiderDashboard({ user }) {
 
       {/* Location Info */}
       {userLocation && (
-        <div className="card mb-4" style={{ backgroundColor: 'rgba(76, 175, 80, 0.1)', borderLeft: '4px solid var(--success-color)' }}>
+        <div
+          className="card mb-4"
+          style={{
+            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+            borderLeft: '4px solid var(--success-color)',
+          }}
+        >
           <p style={{ margin: 0 }}>
-            📍 Posizione: Lat {userLocation.lat.toFixed(4)}, Lng {userLocation.lng.toFixed(4)} | Precisione: ±{Math.round(userLocation.accuracy)}m
+            📍 Posizione: Lat {userLocation.lat.toFixed(4)}, Lng {userLocation.lng.toFixed(4)} |
+            Precisione: ±{Math.round(userLocation.accuracy)}m
           </p>
         </div>
       )}
@@ -120,17 +129,23 @@ export default function RiderDashboard({ user }) {
       <div className="grid grid-3 gap-2 mb-4">
         <div className="card text-center">
           <p style={{ margin: 0, fontSize: '2rem' }}>📦</p>
-          <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.5rem' }}>{orders.length}</p>
+          <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.5rem' }}>
+            {orders.length}
+          </p>
           <p style={{ margin: 0, fontSize: '0.9rem', color: '#999' }}>Ordini Disponibili</p>
         </div>
         <div className="card text-center">
           <p style={{ margin: 0, fontSize: '2rem' }}>🚚</p>
-          <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.5rem' }}>{myOrders.filter(o => o.status === 'accepted').length}</p>
+          <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.5rem' }}>
+            {myOrders.filter(o => o.status === 'accepted').length}
+          </p>
           <p style={{ margin: 0, fontSize: '0.9rem', color: '#999' }}>In Consegna</p>
         </div>
         <div className="card text-center">
           <p style={{ margin: 0, fontSize: '2rem' }}>✅</p>
-          <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.5rem' }}>{myOrders.filter(o => o.status === 'completed').length}</p>
+          <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.5rem' }}>
+            {myOrders.filter(o => o.status === 'completed').length}
+          </p>
           <p style={{ margin: 0, fontSize: '0.9rem', color: '#999' }}>Completati</p>
         </div>
       </div>
@@ -167,14 +182,20 @@ export default function RiderDashboard({ user }) {
               {sortedOrders.map(order => {
                 const distance = calculateDistance(order);
                 return (
-                  <div key={order.id} className="card" style={{ borderLeft: '4px solid var(--secondary-color)' }}>
+                  <div
+                    key={order.id}
+                    className="card"
+                    style={{ borderLeft: '4px solid var(--secondary-color)' }}
+                  >
                     <div className="flex-between mb-2">
                       <div>
                         <h3 style={{ margin: 0, marginBottom: '0.5rem' }}>Ordine #{order.id}</h3>
                         <p className="text-muted">📍 {distance} km da te</p>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <p style={{ fontSize: '1.3rem', fontWeight: 'bold', margin: '0.5rem 0' }}>€{Number(order.total_price || 0).toFixed(2)}</p>
+                        <p style={{ fontSize: '1.3rem', fontWeight: 'bold', margin: '0.5rem 0' }}>
+                          €{Number(order.total_price || 0).toFixed(2)}
+                        </p>
                         <span className="badge badge-info">⏳ In Attesa</span>
                       </div>
                     </div>
@@ -182,7 +203,14 @@ export default function RiderDashboard({ user }) {
                       📌 {order.address || 'Indirizzo non specificato'}
                     </p>
                     {order.notes && (
-                      <p style={{ fontSize: '0.9rem', fontStyle: 'italic', color: '#666', marginBottom: '0.5rem' }}>
+                      <p
+                        style={{
+                          fontSize: '0.9rem',
+                          fontStyle: 'italic',
+                          color: '#666',
+                          marginBottom: '0.5rem',
+                        }}
+                      >
                         Nota: {order.notes}
                       </p>
                     )}
@@ -211,15 +239,25 @@ export default function RiderDashboard({ user }) {
           ) : (
             <div className="list-wrapper">
               {myOrders.map(order => (
-                <div key={order.id} className="card" style={{ borderLeft: `4px solid ${order.status === 'accepted' ? '#FB8500' : '#4CAF50'}` }}>
+                <div
+                  key={order.id}
+                  className="card"
+                  style={{
+                    borderLeft: `4px solid ${order.status === 'accepted' ? '#FB8500' : '#4CAF50'}`,
+                  }}
+                >
                   <div className="flex-between mb-2">
                     <div>
                       <h3 style={{ margin: 0, marginBottom: '0.5rem' }}>Ordine #{order.id}</h3>
-                      <span className={`badge badge-${order.status === 'accepted' ? 'warning' : 'success'}`}>
+                      <span
+                        className={`badge badge-${order.status === 'accepted' ? 'warning' : 'success'}`}
+                      >
                         {order.status === 'accepted' ? '🚗 In Consegna' : '✅ Completato'}
                       </span>
                     </div>
-                    <p style={{ fontSize: '1.2rem', fontWeight: 'bold', margin: 0 }}>€{Number(order.total_price || 0).toFixed(2)}</p>
+                    <p style={{ fontSize: '1.2rem', fontWeight: 'bold', margin: 0 }}>
+                      €{Number(order.total_price || 0).toFixed(2)}
+                    </p>
                   </div>
                   <p className="text-muted">📍 {order.address || 'Indirizzo'}</p>
                   {order.status === 'accepted' && (

@@ -7,7 +7,7 @@ export const createBillPayment = async (billId, userId, paymentMethod, amount) =
       `INSERT INTO bill_payments (bill_id, user_id, payment_method, amount, status)
        VALUES ($1, $2, $3, $4, 'pending')
        RETURNING *`,
-      [billId, userId, paymentMethod, amount]
+      [billId, userId, paymentMethod, amount],
     );
     return result.rows[0];
   } catch (error) {
@@ -16,7 +16,7 @@ export const createBillPayment = async (billId, userId, paymentMethod, amount) =
 };
 
 // Get bill payment by ID
-export const getBillPaymentById = async (paymentId) => {
+export const getBillPaymentById = async paymentId => {
   try {
     const result = await db.query(
       `SELECT bp.*, b.type, b.due_date, u.name, u.phone, u.email
@@ -24,7 +24,7 @@ export const getBillPaymentById = async (paymentId) => {
        JOIN bills b ON bp.bill_id = b.id
        JOIN users u ON bp.user_id = u.id
        WHERE bp.id = $1`,
-      [paymentId]
+      [paymentId],
     );
     return result.rows[0];
   } catch (error) {
@@ -33,7 +33,7 @@ export const getBillPaymentById = async (paymentId) => {
 };
 
 // Get all bill payments for a user
-export const getUserBillPayments = async (userId) => {
+export const getUserBillPayments = async userId => {
   try {
     const result = await db.query(
       `SELECT bp.*, b.type, b.due_date, b.description
@@ -41,7 +41,7 @@ export const getUserBillPayments = async (userId) => {
        JOIN bills b ON bp.bill_id = b.id
        WHERE bp.user_id = $1
        ORDER BY bp.created_at DESC`,
-      [userId]
+      [userId],
     );
     return result.rows;
   } catch (error) {
@@ -80,7 +80,7 @@ export const updateBillPaymentImages = async (paymentId, barcodeUrl, qrCodeUrl) 
        SET barcode_image_url = $1, qr_code_image_url = $2, updated_at = CURRENT_TIMESTAMP
        WHERE id = $3
        RETURNING *`,
-      [barcodeUrl, qrCodeUrl, paymentId]
+      [barcodeUrl, qrCodeUrl, paymentId],
     );
     return result.rows[0];
   } catch (error) {
@@ -96,7 +96,7 @@ export const assignRiderToBillPayment = async (paymentId, riderId) => {
        SET rider_id = $1, status = 'driver_assigned', updated_at = CURRENT_TIMESTAMP
        WHERE id = $2
        RETURNING *`,
-      [riderId, paymentId]
+      [riderId, paymentId],
     );
     return result.rows[0];
   } catch (error) {
@@ -136,7 +136,7 @@ export const addBillPaymentNotes = async (paymentId, notes) => {
        SET notes = $1, updated_at = CURRENT_TIMESTAMP
        WHERE id = $2
        RETURNING *`,
-      [notes, paymentId]
+      [notes, paymentId],
     );
     return result.rows[0];
   } catch (error) {
@@ -170,7 +170,12 @@ export const getBillPaymentStats = async (startDate = null, endDate = null) => {
 };
 
 // Update bill payment with photo information
-export const updateBillPaymentPhoto = async (paymentId, photoUrl, cameraPermissionGranted, photoTimestamp) => {
+export const updateBillPaymentPhoto = async (
+  paymentId,
+  photoUrl,
+  cameraPermissionGranted,
+  photoTimestamp,
+) => {
   try {
     const result = await db.query(
       `UPDATE bill_payments
@@ -180,7 +185,7 @@ export const updateBillPaymentPhoto = async (paymentId, photoUrl, cameraPermissi
            updated_at = CURRENT_TIMESTAMP
        WHERE id = $4
        RETURNING *`,
-      [photoUrl, cameraPermissionGranted, photoTimestamp, paymentId]
+      [photoUrl, cameraPermissionGranted, photoTimestamp, paymentId],
     );
     return result.rows[0];
   } catch (error) {
@@ -196,7 +201,7 @@ export const updateBillPaymentOrderId = async (paymentId, orderId) => {
        SET order_id = $1, updated_at = CURRENT_TIMESTAMP
        WHERE id = $2
        RETURNING *`,
-      [orderId, paymentId]
+      [orderId, paymentId],
     );
     return result.rows[0];
   } catch (error) {
@@ -205,7 +210,7 @@ export const updateBillPaymentOrderId = async (paymentId, orderId) => {
 };
 
 // Get bill payment with order details
-export const getBillPaymentWithOrder = async (paymentId) => {
+export const getBillPaymentWithOrder = async paymentId => {
   try {
     const result = await db.query(
       `SELECT bp.*, 
@@ -218,7 +223,7 @@ export const getBillPaymentWithOrder = async (paymentId) => {
        JOIN users u ON bp.user_id = u.id
        LEFT JOIN orders o ON bp.order_id = o.id
        WHERE bp.id = $1`,
-      [paymentId]
+      [paymentId],
     );
     return result.rows[0];
   } catch (error) {
@@ -227,7 +232,7 @@ export const getBillPaymentWithOrder = async (paymentId) => {
 };
 
 // Get bill payments with photos for a user
-export const getUserBillPaymentsWithPhotos = async (userId) => {
+export const getUserBillPaymentsWithPhotos = async userId => {
   try {
     const result = await db.query(
       `SELECT bp.*, 
@@ -238,7 +243,7 @@ export const getUserBillPaymentsWithPhotos = async (userId) => {
        LEFT JOIN orders o ON bp.order_id = o.id
        WHERE bp.user_id = $1 AND bp.bill_photo_url IS NOT NULL
        ORDER BY bp.created_at DESC`,
-      [userId]
+      [userId],
     );
     return result.rows;
   } catch (error) {

@@ -20,7 +20,7 @@ if (process.env.DATABASE_URL) {
   pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: {
-      rejectUnauthorized: false // Obbligatorio per Supabase
+      rejectUnauthorized: false, // Obbligatorio per Supabase
     },
   });
 } else {
@@ -38,7 +38,7 @@ pool.on('connect', () => {
   console.log('✅ Database connesso con successo');
 });
 
-pool.on('error', (err) => {
+pool.on('error', err => {
   console.error('❌ Errore inaspettato sul client database', err);
 });
 

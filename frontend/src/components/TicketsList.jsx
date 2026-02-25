@@ -21,8 +21,8 @@ const TicketsList = () => {
       const response = await axios.get(
         'https://delivero-gyjx.onrender.com/api/tickets/my-tickets',
         {
-          headers: { Authorization: `Bearer ${token}` }
-        }
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
       setTickets(response.data);
     } catch (error) {
@@ -32,14 +32,14 @@ const TicketsList = () => {
     }
   };
 
-  const getTicketDetails = async (ticketId) => {
+  const getTicketDetails = async ticketId => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(
         `https://delivero-gyjx.onrender.com/api/tickets/${ticketId}`,
         {
-          headers: { Authorization: `Bearer ${token}` }
-        }
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
       setSelectedTicket(response.data);
     } catch (error) {
@@ -47,7 +47,7 @@ const TicketsList = () => {
     }
   };
 
-  const handleAddComment = async (e) => {
+  const handleAddComment = async e => {
     e.preventDefault();
     if (!comment.trim()) return;
 
@@ -58,8 +58,8 @@ const TicketsList = () => {
         `https://delivero-gyjx.onrender.com/api/tickets/${selectedTicket.id}/comments`,
         { comment },
         {
-          headers: { Authorization: `Bearer ${token}` }
-        }
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
       setComment('');
       // Refresh ticket details
@@ -71,29 +71,28 @@ const TicketsList = () => {
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     const colors = {
-      'open': '#ff9800',
-      'in_progress': '#2196f3',
-      'resolved': '#4caf50',
-      'closed': '#757575'
+      open: '#ff9800',
+      in_progress: '#2196f3',
+      resolved: '#4caf50',
+      closed: '#757575',
     };
     return colors[status] || '#999';
   };
 
-  const getTypeIcon = (type) => {
+  const getTypeIcon = type => {
     const icons = {
-      'bug': '🐛',
-      'complaint': '😞',
-      'feature_request': '💡',
-      'support': '🆘'
+      bug: '🐛',
+      complaint: '😞',
+      feature_request: '💡',
+      support: '🆘',
     };
     return icons[type] || '📝';
   };
 
-  const filteredTickets = filterStatus === 'all'
-    ? tickets
-    : tickets.filter(t => t.status === filterStatus);
+  const filteredTickets =
+    filterStatus === 'all' ? tickets : tickets.filter(t => t.status === filterStatus);
 
   if (loading) {
     return (
@@ -115,7 +114,7 @@ const TicketsList = () => {
             <select
               style={ticketsListStyles.filterSelect}
               value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
+              onChange={e => setFilterStatus(e.target.value)}
             >
               <option value="all">Tutti</option>
               <option value="open">Aperti</option>
@@ -132,8 +131,7 @@ const TicketsList = () => {
               <div style={ticketsListStyles.emptyText}>
                 {filterStatus === 'all'
                   ? 'Non hai ancora creato nessun ticket'
-                  : 'Nessun ticket con questo stato'
-                }
+                  : 'Nessun ticket con questo stato'}
               </div>
             </div>
           ) : (
@@ -145,15 +143,11 @@ const TicketsList = () => {
                   onClick={() => getTicketDetails(ticket.id)}
                 >
                   <div style={ticketsListStyles.headerCard}>
-                    <span style={ticketsListStyles.ticketType}>
-                      {getTypeIcon(ticket.type)}
-                    </span>
+                    <span style={ticketsListStyles.ticketType}>{getTypeIcon(ticket.type)}</span>
                     <h3 style={ticketsListStyles.titleCard}>{ticket.title}</h3>
                   </div>
 
-                  <p style={ticketsListStyles.ticketDescription}>
-                    {ticket.description}
-                  </p>
+                  <p style={ticketsListStyles.ticketDescription}>{ticket.description}</p>
 
                   <div style={ticketsListStyles.ticketMeta}>
                     <span style={ticketsListStyles.ticketId}>#{ticket.id}</span>
@@ -168,7 +162,7 @@ const TicketsList = () => {
                       ticket.status === 'open' && ticketsListStyles.statusOpen,
                       ticket.status === 'in_progress' && ticketsListStyles.statusInProgress,
                       ticket.status === 'resolved' && ticketsListStyles.statusResolved,
-                      ticket.status === 'closed' && ticketsListStyles.statusClosed
+                      ticket.status === 'closed' && ticketsListStyles.statusClosed,
                     ]}
                   >
                     {ticket.status === 'open' && '🔴 Aperto'}
@@ -191,7 +185,7 @@ const TicketsList = () => {
               <span
                 style={{
                   ...ticketsListStyles.statusBadge,
-                  backgroundColor: getStatusColor(selectedTicket.status)
+                  backgroundColor: getStatusColor(selectedTicket.status),
                 }}
               >
                 {selectedTicket.status}
@@ -200,19 +194,24 @@ const TicketsList = () => {
 
             {selectedTicket.admin_notes && (
               <div style={ticketsListStyles.adminNotes}>
-                <div style={ticketsListStyles.adminNotesTitle}>
-                  📌 Nota dell'Admin:
-                </div>
+                <div style={ticketsListStyles.adminNotesTitle}>📌 Nota dell'Admin:</div>
                 <p>{selectedTicket.admin_notes}</p>
               </div>
             )}
 
             <div style={ticketsListStyles.detailBody}>
-              <p><strong>Descrizione:</strong></p>
+              <p>
+                <strong>Descrizione:</strong>
+              </p>
               <p>{selectedTicket.description}</p>
 
-              <p><strong>Data creazione:</strong> {new Date(selectedTicket.created_at).toLocaleDateString('it-IT')}</p>
-              <p><strong>Priorità:</strong> {selectedTicket.priority}</p>
+              <p>
+                <strong>Data creazione:</strong>{' '}
+                {new Date(selectedTicket.created_at).toLocaleDateString('it-IT')}
+              </p>
+              <p>
+                <strong>Priorità:</strong> {selectedTicket.priority}
+              </p>
             </div>
 
             <div style={ticketsListStyles.commentsSection}>
@@ -220,29 +219,32 @@ const TicketsList = () => {
                 💬 Commenti ({selectedTicket.comments?.length || 0})
               </h3>
 
-              {selectedTicket.comments && selectedTicket.comments.map(comment => (
-                <div key={comment.id} style={ticketsListStyles.commentCard}>
-                  <div style={ticketsListStyles.commentHeader}>
-                    <strong>{comment.user_name}</strong>
-                    <span style={[
-                      ticketsListStyles.commentRole,
-                      comment.role === 'admin' && ticketsListStyles.commentRoleAdmin,
-                      comment.role === 'user' && ticketsListStyles.commentRoleUser
-                    ]}>
-                      {comment.role === 'admin' ? '🔐 Admin' : '👤 Utente'}
-                    </span>
-                    <span style={ticketsListStyles.commentDate}>
-                      {new Date(comment.created_at).toLocaleDateString('it-IT')}
-                    </span>
+              {selectedTicket.comments &&
+                selectedTicket.comments.map(comment => (
+                  <div key={comment.id} style={ticketsListStyles.commentCard}>
+                    <div style={ticketsListStyles.commentHeader}>
+                      <strong>{comment.user_name}</strong>
+                      <span
+                        style={[
+                          ticketsListStyles.commentRole,
+                          comment.role === 'admin' && ticketsListStyles.commentRoleAdmin,
+                          comment.role === 'user' && ticketsListStyles.commentRoleUser,
+                        ]}
+                      >
+                        {comment.role === 'admin' ? '🔐 Admin' : '👤 Utente'}
+                      </span>
+                      <span style={ticketsListStyles.commentDate}>
+                        {new Date(comment.created_at).toLocaleDateString('it-IT')}
+                      </span>
+                    </div>
+                    <p style={ticketsListStyles.commentText}>{comment.comment}</p>
                   </div>
-                  <p style={ticketsListStyles.commentText}>{comment.comment}</p>
-                </div>
-              ))}
+                ))}
 
               <form onSubmit={handleAddComment} style={ticketsListStyles.commentForm}>
                 <textarea
                   value={comment}
-                  onChange={(e) => setComment(e.target.value)}
+                  onChange={e => setComment(e.target.value)}
                   placeholder="Aggiungi un commento..."
                   rows="3"
                   style={ticketsListStyles.commentInput}

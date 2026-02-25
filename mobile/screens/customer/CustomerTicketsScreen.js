@@ -32,7 +32,9 @@ export default function CustomerTicketsScreen({ navigation }) {
       const ticketsData = data || [];
 
       // Filtra solo ticket validi (con ID non null) - TEMPORANEAMENTE MOSTRA TUTTI
-      const validTickets = ticketsData.filter(ticket => ticket.id != null || ticket.ticket_status != null);
+      const validTickets = ticketsData.filter(
+        ticket => ticket.id != null || ticket.ticket_status != null,
+      );
 
       setTickets(validTickets);
     } catch (error) {
@@ -81,29 +83,37 @@ export default function CustomerTicketsScreen({ navigation }) {
   }, [tickets]);
 
   // Funzione per toggle delle sezioni - ottimizzata con useCallback
-  const toggleSection = useCallback((ticket_status) => {
+  const toggleSection = useCallback(ticket_status => {
     setExpandedSections(prev => ({
       ...prev,
-      [ticket_status]: !prev[ticket_status]
+      [ticket_status]: !prev[ticket_status],
     }));
   }, []);
 
   // Funzioni helper memoizzate
-  const getStatusColor = useCallback((status) => {
+  const getStatusColor = useCallback(status => {
     switch (status) {
-      case 'open': return '#4CAF50';
-      case 'in_progress': return '#FF9800';
-      case 'closed': return '#9E9E9E';
-      default: return '#666';
+      case 'open':
+        return '#4CAF50';
+      case 'in_progress':
+        return '#FF9800';
+      case 'closed':
+        return '#9E9E9E';
+      default:
+        return '#666';
     }
   }, []);
 
-  const getStatusText = useCallback((status) => {
+  const getStatusText = useCallback(status => {
     switch (status) {
-      case 'open': return '🟢 Aperti';
-      case 'in_progress': return '🟠 In corso';
-      case 'closed': return '🔴 Chiusi';
-      default: return status;
+      case 'open':
+        return '🟢 Aperti';
+      case 'in_progress':
+        return '🟠 In corso';
+      case 'closed':
+        return '🔴 Chiusi';
+      default:
+        return status;
     }
   }, []);
 
@@ -113,23 +123,17 @@ export default function CustomerTicketsScreen({ navigation }) {
       <TouchableOpacity
         style={[
           customerTicketsScreenStyles.statusSeparator,
-          { borderLeftColor: getStatusColor(status) }
+          { borderLeftColor: getStatusColor(status) },
         ]}
         onPress={() => toggleSection(status)}
       >
         <View style={customerTicketsScreenStyles.statusSeparatorContent}>
           <View style={customerTicketsScreenStyles.statusSeparatorLeft}>
-            <Text style={customerTicketsScreenStyles.statusSeparatorIcon}>
-              {statusInfo.icon}
-            </Text>
-            <Text style={customerTicketsScreenStyles.statusSeparatorTitle}>
-              {statusInfo.label}
-            </Text>
+            <Text style={customerTicketsScreenStyles.statusSeparatorIcon}>{statusInfo.icon}</Text>
+            <Text style={customerTicketsScreenStyles.statusSeparatorTitle}>{statusInfo.label}</Text>
           </View>
           <View style={customerTicketsScreenStyles.statusSeparatorRight}>
-            <Text style={customerTicketsScreenStyles.statusSeparatorCount}>
-              {count}
-            </Text>
+            <Text style={customerTicketsScreenStyles.statusSeparatorCount}>{count}</Text>
             <Text style={customerTicketsScreenStyles.statusSeparatorToggle}>
               {isExpanded ? '🔼' : '🔽'}
             </Text>
@@ -154,7 +158,7 @@ export default function CustomerTicketsScreen({ navigation }) {
     const statusInfo = {
       open: { label: 'Aperti', icon: '🔓' },
       in_progress: { label: 'In Corso', icon: '⚙️' },
-      resolved: { label: 'Risolti', icon: '✅' }
+      resolved: { label: 'Risolti', icon: '✅' },
     };
 
     const result = [];
@@ -170,7 +174,7 @@ export default function CustomerTicketsScreen({ navigation }) {
       result.push(
         <View key={`separator-${ticket_status}`}>
           {renderStatusSeparator(ticket_status, groupTickets.length, statusData, isExpanded)}
-        </View>
+        </View>,
       );
 
       // 2. Aggiungiamo i ticket SOLO se la sezione è espansa
@@ -178,11 +182,7 @@ export default function CustomerTicketsScreen({ navigation }) {
         groupTickets.forEach(ticket => {
           // Aggiungi solo ticket con ID valido per evitare chiavi duplicate
           if (ticket.id != null) {
-            result.push(
-              <View key={`ticket-${ticket.id}`}>
-                {renderTicket({ item: ticket })}
-              </View>
-            );
+            result.push(<View key={`ticket-${ticket.id}`}>{renderTicket({ item: ticket })}</View>);
           }
         });
       }
@@ -199,10 +199,12 @@ export default function CustomerTicketsScreen({ navigation }) {
       >
         <View style={customerTicketsScreenStyles.headerCard}>
           <Text style={customerTicketsScreenStyles.titleCard}>{item.title}</Text>
-          <View style={[
-            customerTicketsScreenStyles.statusBadge,
-            { backgroundColor: getStatusColor(item.ticket_status) }
-          ]}>
+          <View
+            style={[
+              customerTicketsScreenStyles.statusBadge,
+              { backgroundColor: getStatusColor(item.ticket_status) },
+            ]}
+          >
             <Text style={customerTicketsScreenStyles.statusText}>
               {getStatusText(item.ticket_status)}
             </Text>
@@ -217,9 +219,15 @@ export default function CustomerTicketsScreen({ navigation }) {
         {item.ticket_order_id && (
           <View style={customerTicketsScreenStyles.orderInfo}>
             <Text style={customerTicketsScreenStyles.orderLabel}>Ordine Associato:</Text>
-            <Text style={customerTicketsScreenStyles.orderId}>#{item.ticket_order_id?.toString().slice(-5)}</Text>
-            <Text style={customerTicketsScreenStyles.orderDate}>Ordine del {new Date(item.order_created_at).toLocaleDateString()}</Text>
-            <Text style={customerTicketsScreenStyles.orderTotal}>€{item.total_amount || item.total_price || item.total}</Text>
+            <Text style={customerTicketsScreenStyles.orderId}>
+              #{item.ticket_order_id?.toString().slice(-5)}
+            </Text>
+            <Text style={customerTicketsScreenStyles.orderDate}>
+              Ordine del {new Date(item.order_created_at).toLocaleDateString()}
+            </Text>
+            <Text style={customerTicketsScreenStyles.orderTotal}>
+              €{item.total_amount || item.total_price || item.total}
+            </Text>
             <Text style={customerTicketsScreenStyles.orderAddress}>📍 {item.delivery_address}</Text>
           </View>
         )}
@@ -253,9 +261,7 @@ export default function CustomerTicketsScreen({ navigation }) {
 
       <ScrollView
         style={customerTicketsScreenStyles.content}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         {tickets.length === 0 ? (
           <View style={customerTicketsScreenStyles.emptyContainer}>

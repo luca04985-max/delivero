@@ -21,7 +21,7 @@ export default function CustomerHomeAdvanced() {
     { id: 'kebab', name: 'Kebab', icon: '🌮', color: '#FFF3E0' },
     { id: 'dessert', name: 'Dessert', icon: '🍰', color: '#FCE4EC' },
     { id: 'healthy', name: 'Healthy', icon: '🥙', color: '#E0F2F1' },
-    { id: 'italian', name: 'Italiano', icon: '🍝', color: '#F3E5F5' }
+    { id: 'italian', name: 'Italiano', icon: '🍝', color: '#F3E5F5' },
   ];
 
   // Load data on mount
@@ -56,9 +56,27 @@ export default function CustomerHomeAdvanced() {
   const loadPromotions = async () => {
     // Mock promotions - in real app would come from API
     setPromotions([
-      { id: 1, title: 'Sconto 20% Pizza', description: 'Su tutte le pizze', discount: '20%', icon: '🍕' },
-      { id: 2, title: 'Consegna Gratis', description: 'Ordini sopra €15', discount: 'Consegna', icon: '🚚' },
-      { id: 3, title: 'Happy Hour', description: '50% di sconto 18-20', discount: '50%', icon: '🎉' }
+      {
+        id: 1,
+        title: 'Sconto 20% Pizza',
+        description: 'Su tutte le pizze',
+        discount: '20%',
+        icon: '🍕',
+      },
+      {
+        id: 2,
+        title: 'Consegna Gratis',
+        description: 'Ordini sopra €15',
+        discount: 'Consegna',
+        icon: '🚚',
+      },
+      {
+        id: 3,
+        title: 'Happy Hour',
+        description: '50% di sconto 18-20',
+        discount: '50%',
+        icon: '🎉',
+      },
     ]);
   };
 
@@ -69,31 +87,35 @@ export default function CustomerHomeAdvanced() {
     }
   };
 
-  const toggleFavorite = useCallback((restaurant) => {
-    const isFavorited = favorites.some(f => f.id === restaurant.id);
-    let newFavorites;
-    
-    if (isFavorited) {
-      newFavorites = favorites.filter(f => f.id !== restaurant.id);
-    } else {
-      newFavorites = [...favorites, restaurant];
-    }
-    
-    setFavorites(newFavorites);
-    localStorage.setItem('favoriteRestaurants', JSON.stringify(newFavorites));
-  }, [favorites]);
+  const toggleFavorite = useCallback(
+    restaurant => {
+      const isFavorited = favorites.some(f => f.id === restaurant.id);
+      let newFavorites;
+
+      if (isFavorited) {
+        newFavorites = favorites.filter(f => f.id !== restaurant.id);
+      } else {
+        newFavorites = [...favorites, restaurant];
+      }
+
+      setFavorites(newFavorites);
+      localStorage.setItem('favoriteRestaurants', JSON.stringify(newFavorites));
+    },
+    [favorites],
+  );
 
   const filteredRestaurants = restaurants.filter(restaurant => {
-    const matchesSearch = !searchText || 
+    const matchesSearch =
+      !searchText ||
       restaurant.name.toLowerCase().includes(searchText.toLowerCase()) ||
       restaurant.category?.toLowerCase().includes(searchText.toLowerCase());
-    
+
     const matchesCategory = activeCategory === 'all' || restaurant.category === activeCategory;
-    
+
     return matchesSearch && matchesCategory;
   });
 
-  const renderRestaurantCard = (restaurant) => (
+  const renderRestaurantCard = restaurant => (
     <div className="restaurant-card">
       <div className="restaurant-header">
         <div className="restaurant-info">
@@ -104,10 +126,7 @@ export default function CustomerHomeAdvanced() {
             <span className="price">💰 €{restaurant.delivery_cost || '2.00'}</span>
           </div>
         </div>
-        <button 
-          className="favorite-btn"
-          onClick={() => toggleFavorite(restaurant)}
-        >
+        <button className="favorite-btn" onClick={() => toggleFavorite(restaurant)}>
           {favorites.some(f => f.id === restaurant.id) ? '❤️' : '🤍'}
         </button>
       </div>
@@ -130,7 +149,7 @@ export default function CustomerHomeAdvanced() {
             type="text"
             placeholder="🔍 Cerca ristoranti o piatti..."
             value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
+            onChange={e => setSearchText(e.target.value)}
             className="search-input"
           />
           <button className="filter-btn">Filtri</button>

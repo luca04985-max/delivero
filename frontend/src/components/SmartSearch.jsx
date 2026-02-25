@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './SmartSearch.css';
 
-export default function SmartSearch({ onSearch, onFilter, placeholder = 'Cerca ristoranti, piatti...' }) {
+export default function SmartSearch({
+  onSearch,
+  onFilter,
+  placeholder = 'Cerca ristoranti, piatti...',
+}) {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -17,7 +21,7 @@ export default function SmartSearch({ onSearch, onFilter, placeholder = 'Cerca r
     { type: 'item', name: 'Cheese Burger', restaurant: 'Burger House' },
     { type: 'cuisine', name: 'Italiano' },
     { type: 'cuisine', name: 'Cinese' },
-    { type: 'cuisine', name: 'Giapponese' }
+    { type: 'cuisine', name: 'Giapponese' },
   ];
 
   useEffect(() => {
@@ -27,47 +31,52 @@ export default function SmartSearch({ onSearch, onFilter, placeholder = 'Cerca r
     }
   }, []);
 
-  const filterSuggestions = useCallback((searchTerm) => {
+  const filterSuggestions = useCallback(searchTerm => {
     if (!searchTerm) {
       setSuggestions([]);
       return;
     }
 
-    const filtered = mockSuggestions.filter(item =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase())
-    ).slice(0, 5);
+    const filtered = mockSuggestions
+      .filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
+      .slice(0, 5);
 
     setSuggestions(filtered);
     setShowSuggestions(filtered.length > 0);
   }, []);
 
-  const handleInputChange = (value) => {
+  const handleInputChange = value => {
     setQuery(value);
     filterSuggestions(value);
   };
 
-  const handleSuggestionClick = (suggestion) => {
+  const handleSuggestionClick = suggestion => {
     setQuery(suggestion.name);
     setShowSuggestions(false);
-    
+
     // Add to recent searches
-    const newRecent = [suggestion, ...recentSearches.filter(item => item.name !== suggestion.name)].slice(0, 10);
+    const newRecent = [
+      suggestion,
+      ...recentSearches.filter(item => item.name !== suggestion.name),
+    ].slice(0, 10);
     setRecentSearches(newRecent);
     localStorage.setItem('recentSearches', JSON.stringify(newRecent));
-    
+
     onSearch(suggestion.name);
   };
 
   const handleSearch = () => {
     if (query.trim()) {
       // Add to recent searches
-      const existingItem = recentSearches.find(item => item.name.toLowerCase() === query.toLowerCase());
+      const existingItem = recentSearches.find(
+        item => item.name.toLowerCase() === query.toLowerCase(),
+      );
       if (!existingItem) {
-        const newRecent = [{ name: query, type: 'custom' }, ...recentSearches].slice(0, 9)];
+        const newRecent = [{ name: query, type: 'custom' }, ...recentSearches].slice(0, 9);
         setRecentSearches(newRecent);
         localStorage.setItem('recentSearches', JSON.stringify(newRecent));
       }
-      
+
       onSearch(query);
       setShowSuggestions(false);
     }
@@ -84,8 +93,8 @@ export default function SmartSearch({ onSearch, onFilter, placeholder = 'Cerca r
         <input
           type="text"
           value={query}
-          onChange={(e) => handleInputChange(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+          onChange={e => handleInputChange(e.target.value)}
+          onKeyPress={e => e.key === 'Enter' && handleSearch()}
           placeholder={placeholder}
           className="search-input"
           onFocus={() => filterSuggestions(query)}
@@ -133,11 +142,7 @@ export default function SmartSearch({ onSearch, onFilter, placeholder = 'Cerca r
           </div>
           <div className="recent-list">
             {recentSearches.map((item, index) => (
-              <div
-                key={index}
-                className="recent-item"
-                onClick={() => handleSuggestionClick(item)}
-              >
+              <div key={index} className="recent-item" onClick={() => handleSuggestionClick(item)}>
                 <span className="recent-type">
                   {item.type === 'restaurant' && '🍽️'}
                   {item.type === 'item' && '🍽️'}

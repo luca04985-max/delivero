@@ -1,5 +1,6 @@
 import db from '../config/db.js';
 import Stripe from 'stripe';
+import { isStripeConfigured } from '../services/payment.js';
 
 // Inizializza Stripe con la chiave segreta dal .env
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -18,7 +19,7 @@ export const createCashPayment = async (req, res) => {
     // Check if order exists and belongs to user
     const orderResult = await db.query(
       'SELECT id, customer_id, total_amount FROM orders WHERE id = $1 AND customer_id = $2',
-      [orderId, userId]
+      [orderId, userId],
     );
 
     if (orderResult.rows.length === 0) {
@@ -34,9 +35,8 @@ export const createCashPayment = async (req, res) => {
       `INSERT INTO payments (order_id, payment_method, amount, status, created_at)
        VALUES ($1, 'cash', $2, 'pending', CURRENT_TIMESTAMP)
        RETURNING *`,
-      [orderId, order.total_amount]
+      [orderId, order.total_amount],
     );
-
 
     res.status(201).json(paymentResult.rows[0]);
   } catch (error) {
@@ -47,18 +47,20 @@ export const createCashPayment = async (req, res) => {
       constraint: error.constraint,
       table: error.table,
       column: error.column,
-      datatype: error.datatype
+      datatype: error.datatype,
     });
 
     // Log specifico per constraint violation
     if (error.constraint === 'payments_status_check') {
-      console.error('🔍 Expected values for status constraint: pending, processing, completed, failed, refunded');
+      console.error(
+        '🔍 Expected values for status constraint: pending, processing, completed, failed, refunded',
+      );
     }
 
     res.status(500).json({
       message: 'Error creating cash payment',
       error: error.message,
-      constraint: error.constraint
+      constraint: error.constraint,
     });
   }
 };
@@ -80,7 +82,7 @@ export const markCashCollected = async (req, res) => {
        SET status = 'completed', collected_at = CURRENT_TIMESTAMP, collected_by = $1
        WHERE order_id = $2 AND payment_method = 'cash'
        RETURNING *`,
-      [userId, orderId]
+      [userId, orderId],
     );
 
     if (result.rows.length === 0) {
@@ -106,7 +108,7 @@ export const createPayment = async (req, res) => {
     // Check if order exists and belongs to user
     const orderResult = await db.query(
       'SELECT o.*, u.email FROM orders o JOIN users u ON o.customer_id = u.id WHERE o.id = $1 AND o.customer_id = $2',
-      [orderId, userId]
+      [orderId, userId],
     );
 
     if (orderResult.rows.length === 0) {
@@ -125,11 +127,11 @@ export const createPayment = async (req, res) => {
       currency: 'eur',
       metadata: {
         order_id: orderId.toString(),
-        user_id: userId.toString()
+        user_id: userId.toString(),
       },
       automatic_payment_methods: {
-        enabled: ['card']
-      }
+        enabled: ['card'],
+      },
     });
 
     // Salva il payment intent nel database
@@ -137,13 +139,13 @@ export const createPayment = async (req, res) => {
       `INSERT INTO payments (order_id, payment_method, amount, status, stripe_payment_id, created_at)
        VALUES ($1, 'stripe', $2, 'pending', $3, CURRENT_TIMESTAMP)
        RETURNING *`,
-      [orderId, order.total_amount, paymentIntent.id]
+      [orderId, order.total_amount, paymentIntent.id],
     );
 
     const response = {
       ...paymentResult.rows[0],
       client_secret: paymentIntent.client_secret,
-      payment_intent_id: paymentIntent.id
+      payment_intent_id: paymentIntent.id,
     };
 
     res.status(201).json(response);
@@ -169,7 +171,7 @@ export const confirmStripePayment = async (req, res) => {
     if (paymentIntent.status !== 'succeeded') {
       return res.status(400).json({
         error: 'Payment not successful',
-        status: paymentIntent.status
+        status: paymentIntent.status,
       });
     }
 
@@ -179,14 +181,14 @@ export const confirmStripePayment = async (req, res) => {
        SET status = 'completed', confirmed_at = CURRENT_TIMESTAMP
        WHERE stripe_payment_id = $1 AND order_id = $2
        RETURNING *`,
-      [paymentIntentId, orderId]
+      [paymentIntentId, orderId],
     );
 
     // Conferma l'ordine
-    await db.query(
-      'UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2',
-      ['confirmed', orderId]
-    );
+    await db.query('UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2', [
+      'confirmed',
+      orderId,
+    ]);
 
     res.json(result.rows[0]);
   } catch (error) {

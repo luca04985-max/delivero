@@ -2,7 +2,7 @@ import express from 'express';
 import {
   sendRiderLocation,
   getRiderLocation,
-  getMyActiveOrderLocation
+  getMyActiveOrderLocation,
 } from '../controllers/riderController.js';
 import { authenticateToken } from '../middleware/auth.js';
 

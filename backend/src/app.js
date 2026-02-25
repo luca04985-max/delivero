@@ -1,28 +1,28 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import helmet from "helmet";
-import http from "http";
-import logger from "./utils/logger.js";
-import { generalLimiter, authLimiter } from "./middleware/rateLimiter.js";
-import PerformanceMiddleware from "./middleware/performance-middleware.js";
-import authRoutes from "./routes/auth.js";
-import userRoutes from "./routes/user.js";
-import riderRoutes from "./routes/rider.js";
-import orderRoutes from "./routes/orders.js";
-import billRoutes from "./routes/bills.js";
-import paymentRoutes from "./routes/payments.js";
-import adminRoutes from "./routes/admin.js";
-import billPaymentsRoutes from "./routes/billPayments.js";
-import pharmaciesRoutes from "./routes/pharmacies.js";
-import medicalTransportsRoutes from "./routes/medicalTransports.js";
-import documentPickupsRoutes from "./routes/documentPickups.js";
-import ticketsRoutes from "./routes/tickets.js";
-import restaurantsRoutes from "./routes/restaurants.js";
-import monitoringRoutes from "./routes/monitoring.js";
-import notificationsRoutes from "./routes/notifications.js";
-import { initializeSocket } from "./services/socket.js";
-import { authenticateToken } from "./middleware/auth.js";
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import helmet from 'helmet';
+import http from 'http';
+import logger from './utils/logger.js';
+import { generalLimiter, authLimiter } from './middleware/rateLimiter.js';
+import PerformanceMiddleware from './middleware/performance-middleware.js';
+import authRoutes from './routes/auth.js';
+import userRoutes from './routes/user.js';
+import riderRoutes from './routes/rider.js';
+import orderRoutes from './routes/orders.js';
+import billRoutes from './routes/bills.js';
+import paymentRoutes from './routes/payments.js';
+import adminRoutes from './routes/admin.js';
+import billPaymentsRoutes from './routes/billPayments.js';
+import pharmaciesRoutes from './routes/pharmacies.js';
+import medicalTransportsRoutes from './routes/medicalTransports.js';
+import documentPickupsRoutes from './routes/documentPickups.js';
+import ticketsRoutes from './routes/tickets.js';
+import restaurantsRoutes from './routes/restaurants.js';
+import monitoringRoutes from './routes/monitoring.js';
+import notificationsRoutes from './routes/notifications.js';
+import { initializeSocket } from './services/socket.js';
+import { authenticateToken } from './middleware/auth.js';
 
 import db from './config/db.js';
 
@@ -36,9 +36,11 @@ const performanceMiddleware = new PerformanceMiddleware();
 performanceMiddleware.initialize();
 
 // Security middleware
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" }
-}));
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+  }),
+);
 
 // CORS configuration
 const frontendOrigin = [
@@ -46,15 +48,17 @@ const frontendOrigin = [
   'https://delivero-gyjx.onrender.com',
   'http://localhost:3000',
   'http://localhost:3001',
-  'http://localhost:19007'
+  'http://localhost:19007',
 ];
 
-app.use(cors({
-  origin: frontendOrigin,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(
+  cors({
+    origin: frontendOrigin,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }),
+);
 
 // Middleware
 app.use(express.json({ limit: '10mb' }));
@@ -76,31 +80,34 @@ app.get('/health', performanceMiddleware.healthCheck());
 app.use('/api/monitoring', monitoringRoutes);
 
 // Routes
-app.use("/api/auth", authLimiter, authRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/rider", riderRoutes);
-app.use("/api/restaurants", restaurantsRoutes);
-app.use("/api/orders", orderRoutes);
-app.use("/api/bills", billRoutes);
-app.use("/api/payments", paymentRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/bill-payments", billPaymentsRoutes);
-app.use("/api/pharmacies", pharmaciesRoutes);
-app.use("/api/medical-transports", medicalTransportsRoutes);
-app.use("/api/document-pickups", documentPickupsRoutes);
-app.use("/api/tickets", ticketsRoutes);
-app.use("/api/notifications", notificationsRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/rider', riderRoutes);
+app.use('/api/restaurants', restaurantsRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/bills', billRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/bill-payments', billPaymentsRoutes);
+app.use('/api/pharmacies', pharmaciesRoutes);
+app.use('/api/medical-transports', medicalTransportsRoutes);
+app.use('/api/document-pickups', documentPickupsRoutes);
+app.use('/api/tickets', ticketsRoutes);
+app.use('/api/notifications', notificationsRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
   logger.error('Unhandled error:', err);
-  res.status(500).json({ message: "Errore del server", error: process.env.NODE_ENV === 'development' ? err.message : undefined });
+  res.status(500).json({
+    message: 'Errore del server',
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined,
+  });
 });
 
 // 404 handler
 app.use((req, res) => {
   logger.warn(`Route not found: ${req.method} ${req.path}`);
-  res.status(404).json({ message: "Route not found" });
+  res.status(404).json({ message: 'Route not found' });
 });
 
 server.listen(process.env.PORT || 5000, () => {

@@ -43,7 +43,8 @@ export default function RestaurantsScreen({ navigation, route }) {
 
       // Attendi che le categorie siano caricate, poi imposta quella corretta
       const checkAndSetCategory = () => {
-        if (categories.length > 1) { // Più di 'All' significa che sono caricate
+        if (categories.length > 1) {
+          // Più di 'All' significa che sono caricate
           if (categories.includes(categoryFromRoute)) {
             setSelectedCategory(categoryFromRoute);
             loadRestaurants('', categoryFromRoute);
@@ -107,15 +108,15 @@ export default function RestaurantsScreen({ navigation, route }) {
     debounce((query, cat) => {
       loadRestaurants(query, cat);
     }, 500),
-    [filters] // Si aggiorna se cambiano i filtri
+    [filters], // Si aggiorna se cambiano i filtri
   );
 
-  const handleSearch = (text) => {
+  const handleSearch = text => {
     setSearchText(text);
     debouncedSearch(text, selectedCategory);
   };
 
-  const handleCategoryChange = (category) => {
+  const handleCategoryChange = category => {
     setSelectedCategory(category);
     loadRestaurants(searchText, category); // Al click cambiamo subito, no debounce
   };
@@ -129,35 +130,41 @@ export default function RestaurantsScreen({ navigation, route }) {
         key={item}
         style={[
           restaurantsScreenStyles.categoryCard,
-          isActive && sharedCategoryStyles.categoryCardActive
+          isActive && sharedCategoryStyles.categoryCardActive,
         ]}
         onPress={() => handleCategoryChange(item)}
       >
-        <Text style={[
-          restaurantsScreenStyles.categoryButtonText,
-          isActive && sharedCategoryStyles.categoryButtonTextActive
-        ]}>
+        <Text
+          style={[
+            restaurantsScreenStyles.categoryButtonText,
+            isActive && sharedCategoryStyles.categoryButtonTextActive,
+          ]}
+        >
           {item}
         </Text>
 
         {/* Badge speciale per categoria attiva */}
         {isActive && (
-          <View style={{
-            position: 'absolute',
-            top: -5,
-            right: -5,
-            backgroundColor: 'primary',
-            borderRadius: 10,
-            width: 20,
-            height: 20,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-            <Text style={{
-              color: 'white',
-              fontSize: 10,
-              fontWeight: 'bold',
-            }}>
+          <View
+            style={{
+              position: 'absolute',
+              top: -5,
+              right: -5,
+              backgroundColor: 'primary',
+              borderRadius: 10,
+              width: 20,
+              height: 20,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Text
+              style={{
+                color: 'white',
+                fontSize: 10,
+                fontWeight: 'bold',
+              }}
+            >
               ✓
             </Text>
           </View>
@@ -185,11 +192,15 @@ export default function RestaurantsScreen({ navigation, route }) {
         <View style={restaurantsScreenStyles.restaurantFooter}>
           <View style={restaurantsScreenStyles.ratingContainer}>
             <Text>⭐</Text>
-            <Text style={restaurantsScreenStyles.rating}>{Number(item.rating || 0).toFixed(1)}</Text>
+            <Text style={restaurantsScreenStyles.rating}>
+              {Number(item.rating || 0).toFixed(1)}
+            </Text>
           </View>
           <Text style={restaurantsScreenStyles.deliveryInfo}>{item.delivery_time || 0} min</Text>
           <View style={restaurantsScreenStyles.deliveryBadge}>
-            <Text style={restaurantsScreenStyles.deliveryText}>€{Number(item.delivery_cost || 0).toFixed(2)}</Text>
+            <Text style={restaurantsScreenStyles.deliveryText}>
+              €{Number(item.delivery_cost || 0).toFixed(2)}
+            </Text>
           </View>
         </View>
       </View>
@@ -216,52 +227,59 @@ export default function RestaurantsScreen({ navigation, route }) {
 
       <View style={restaurantsScreenStyles.categoriesContainer}>
         {/* Categoria attiva fissa a sinistra */}
-        <View style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+        >
           <TouchableOpacity
-            style={[
-              restaurantsScreenStyles.categoryCard,
-              sharedCategoryStyles.categoryCardActive
-            ]}
+            style={[restaurantsScreenStyles.categoryCard, sharedCategoryStyles.categoryCardActive]}
             onPress={() => handleCategoryChange(selectedCategory)}
           >
-            <Text style={[
-              restaurantsScreenStyles.categoryButtonText,
-              sharedCategoryStyles.categoryButtonTextActive
-            ]}>
+            <Text
+              style={[
+                restaurantsScreenStyles.categoryButtonText,
+                sharedCategoryStyles.categoryButtonTextActive,
+              ]}
+            >
               {selectedCategory}
             </Text>
             {/* Badge speciale per categoria attiva */}
-            <View style={{
-              position: 'absolute',
-              top: -5,
-              right: -5,
-              backgroundColor: mobileTheme.colors.primary,
-              borderRadius: 10,
-              width: 20,
-              height: 20,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-              <Text style={{
-                color: mobileTheme.colors.white,
-                fontSize: 10,
-                fontWeight: 'bold',
-              }}>
+            <View
+              style={{
+                position: 'absolute',
+                top: -5,
+                right: -5,
+                backgroundColor: mobileTheme.colors.primary,
+                borderRadius: 10,
+                width: 20,
+                height: 20,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  color: mobileTheme.colors.white,
+                  fontSize: 10,
+                  fontWeight: 'bold',
+                }}
+              >
                 ✓
               </Text>
             </View>
           </TouchableOpacity>
 
           {/* Separatore visivo */}
-          <View style={{
-            width: 1,
-            height: 30,
-            backgroundColor: mobileTheme.colors.border,
-            marginHorizontal: mobileTheme.spacing[2],
-          }} />
+          <View
+            style={{
+              width: 1,
+              height: 30,
+              backgroundColor: mobileTheme.colors.border,
+              marginHorizontal: mobileTheme.spacing[2],
+            }}
+          />
 
           {/* Altre categorie scorrevoli */}
           <ScrollView
@@ -277,9 +295,7 @@ export default function RestaurantsScreen({ navigation, route }) {
                   style={restaurantsScreenStyles.categoryCard}
                   onPress={() => handleCategoryChange(category)}
                 >
-                  <Text style={restaurantsScreenStyles.categoryButtonText}>
-                    {category}
-                  </Text>
+                  <Text style={restaurantsScreenStyles.categoryButtonText}>{category}</Text>
                 </TouchableOpacity>
               ))}
           </ScrollView>
@@ -290,12 +306,14 @@ export default function RestaurantsScreen({ navigation, route }) {
         <FlatList
           data={restaurants}
           renderItem={renderRestaurantItem}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={item => item.id.toString()}
           contentContainerStyle={restaurantsScreenStyles.restaurantsList}
           ListEmptyComponent={
             <View style={restaurantsScreenStyles.emptyContainer}>
               <Text style={restaurantsScreenStyles.emptyText}>😅 Nessun ristorante trovato</Text>
-              <Text style={restaurantsScreenStyles.emptyText}>Prova a cambiare i filtri o la ricerca</Text>
+              <Text style={restaurantsScreenStyles.emptyText}>
+                Prova a cambiare i filtri o la ricerca
+              </Text>
             </View>
           }
         />

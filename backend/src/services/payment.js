@@ -21,9 +21,9 @@ export const createPaymentIntent = async (amount, orderId, userId, email) => {
       currency: 'eur',
       metadata: {
         orderId,
-        userId
+        userId,
       },
-      receipt_email: email
+      receipt_email: email,
     });
 
     return paymentIntent;
@@ -32,7 +32,7 @@ export const createPaymentIntent = async (amount, orderId, userId, email) => {
   }
 };
 
-export const confirmPayment = async (paymentIntentId) => {
+export const confirmPayment = async paymentIntentId => {
   try {
     if (!stripeInstance) {
       const err = new Error('Stripe is not configured');
@@ -46,16 +46,22 @@ export const confirmPayment = async (paymentIntentId) => {
   }
 };
 
-export const savePayment = async (orderId, paymentIntentId, amount, status, paymentMethod = 'card') => {
+export const savePayment = async (
+  orderId,
+  paymentIntentId,
+  amount,
+  status,
+  paymentMethod = 'card',
+) => {
   try {
-    console.log("paymentIntentId: ", paymentIntentId);
-    console.log("status: ", status);
-    console.log("paymentMethod: ", paymentMethod);
-    console.log("orderId: ", orderId);
-    console.log("amount: ", amount);
+    console.log('paymentIntentId: ', paymentIntentId);
+    console.log('status: ', status);
+    console.log('paymentMethod: ', paymentMethod);
+    console.log('orderId: ', orderId);
+    console.log('amount: ', amount);
     const result = await db.query(
       'INSERT INTO payments (order_id, stripe_payment_id, amount, status, payment_method) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [orderId, paymentIntentId || null, amount, status, paymentMethod]
+      [orderId, paymentIntentId || null, amount, status, paymentMethod],
     );
     return result.rows[0];
   } catch (error) {
@@ -67,12 +73,11 @@ export const saveCashPayment = async (orderId, amount, status = 'cash_due') => {
   return savePayment(orderId, null, amount, status, 'cash');
 };
 
-export const getPayment = async (paymentIntentId) => {
+export const getPayment = async paymentIntentId => {
   try {
-    const result = await db.query(
-      'SELECT * FROM payments WHERE stripe_payment_id = $1',
-      [paymentIntentId]
-    );
+    const result = await db.query('SELECT * FROM payments WHERE stripe_payment_id = $1', [
+      paymentIntentId,
+    ]);
     return result.rows[0];
   } catch (error) {
     throw error;

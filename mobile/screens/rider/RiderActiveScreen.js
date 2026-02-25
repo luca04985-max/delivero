@@ -32,14 +32,14 @@ export default function RiderActiveScreen() {
     React.useCallback(() => {
       console.log('🔄 RiderActiveScreen focused - refreshing orders');
       fetchActiveOrders();
-    }, [])
+    }, []),
   );
 
   // Funzione per toggle delle sezioni
-  const toggleSection = (status) => {
+  const toggleSection = status => {
     setExpandedSections(prev => ({
       ...prev,
-      [status]: !prev[status] // Inverte lo stato: se era chiuso (false/undefined) lo apre (true)
+      [status]: !prev[status], // Inverte lo stato: se era chiuso (false/undefined) lo apre (true)
     }));
   };
 
@@ -50,7 +50,11 @@ export default function RiderActiveScreen() {
       console.log('📊 Received orders:', data);
       console.log('📊 Orders count:', data?.length || 0);
       data?.forEach((order, index) => {
-        console.log(`📊 Order ${index + 1}:`, { id: order.id, status: order.status, rider_id: order.rider_id });
+        console.log(`📊 Order ${index + 1}:`, {
+          id: order.id,
+          status: order.status,
+          rider_id: order.rider_id,
+        });
       });
       setActiveOrders(data);
     } catch (e) {
@@ -79,22 +83,33 @@ export default function RiderActiveScreen() {
     return (
       <View style={riderActiveScreenStyles.activeCard}>
         <Text style={riderActiveScreenStyles.statusBadge}>{item.status.toUpperCase()}</Text>
-        <Text style={riderActiveScreenStyles.customerName}>Cliente: {item.customer_name || 'Utente'}</Text>
+        <Text style={riderActiveScreenStyles.customerName}>
+          Cliente: {item.customer_name || 'Utente'}
+        </Text>
         <Text style={riderActiveScreenStyles.address}>📍 {item.delivery_address}</Text>
 
         <View style={riderActiveScreenStyles.row}>
           {item.status === 'accepted' && (
-            <TouchableOpacity style={riderActiveScreenStyles.btnPickup} onPress={() => updateStatus(item.id, 'pickup')}>
+            <TouchableOpacity
+              style={riderActiveScreenStyles.btnPickup}
+              onPress={() => updateStatus(item.id, 'pickup')}
+            >
               <Text style={riderActiveScreenStyles.btnText}>Ritirato</Text>
             </TouchableOpacity>
           )}
           {(item.status === 'pickup' || item.status === 'accepted') && (
-            <TouchableOpacity style={riderActiveScreenStyles.btnTransit} onPress={() => updateStatus(item.id, 'in_transit')}>
+            <TouchableOpacity
+              style={riderActiveScreenStyles.btnTransit}
+              onPress={() => updateStatus(item.id, 'in_transit')}
+            >
               <Text style={riderActiveScreenStyles.btnText}>In Viaggio</Text>
             </TouchableOpacity>
           )}
           {item.status === 'in_transit' && (
-            <TouchableOpacity style={riderActiveScreenStyles.btnComplete} onPress={() => updateStatus(item.id, 'delivered')}>
+            <TouchableOpacity
+              style={riderActiveScreenStyles.btnComplete}
+              onPress={() => updateStatus(item.id, 'delivered')}
+            >
               <Text style={riderActiveScreenStyles.btnText}>Consegnato ✅</Text>
             </TouchableOpacity>
           )}
@@ -110,7 +125,9 @@ export default function RiderActiveScreen() {
         onPress={() => toggleSection(status)} // Chiama la funzione toggle
       >
         <View style={riderActiveScreenStyles.statusSeparatorContent}>
-          <Text>{info.icon} {info.label} ({count})</Text>
+          <Text>
+            {info.icon} {info.label} ({count})
+          </Text>
           {/* Cambia l'icona in base allo stato aperto/chiuso */}
           <Text>{isExpanded ? '🔼' : '🔽'}</Text>
         </View>
@@ -133,7 +150,7 @@ export default function RiderActiveScreen() {
       accepted: { label: 'Accettati', icon: '📋' },
       pickup: { label: 'Ritirati', icon: '📦' },
       in_transit: { label: 'In Viaggio', icon: '🚚' },
-      delivered: { label: 'Consegnati', icon: '✅' }
+      delivered: { label: 'Consegnati', icon: '✅' },
     };
 
     const result = [];
@@ -149,7 +166,7 @@ export default function RiderActiveScreen() {
         <View key={`separator-${status}`}>
           {/* Passiamo isExpanded al separatore per cambiare l'icona se vuoi */}
           {renderStatusSeparator(status, groupOrders.length, statusInfo[status], isExpanded)}
-        </View>
+        </View>,
       );
 
       // 2. Aggiungiamo gli ordini SOLO se la sezione è espansa
@@ -158,7 +175,7 @@ export default function RiderActiveScreen() {
           result.push(
             <View key={`order-${order.id}`}>
               <ActiveOrderCard item={order} />
-            </View>
+            </View>,
           );
         });
       }
@@ -174,9 +191,7 @@ export default function RiderActiveScreen() {
       </View>
       <ScrollView
         style={riderActiveScreenStyles.content}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={fetchActiveOrders} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchActiveOrders} />}
       >
         {activeOrders.length === 0 ? (
           <View style={riderActiveScreenStyles.emptyContainer}>

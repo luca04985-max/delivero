@@ -18,7 +18,7 @@ function App() {
     setUser(null);
   };
 
-  const handleLoginSuccess = (userData) => {
+  const handleLoginSuccess = userData => {
     setUser(userData);
     setShowRegister(false);
   };
@@ -41,10 +41,14 @@ function App() {
 
   const getRoleLabel = () => {
     switch (user?.role) {
-      case 'customer': return '👤 Consumatore';
-      case 'rider': return '🚗 Rider';
-      case 'manager': return '👨‍💼 Manager/Admin';
-      default: return user?.role || '';
+      case 'customer':
+        return '👤 Consumatore';
+      case 'rider':
+        return '🚗 Rider';
+      case 'manager':
+        return '👨‍💼 Manager/Admin';
+      default:
+        return user?.role || '';
     }
   };
 
@@ -53,9 +57,7 @@ function App() {
       <div className="app-container">
         {/* Navigation */}
         <nav className="navbar">
-          <div className="navbar-brand">
-            🚀 Delivero
-          </div>
+          <div className="navbar-brand">🚀 Delivero</div>
 
           {user ? (
             <div className="navbar-user" style={{ marginLeft: 'auto' }}>
@@ -64,10 +66,7 @@ function App() {
                   👤 {user.name || user.email} - <strong>{getRoleLabel()}</strong>
                 </span>
               </div>
-              <button
-                onClick={handleLogout}
-                className="navbar-logout"
-              >
+              <button onClick={handleLogout} className="navbar-logout">
                 Logout
               </button>
             </div>

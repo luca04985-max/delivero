@@ -6,7 +6,8 @@ import jwt from 'jsonwebtoken';
 // Pharmacy registration
 export const registerPharmacy = async (req, res) => {
   try {
-    const { email, password, name, phone, address, city, postalCode, licenseNumber, lat, lon } = req.body;
+    const { email, password, name, phone, address, city, postalCode, licenseNumber, lat, lon } =
+      req.body;
 
     // Check if pharmacy already exists
     const existing = await PharmacyModel.getPharmacyByEmail(email);
@@ -24,12 +25,12 @@ export const registerPharmacy = async (req, res) => {
       postalCode,
       licenseNumber,
       lat,
-      lon
+      lon,
     );
 
     res.status(201).json({
       message: 'Farmacia registrata con successo. Pending approvazione admin.',
-      pharmacy
+      pharmacy,
     });
   } catch (error) {
     console.error(error);
@@ -96,7 +97,7 @@ export const addProduct = async (req, res) => {
       category,
       price,
       stockQuantity,
-      imageUrl
+      imageUrl,
     );
 
     res.status(201).json(product);
@@ -113,7 +114,7 @@ export const createOrder = async (req, res) => {
     const userId = req.user.id;
 
     // Calculate total amount
-    const totalAmount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     const order = await PharmacyModel.createPharmacyOrder(
       userId,
@@ -122,7 +123,7 @@ export const createOrder = async (req, res) => {
       totalAmount,
       deliveryAddress,
       lat,
-      lon
+      lon,
     );
 
     res.status(201).json(order);

@@ -1,39 +1,20 @@
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { mobileTheme } from '../../../theme';
+import { unifiedStyles } from '../../../theme/UnifiedStyles';
 
 export const customerHomeScreenStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: mobileTheme.colors.background,
-  },
+  // shared: base styles from unifiedStyles
+  ...unifiedStyles,
 
-  // HEADER CON TOGGLE MAPPA
-  header: {
-    backgroundColor: mobileTheme.colors.secondary, // Navy profondo
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingBottom: mobileTheme.spacing[4],
-    paddingHorizontal: mobileTheme.spacing[5],
-    borderBottomLeftRadius: mobileTheme.borderRadius.xl,
-    borderBottomRightRadius: mobileTheme.borderRadius.xl,
-    ...mobileTheme.shadows.medium,
-  },
-  headerContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: mobileTheme.typography.fontSize['2xl'],
-    fontWeight: mobileTheme.typography.fontWeight.black,
-    color: mobileTheme.colors.white,
-    marginBottom: mobileTheme.spacing[2],
-    letterSpacing: -0.5,
-  },
-  subtitle: {
-    fontSize: mobileTheme.typography.fontSize.sm,
-    color: mobileTheme.colors.text.tertiary,
-    opacity: 0.9,
-  },
+  // header: header standard (CustomerHomeScreen.js)
+  header: unifiedStyles.header,
+  // headerContent: layout header con toggle (CustomerHomeScreen.js)
+  headerContent: unifiedStyles.headerContent,
+  // title: titolo header (CustomerHomeScreen.js)
+  title: unifiedStyles.title,
+  // subtitle: sottotitolo header (CustomerHomeScreen.js)
+  subtitle: unifiedStyles.subtitle,
+  // mapToggleBtn: bottone toggle mappa (CustomerHomeScreen.js)
   mapToggleBtn: {
     backgroundColor: 'rgba(255,255,255,0.2)',
     paddingVertical: mobileTheme.spacing[2],
@@ -41,63 +22,57 @@ export const customerHomeScreenStyles = StyleSheet.create({
     borderRadius: mobileTheme.borderRadius.xl,
   },
 
-  // SEZIONI
+  // whiteSection: sezione bianca separatrice (CustomerHomeScreen.js)
   whiteSection: {
     backgroundColor: mobileTheme.colors.white,
     paddingVertical: mobileTheme.spacing[4],
     marginBottom: mobileTheme.spacing[3],
   },
+  // section: wrapper sezione (CustomerHomeScreen.js)
   section: {
     marginBottom: mobileTheme.spacing[5],
   },
+  // sectionTitle: titolo sezione (CustomerHomeScreen.js)
   sectionTitle: {
-    fontSize: mobileTheme.typography.fontSize.lg,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.text.primary,
+    ...unifiedStyles.sectionTitle,
     marginHorizontal: mobileTheme.spacing[5],
     marginBottom: mobileTheme.spacing[4],
   },
 
-  // SERVIZI CIRCLE
+  // serviceCircle: wrapper icona servizio (CustomerHomeScreen.js)
   serviceCircle: {
     alignItems: 'center',
     marginRight: mobileTheme.spacing[5],
   },
+  // iconCircle: cerchio icona servizio (CustomerHomeScreen.js)
   iconCircle: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: mobileTheme.colors.surface,
+    backgroundColor: mobileTheme.colors.background,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: mobileTheme.spacing[2],
     borderWidth: 2,
     borderColor: mobileTheme.colors.border,
   },
+  // serviceText: label servizio (CustomerHomeScreen.js)
   serviceText: {
     fontSize: mobileTheme.typography.fontSize.sm,
     fontWeight: mobileTheme.typography.fontWeight.medium,
     color: mobileTheme.colors.text.secondary,
   },
 
-  // SEARCH BAR
+  // searchSection: wrapper barra ricerca (CustomerHomeScreen.js)
   searchSection: {
     paddingHorizontal: mobileTheme.spacing[5],
     paddingVertical: mobileTheme.spacing[4],
     backgroundColor: mobileTheme.colors.background,
   },
-  searchInput: {
-    backgroundColor: mobileTheme.colors.white,
-    padding: mobileTheme.spacing[4],
-    borderRadius: mobileTheme.borderRadius.lg,
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.primary,
-    ...mobileTheme.shadows.soft,
-    borderWidth: 1,
-    borderColor: mobileTheme.colors.border,
-  },
+  // searchInput: input ricerca (CustomerHomeScreen.js)
+  searchInput: unifiedStyles.searchInput,
 
-  // CATEGORIE PILLS
+  // categoryPill: pill categoria (CustomerHomeScreen.js)
   categoryPill: {
     backgroundColor: mobileTheme.colors.primary,
     paddingHorizontal: mobileTheme.spacing[5],
@@ -105,13 +80,14 @@ export const customerHomeScreenStyles = StyleSheet.create({
     borderRadius: mobileTheme.borderRadius.full,
     marginRight: mobileTheme.spacing[3],
   },
+  // categoryText: testo pill categoria (CustomerHomeScreen.js)
   categoryText: {
     color: mobileTheme.colors.white,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     fontSize: mobileTheme.typography.fontSize.sm,
   },
 
-  // RESTAURANT CARDS
+  // restCard: card ristorante in home (CustomerHomeScreen.js)
   restCard: {
     backgroundColor: mobileTheme.colors.white,
     marginHorizontal: mobileTheme.spacing[5],
@@ -125,38 +101,45 @@ export const customerHomeScreenStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: mobileTheme.colors.border,
   },
+  // restInfo: wrapper testo card (CustomerHomeScreen.js)
   restInfo: {
     flex: 1,
   },
+  // restName: nome ristorante (CustomerHomeScreen.js)
   restName: {
     fontSize: mobileTheme.typography.fontSize.base,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.text.primary,
     marginBottom: mobileTheme.spacing[1],
   },
+  // restSub: sottotitolo ristorante (CustomerHomeScreen.js)
   restSub: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
     marginTop: mobileTheme.spacing[1],
   },
+  // restBadge: badge info (CustomerHomeScreen.js)
   restBadge: {
-    backgroundColor: mobileTheme.colors.surface,
+    backgroundColor: mobileTheme.colors.background,
     padding: mobileTheme.spacing[2],
     borderRadius: mobileTheme.borderRadius.md,
   },
+  // badgeText: testo badge (CustomerHomeScreen.js)
   badgeText: {
     color: mobileTheme.colors.primary,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     fontSize: mobileTheme.typography.fontSize.sm,
   },
 
-  // MAPPA
+  // mapContainer: wrapper mappa (CustomerHomeScreen.js)
   mapContainer: {
     flex: 1,
   },
+  // map: mappa full size (CustomerHomeScreen.js)
   map: {
     flex: 1,
   },
+  // mapLoader: loader mappa (CustomerHomeScreen.js)
   mapLoader: {
     position: 'absolute',
     top: mobileTheme.spacing[5],

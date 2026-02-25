@@ -1,21 +1,20 @@
 import { StyleSheet } from 'react-native';
 import { mobileTheme } from '../../../theme';
+import { unifiedStyles } from '../../../theme/UnifiedStyles';
 
 export const documentPickupScreenStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: mobileTheme.colors.background,
-  },
-  
-  // INLINE STYLES FROM DocumentPickupScreen.js
+  // shared: base styles from unifiedStyles
+  ...unifiedStyles,
+
+  // header: titolo pagina (DocumentPickupScreen.js)
   header: {
     fontSize: mobileTheme.typography.fontSize.xl,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     padding: mobileTheme.spacing[4],
     color: mobileTheme.colors.text.primary,
   },
-  
-  // FORM SECTIONS
+
+  // formSection: box sezione form (DocumentPickupScreen.js)
   formSection: {
     backgroundColor: mobileTheme.colors.white,
     margin: mobileTheme.spacing[4],
@@ -24,20 +23,17 @@ export const documentPickupScreenStyles = StyleSheet.create({
     marginBottom: mobileTheme.spacing[3],
     ...mobileTheme.shadows.sm,
   },
-  sectionTitle: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    fontWeight: mobileTheme.typography.fontWeight.semibold,
-    color: mobileTheme.colors.text.primary,
-    marginBottom: mobileTheme.spacing[3],
-  },
-  
-  // DOCUMENT TYPE SELECTOR
+  // sectionTitle: titolo sezione form (DocumentPickupScreen.js)
+  sectionTitle: unifiedStyles.sectionTitle,
+
+  // documentTypeContainer: wrapper tipo documento (DocumentPickupScreen.js)
   documentTypeContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: mobileTheme.spacing[2],
     marginBottom: mobileTheme.spacing[4],
   },
+  // documentTypeButton: bottone tipo documento (DocumentPickupScreen.js)
   documentTypeButton: {
     paddingHorizontal: mobileTheme.spacing[3],
     paddingVertical: mobileTheme.spacing[2],
@@ -46,30 +42,29 @@ export const documentPickupScreenStyles = StyleSheet.create({
     borderColor: mobileTheme.colors.border,
     backgroundColor: mobileTheme.colors.background,
   },
+  // documentTypeButtonSelected: bottone tipo selezionato (DocumentPickupScreen.js)
   documentTypeButtonSelected: {
     backgroundColor: mobileTheme.colors.primary,
     borderColor: mobileTheme.colors.primary,
   },
+  // documentTypeButtonText: testo tipo documento (DocumentPickupScreen.js)
   documentTypeButtonText: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
   },
+  // documentTypeButtonTextSelected: testo tipo selezionato (DocumentPickupScreen.js)
   documentTypeButtonTextSelected: {
     color: mobileTheme.colors.white,
     fontWeight: mobileTheme.typography.fontWeight.medium,
   },
-  
-  // INPUTS
+
+  // input: campo input (DocumentPickupScreen.js)
   input: {
-    borderWidth: 1,
-    borderColor: mobileTheme.colors.border,
-    borderRadius: mobileTheme.borderRadius.md,
-    padding: mobileTheme.spacing[3],
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.primary,
+    ...unifiedStyles.input,
     backgroundColor: mobileTheme.colors.white,
     marginBottom: mobileTheme.spacing[3],
   },
+  // textArea: textarea descrizione (DocumentPickupScreen.js)
   textArea: {
     borderWidth: 1,
     borderColor: mobileTheme.colors.border,
@@ -82,68 +77,65 @@ export const documentPickupScreenStyles = StyleSheet.create({
     textAlignVertical: 'top',
     marginBottom: mobileTheme.spacing[3],
   },
-  
-  // SWITCH
+
+  // switchContainer: wrapper switch (DocumentPickupScreen.js)
   switchContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: mobileTheme.spacing[3],
   },
+  // switchLabel: label switch (DocumentPickupScreen.js)
   switchLabel: {
     fontSize: mobileTheme.typography.fontSize.base,
     color: mobileTheme.colors.text.primary,
   },
-  
-  // TRACKING INFO
+
+  // trackingInfo: box tracking (DocumentPickupScreen.js)
   trackingInfo: {
     backgroundColor: mobileTheme.colors.background,
     padding: mobileTheme.spacing[3],
     borderRadius: mobileTheme.borderRadius.md,
     marginBottom: mobileTheme.spacing[3],
   },
+  // trackingNumber: numero tracking (DocumentPickupScreen.js)
   trackingNumber: {
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.primary,
     marginBottom: mobileTheme.spacing[2],
   },
+  // trackingLabel: label tracking (DocumentPickupScreen.js)
   trackingLabel: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
   },
-  
-  // SUBMIT BUTTON
+
+  // submitButton: bottone submit (DocumentPickupScreen.js)
   submitButton: {
     padding: mobileTheme.spacing[4],
-    backgroundColor: '#007AFF',
+    backgroundColor: mobileTheme.colors.primary,
     borderRadius: mobileTheme.borderRadius.md,
     alignItems: 'center',
     marginBottom: mobileTheme.spacing[5],
     ...mobileTheme.shadows.medium,
   },
+  // submitButtonText: testo bottone submit (DocumentPickupScreen.js)
   submitButtonText: {
     color: mobileTheme.colors.white,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    fontSize: mobileTheme.typography.base,
+    fontSize: mobileTheme.typography.fontSize.base,
   },
+  // submitButtonDisabled: stato disabilitato (DocumentPickupScreen.js)
   submitButtonDisabled: {
     backgroundColor: mobileTheme.colors.text.tertiary,
     ...mobileTheme.shadows.none,
   },
-  
-  // LOADING
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: mobileTheme.spacing[5],
-  },
-  loadingText: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.secondary,
-    marginTop: mobileTheme.spacing[2],
-  },
+
+  // loadingContainer: wrapper loading (DocumentPickupScreen.js)
+  loadingContainer: unifiedStyles.loadingContainer,
+  // loadingText: testo loading (DocumentPickupScreen.js)
+  loadingText: unifiedStyles.loadingText,
 });
 
 export default documentPickupScreenStyles;

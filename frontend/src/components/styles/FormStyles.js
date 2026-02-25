@@ -5,12 +5,12 @@ export const formStyles = {
   // Container form
   container: {
     maxWidth: '500px',
-    margin: '2rem auto'
+    margin: '2rem auto',
   },
 
   // Gruppo form
   formGroup: {
-    marginBottom: Theme.spacing.lg
+    marginBottom: Theme.spacing.lg,
   },
 
   // Label
@@ -18,7 +18,7 @@ export const formStyles = {
     display: 'block',
     marginBottom: Theme.spacing.sm,
     fontWeight: 500,
-    color: Theme.colors.textPrimary
+    color: Theme.colors.textPrimary,
   },
 
   // Input fields
@@ -32,30 +32,30 @@ export const formStyles = {
     transition: Theme.transitions.default,
     backgroundColor: 'white',
     color: Theme.colors.textPrimary,
-    outline: 'none'
+    outline: 'none',
   },
 
   inputFocus: {
     borderColor: Theme.colors.primary,
-    boxShadow: `0 0 0 3px ${Theme.getColor('primary', 0.1)}`
+    boxShadow: `0 0 0 3px ${Theme.getColor('primary', 0.1)}`,
   },
 
   inputError: {
     borderColor: Theme.colors.danger,
-    boxShadow: `0 0 0 3px ${Theme.getColor('danger', 0.1)}`
+    boxShadow: `0 0 0 3px ${Theme.getColor('danger', 0.1)}`,
   },
 
   // Textarea
   textarea: {
     ...Theme.input,
     resize: 'vertical',
-    minHeight: '100px'
+    minHeight: '100px',
   },
 
   // Select
   select: {
     ...Theme.input,
-    cursor: 'pointer'
+    cursor: 'pointer',
   },
 
   // Messaggi di errore
@@ -65,7 +65,7 @@ export const formStyles = {
     marginTop: Theme.spacing.sm,
     display: 'flex',
     alignItems: 'center',
-    gap: Theme.spacing.xs
+    gap: Theme.spacing.xs,
   },
 
   // Messaggi di successo
@@ -75,7 +75,7 @@ export const formStyles = {
     marginTop: Theme.spacing.sm,
     display: 'flex',
     alignItems: 'center',
-    gap: Theme.spacing.xs
+    gap: Theme.spacing.xs,
   },
 
   // Bottoni form
@@ -90,19 +90,19 @@ export const formStyles = {
     fontWeight: 600,
     cursor: 'pointer',
     transition: Theme.transitions.button,
-    boxShadow: Theme.shadows.button
+    boxShadow: Theme.shadows.button,
   },
 
   submitButtonHover: {
     background: Theme.colors.primaryDark,
     transform: 'translateY(-2px)',
-    boxShadow: Theme.shadows.buttonHover
+    boxShadow: Theme.shadows.buttonHover,
   },
 
   submitButtonDisabled: {
     opacity: 0.5,
     cursor: 'not-allowed',
-    transform: 'none'
+    transform: 'none',
   },
 
   // Pulsanti secondari
@@ -116,12 +116,12 @@ export const formStyles = {
     fontSize: '16px',
     fontWeight: 600,
     cursor: 'pointer',
-    transition: Theme.transitions.button
+    transition: Theme.transitions.button,
   },
 
   secondaryButtonHover: {
     background: Theme.getColor('primary', 0.1),
-    transform: 'translateY(-2px)'
+    transform: 'translateY(-2px)',
   },
 
   // Card form
@@ -130,25 +130,25 @@ export const formStyles = {
     borderRadius: Theme.borderRadius.lg,
     boxShadow: Theme.shadows.md,
     padding: Theme.spacing.xl,
-    border: `1px solid ${Theme.colors.borderColor}`
+    border: `1px solid ${Theme.colors.borderColor}`,
   },
 
   // Header form
   formHeader: {
     textAlign: 'center',
-    marginBottom: Theme.spacing.lg
+    marginBottom: Theme.spacing.lg,
   },
 
   formTitle: {
     fontSize: '24px',
     fontWeight: 700,
     color: Theme.colors.textPrimary,
-    marginBottom: Theme.spacing.sm
+    marginBottom: Theme.spacing.sm,
   },
 
   formSubtitle: {
     color: Theme.colors.textSecondary,
-    fontSize: '16px'
+    fontSize: '16px',
   },
 
   // Footer form
@@ -156,7 +156,7 @@ export const formStyles = {
     display: 'flex',
     flexDirection: 'column',
     gap: Theme.spacing.md,
-    marginTop: Theme.spacing.lg
+    marginTop: Theme.spacing.lg,
   },
 
   // Link form
@@ -164,11 +164,11 @@ export const formStyles = {
     color: Theme.colors.primary,
     textDecoration: 'none',
     fontWeight: 500,
-    transition: Theme.transitions.fast
+    transition: Theme.transitions.fast,
   },
 
   formLinkHover: {
-    textDecoration: 'underline'
+    textDecoration: 'underline',
   },
 
   // Divider
@@ -176,18 +176,18 @@ export const formStyles = {
     display: 'flex',
     alignItems: 'center',
     margin: `${Theme.spacing.lg} 0`,
-    color: Theme.colors.textSecondary
+    color: Theme.colors.textSecondary,
   },
 
   dividerLine: {
     flex: 1,
     height: '1px',
-    background: Theme.colors.borderColor
+    background: Theme.colors.borderColor,
   },
 
   dividerText: {
     padding: `0 ${Theme.spacing.md}`,
-    fontSize: '14px'
+    fontSize: '14px',
   },
 
   // Checkbox
@@ -195,18 +195,18 @@ export const formStyles = {
     display: 'flex',
     alignItems: 'center',
     gap: Theme.spacing.sm,
-    marginBottom: Theme.spacing.md
+    marginBottom: Theme.spacing.md,
   },
 
   checkboxInput: {
     width: '18px',
     height: '18px',
-    accentColor: Theme.colors.primary
+    accentColor: Theme.colors.primary,
   },
 
   checkboxLabel: {
     fontSize: '14px',
-    color: Theme.colors.textSecondary
+    color: Theme.colors.textSecondary,
   },
 
   // Loading state
@@ -220,7 +220,7 @@ export const formStyles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: Theme.borderRadius.md
+    borderRadius: Theme.borderRadius.md,
   },
 
   // Responsive
@@ -228,40 +228,40 @@ export const formStyles = {
     mobile: {
       container: {
         margin: '1rem',
-        maxWidth: 'none'
+        maxWidth: 'none',
       },
       formCard: {
-        padding: Theme.spacing.lg
+        padding: Theme.spacing.lg,
       },
       input: {
-        fontSize: '16px' // Previeni zoom su iOS
-      }
-    }
-  }
+        fontSize: '16px', // Previeni zoom su iOS
+      },
+    },
+  },
 };
 
 // 🎯 STILI PER CLASSE CSS
 export const formCSS = {
   '.form-group': {
-    marginBottom: '1.5rem'
+    marginBottom: '1.5rem',
   },
 
   'input:focus, select:focus, textarea:focus': {
     outline: 'none',
     borderColor: 'var(--primary-color)',
-    boxShadow: '0 0 0 3px rgba(255, 107, 0, 0.1)'
+    boxShadow: '0 0 0 3px rgba(255, 107, 0, 0.1)',
   },
 
   '.form-error': {
     color: 'var(--danger-color)',
     fontSize: '0.9rem',
-    marginTop: '0.5rem'
+    marginTop: '0.5rem',
   },
 
   '.btn-primary:hover': {
     background: 'var(--primary-dark)',
-    transform: 'translateY(-2px)'
-  }
+    transform: 'translateY(-2px)',
+  },
 };
 
 export default formStyles;

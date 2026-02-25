@@ -32,6 +32,10 @@ router.patch('/:pickupId/status', authenticateToken, documentPickupController.up
 router.get('/admin/stats', authenticateToken, documentPickupController.getStats);
 
 // Get document type statistics (admin only)
-router.get('/admin/document-types', authenticateToken, documentPickupController.getDocumentTypeStats);
+router.get(
+  '/admin/document-types',
+  authenticateToken,
+  documentPickupController.getDocumentTypeStats,
+);
 
 export default router;

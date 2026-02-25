@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, RefreshControl, ActivityIndicator, Alert, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  RefreshControl,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+} from 'react-native';
 import { adminAPI } from '../../services/api';
 import { adminDashboardOrderStyles as styles } from './styles/AdminDashboardOrdersStyles';
 
@@ -9,10 +18,10 @@ export default function AdminDashboardOrders({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const [expandedSections, setExpandedSections] = useState({});
 
-  const toggleSection = (status) => {
+  const toggleSection = status => {
     setExpandedSections(prev => ({
       ...prev,
-      [status]: !prev[status]
+      [status]: !prev[status],
     }));
   };
 
@@ -21,7 +30,7 @@ export default function AdminDashboardOrders({ navigation }) {
       const data = await adminAPI.getAllOrders();
       setOrders(Array.isArray(data) ? data : data.data || []);
     } catch (e) {
-      Alert.alert("Errore", "Non ho potuto caricare tutti gli ordini.");
+      Alert.alert('Errore', 'Non ho potuto caricare tutti gli ordini.');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -47,20 +56,12 @@ export default function AdminDashboardOrders({ navigation }) {
       >
         <View style={styles.statusSeparatorContent}>
           <View style={styles.statusSeparatorLeft}>
-            <Text style={styles.statusSeparatorIcon}>
-              {statusInfo.icon}
-            </Text>
-            <Text style={styles.statusSeparatorTitle}>
-              {statusInfo.label}
-            </Text>
+            <Text style={styles.statusSeparatorIcon}>{statusInfo.icon}</Text>
+            <Text style={styles.statusSeparatorTitle}>{statusInfo.label}</Text>
           </View>
           <View style={styles.statusSeparatorRight}>
-            <Text style={styles.statusSeparatorCount}>
-              {count}
-            </Text>
-            <Text style={styles.statusSeparatorToggle}>
-              {isExpanded ? '🔼' : '🔽'}
-            </Text>
+            <Text style={styles.statusSeparatorCount}>{count}</Text>
+            <Text style={styles.statusSeparatorToggle}>{isExpanded ? '🔼' : '🔽'}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -81,14 +82,14 @@ export default function AdminDashboardOrders({ navigation }) {
     });
 
     const statusInfo = {
-      'pending': { label: 'In Attesa', icon: '⏳' },
-      'confirmed': { label: 'Confermati', icon: '✅' },
-      'preparing': { label: 'In Preparazione', icon: '👨‍🍳' },
-      'ready': { label: 'Pronti', icon: '📦' },
-      'pickup': { label: 'Ritiro', icon: '📦' },
-      'in_transit': { label: 'In Viaggio', icon: '🚚' },
-      'delivered': { label: 'Consegnati', icon: '✅' },
-      'cancelled': { label: 'Cancellati', icon: '❌' }
+      pending: { label: 'In Attesa', icon: '⏳' },
+      confirmed: { label: 'Confermati', icon: '✅' },
+      preparing: { label: 'In Preparazione', icon: '👨‍🍳' },
+      ready: { label: 'Pronti', icon: '📦' },
+      pickup: { label: 'Ritiro', icon: '📦' },
+      in_transit: { label: 'In Viaggio', icon: '🚚' },
+      delivered: { label: 'Consegnati', icon: '✅' },
+      cancelled: { label: 'Cancellati', icon: '❌' },
     };
 
     const result = [];
@@ -99,17 +100,18 @@ export default function AdminDashboardOrders({ navigation }) {
 
       result.push(
         <View key={`separator-${status}`}>
-          {renderStatusSeparator(status, groupOrders.length, statusInfo[status] || { label: status, icon: '📋' }, isExpanded)}
-        </View>
+          {renderStatusSeparator(
+            status,
+            groupOrders.length,
+            statusInfo[status] || { label: status, icon: '📋' },
+            isExpanded,
+          )}
+        </View>,
       );
 
       if (isExpanded) {
         groupOrders.forEach(order => {
-          result.push(
-            <View key={`order-${order.id}`}>
-              {renderOrder({ item: order })}
-            </View>
-          );
+          result.push(<View key={`order-${order.id}`}>{renderOrder({ item: order })}</View>);
         });
       }
     });
@@ -129,7 +131,9 @@ export default function AdminDashboardOrders({ navigation }) {
             <Text style={styles.orderDate}>Cliente: {item.customer_name || '—'}</Text>
             <Text style={styles.orderDate}>Rider: {item.rider_name || '—'}</Text>
             <Text style={styles.orderDate}>Indirizzo: {item.delivery_address || '—'}</Text>
-            <Text style={styles.orderDate}>ETA: {item.eta_minutes != null ? `${item.eta_minutes} min` : '—'}</Text>
+            <Text style={styles.orderDate}>
+              ETA: {item.eta_minutes != null ? `${item.eta_minutes} min` : '—'}
+            </Text>
           </View>
           <View style={styles.orderStatus}>
             <Text style={styles.orderStatusText}>
@@ -146,11 +150,16 @@ export default function AdminDashboardOrders({ navigation }) {
         </View>
 
         <View style={styles.orderItems}>
-          <Text style={styles.orderTotal}>€{item.total_amount != null ? Number(item.total_amount).toFixed(2) : '0.00'}</Text>
+          <Text style={styles.orderTotal}>
+            €{item.total_amount != null ? Number(item.total_amount).toFixed(2) : '0.00'}
+          </Text>
         </View>
 
         {IN_TRANSIT && (
-          <TouchableOpacity style={styles.trackButton} onPress={() => navigation.navigate('ManagerRealTimeMap', { orderId: item.id })}>
+          <TouchableOpacity
+            style={styles.trackButton}
+            onPress={() => navigation.navigate('ManagerRealTimeMap', { orderId: item.id })}
+          >
             <Text style={styles.trackButtonText}>Traccia</Text>
           </TouchableOpacity>
         )}
@@ -190,9 +199,7 @@ export default function AdminDashboardOrders({ navigation }) {
         {orders.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>Nessun ordine trovato</Text>
-            <Text style={styles.emptySubtext}>
-              Non ci sono ordini nel sistema
-            </Text>
+            <Text style={styles.emptySubtext}>Non ci sono ordini nel sistema</Text>
           </View>
         ) : (
           renderOrdersWithSeparators()

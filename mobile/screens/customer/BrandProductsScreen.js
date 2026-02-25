@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
 import { useCart } from '../../context/CartContext';
 import { brandProductsScreenStyles } from './styles/BrandProductsScreenStyles';
 
@@ -28,19 +36,25 @@ export default function BrandProductsScreen({ route, navigation }) {
     }
   };
 
-  const generateProductsForBrand = (brand) => {
+  const generateProductsForBrand = brand => {
     const baseProducts = {
-      'Carrefour': [
+      Carrefour: [
         { name: 'Latte Inter', price: 1.29, category: 'Latticini', unit: '1L', image: '🥛' },
         { name: 'Pane Bianco', price: 1.99, category: 'Panetteria', unit: '500g', image: '🍞' },
         { name: 'Uova 12pz', price: 3.49, category: 'Latticini', unit: '12pz', image: '🥚' },
         { name: 'Pomodori', price: 2.99, category: 'Frutta e Verdura', unit: '1kg', image: '🍅' },
-        { name: 'Mele Golden', price: 3.49, category: 'Frutta e Verdura', unit: '1kg', image: '🍎' },
+        {
+          name: 'Mele Golden',
+          price: 3.49,
+          category: 'Frutta e Verdura',
+          unit: '1kg',
+          image: '🍎',
+        },
         { name: 'Petto di Pollo', price: 8.99, category: 'Carne', unit: '1kg', image: '🍗' },
         { name: 'Acqua Minerale', price: 0.49, category: 'Bevande', unit: '1.5L', image: '💧' },
         { name: 'Pasta Gr. 500', price: 1.29, category: 'Panetteria', unit: '500g', image: '🍝' },
       ],
-      'Conad': [
+      Conad: [
         { name: 'Mozzarella', price: 2.49, category: 'Latticini', unit: '125g', image: '🧀' },
         { name: 'Prosciutto Cotto', price: 4.99, category: 'Carne', unit: '200g', image: '🥓' },
         { name: 'Banane', price: 2.49, category: 'Frutta e Verdura', unit: '1kg', image: '🍌' },
@@ -48,21 +62,33 @@ export default function BrandProductsScreen({ route, navigation }) {
         { name: 'Biscotti', price: 2.99, category: 'Panetteria', unit: '400g', image: '🍪' },
         { name: 'Vino Rosso', price: 7.99, category: 'Bevande', unit: '750ml', image: '🍷' },
       ],
-      'Lidl': [
+      Lidl: [
         { name: 'Birra 6pz', price: 4.99, category: 'Bevande', unit: '6x330ml', image: '🍺' },
         { name: 'Cioccolato', price: 1.99, category: 'Dolci', unit: '100g', image: '🍫' },
         { name: 'Patate', price: 1.99, category: 'Frutta e Verdura', unit: '2kg', image: '🥔' },
         { name: 'Salmone', price: 12.99, category: 'Pesce', unit: '300g', image: '🐟' },
         { name: 'Caffè', price: 3.99, category: 'Bevande', unit: '250g', image: '☕' },
-      ]
+      ],
     };
 
     const brandProducts = baseProducts[brand?.name] || baseProducts['Carrefour'];
 
     // Aggiungi prodotti generici se ne servono altri
     const genericProducts = [
-      { name: `${brand?.name} Product 1`, price: (Math.random() * 10 + 1).toFixed(2), category: 'Varie', unit: '1pz', image: '📦' },
-      { name: `${brand?.name} Product 2`, price: (Math.random() * 10 + 1).toFixed(2), category: 'Varie', unit: '1pz', image: '📦' },
+      {
+        name: `${brand?.name} Product 1`,
+        price: (Math.random() * 10 + 1).toFixed(2),
+        category: 'Varie',
+        unit: '1pz',
+        image: '📦',
+      },
+      {
+        name: `${brand?.name} Product 2`,
+        price: (Math.random() * 10 + 1).toFixed(2),
+        category: 'Varie',
+        unit: '1pz',
+        image: '📦',
+      },
     ];
 
     return [...brandProducts, ...genericProducts].map((product, index) => ({
@@ -70,11 +96,11 @@ export default function BrandProductsScreen({ route, navigation }) {
       ...product,
       brand: brand?.name,
       inStock: Math.random() > 0.1, // 90% in stock
-      discount: Math.random() > 0.8 ? Math.floor(Math.random() * 30 + 10) : 0 // 20% sconto
+      discount: Math.random() > 0.8 ? Math.floor(Math.random() * 30 + 10) : 0, // 20% sconto
     }));
   };
 
-  const handleAddToCart = (product) => {
+  const handleAddToCart = product => {
     if (!product.inStock) {
       Alert.alert('Non Disponibile', 'Questo prodotto è temporaneamente esaurito');
       return;
@@ -83,14 +109,17 @@ export default function BrandProductsScreen({ route, navigation }) {
     addToCart({
       ...product,
       quantity: 1,
-      type: 'shopping'
+      type: 'shopping',
     });
 
     Alert.alert('Aggiunto!', `${product.name} aggiunto al carrello`);
   };
 
   const renderProduct = ({ item }) => (
-    <TouchableOpacity style={brandProductsScreenStyles.productCard} onPress={() => handleAddToCart(item)}>
+    <TouchableOpacity
+      style={brandProductsScreenStyles.productCard}
+      onPress={() => handleAddToCart(item)}
+    >
       <View style={brandProductsScreenStyles.productHeader}>
         <Text style={brandProductsScreenStyles.productEmoji}>{item.image}</Text>
         <View style={brandProductsScreenStyles.productInfo}>
@@ -108,13 +137,21 @@ export default function BrandProductsScreen({ route, navigation }) {
         </View>
       </View>
       <View style={brandProductsScreenStyles.productFooter}>
-        <View style={[brandProductsScreenStyles.stockIndicator, { backgroundColor: item.inStock ? '#4CAF50' : '#F44336' }]}>
+        <View
+          style={[
+            brandProductsScreenStyles.stockIndicator,
+            { backgroundColor: item.inStock ? '#4CAF50' : '#F44336' },
+          ]}
+        >
           <Text style={brandProductsScreenStyles.stockText}>
             {item.inStock ? '✅ Disponibile' : '❌ Esaurito'}
           </Text>
         </View>
         <TouchableOpacity
-          style={[brandProductsScreenStyles.addButton, { backgroundColor: item.inStock ? '#FF6B00' : '#ccc' }]}
+          style={[
+            brandProductsScreenStyles.addButton,
+            { backgroundColor: item.inStock ? '#FF6B00' : '#ccc' },
+          ]}
           onPress={() => handleAddToCart(item)}
           disabled={!item.inStock}
         >
@@ -138,8 +175,12 @@ export default function BrandProductsScreen({ route, navigation }) {
   return (
     <View style={brandProductsScreenStyles.container}>
       <View style={brandProductsScreenStyles.header}>
-        <Text style={brandProductsScreenStyles.title}>{brand?.emoji} {brand?.name}</Text>
-        <Text style={brandProductsScreenStyles.subtitle}>{products.length} prodotti disponibili</Text>
+        <Text style={brandProductsScreenStyles.title}>
+          {brand?.emoji} {brand?.name}
+        </Text>
+        <Text style={brandProductsScreenStyles.subtitle}>
+          {products.length} prodotti disponibili
+        </Text>
       </View>
 
       <View style={brandProductsScreenStyles.filterContainer}>
@@ -147,19 +188,21 @@ export default function BrandProductsScreen({ route, navigation }) {
           data={['Tutti', ...categories]}
           horizontal
           showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item}
+          keyExtractor={item => item}
           renderItem={({ item }) => (
             <TouchableOpacity
               style={[
                 brandProductsScreenStyles.filterChip,
-                selectedCategory === item && brandProductsScreenStyles.selectedFilter
+                selectedCategory === item && brandProductsScreenStyles.selectedFilter,
               ]}
               onPress={() => setSelectedCategory(item === 'Tutti' ? null : item)}
             >
-              <Text style={[
-                brandProductsScreenStyles.filterText,
-                selectedCategory === item && brandProductsScreenStyles.selectedFilterText
-              ]}>
+              <Text
+                style={[
+                  brandProductsScreenStyles.filterText,
+                  selectedCategory === item && brandProductsScreenStyles.selectedFilterText,
+                ]}
+              >
                 {item}
               </Text>
             </TouchableOpacity>
@@ -169,11 +212,8 @@ export default function BrandProductsScreen({ route, navigation }) {
       </View>
 
       <FlatList
-        data={selectedCategory
-          ? products.filter(p => p.category === selectedCategory)
-          : products
-        }
-        keyExtractor={(item) => item.id.toString()}
+        data={selectedCategory ? products.filter(p => p.category === selectedCategory) : products}
+        keyExtractor={item => item.id.toString()}
         renderItem={renderProduct}
         contentContainerStyle={brandProductsScreenStyles.productsList}
         showsVerticalScrollIndicator={false}

@@ -7,7 +7,7 @@ export const createTicket = async (userId, type, title, description, attachmentU
       `INSERT INTO tickets (user_id, type, title, description, attachment_urls, status)
        VALUES ($1, $2, $3, $4, $5, 'open')
        RETURNING *`,
-      [userId, type, title, description, attachmentUrls ? JSON.stringify(attachmentUrls) : null]
+      [userId, type, title, description, attachmentUrls ? JSON.stringify(attachmentUrls) : null],
     );
     return result.rows[0];
   } catch (error) {
@@ -52,13 +52,13 @@ export const getAllTickets = async (filters = {}) => {
 };
 
 // Get user tickets
-export const getUserTickets = async (userId) => {
+export const getUserTickets = async userId => {
   try {
     const result = await db.query(
       `SELECT * FROM tickets 
        WHERE user_id = $1 
        ORDER BY created_at DESC`,
-      [userId]
+      [userId],
     );
     return result.rows;
   } catch (error) {
@@ -67,14 +67,14 @@ export const getUserTickets = async (userId) => {
 };
 
 // Get ticket by ID
-export const getTicketById = async (ticketId) => {
+export const getTicketById = async ticketId => {
   try {
     const result = await db.query(
       `SELECT t.*, u.name as user_name, u.email, u.role
        FROM tickets t
        JOIN users u ON t.user_id = u.id
        WHERE t.id = $1`,
-      [ticketId]
+      [ticketId],
     );
     return result.rows[0];
   } catch (error) {
@@ -90,7 +90,7 @@ export const updateTicketStatus = async (ticketId, status, adminNotes = null) =>
        SET status = $1, admin_notes = $2, updated_at = CURRENT_TIMESTAMP
        WHERE id = $3
        RETURNING *`,
-      [status, adminNotes, ticketId]
+      [status, adminNotes, ticketId],
     );
     return result.rows[0];
   } catch (error) {
@@ -105,7 +105,7 @@ export const addTicketComment = async (ticketId, userId, comment) => {
       `INSERT INTO ticket_comments (ticket_id, user_id, comment)
        VALUES ($1, $2, $3)
        RETURNING *`,
-      [ticketId, userId, comment]
+      [ticketId, userId, comment],
     );
     return result.rows[0];
   } catch (error) {
@@ -114,7 +114,7 @@ export const addTicketComment = async (ticketId, userId, comment) => {
 };
 
 // Get ticket comments
-export const getTicketComments = async (ticketId) => {
+export const getTicketComments = async ticketId => {
   try {
     const result = await db.query(
       `SELECT tc.*, u.name as user_name, u.role
@@ -122,7 +122,7 @@ export const getTicketComments = async (ticketId) => {
        JOIN users u ON tc.user_id = u.id
        WHERE tc.ticket_id = $1
        ORDER BY tc.created_at ASC`,
-      [ticketId]
+      [ticketId],
     );
     return result.rows;
   } catch (error) {
@@ -143,7 +143,7 @@ export const getTicketStats = async () => {
          COUNT(CASE WHEN type = 'bug' THEN 1 END) as bug_count,
          COUNT(CASE WHEN type = 'feature' THEN 1 END) as feature_count,
          COUNT(CASE WHEN type = 'complaint' THEN 1 END) as complaint_count
-       FROM tickets`
+       FROM tickets`,
     );
     return result.rows[0];
   } catch (error) {

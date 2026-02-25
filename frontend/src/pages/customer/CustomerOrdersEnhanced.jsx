@@ -46,7 +46,7 @@ export default function CustomerOrdersEnhanced() {
     return [];
   };
 
-  const handleCancelOrder = async (order) => {
+  const handleCancelOrder = async order => {
     if (window.confirm(`Sei sicuro di voler cancellare l'ordine da ${order.restaurant_name}?`)) {
       try {
         await ordersAPI.cancelOrder(order.id);
@@ -58,7 +58,7 @@ export default function CustomerOrdersEnhanced() {
     }
   };
 
-  const handleReorder = (order) => {
+  const handleReorder = order => {
     alert(`🔄 Riordina da ${order.restaurant_name} (funzionalità da implementare)`);
   };
 
@@ -114,9 +114,7 @@ export default function CustomerOrdersEnhanced() {
           <p className="loading">Caricamento...</p>
         ) : filteredOrders.length === 0 ? (
           <p className="empty">
-            {activeTab === 'active'
-              ? '📭 Nessun ordine attivo'
-              : '📭 Nessun ordine nel storico'}
+            {activeTab === 'active' ? '📭 Nessun ordine attivo' : '📭 Nessun ordine nel storico'}
           </p>
         ) : (
           <div className="orders-list">
@@ -125,41 +123,27 @@ export default function CustomerOrdersEnhanced() {
                 label: 'Sconosciuto',
                 color: '#999',
               };
-              const isActive =
-                order.status !== 'delivered' && order.status !== 'cancelled';
+              const isActive = order.status !== 'delivered' && order.status !== 'cancelled';
               const canRate = order.status === 'delivered' && !order.rated;
               const canCancel =
-                isActive &&
-                order.status !== 'in_transit' &&
-                order.status !== 'pickup';
+                isActive && order.status !== 'in_transit' && order.status !== 'pickup';
 
               return (
                 <div key={order.id} className="order-card">
                   <div className="order-header">
                     <div className="restaurant-info">
-                      <h3 className="restaurant-name">
-                        {order.restaurant_name || 'Ristorante'}
-                      </h3>
-                      <p className="order-id">
-                        Ordine #{order.id?.toString().slice(-4)}
-                      </p>
+                      <h3 className="restaurant-name">{order.restaurant_name || 'Ristorante'}</h3>
+                      <p className="order-id">Ordine #{order.id?.toString().slice(-4)}</p>
                     </div>
-                    <div
-                      className="status-badge"
-                      style={{ backgroundColor: statusInfo.color }}
-                    >
+                    <div className="status-badge" style={{ backgroundColor: statusInfo.color }}>
                       <span className="status-icon">{statusInfo.icon}</span>
                       <span className="status-label">{statusInfo.label}</span>
                     </div>
                   </div>
 
                   <div className="order-details">
-                    <span className="items-count">
-                      📦 {order.items_count || 2} articoli
-                    </span>
-                    <span className="total-price">
-                      €{order.total_amount?.toFixed(2) || '0.00'}
-                    </span>
+                    <span className="items-count">📦 {order.items_count || 2} articoli</span>
+                    <span className="total-price">€{order.total_amount?.toFixed(2) || '0.00'}</span>
                   </div>
 
                   <div className="timestamp-row">
@@ -170,11 +154,7 @@ export default function CustomerOrdersEnhanced() {
                         minute: '2-digit',
                       })}
                     </span>
-                    {isActive && (
-                      <span className="eta">
-                        ⏱️ {order.estimated_time || '30'} min
-                      </span>
-                    )}
+                    {isActive && <span className="eta">⏱️ {order.estimated_time || '30'} min</span>}
                   </div>
 
                   {/* Action Buttons */}
@@ -191,10 +171,7 @@ export default function CustomerOrdersEnhanced() {
                       </button>
                     )}
                     {canCancel && (
-                      <button
-                        className="btn-cancel"
-                        onClick={() => handleCancelOrder(order)}
-                      >
+                      <button className="btn-cancel" onClick={() => handleCancelOrder(order)}>
                         ✕ Annulla
                       </button>
                     )}
@@ -210,10 +187,7 @@ export default function CustomerOrdersEnhanced() {
                       </button>
                     )}
                     {!isActive && (
-                      <button
-                        className="btn-reorder"
-                        onClick={() => handleReorder(order)}
-                      >
+                      <button className="btn-reorder" onClick={() => handleReorder(order)}>
                         🔄 Riordina
                       </button>
                     )}
@@ -231,45 +205,30 @@ export default function CustomerOrdersEnhanced() {
           <div className="modal">
             <div className="modal-header">
               <h2>Traccia Ordine</h2>
-              <button
-                className="modal-close"
-                onClick={() => setTrackingModal(false)}
-              >
+              <button className="modal-close" onClick={() => setTrackingModal(false)}>
                 ✕
               </button>
             </div>
 
             <div className="tracking-info">
-              <p className="tracking-restaurant">
-                {selectedOrder.restaurant_name}
-              </p>
-              <p className="tracking-total">
-                Totale: €{selectedOrder.total_amount?.toFixed(2)}
-              </p>
+              <p className="tracking-restaurant">{selectedOrder.restaurant_name}</p>
+              <p className="tracking-total">Totale: €{selectedOrder.total_amount?.toFixed(2)}</p>
             </div>
 
             {/* Status Timeline */}
             <div className="timeline">
               {Object.entries(orderStatuses).map(([key, status], index) => (
                 <div key={key} className="timeline-item">
-                  <div
-                    className={`timeline-dot ${
-                      selectedOrder.status === key ? 'active' : ''
-                    }`}
-                  >
+                  <div className={`timeline-dot ${selectedOrder.status === key ? 'active' : ''}`}>
                     <span className="timeline-icon">{status.icon}</span>
                   </div>
                   {index < Object.keys(orderStatuses).length - 1 && (
                     <div
-                      className={`timeline-line ${
-                        selectedOrder.status === key ? 'active' : ''
-                      }`}
+                      className={`timeline-line ${selectedOrder.status === key ? 'active' : ''}`}
                     />
                   )}
                   <span
-                    className={`timeline-label ${
-                      selectedOrder.status === key ? 'active' : ''
-                    }`}
+                    className={`timeline-label ${selectedOrder.status === key ? 'active' : ''}`}
                   >
                     {status.label}
                   </span>
@@ -278,27 +237,21 @@ export default function CustomerOrdersEnhanced() {
             </div>
 
             {/* Rider Info */}
-            {selectedOrder.status !== 'pending' &&
-              selectedOrder.status !== 'accepted' && (
-                <div className="rider-section">
-                  <h3>Il tuo Rider 🚗</h3>
-                  <div className="rider-card">
-                    <p className="rider-name">
-                      {selectedOrder.rider_name || 'Rider assegnato'}
-                    </p>
-                    <p className="rider-rating">
-                      ⭐ {selectedOrder.rider_rating || '4.8'} • 📍{' '}
-                      {selectedOrder.rider_distance || '0.5km'}
-                    </p>
-                    <button className="btn-contact">📞 Chiama</button>
-                  </div>
+            {selectedOrder.status !== 'pending' && selectedOrder.status !== 'accepted' && (
+              <div className="rider-section">
+                <h3>Il tuo Rider 🚗</h3>
+                <div className="rider-card">
+                  <p className="rider-name">{selectedOrder.rider_name || 'Rider assegnato'}</p>
+                  <p className="rider-rating">
+                    ⭐ {selectedOrder.rider_rating || '4.8'} • 📍{' '}
+                    {selectedOrder.rider_distance || '0.5km'}
+                  </p>
+                  <button className="btn-contact">📞 Chiama</button>
                 </div>
-              )}
+              </div>
+            )}
 
-            <button
-              className="btn-close-modal"
-              onClick={() => setTrackingModal(false)}
-            >
+            <button className="btn-close-modal" onClick={() => setTrackingModal(false)}>
               Chiudi
             </button>
           </div>
@@ -311,10 +264,7 @@ export default function CustomerOrdersEnhanced() {
           <div className="modal">
             <div className="modal-header">
               <h2>⭐ Valuta l'Ordine</h2>
-              <button
-                className="modal-close"
-                onClick={() => setRatingModal(false)}
-              >
+              <button className="modal-close" onClick={() => setRatingModal(false)}>
                 ✕
               </button>
             </div>
@@ -339,7 +289,7 @@ export default function CustomerOrdersEnhanced() {
               className="note-input"
               placeholder="Aggiungi una nota... (opzionale)"
               value={ratingNote}
-              onChange={(e) => setRatingNote(e.target.value)}
+              onChange={e => setRatingNote(e.target.value)}
               rows="3"
             />
 

@@ -10,18 +10,15 @@ export default function RestaurantCard({ restaurant, onFavorite, isFavorite, onO
           <div className="placeholder-image">🍽️</div>
         )}
       </div>
-      
+
       <div className="restaurant-content">
         <div className="restaurant-header">
           <h3>{restaurant.name}</h3>
-          <button 
-            className="favorite-btn"
-            onClick={() => onFavorite(restaurant)}
-          >
+          <button className="favorite-btn" onClick={() => onFavorite(restaurant)}>
             {isFavorite ? '❤️' : '🤍'}
           </button>
         </div>
-        
+
         <div className="restaurant-meta">
           <div className="rating">
             <span className="stars">⭐</span>
@@ -31,31 +28,28 @@ export default function RestaurantCard({ restaurant, onFavorite, isFavorite, onO
             <span className="time">⏱️ {restaurant.delivery_time || '30'} min</span>
             <span className="price">💰 €{restaurant.delivery_cost || '2.00'}</span>
           </div>
-          <div className="distance">
-            📍 {restaurant.distance || '1.2'} km
-          </div>
+          <div className="distance">📍 {restaurant.distance || '1.2'} km</div>
         </div>
       </div>
-      
+
       <div className="restaurant-description">
         <p>{restaurant.description}</p>
       </div>
-      
+
       <div className="restaurant-actions">
-        <button 
-          className="quick-order-btn"
-          onClick={() => onOrder(restaurant)}
-        >
+        <button className="quick-order-btn" onClick={() => onOrder(restaurant)}>
           Ordina Veloce
         </button>
-        <button 
+        <button
           className="menu-btn"
-          onClick={() => {/* Navigate to menu */}}
+          onClick={() => {
+            /* Navigate to menu */
+          }}
         >
           Menu Completo
         </button>
       </div>
-      
+
       <div className="restaurant-footer">
         <div className="restaurant-status">
           {restaurant.is_open ? (
@@ -66,7 +60,9 @@ export default function RestaurantCard({ restaurant, onFavorite, isFavorite, onO
         </div>
         <div className="restaurant-tags">
           {restaurant.categories?.map(cat => (
-            <span key={cat} className="tag">{cat}</span>
+            <span key={cat} className="tag">
+              {cat}
+            </span>
           ))}
         </div>
       </div>

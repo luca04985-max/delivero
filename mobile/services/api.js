@@ -32,7 +32,7 @@ async function makeRequest(endpoint, options = {}) {
     // Se options.data esiste, convertilo a stringa JSON
     if (options.data) {
       requestOptions.body = JSON.stringify(options.data);
-      console.log("Request body: " + requestOptions.body);
+      console.log('Request body: ' + requestOptions.body);
     }
 
     const response = await fetch(fullUrl, requestOptions);
@@ -68,7 +68,7 @@ export const initializeTrackingSocket = async () => {
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
-      reconnectionAttempts: 5
+      reconnectionAttempts: 5,
     });
 
     socket.on('connect', () => {
@@ -79,7 +79,7 @@ export const initializeTrackingSocket = async () => {
       console.log('✗ Disconnected from tracking socket');
     });
 
-    socket.on('error', (err) => {
+    socket.on('error', err => {
       console.error('Socket error:', err);
     });
 
@@ -91,7 +91,7 @@ export const initializeTrackingSocket = async () => {
 };
 
 // Join order tracking channel
-export const joinOrderTracking = async (orderId) => {
+export const joinOrderTracking = async orderId => {
   try {
     const sock = socket || (await initializeTrackingSocket());
     if (!sock) {
@@ -105,7 +105,7 @@ export const joinOrderTracking = async (orderId) => {
 };
 
 // Leave order tracking channel
-export const leaveOrderTracking = (orderId) => {
+export const leaveOrderTracking = orderId => {
   try {
     if (!socket) return;
     socket.emit('leaveOrderTracking', orderId);
@@ -115,24 +115,24 @@ export const leaveOrderTracking = (orderId) => {
 };
 
 // Subscribe to location updates
-export const onRiderLocationUpdate = (callback) => {
-  if (!socket) return () => { };
+export const onRiderLocationUpdate = callback => {
+  if (!socket) return () => {};
   socket.off('riderLocationUpdate'); // remove previous listeners
   socket.on('riderLocationUpdate', callback);
   return () => socket.off('riderLocationUpdate');
 };
 
-// Subscribe to order status updates  
-export const onOrderStatusUpdate = (callback) => {
-  if (!socket) return () => { };
+// Subscribe to order status updates
+export const onOrderStatusUpdate = callback => {
+  if (!socket) return () => {};
   socket.off('orderStatusUpdate');
   socket.on('orderStatusUpdate', callback);
   return () => socket.off('orderStatusUpdate');
 };
 
 // Subscribe to tracking stopped (after delivery)
-export const onTrackingStopped = (callback) => {
-  if (!socket) return () => { };
+export const onTrackingStopped = callback => {
+  if (!socket) return () => {};
   socket.off('trackingStopped');
   socket.on('trackingStopped', callback);
   return () => socket.off('trackingStopped');
@@ -140,11 +140,13 @@ export const onTrackingStopped = (callback) => {
 
 // Calculate straight-line distance between two points (Haversine formula)
 export const calculateDistance = (lat1, lon1, lat2, lon2) => {
-  const toRad = (v) => (v * Math.PI) / 180;
+  const toRad = v => (v * Math.PI) / 180;
   const R = 6371000; // meters
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
-  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c; // meters
 };
@@ -190,7 +192,7 @@ export const authAPI = {
   logout: async () => {
     await AsyncStorage.removeItem('token');
     await AsyncStorage.removeItem('user');
-  }
+  },
 };
 
 export const ordersAPI = {
@@ -201,14 +203,15 @@ export const ordersAPI = {
   getMyOrders: async () => {
     return makeRequest('/orders/my', { method: 'GET' });
   },
-  create: (data) => makeRequest('/orders', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  }),
+  create: data =>
+    makeRequest('/orders', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
   getAvailable: async () => {
     return makeRequest('/orders/available', { method: 'GET' });
   },
-  trackOrder: async (id) => {
+  trackOrder: async id => {
     return makeRequest(`/orders/${id}/track`, { method: 'GET' });
   },
   updateDeliveryCoordinates: async (id, delivery_latitude, delivery_longitude) => {
@@ -217,7 +220,7 @@ export const ordersAPI = {
       body: JSON.stringify({ delivery_latitude, delivery_longitude }),
     });
   },
-  cancelOrder: async (id) => {
+  cancelOrder: async id => {
     return makeRequest(`/orders/${id}/cancel`, { method: 'PUT' });
   },
   rateOrder: async (id, data) => {
@@ -231,14 +234,14 @@ export const ordersAPI = {
   getActiveRiderOrders: async () => {
     return makeRequest('/orders/rider/active', { method: 'GET' });
   },
-  acceptOrder: async (id) => {
+  acceptOrder: async id => {
     return makeRequest(`/orders/${id}/accept`, { method: 'PUT' });
   },
   updateOrderStatus: async (id, status) => {
     console.log('🚀 API Call: updateOrderStatus', {
       url: `/orders/${id}/status`,
       method: 'PUT',
-      body: { status }
+      body: { status },
     });
     return makeRequest(`/orders/${id}/status`, {
       method: 'PUT',
@@ -249,17 +252,17 @@ export const ordersAPI = {
     console.log('🚀 API Call: updateOrderRiderStatus', {
       url: `/orders/${id}/rider-status`,
       method: 'PUT',
-      body: { status }
+      body: { status },
     });
     return makeRequest(`/orders/${id}/rider-status`, {
       method: 'PUT',
       body: JSON.stringify({ status }),
     });
   },
-  completeOrder: async (id) => {
+  completeOrder: async id => {
     return makeRequest(`/orders/${id}/complete`, { method: 'PUT' });
   },
-  completeDelivery: async (id) => {
+  completeDelivery: async id => {
     return makeRequest(`/orders/${id}/delivered`, { method: 'PUT' });
   },
 
@@ -270,16 +273,16 @@ export const ordersAPI = {
       body: JSON.stringify({
         latitude,
         longitude,
-        eta_minutes
+        eta_minutes,
       }),
     });
   },
 
   // Get tracking info (customer/manager views)
-  getTrackingInfo: async (orderId) => {
+  getTrackingInfo: async orderId => {
     return makeRequest(`/orders/${orderId}/track`, { method: 'GET' });
   },
-  getTrackHistory: async (orderId) => {
+  getTrackHistory: async orderId => {
     return makeRequest(`/orders/${orderId}/track-history`, { method: 'GET' });
   },
 
@@ -292,7 +295,7 @@ export const ordersAPI = {
   getCustomerTickets: async () => {
     return makeRequest('/tickets/customer', { method: 'GET' });
   },
-  createCustomerTicket: async (data) => {
+  createCustomerTicket: async data => {
     return makeRequest('/tickets/customer', {
       method: 'POST',
       body: JSON.stringify(data),
@@ -302,10 +305,10 @@ export const ordersAPI = {
   getRiderTickets: async () => {
     return makeRequest('/tickets/rider', { method: 'GET' });
   },
-  getRiderTicketById: async (ticketId) => {
+  getRiderTicketById: async ticketId => {
     return makeRequest(`/tickets/rider/${ticketId}`, { method: 'GET' });
   },
-  createRiderTicket: async (data) => {
+  createRiderTicket: async data => {
     return makeRequest('/tickets/rider', {
       method: 'POST',
       body: JSON.stringify(data),
@@ -313,48 +316,54 @@ export const ordersAPI = {
   },
 
   // Location sharing (riders)
-  sendLocation: (location) => makeRequest('/rider/location', {
-    method: 'POST',
-    body: JSON.stringify(location),
-  }),
-  getRiderLocation: (riderId) => makeRequest(`/rider/${riderId}/location`, {
-    method: 'GET',
-  }),
+  sendLocation: location =>
+    makeRequest('/rider/location', {
+      method: 'POST',
+      body: JSON.stringify(location),
+    }),
+  getRiderLocation: riderId =>
+    makeRequest(`/rider/${riderId}/location`, {
+      method: 'GET',
+    }),
 };
 
 export const userAPI = {
   getProfile: () => makeRequest('/user/profile', { method: 'GET' }),
-  updateProfile: (data) => makeRequest('/user/profile', {
-    method: 'PUT',
-    body: JSON.stringify(data),
-  }),
-  setPushToken: (token) => makeRequest('/auth/push-token', {
-    method: 'PUT',
-    body: JSON.stringify({ push_token: token }),
-  }),
+  updateProfile: data =>
+    makeRequest('/user/profile', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+  setPushToken: token =>
+    makeRequest('/auth/push-token', {
+      method: 'PUT',
+      body: JSON.stringify({ push_token: token }),
+    }),
 };
 
 export const adminAPI = {
   getStats: () => makeRequest('/admin/stats', { method: 'GET' }),
   getAllOrders: () => makeRequest('/admin/orders', { method: 'GET' }),
   getAllUsers: () => makeRequest('/admin/users', { method: 'GET' }),
-  updateUserRole: (userId, role) => makeRequest(`/admin/users/${userId}/role`, {
-    method: 'PUT',
-    body: JSON.stringify({ newRole: role }),
-  }),
-  updateUser: (userId, data) => makeRequest(`/admin/users/${userId}`, {
-    method: 'PUT',
-    body: JSON.stringify(data),
-  }),
-  deleteUser: (userId) => makeRequest(`/admin/users/${userId}`, { method: 'DELETE' }),
+  updateUserRole: (userId, role) =>
+    makeRequest(`/admin/users/${userId}/role`, {
+      method: 'PUT',
+      body: JSON.stringify({ newRole: role }),
+    }),
+  updateUser: (userId, data) =>
+    makeRequest(`/admin/users/${userId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+  deleteUser: userId => makeRequest(`/admin/users/${userId}`, { method: 'DELETE' }),
   getFinanceReport: () => makeRequest('/admin/finance', { method: 'GET' }),
   getServiceMetrics: () => makeRequest('/admin/metrics', { method: 'GET' }),
   getTicketStats: () => makeRequest('/admin/tickets/stats', { method: 'GET' }),
-  getAdminTickets: () => makeRequest('/tickets/admin', { method: 'GET' })
+  getAdminTickets: () => makeRequest('/tickets/admin', { method: 'GET' }),
 };
 
 export const paymentsAPI = {
-  createCashPayment: (orderId) => {
+  createCashPayment: orderId => {
     console.log('🌐 API: Making cash payment request for order:', orderId);
     return makeRequest('/payments/cash/create', {
       method: 'POST',
@@ -362,20 +371,23 @@ export const paymentsAPI = {
     });
   },
 
-  markCashCollected: (orderId) => makeRequest('/payments/cash/collected', {
-    method: 'POST',
-    body: JSON.stringify({ orderId }),
-  }),
+  markCashCollected: orderId =>
+    makeRequest('/payments/cash/collected', {
+      method: 'POST',
+      body: JSON.stringify({ orderId }),
+    }),
 
-  createStripePayment: (orderId) => makeRequest('/payments/create', {
-    method: 'POST',
-    body: JSON.stringify({ orderId }),
-  }),
+  createStripePayment: orderId =>
+    makeRequest('/payments/create', {
+      method: 'POST',
+      body: JSON.stringify({ orderId }),
+    }),
 
-  confirmStripePayment: (orderId, paymentIntentId) => makeRequest('/payments/confirm', {
-    method: 'POST',
-    body: JSON.stringify({ orderId, paymentIntentId }),
-  }),
+  confirmStripePayment: (orderId, paymentIntentId) =>
+    makeRequest('/payments/confirm', {
+      method: 'POST',
+      body: JSON.stringify({ orderId, paymentIntentId }),
+    }),
 };
 
 export { makeRequest };

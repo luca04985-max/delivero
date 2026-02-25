@@ -4,12 +4,13 @@ import pool from '../config/db.js';
 async function createTicket(userId, type, title, description, attachmentUrls = [], order_id) {
   try {
     // Gestisci attachmentUrls correttamente - usa JSON.stringify solo se ci sono allegati
-    const attachmentJson = attachmentUrls && attachmentUrls.length > 0 ? JSON.stringify(attachmentUrls) : '{}';
+    const attachmentJson =
+      attachmentUrls && attachmentUrls.length > 0 ? JSON.stringify(attachmentUrls) : '{}';
     const result = await pool.query(
       `INSERT INTO tickets (user_id, type, title, description, attachment_urls, status, order_id)
        VALUES ($1, $2, $3, $4, $5, 'open', $6)
        RETURNING *`,
-      [userId, type, title, description, attachmentJson, order_id]
+      [userId, type, title, description, attachmentJson, order_id],
     );
     return result.rows[0];
   } catch (error) {
@@ -21,7 +22,8 @@ async function createTicket(userId, type, title, description, attachmentUrls = [
 // Get all tickets (admin)
 async function getAllTickets(filters = {}) {
   try {
-    let query = 'SELECT t.*, u.name as user_name, u.email as user_email FROM tickets t JOIN users u ON t.user_id = u.id WHERE 1=1';
+    let query =
+      'SELECT t.*, u.name as user_name, u.email as user_email FROM tickets t JOIN users u ON t.user_id = u.id WHERE 1=1';
     const params = [];
 
     if (filters.status) {
@@ -84,7 +86,7 @@ async function getUserTickets(userId) {
        LEFT JOIN orders o ON t.order_id = o.id
        WHERE t.user_id = $1 
        ORDER BY t.created_at DESC`,
-      [userId]
+      [userId],
     );
     return result.rows;
   } catch (error) {
@@ -107,7 +109,7 @@ async function getTicketById(ticketId) {
        LEFT JOIN users u ON t.user_id = u.id 
        LEFT JOIN orders o ON t.order_id = o.id
        WHERE t.id = $1`,
-      [ticketId]
+      [ticketId],
     );
 
     if (ticketResult.rows.length === 0) {
@@ -123,7 +125,7 @@ async function getTicketById(ticketId) {
        JOIN users u ON tc.user_id = u.id 
        WHERE tc.ticket_id = $1 
        ORDER BY tc.created_at ASC`,
-      [ticketId]
+      [ticketId],
     );
 
     ticket.comments = commentsResult.rows;
@@ -142,7 +144,7 @@ async function updateTicketStatus(ticketId, status, adminNotes = null) {
        SET status = $1, admin_notes = COALESCE($2, admin_notes), updated_at = CURRENT_TIMESTAMP
        WHERE id = $3
        RETURNING *`,
-      [status, adminNotes, ticketId]
+      [status, adminNotes, ticketId],
     );
     return result.rows[0];
   } catch (error) {
@@ -159,7 +161,7 @@ async function updateTicketPriority(ticketId, priority) {
        SET priority = $1, updated_at = CURRENT_TIMESTAMP
        WHERE id = $2
        RETURNING *`,
-      [priority, ticketId]
+      [priority, ticketId],
     );
     return result.rows[0];
   } catch (error) {
@@ -175,7 +177,7 @@ async function addTicketComment(ticketId, userId, comment) {
       `INSERT INTO ticket_comments (ticket_id, user_id, comment)
        VALUES ($1, $2, $3)
        RETURNING *`,
-      [ticketId, userId, comment]
+      [ticketId, userId, comment],
     );
     return result.rows[0];
   } catch (error) {
@@ -193,7 +195,7 @@ async function getTicketComments(ticketId) {
        JOIN users u ON tc.user_id = u.id 
        WHERE tc.ticket_id = $1 
        ORDER BY tc.created_at ASC`,
-      [ticketId]
+      [ticketId],
     );
     return result.rows;
   } catch (error) {
@@ -221,7 +223,7 @@ async function getTicketStats() {
         COUNT(CASE WHEN type = 'delivery' THEN 1 END) as delivery_count,
         COUNT(CASE WHEN type = 'other' THEN 1 END) as other_count,
         COUNT(CASE WHEN priority = 'critical' THEN 1 END) as critical_count
-       FROM tickets`
+       FROM tickets`,
     );
     return result.rows[0];
   } catch (error) {
@@ -239,7 +241,7 @@ async function searchTickets(searchTerm) {
        JOIN users u ON t.user_id = u.id 
        WHERE t.title ILIKE $1 OR t.description ILIKE $1
        ORDER BY t.created_at DESC`,
-      [`%${searchTerm}%`]
+      [`%${searchTerm}%`],
     );
     return result.rows;
   } catch (error) {
@@ -252,10 +254,7 @@ async function searchTickets(searchTerm) {
 async function deleteTicket(ticketId) {
   try {
     // Ticket_comments will be cascade deleted
-    const result = await pool.query(
-      `DELETE FROM tickets WHERE id = $1 RETURNING *`,
-      [ticketId]
-    );
+    const result = await pool.query(`DELETE FROM tickets WHERE id = $1 RETURNING *`, [ticketId]);
     return result.rows[0];
   } catch (error) {
     console.error('Error deleting ticket:', error);
@@ -274,5 +273,5 @@ export {
   getTicketComments,
   getTicketStats,
   searchTickets,
-  deleteTicket
+  deleteTicket,
 };

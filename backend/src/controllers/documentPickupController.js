@@ -14,7 +14,7 @@ export const createPickup = async (req, res) => {
       deliveryLon,
       estimatedCost,
       description,
-      signatureRequired = false
+      signatureRequired = false,
     } = req.body;
 
     const pickup = await DocumentPickupModel.createDocumentPickup(
@@ -28,7 +28,7 @@ export const createPickup = async (req, res) => {
       deliveryLon,
       estimatedCost,
       description,
-      signatureRequired
+      signatureRequired,
     );
 
     res.status(201).json(pickup);

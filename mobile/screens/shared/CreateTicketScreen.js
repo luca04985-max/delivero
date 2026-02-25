@@ -90,7 +90,7 @@ export default function CreateTicketScreen({ navigation, route }) {
   };
 
   // Carica gli ordini del cliente
-  const loadCustomerOrders = async (customerId) => {
+  const loadCustomerOrders = async customerId => {
     try {
       const response = await makeRequest('/orders/my');
       console.log('Orders response:', response); // Debug log
@@ -115,7 +115,7 @@ export default function CreateTicketScreen({ navigation, route }) {
   }, [orderData, orderId]);
 
   // Gestione selezione ordine
-  const handleOrderSelect = (order) => {
+  const handleOrderSelect = order => {
     setSelectedOrder(order);
     setShowOrderSelector(false);
   };
@@ -135,15 +135,15 @@ export default function CreateTicketScreen({ navigation, route }) {
   // Tipi di ticket basati sul ruolo
   const ticketTypes = isRider
     ? [
-      { label: '🐛 Bug', value: 'bug' },
-      { label: '🚚 Problema Consegna', value: 'delivery_issue' },
-      { label: '🆘 Supporto', value: 'support' }
-    ]
+        { label: '🐛 Bug', value: 'bug' },
+        { label: '🚚 Problema Consegna', value: 'delivery_issue' },
+        { label: '🆘 Supporto', value: 'support' },
+      ]
     : [
-      { label: '🐛 Bug', value: 'bug' },
-      { label: '😞 Reclamo', value: 'complaint' },
-      { label: '🆘 Supporto', value: 'support' }
-    ];
+        { label: '🐛 Bug', value: 'bug' },
+        { label: '😞 Reclamo', value: 'complaint' },
+        { label: '🆘 Supporto', value: 'support' },
+      ];
 
   const createTicket = async () => {
     if (!newTicket.title.trim() || !newTicket.description.trim()) {
@@ -187,7 +187,6 @@ export default function CreateTicketScreen({ navigation, route }) {
           navigation.navigate(isRider ? 'RiderTickets' : 'CustomerTickets');
         }
       }, 1500);
-
     } catch (error) {
       console.error('Error creating ticket:', error);
       showToast('❌ Impossibile creare il ticket', 'error');
@@ -200,10 +199,19 @@ export default function CreateTicketScreen({ navigation, route }) {
     <View style={createTicketScreenStyles.container}>
       {/* Toast Notification */}
       {toast.visible && (
-        <View style={[
-          createTicketScreenStyles.toast,
-          { backgroundColor: toast.type === 'error' ? '#FF3B30' : toast.type === 'success' ? '#34C759' : '#007AFF' }
-        ]}>
+        <View
+          style={[
+            createTicketScreenStyles.toast,
+            {
+              backgroundColor:
+                toast.type === 'error'
+                  ? '#FF3B30'
+                  : toast.type === 'success'
+                    ? '#34C759'
+                    : '#007AFF',
+            },
+          ]}
+        >
           <Text style={createTicketScreenStyles.toastText}>{toast.message}</Text>
         </View>
       )}
@@ -229,7 +237,8 @@ export default function CreateTicketScreen({ navigation, route }) {
             {selectedOrder ? (
               <View style={createTicketScreenStyles.orderSummary}>
                 <Text style={createTicketScreenStyles.orderTitle}>
-                  Ordine #{selectedOrder.id?.toString().slice(-5)} - {selectedOrder.restaurant_name || selectedOrder.customer_address}
+                  Ordine #{selectedOrder.id?.toString().slice(-5)} -{' '}
+                  {selectedOrder.restaurant_name || selectedOrder.customer_address}
                 </Text>
                 <Text style={createTicketScreenStyles.orderStatus}>
                   {new Date(selectedOrder.created_at).toLocaleDateString('it-IT')}
@@ -253,8 +262,7 @@ export default function CreateTicketScreen({ navigation, route }) {
             <Text style={createTicketScreenStyles.helperText}>
               {isCustomer
                 ? 'Associa un ordine per aiutarci a risolvere più rapidamente il problema'
-                : 'Seleziona l\'ordine per cui stai segnalando il problema'
-              }
+                : "Seleziona l'ordine per cui stai segnalando il problema"}
             </Text>
           </View>
         )}
@@ -276,19 +284,23 @@ export default function CreateTicketScreen({ navigation, route }) {
         <View style={createTicketScreenStyles.section}>
           <Text style={createTicketScreenStyles.sectionTitle}>Tipo di Ticket</Text>
           <View style={createTicketScreenStyles.ticketTypesContainer}>
-            {ticketTypes.map((type) => (
+            {ticketTypes.map(type => (
               <TouchableOpacity
                 key={type.value}
                 style={[
                   createTicketScreenStyles.ticketTypeButton,
-                  newTicket.type === type.value && createTicketScreenStyles.ticketTypeButtonSelected
+                  newTicket.type === type.value &&
+                    createTicketScreenStyles.ticketTypeButtonSelected,
                 ]}
                 onPress={() => setNewTicket({ ...newTicket, type: type.value })}
               >
-                <Text style={[
-                  createTicketScreenStyles.ticketTypeButtonText,
-                  newTicket.type === type.value && createTicketScreenStyles.ticketTypeButtonTextSelected
-                ]}>
+                <Text
+                  style={[
+                    createTicketScreenStyles.ticketTypeButtonText,
+                    newTicket.type === type.value &&
+                      createTicketScreenStyles.ticketTypeButtonTextSelected,
+                  ]}
+                >
                   {type.label}
                 </Text>
               </TouchableOpacity>
@@ -303,7 +315,7 @@ export default function CreateTicketScreen({ navigation, route }) {
             style={createTicketScreenStyles.input}
             placeholder="Inserisci un titolo breve..."
             value={newTicket.title}
-            onChangeText={(text) => setNewTicket({ ...newTicket, title: text })}
+            onChangeText={text => setNewTicket({ ...newTicket, title: text })}
             maxLength={100}
           />
           <Text style={createTicketScreenStyles.charCount}>
@@ -318,7 +330,7 @@ export default function CreateTicketScreen({ navigation, route }) {
             style={[createTicketScreenStyles.input, createTicketScreenStyles.textArea]}
             placeholder="Descrivi dettagliatamente il problema..."
             value={newTicket.description}
-            onChangeText={(text) => setNewTicket({ ...newTicket, description: text })}
+            onChangeText={text => setNewTicket({ ...newTicket, description: text })}
             multiline
             numberOfLines={6}
             textAlignVertical="top"
@@ -337,13 +349,15 @@ export default function CreateTicketScreen({ navigation, route }) {
               !newTicket.title.trim() ||
               !newTicket.description.trim() ||
               (isRider && newTicket.type === 'delivery_issue' && !selectedOrder)) &&
-            createTicketScreenStyles.submitButtonDisabled
+              createTicketScreenStyles.submitButtonDisabled,
           ]}
           onPress={createTicket}
-          disabled={submitting ||
+          disabled={
+            submitting ||
             !newTicket.title.trim() ||
             !newTicket.description.trim() ||
-            (isRider && newTicket.type === 'delivery_issue' && !selectedOrder)}
+            (isRider && newTicket.type === 'delivery_issue' && !selectedOrder)
+          }
         >
           {submitting ? (
             <ActivityIndicator size="small" color="#fff" />
@@ -375,14 +389,12 @@ export default function CreateTicketScreen({ navigation, route }) {
 
           {orders.length === 0 ? (
             <View style={createTicketScreenStyles.emptyState}>
-              <Text style={createTicketScreenStyles.emptyStateText}>
-                Nessun ordine trovato
-              </Text>
+              <Text style={createTicketScreenStyles.emptyStateText}>Nessun ordine trovato</Text>
             </View>
           ) : (
             <FlatList
               data={orders}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={item => item.id.toString()}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={createTicketScreenStyles.orderItem}

@@ -13,7 +13,7 @@ class PerformanceMiddleware {
       total: 0,
       byEndpoint: new Map(),
       byMethod: new Map(),
-      errors: 0
+      errors: 0,
     };
   }
 
@@ -51,8 +51,14 @@ class PerformanceMiddleware {
       // Track request count
       this.requestCounts.total++;
       const endpoint = req.route?.path || req.path;
-      this.requestCounts.byEndpoint.set(endpoint, (this.requestCounts.byEndpoint.get(endpoint) || 0) + 1);
-      this.requestCounts.byMethod.set(req.method, (this.requestCounts.byMethod.get(req.method) || 0) + 1);
+      this.requestCounts.byEndpoint.set(
+        endpoint,
+        (this.requestCounts.byEndpoint.get(endpoint) || 0) + 1,
+      );
+      this.requestCounts.byMethod.set(
+        req.method,
+        (this.requestCounts.byMethod.get(req.method) || 0) + 1,
+      );
 
       // Override res.end to track completion
       const originalEnd = res.end;
@@ -126,22 +132,24 @@ class PerformanceMiddleware {
         system: {
           cpu: metrics.system.cpu[metrics.system.cpu.length - 1] || 0,
           memory: metrics.system.memory[metrics.system.memory.length - 1] || 0,
-          loadAverage: metrics.system.loadAverage[metrics.system.loadAverage.length - 1] || 0
+          loadAverage: metrics.system.loadAverage[metrics.system.loadAverage.length - 1] || 0,
         },
         application: {
           requests: this.requestCounts.total,
           errors: this.requestCounts.errors,
-          avgResponseTime: metrics.application.responseTime.length > 0
-            ? metrics.application.responseTime.reduce((a, b) => a + b, 0) / metrics.application.responseTime.length
-            : 0
+          avgResponseTime:
+            metrics.application.responseTime.length > 0
+              ? metrics.application.responseTime.reduce((a, b) => a + b, 0) /
+                metrics.application.responseTime.length
+              : 0,
         },
         database: {
           queryCount: metrics.database.queryCount,
           avgResponseTime: metrics.database.avgResponseTime,
-          connectionPool: metrics.database.connectionPool
+          connectionPool: metrics.database.connectionPool,
         },
         stress,
-        recommendations
+        recommendations,
       };
 
       res.status(stress.isStressed ? 200 : 200).json(health);
@@ -163,14 +171,17 @@ class PerformanceMiddleware {
           byEndpoint: Object.fromEntries(this.requestCounts.byEndpoint),
           byMethod: Object.fromEntries(this.requestCounts.byMethod),
           errors: this.requestCounts.errors,
-          errorRate: this.requestCounts.total > 0 ? (this.requestCounts.errors / this.requestCounts.total * 100).toFixed(2) : 0
+          errorRate:
+            this.requestCounts.total > 0
+              ? ((this.requestCounts.errors / this.requestCounts.total) * 100).toFixed(2)
+              : 0,
         },
         system: {
           platform: process.platform,
           nodeVersion: process.version,
           pid: process.pid,
-          memory: process.memoryUsage()
-        }
+          memory: process.memoryUsage(),
+        },
       });
     };
   }
@@ -214,7 +225,7 @@ Status:      ${stress.isStressed ? '⚠️  STRESSED' : '✅ HEALTHY'}
 📊  APPLICATION METRICS
 ═══════════════════════════════════════════════════════════════
 Total Requests:    ${this.requestCounts.total}
-Error Rate:         ${this.requestCounts.total > 0 ? (this.requestCounts.errors / this.requestCounts.total * 100).toFixed(2) : 0}%
+Error Rate:         ${this.requestCounts.total > 0 ? ((this.requestCounts.errors / this.requestCounts.total) * 100).toFixed(2) : 0}%
 Avg Response Time:  ${metrics.application.responseTime.length > 0 ? (metrics.application.responseTime.reduce((a, b) => a + b, 0) / metrics.application.responseTime.length).toFixed(1) : 0}ms
 
 🗄️  DATABASE PERFORMANCE
@@ -256,7 +267,7 @@ Last Updated: ${new Date().toLocaleString()}
       requests: this.requestCounts,
       metrics: this.monitor.getMetrics(),
       stress: this.monitor.isSystemUnderStress(),
-      recommendations: this.monitor.getRecommendations()
+      recommendations: this.monitor.getRecommendations(),
     };
   }
 }

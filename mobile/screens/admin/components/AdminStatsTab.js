@@ -1,14 +1,8 @@
 import React from 'react';
 import { View, FlatList, RefreshControl, Text } from 'react-native';
-import { adminDashboardScreenStyles as styles } from '../styles/AdminDashboardScreenStyles';
+import { AdminDashboardScreenStyles as styles } from '../styles/AdminDashboardScreenStyles';
 
-const AdminStatsTab = ({ 
-  stats, 
-  loading, 
-  refreshing, 
-  onRefresh,
-  StatCard 
-}) => {
+const AdminStatsTab = ({ stats, loading, refreshing, onRefresh, StatCard }) => {
   return (
     <FlatList
       data={[]}

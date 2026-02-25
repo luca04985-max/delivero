@@ -6,9 +6,9 @@ const DocumentPickup = () => {
     documentType: 'certificate',
     pickupLocation: '',
     deliveryAddress: '',
-    estimatedCost: 5.00,
+    estimatedCost: 5.0,
     description: '',
-    signatureRequired: false
+    signatureRequired: false,
   });
 
   const [loading, setLoading] = useState(false);
@@ -21,18 +21,18 @@ const DocumentPickup = () => {
     { value: 'contract', label: 'Contratto' },
     { value: 'document', label: 'Documento generico' },
     { value: 'bill', label: 'Bolletta' },
-    { value: 'other', label: 'Altro' }
+    { value: 'other', label: 'Altro' },
   ];
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
 
@@ -43,20 +43,20 @@ const DocumentPickup = () => {
         pickupLon: 0,
         deliveryLat: 0,
         deliveryLon: 0,
-        estimatedCost: parseFloat(formData.estimatedCost)
+        estimatedCost: parseFloat(formData.estimatedCost),
       });
 
       setTrackingNumber(response.data.tracking_number);
       setMessage('Ritiro documento prenotato con successo!');
-      
+
       // Reset form
       setFormData({
         documentType: 'certificate',
         pickupLocation: '',
         deliveryAddress: '',
-        estimatedCost: 5.00,
+        estimatedCost: 5.0,
         description: '',
-        signatureRequired: false
+        signatureRequired: false,
       });
     } catch (error) {
       setMessage(`Errore: ${error.response?.data?.message || error.message}`);
@@ -73,7 +73,9 @@ const DocumentPickup = () => {
       {trackingNumber && (
         <div className="tracking-info">
           <h4>✓ Ritiro Confermato</h4>
-          <p>Numero di Tracking: <strong>{trackingNumber}</strong></p>
+          <p>
+            Numero di Tracking: <strong>{trackingNumber}</strong>
+          </p>
           <p>Puoi tracciare lo stato del tuo ritiro usando questo numero</p>
         </div>
       )}
@@ -160,11 +162,7 @@ const DocumentPickup = () => {
         </button>
       </form>
 
-      {message && (
-        <p className={`message ${trackingNumber ? 'success' : 'error'}`}>
-          {message}
-        </p>
-      )}
+      {message && <p className={`message ${trackingNumber ? 'success' : 'error'}`}>{message}</p>}
 
       <div className="info-box">
         <h4>ℹ️ Informazioni importante</h4>

@@ -1,27 +1,27 @@
-import { useState } from "react";
-import { authAPI } from "../services/api";
+import { useState } from 'react';
+import { authAPI } from '../services/api';
 
 export default function LoginForm({ onLoginSuccess }) {
   const [formData, setFormData] = useState({
-    email: "",
-    password: ""
+    email: '',
+    password: '',
   });
 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
     try {
       const response = await authAPI.login(formData.email, formData.password);
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
       onLoginSuccess(response.data.user);
       setError(null);
     } catch (err) {
@@ -65,13 +65,13 @@ export default function LoginForm({ onLoginSuccess }) {
             placeholder="••••••••"
           />
         </div>
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           disabled={loading}
           className="btn btn-primary"
-          style={{ width: "100%" }}
+          style={{ width: '100%' }}
         >
-          {loading ? "⏳ Accesso in corso..." : "🚀 Accedi"}
+          {loading ? '⏳ Accesso in corso...' : '🚀 Accedi'}
         </button>
       </form>
     </div>

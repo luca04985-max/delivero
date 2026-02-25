@@ -23,15 +23,13 @@ export const useTicketDetail = (ticketId, userRole) => {
       setError(null);
 
       // Determina l'endpoint basato sul ruolo
-      const endpoint = userRole === 'rider'
-        ? `/tickets/rider/${ticketId}`
-        : `/tickets/customer/${ticketId}`;
+      const endpoint =
+        userRole === 'rider' ? `/tickets/rider/${ticketId}` : `/tickets/customer/${ticketId}`;
 
       console.log(`🌐 Loading ticket from API: ${endpoint} (${userRole})`);
 
       const data = await makeRequest(endpoint, { method: 'GET' });
       setTicket(data);
-
     } catch (err) {
       console.error('❌ Error loading ticket detail:', err);
       setError(err);

@@ -11,21 +11,21 @@ const MedicalTransport = () => {
     appointmentDate: '',
     appointmentTime: '',
     returnTrip: true,
-    specialRequirements: ''
+    specialRequirements: '',
   });
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
 
@@ -33,7 +33,7 @@ const MedicalTransport = () => {
       const response = await API.post('/medical-transports', {
         ...formData,
         pickupLat: 0, // Get from geolocation
-        pickupLon: 0
+        pickupLon: 0,
       });
 
       setMessage('Trasporto medico prenotato con successo!');
@@ -46,7 +46,7 @@ const MedicalTransport = () => {
         appointmentDate: '',
         appointmentTime: '',
         returnTrip: true,
-        specialRequirements: ''
+        specialRequirements: '',
       });
     } catch (error) {
       setMessage(`Errore: ${error.response?.data?.message || error.message}`);

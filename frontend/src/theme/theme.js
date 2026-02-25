@@ -20,9 +20,9 @@ export const theme = {
     text: {
       primary: '#212121', // Main text
       secondary: '#666666', // Secondary text
-      disabled: '#BDBDBD' // Disabled text
+      disabled: '#BDBDBD', // Disabled text
     },
-    
+
     // Status Colors
     pending: '#FF9800',
     confirmed: '#4CAF50',
@@ -41,7 +41,7 @@ export const theme = {
 
     // Shadows
     shadow: 'rgba(0, 0, 0, 0.1)',
-    shadowDark: 'rgba(0, 0, 0, 0.2)'
+    shadowDark: 'rgba(0, 0, 0, 0.2)',
   },
 
   // Typography
@@ -56,7 +56,7 @@ export const theme = {
       '2xl': 20,
       '3xl': 24,
       '4xl': 28,
-      '5xl': 32
+      '5xl': 32,
     },
     // Font weights
     fontWeight: {
@@ -64,15 +64,15 @@ export const theme = {
       normal: 400,
       medium: 500,
       semibold: 600,
-      bold: 700
+      bold: 700,
     },
     // Line heights
     lineHeight: {
       tight: 1.2,
       normal: 1.5,
       relaxed: 1.75,
-      loose: 2
-    }
+      loose: 2,
+    },
   },
 
   // Spacing System (8px base)
@@ -89,7 +89,7 @@ export const theme = {
     12: 48,
     16: 64,
     20: 80,
-    24: 96
+    24: 96,
   },
 
   // Border Radius
@@ -100,7 +100,7 @@ export const theme = {
     md: 8,
     lg: 12,
     xl: 16,
-    full: 9999
+    full: 9999,
   },
 
   // Shadows (Web CSS)
@@ -110,7 +110,7 @@ export const theme = {
     base: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
     md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
     lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-    xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+    xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
   },
 
   // Buttons
@@ -123,54 +123,54 @@ export const theme = {
         fontWeight: '600',
         border: 'none',
         cursor: 'pointer',
-        transition: 'all 0.3s ease'
+        transition: 'all 0.3s ease',
       },
       mobile: {
         paddingVertical: 10,
         paddingHorizontal: 16,
         borderRadius: 6,
-        minHeight: 44
-      }
+        minHeight: 44,
+      },
     },
     primary: {
       web: {
         backgroundColor: '#FF6B00',
-        color: '#fff'
+        color: '#fff',
       },
       mobile: {
-        backgroundColor: '#FF6B00'
-      }
+        backgroundColor: '#FF6B00',
+      },
     },
     secondary: {
       web: {
         backgroundColor: '#0066FF',
-        color: '#fff'
+        color: '#fff',
       },
       mobile: {
-        backgroundColor: '#0066FF'
-      }
+        backgroundColor: '#0066FF',
+      },
     },
     outline: {
       web: {
         backgroundColor: 'transparent',
         color: '#FF6B00',
-        border: '2px solid #FF6B00'
+        border: '2px solid #FF6B00',
       },
       mobile: {
         backgroundColor: 'transparent',
         borderWidth: 2,
-        borderColor: '#FF6B00'
-      }
+        borderColor: '#FF6B00',
+      },
     },
     danger: {
       web: {
         backgroundColor: '#D32F2F',
-        color: '#fff'
+        color: '#fff',
       },
       mobile: {
-        backgroundColor: '#D32F2F'
-      }
-    }
+        backgroundColor: '#D32F2F',
+      },
+    },
   },
 
   // Form Elements
@@ -181,7 +181,7 @@ export const theme = {
         borderRadius: '6px',
         border: '1px solid #E0E0E0',
         fontSize: '14px',
-        fontFamily: 'inherit'
+        fontFamily: 'inherit',
       },
       mobile: {
         paddingVertical: 10,
@@ -189,8 +189,8 @@ export const theme = {
         borderRadius: 6,
         borderWidth: 1,
         borderColor: '#E0E0E0',
-        fontSize: 14
-      }
+        fontSize: 14,
+      },
     },
     label: {
       web: {
@@ -198,27 +198,27 @@ export const theme = {
         fontWeight: '600',
         color: '#212121',
         marginBottom: '6px',
-        display: 'block'
+        display: 'block',
       },
       mobile: {
         fontSize: 12,
         fontWeight: '600',
         color: '#212121',
-        marginBottom: 6
-      }
+        marginBottom: 6,
+      },
     },
     error: {
       web: {
         color: '#D32F2F',
         fontSize: '12px',
-        marginTop: '4px'
+        marginTop: '4px',
       },
       mobile: {
         color: '#D32F2F',
         fontSize: 12,
-        marginTop: 4
-      }
-    }
+        marginTop: 4,
+      },
+    },
   },
 
   // Tables
@@ -227,23 +227,23 @@ export const theme = {
       web: {
         backgroundColor: '#212121',
         color: '#fff',
-        fontWeight: '600'
+        fontWeight: '600',
       },
       mobile: {
-        backgroundColor: '#212121'
-      }
+        backgroundColor: '#212121',
+      },
     },
     cell: {
       web: {
         padding: '12px',
-        borderBottom: '1px solid #E0E0E0'
+        borderBottom: '1px solid #E0E0E0',
       },
       mobile: {
         padding: 12,
         borderBottomWidth: 1,
-        borderBottomColor: '#E0E0E0'
-      }
-    }
+        borderBottomColor: '#E0E0E0',
+      },
+    },
   },
 
   // Cards
@@ -253,7 +253,7 @@ export const theme = {
         backgroundColor: '#fff',
         borderRadius: '8px',
         padding: '16px',
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
       },
       mobile: {
         backgroundColor: '#fff',
@@ -263,9 +263,9 @@ export const theme = {
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
         shadowRadius: 2,
-        elevation: 2
-      }
-    }
+        elevation: 2,
+      },
+    },
   },
 
   // Breakpoints (Web)
@@ -275,8 +275,8 @@ export const theme = {
     md: '768px',
     lg: '1024px',
     xl: '1280px',
-    '2xl': '1536px'
-  }
+    '2xl': '1536px',
+  },
 };
 
 // Helper function to get responsive styles
@@ -284,7 +284,7 @@ export const getResponsiveStyle = (mobile, tablet, desktop) => {
   return {
     '@media (max-width: 640px)': mobile || {},
     '@media (min-width: 641px) and (max-width: 1024px)': tablet || mobile || {},
-    '@media (min-width: 1025px)': desktop || {}
+    '@media (min-width: 1025px)': desktop || {},
   };
 };
 
@@ -297,17 +297,18 @@ export const mergeThemeStyles = (...styles) => {
 export const webStyles = {
   // Global
   body: {
-    fontFamily: '"-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "sans-serif"',
+    fontFamily:
+      '"-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "sans-serif"',
     backgroundColor: theme.colors.background,
     color: theme.colors.text.primary,
-    lineHeight: theme.typography.lineHeight.normal
+    lineHeight: theme.typography.lineHeight.normal,
   },
 
   // Container
   container: {
     maxWidth: '1400px',
     margin: '0 auto',
-    padding: `0 ${theme.spacing[4]}px`
+    padding: `0 ${theme.spacing[4]}px`,
   },
 
   // Buttons
@@ -317,41 +318,41 @@ export const webStyles = {
     '&:hover': {
       backgroundColor: '#E85A00',
       transform: 'translateY(-2px)',
-      boxShadow: theme.shadows.md
+      boxShadow: theme.shadows.md,
     },
     '&:active': {
       transform: 'translateY(0)',
-      boxShadow: theme.shadows.sm
-    }
+      boxShadow: theme.shadows.sm,
+    },
   },
 
   buttonSecondary: {
     ...theme.buttons.base.web,
     ...theme.buttons.secondary.web,
     '&:hover': {
-      backgroundColor: '#0052CC'
-    }
+      backgroundColor: '#0052CC',
+    },
   },
 
   buttonOutline: {
     ...theme.buttons.base.web,
     ...theme.buttons.outline.web,
     '&:hover': {
-      backgroundColor: '#FFF0E6'
-    }
+      backgroundColor: '#FFF0E6',
+    },
   },
 
   buttonDanger: {
     ...theme.buttons.base.web,
     ...theme.buttons.danger.web,
     '&:hover': {
-      backgroundColor: '#B71C1C'
-    }
+      backgroundColor: '#B71C1C',
+    },
   },
 
   // Forms
   formGroup: {
-    marginBottom: theme.spacing[4]
+    marginBottom: theme.spacing[4],
   },
 
   input: {
@@ -359,13 +360,13 @@ export const webStyles = {
     '&:focus': {
       outline: 'none',
       borderColor: theme.colors.primary,
-      boxShadow: `0 0 0 3px ${theme.colors.primary}20`
+      boxShadow: `0 0 0 3px ${theme.colors.primary}20`,
     },
     '&:disabled': {
       backgroundColor: theme.colors.background,
       color: theme.colors.text.disabled,
-      cursor: 'not-allowed'
-    }
+      cursor: 'not-allowed',
+    },
   },
 
   label: theme.forms.label.web,
@@ -374,12 +375,12 @@ export const webStyles = {
   table: {
     width: '100%',
     borderCollapse: 'collapse',
-    marginTop: theme.spacing[4]
+    marginTop: theme.spacing[4],
   },
 
   tableHeader: {
     ...theme.tables.header.web,
-    padding: theme.tables.cell.web.padding
+    padding: theme.tables.cell.web.padding,
   },
 
   tableCell: theme.tables.cell.web,
@@ -392,28 +393,28 @@ export const webStyles = {
     fontSize: `${theme.typography.fontSize['5xl']}px`,
     fontWeight: theme.typography.fontWeight.bold,
     lineHeight: theme.typography.lineHeight.tight,
-    marginBottom: theme.spacing[4]
+    marginBottom: theme.spacing[4],
   },
 
   h2: {
     fontSize: `${theme.typography.fontSize['4xl']}px`,
     fontWeight: theme.typography.fontWeight.bold,
     lineHeight: theme.typography.lineHeight.tight,
-    marginBottom: theme.spacing[3]
+    marginBottom: theme.spacing[3],
   },
 
   h3: {
     fontSize: `${theme.typography.fontSize['3xl']}px`,
     fontWeight: theme.typography.fontWeight.semibold,
     lineHeight: theme.typography.lineHeight.tight,
-    marginBottom: theme.spacing[2]
+    marginBottom: theme.spacing[2],
   },
 
   p: {
     fontSize: `${theme.typography.fontSize.base}px`,
     lineHeight: theme.typography.lineHeight.normal,
-    marginBottom: theme.spacing[3]
-  }
+    marginBottom: theme.spacing[3],
+  },
 };
 
 // Mobile Native Styles for React Native Components
@@ -421,13 +422,13 @@ export const mobileStyles = {
   // Global Container
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
 
   // Safe Area
   safeArea: {
     flex: 1,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.white,
   },
 
   // Header
@@ -436,66 +437,66 @@ export const mobileStyles = {
     paddingVertical: theme.spacing[4],
     paddingHorizontal: theme.spacing[4],
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
 
   headerTitle: {
     fontSize: theme.typography.fontSize['2xl'],
     fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text.primary
+    color: theme.colors.text.primary,
   },
 
   // Buttons
   buttonPrimary: {
     ...theme.buttons.base.mobile,
     ...theme.buttons.primary.mobile,
-    backgroundColor: theme.colors.primary
+    backgroundColor: theme.colors.primary,
   },
 
   buttonSecondary: {
     ...theme.buttons.base.mobile,
     ...theme.buttons.secondary.mobile,
-    backgroundColor: theme.colors.secondary
+    backgroundColor: theme.colors.secondary,
   },
 
   buttonOutline: {
     ...theme.buttons.base.mobile,
     ...theme.buttons.outline.mobile,
-    borderColor: theme.colors.primary
+    borderColor: theme.colors.primary,
   },
 
   buttonDanger: {
     ...theme.buttons.base.mobile,
     ...theme.buttons.danger.mobile,
-    backgroundColor: theme.colors.error
+    backgroundColor: theme.colors.error,
   },
 
   buttonText: (type = 'primary') => ({
     color: '#fff',
     fontSize: theme.typography.fontSize.base,
-    fontWeight: theme.typography.fontWeight.semibold
+    fontWeight: theme.typography.fontWeight.semibold,
   }),
 
   // Forms
   formGroup: {
-    marginBottom: theme.spacing[4]
+    marginBottom: theme.spacing[4],
   },
 
   label: {
     ...theme.forms.label.mobile,
-    marginBottom: theme.spacing[1]
+    marginBottom: theme.spacing[1],
   },
 
   input: {
     ...theme.forms.input.mobile,
     height: 44,
-    color: theme.colors.text.primary
+    color: theme.colors.text.primary,
   },
 
   // Cards
   card: {
     ...theme.cards.base.mobile,
-    marginBottom: theme.spacing[2]
+    marginBottom: theme.spacing[2],
   },
 
   // Lists
@@ -503,7 +504,7 @@ export const mobileStyles = {
     paddingVertical: theme.spacing[3],
     paddingHorizontal: theme.spacing[4],
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
 
   // Typography
@@ -511,33 +512,33 @@ export const mobileStyles = {
     fontSize: theme.typography.fontSize['3xl'],
     fontWeight: theme.typography.fontWeight.bold,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing[2]
+    marginBottom: theme.spacing[2],
   },
 
   h2: {
     fontSize: theme.typography.fontSize['2xl'],
     fontWeight: theme.typography.fontWeight.bold,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing[2]
+    marginBottom: theme.spacing[2],
   },
 
   h3: {
     fontSize: theme.typography.fontSize.lg,
     fontWeight: theme.typography.fontWeight.semibold,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing[1]
+    marginBottom: theme.spacing[1],
   },
 
   body: {
     fontSize: theme.typography.fontSize.base,
     color: theme.colors.text.primary,
-    lineHeight: theme.typography.lineHeight.normal
+    lineHeight: theme.typography.lineHeight.normal,
   },
 
   caption: {
     fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.text.secondary
-  }
+    color: theme.colors.text.secondary,
+  },
 };
 
 export default theme;

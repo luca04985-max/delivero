@@ -15,7 +15,7 @@ import {
   getTrackHistory,
   updateRiderLocation,
   getActiveOrders,
-  updateDeliveryCoordinates
+  updateDeliveryCoordinates,
 } from '../controllers/ordersController.js';
 import { authenticateToken } from '../middleware/auth.js';
 

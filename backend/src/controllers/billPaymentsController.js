@@ -23,7 +23,7 @@ export const createBillPayment = async (req, res) => {
       billId,
       userId,
       paymentMethod,
-      bill.amount
+      bill.amount,
     );
 
     res.status(201).json(billPayment);
@@ -62,7 +62,7 @@ export const uploadBillPaymentImages = async (req, res) => {
     const updated = await BillPaymentModel.updateBillPaymentImages(
       billPaymentId,
       barcodeUrl,
-      qrCodeUrl
+      qrCodeUrl,
     );
 
     res.json(updated);
@@ -82,7 +82,11 @@ export const getBillPayment = async (req, res) => {
       return res.status(404).json({ message: 'Pagamento bolletta non trovato' });
     }
 
-    if (billPayment.user_id !== req.user.id && req.user.role !== 'admin' && req.user.role !== 'rider') {
+    if (
+      billPayment.user_id !== req.user.id &&
+      req.user.role !== 'admin' &&
+      req.user.role !== 'rider'
+    ) {
       return res.status(403).json({ message: 'Non autorizzato' });
     }
 
@@ -155,7 +159,7 @@ export const updatePaymentStatus = async (req, res) => {
     const updated = await BillPaymentModel.updateBillPaymentStatus(
       billPaymentId,
       status,
-      riderPaymentStatus
+      riderPaymentStatus,
     );
 
     res.json(updated);
@@ -232,26 +236,23 @@ export const uploadBillPhoto = async (req, res) => {
       billPaymentId,
       billPhotoUrl,
       cameraPermissionGranted === 'true',
-      new Date()
+      new Date(),
     );
 
     res.json(updated);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Errore durante il caricamento della foto', error: error.message });
+    res
+      .status(500)
+      .json({ message: 'Errore durante il caricamento della foto', error: error.message });
   }
 };
 
 // Create order with bill photo
 export const createOrderWithBillPhoto = async (req, res) => {
   try {
-    const {
-      billId,
-      paymentMethod,
-      deliveryAddress,
-      billPhotoBase64,
-      cameraPermissionGranted
-    } = req.body;
+    const { billId, paymentMethod, deliveryAddress, billPhotoBase64, cameraPermissionGranted } =
+      req.body;
 
     const userId = req.user.id;
 
@@ -270,7 +271,7 @@ export const createOrderWithBillPhoto = async (req, res) => {
       billId,
       userId,
       paymentMethod,
-      bill.amount
+      bill.amount,
     );
 
     // Process bill photo if provided
@@ -284,34 +285,31 @@ export const createOrderWithBillPhoto = async (req, res) => {
       const mockFile = {
         buffer: buffer,
         originalname: filename,
-        mimetype: 'image/jpeg'
+        mimetype: 'image/jpeg',
       };
 
       billPhotoUrl = await uploadToS3(mockFile, 'bill-payments/photos');
 
       // Update bill payment with photo info
-      await BillPaymentModel.updateBillPaymentPhoto(
-        billPayment.id,
-        billPhotoUrl,
-        true,
-        new Date()
-      );
+      await BillPaymentModel.updateBillPaymentPhoto(billPayment.id, billPhotoUrl, true, new Date());
     }
 
     // Create order linked to bill payment
     const orderData = {
       user_id: userId,
-      items: [{
-        type: 'bill_payment',
-        billId: billId,
-        billPaymentId: billPayment.id,
-        description: `Pagamento bolletta ${bill.type}`,
-        amount: bill.amount,
-        photoUrl: billPhotoUrl
-      }],
+      items: [
+        {
+          type: 'bill_payment',
+          billId: billId,
+          billPaymentId: billPayment.id,
+          description: `Pagamento bolletta ${bill.type}`,
+          amount: bill.amount,
+          photoUrl: billPhotoUrl,
+        },
+      ],
       total_amount: bill.amount,
       delivery_address: deliveryAddress,
-      status: 'pending'
+      status: 'pending',
     };
 
     const order = await OrderModel.createOrder(orderData);
@@ -326,8 +324,8 @@ export const createOrderWithBillPhoto = async (req, res) => {
         ...billPayment,
         bill_photo_url: billPhotoUrl,
         camera_permission_granted: cameraPermissionGranted,
-        photo_capture_timestamp: billPhotoUrl ? new Date() : null
-      }
+        photo_capture_timestamp: billPhotoUrl ? new Date() : null,
+      },
     });
   } catch (error) {
     console.error(error);
@@ -345,7 +343,11 @@ export const getBillPaymentWithOrder = async (req, res) => {
       return res.status(404).json({ message: 'Pagamento bolletta non trovato' });
     }
 
-    if (billPayment.user_id !== req.user.id && req.user.role !== 'admin' && req.user.role !== 'rider') {
+    if (
+      billPayment.user_id !== req.user.id &&
+      req.user.role !== 'admin' &&
+      req.user.role !== 'rider'
+    ) {
       return res.status(403).json({ message: 'Non autorizzato' });
     }
 
@@ -359,12 +361,7 @@ export const getBillPaymentWithOrder = async (req, res) => {
 // Create order with bill photo (mobile version - handles multipart form)
 export const createOrderWithBillPhotoMobile = async (req, res) => {
   try {
-    const {
-      billId,
-      paymentMethod,
-      deliveryAddress,
-      cameraPermissionGranted
-    } = req.body;
+    const { billId, paymentMethod, deliveryAddress, cameraPermissionGranted } = req.body;
 
     const billPhoto = req.file;
     const userId = req.user.id;
@@ -384,7 +381,7 @@ export const createOrderWithBillPhotoMobile = async (req, res) => {
       billId,
       userId,
       paymentMethod,
-      bill.amount
+      bill.amount,
     );
 
     // Process bill photo if provided
@@ -394,28 +391,25 @@ export const createOrderWithBillPhotoMobile = async (req, res) => {
       billPhotoUrl = await uploadToS3(billPhoto, 'bill-payments/photos');
 
       // Update bill payment with photo info
-      await BillPaymentModel.updateBillPaymentPhoto(
-        billPayment.id,
-        billPhotoUrl,
-        true,
-        new Date()
-      );
+      await BillPaymentModel.updateBillPaymentPhoto(billPayment.id, billPhotoUrl, true, new Date());
     }
 
     // Create order linked to bill payment
     const orderData = {
       user_id: userId,
-      items: [{
-        type: 'bill_payment',
-        billId: billId,
-        billPaymentId: billPayment.id,
-        description: `Pagamento bolletta ${bill.type}`,
-        amount: bill.amount,
-        photoUrl: billPhotoUrl
-      }],
+      items: [
+        {
+          type: 'bill_payment',
+          billId: billId,
+          billPaymentId: billPayment.id,
+          description: `Pagamento bolletta ${bill.type}`,
+          amount: bill.amount,
+          photoUrl: billPhotoUrl,
+        },
+      ],
       total_amount: bill.amount,
       delivery_address: deliveryAddress,
-      status: 'pending'
+      status: 'pending',
     };
 
     const order = await OrderModel.createOrder(orderData);
@@ -430,8 +424,8 @@ export const createOrderWithBillPhotoMobile = async (req, res) => {
         ...billPayment,
         bill_photo_url: billPhotoUrl,
         camera_permission_granted: cameraPermissionGranted === 'true',
-        photo_capture_timestamp: billPhotoUrl ? new Date() : null
-      }
+        photo_capture_timestamp: billPhotoUrl ? new Date() : null,
+      },
     });
   } catch (error) {
     console.error(error);

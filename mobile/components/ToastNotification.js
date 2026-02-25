@@ -11,13 +11,7 @@ import { mobileTheme } from '../theme';
  * @param {Function} props.onHide - Callback quando il toast si nasconde
  * @param {number} props.duration - Durata visibilità in ms (default 3000)
  */
-const ToastNotification = ({ 
-  visible, 
-  message, 
-  type = 'info', 
-  onHide, 
-  duration = 3000 
-}) => {
+const ToastNotification = ({ visible, message, type = 'info', onHide, duration = 3000 }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(-100)).current;
   const { width: screenWidth } = Dimensions.get('window');

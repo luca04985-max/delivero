@@ -15,7 +15,7 @@ export const createTransport = async (req, res) => {
       appointmentDate,
       appointmentTime,
       returnTrip,
-      specialRequirements
+      specialRequirements,
     } = req.body;
 
     const transport = await MedicalTransportModel.createMedicalTransport(
@@ -30,7 +30,7 @@ export const createTransport = async (req, res) => {
       appointmentDate,
       appointmentTime,
       returnTrip,
-      specialRequirements
+      specialRequirements,
     );
 
     res.status(201).json(transport);
@@ -62,7 +62,11 @@ export const getTransport = async (req, res) => {
       return res.status(404).json({ message: 'Trasporto non trovato' });
     }
 
-    if (transport.user_id !== req.user.id && req.user.role !== 'admin' && req.user.role !== 'rider') {
+    if (
+      transport.user_id !== req.user.id &&
+      req.user.role !== 'admin' &&
+      req.user.role !== 'rider'
+    ) {
       return res.status(403).json({ message: 'Non autorizzato' });
     }
 
@@ -98,7 +102,10 @@ export const assignRider = async (req, res) => {
       return res.status(403).json({ message: 'Solo gli admin possono assegnare rider' });
     }
 
-    const transport = await MedicalTransportModel.assignRiderToMedicalTransport(transportId, riderId);
+    const transport = await MedicalTransportModel.assignRiderToMedicalTransport(
+      transportId,
+      riderId,
+    );
     res.json(transport);
   } catch (error) {
     console.error(error);
@@ -116,7 +123,10 @@ export const confirmTransport = async (req, res) => {
       return res.status(404).json({ message: 'Trasporto non trovato' });
     }
 
-    const updated = await MedicalTransportModel.updateMedicalTransportStatus(transportId, 'confirmed');
+    const updated = await MedicalTransportModel.updateMedicalTransportStatus(
+      transportId,
+      'confirmed',
+    );
     res.json(updated);
   } catch (error) {
     console.error(error);
@@ -165,7 +175,7 @@ export const updateCost = async (req, res) => {
     const updated = await MedicalTransportModel.updateMedicalTransportCost(
       transportId,
       estimatedCost,
-      actualCost
+      actualCost,
     );
     res.json(updated);
   } catch (error) {

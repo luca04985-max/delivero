@@ -3,14 +3,7 @@ import pool from '../config/db.js';
 // Create a new order
 export const createOrder = async (userId, orderData) => {
   try {
-    const {
-      deliveryAddress,
-      items,
-      totalAmount,
-      deliveryFee,
-      restaurantId,
-      notes
-    } = orderData;
+    const { deliveryAddress, items, totalAmount, deliveryFee, restaurantId, notes } = orderData;
 
     const result = await pool.query(
       `INSERT INTO orders (
@@ -34,8 +27,8 @@ export const createOrder = async (userId, orderData) => {
         totalAmount,
         deliveryFee,
         'pending',
-        notes || null
-      ]
+        notes || null,
+      ],
     );
 
     return result.rows[0];
@@ -45,14 +38,14 @@ export const createOrder = async (userId, orderData) => {
 };
 
 // Get order by ID
-export const getOrderById = async (orderId) => {
+export const getOrderById = async orderId => {
   try {
     const result = await pool.query(
       `SELECT o.*, u.name as customer_name, u.phone as customer_phone, u.email as customer_email
        FROM orders o
        JOIN users u ON o.user_id = u.id
        WHERE o.id = $1`,
-      [orderId]
+      [orderId],
     );
 
     return result.rows[0];
@@ -73,7 +66,7 @@ export const getUserOrders = async (userId, limit = 10, offset = 0) => {
        WHERE o.customer_id = $1
        ORDER BY o.created_at DESC
        LIMIT $2 OFFSET $3`,
-      [userId, limit, offset]
+      [userId, limit, offset],
     );
 
     return result.rows;
@@ -85,7 +78,15 @@ export const getUserOrders = async (userId, limit = 10, offset = 0) => {
 // Update order status
 export const updateOrderStatus = async (orderId, status) => {
   try {
-    const validStatuses = ['pending', 'confirmed', 'preparing', 'ready', 'in_transit', 'delivered', 'cancelled'];
+    const validStatuses = [
+      'pending',
+      'confirmed',
+      'preparing',
+      'ready',
+      'in_transit',
+      'delivered',
+      'cancelled',
+    ];
 
     if (!validStatuses.includes(status)) {
       throw new Error('Stato ordine non valido');
@@ -96,7 +97,7 @@ export const updateOrderStatus = async (orderId, status) => {
        SET status = $1, updated_at = CURRENT_TIMESTAMP
        WHERE id = $2
        RETURNING *`,
-      [status, orderId]
+      [status, orderId],
     );
 
     return result.rows[0];
@@ -113,7 +114,7 @@ export const assignRiderToOrder = async (orderId, riderId) => {
        SET rider_id = $1, status = 'in_transit', updated_at = CURRENT_TIMESTAMP
        WHERE id = $2
        RETURNING *`,
-      [riderId, orderId]
+      [riderId, orderId],
     );
 
     return result.rows[0];
@@ -135,7 +136,7 @@ export const getPendingOrders = async () => {
        JOIN users u ON o.user_id = u.id
        LEFT JOIN restaurants r ON o.restaurant_id = r.id
        WHERE o.status IN ('pending', 'confirmed', 'preparing', 'ready')
-       ORDER BY o.created_at ASC`
+       ORDER BY o.created_at ASC`,
     );
 
     return result.rows;
@@ -145,7 +146,7 @@ export const getPendingOrders = async () => {
 };
 
 // Get rider's orders
-export const getRiderOrders = async (riderId) => {
+export const getRiderOrders = async riderId => {
   try {
     const result = await pool.query(
       `SELECT o.*, 
@@ -158,7 +159,7 @@ export const getRiderOrders = async (riderId) => {
        LEFT JOIN restaurants r ON o.restaurant_id = r.id
        WHERE o.rider_id = $1
        ORDER BY o.created_at DESC`,
-      [riderId]
+      [riderId],
     );
 
     return result.rows;
@@ -174,7 +175,7 @@ export const deleteOrder = async (orderId, userId) => {
       `DELETE FROM orders 
        WHERE id = $1 AND user_id = $2
        RETURNING *`,
-      [orderId, userId]
+      [orderId, userId],
     );
 
     return result.rows[0];
@@ -194,7 +195,7 @@ export const getOrderStats = async () => {
          AVG(total_amount) as avg_order_value,
          SUM(total_amount) as total_revenue
        FROM orders
-       WHERE created_at >= CURRENT_DATE - INTERVAL '30 days'`
+       WHERE created_at >= CURRENT_DATE - INTERVAL '30 days'`,
     );
 
     return result.rows[0];

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { billsAPI } from "../services/api";
+import { useEffect, useState } from 'react';
+import { billsAPI } from '../services/api';
 
 export default function BillsList() {
   const [bills, setBills] = useState([]);
@@ -24,9 +24,9 @@ export default function BillsList() {
     }
   };
 
-  const handleDeleteBill = async (id) => {
+  const handleDeleteBill = async id => {
     // eslint-disable-next-line no-restricted-globals
-    if (confirm("Sei sicuro di voler eliminare questa bolletta?")) {
+    if (confirm('Sei sicuro di voler eliminare questa bolletta?')) {
       try {
         await billsAPI.delete(id);
         setBills(bills.filter(b => b.id !== id));
@@ -36,18 +36,20 @@ export default function BillsList() {
     }
   };
 
-  if (loading) return (
-    <div className="loading">
-      <div className="spinner"></div>
-      <p className="text-muted ml-2">Caricamento bollette...</p>
-    </div>
-  );
-  if (error) return (
-    <div className="alert alert-error" role="alert">
-      <span>⚠️</span>
-      <span>Errore: {error}</span>
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="loading">
+        <div className="spinner"></div>
+        <p className="text-muted ml-2">Caricamento bollette...</p>
+      </div>
+    );
+  if (error)
+    return (
+      <div className="alert alert-error" role="alert">
+        <span>⚠️</span>
+        <span>Errore: {error}</span>
+      </div>
+    );
 
   return (
     <div>
@@ -77,7 +79,7 @@ export default function BillsList() {
                     </p>
                   )}
                   <p style={{ margin: 0, fontSize: '0.9rem', color: '#999' }}>
-                    📅 Scade: {new Date(bill.due_date).toLocaleDateString("it-IT")}
+                    📅 Scade: {new Date(bill.due_date).toLocaleDateString('it-IT')}
                   </p>
                 </div>
                 <div style={{ textAlign: 'right' }}>
@@ -90,16 +92,10 @@ export default function BillsList() {
                 </div>
               </div>
               <div className="card-footer">
-                <button
-                  onClick={() => handleDeleteBill(bill.id)}
-                  className="btn btn-danger btn-sm"
-                >
+                <button onClick={() => handleDeleteBill(bill.id)} className="btn btn-danger btn-sm">
                   🗑️ Elimina
                 </button>
-                <button
-                  className="btn btn-primary btn-sm"
-                  style={{ marginLeft: 'auto' }}
-                >
+                <button className="btn btn-primary btn-sm" style={{ marginLeft: 'auto' }}>
                   💳 Paga
                 </button>
               </div>

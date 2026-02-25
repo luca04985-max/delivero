@@ -6,7 +6,7 @@ export const ticketsListStyles = {
     padding: '24px',
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     backgroundColor: '#f8f9fa',
-    minHeight: '100vh'
+    minHeight: '100vh',
   },
 
   title: {
@@ -15,7 +15,7 @@ export const ticketsListStyles = {
     fontWeight: '700',
     marginBottom: '32px',
     textAlign: 'center',
-    textShadow: '0 2px 4px rgba(0,0,0,0.1)'
+    textShadow: '0 2px 4px rgba(0,0,0,0.1)',
   },
 
   filterSection: {
@@ -26,7 +26,7 @@ export const ticketsListStyles = {
     padding: '20px',
     backgroundColor: '#ffffff',
     borderRadius: '12px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
   },
 
   filterLabel: {
@@ -34,7 +34,7 @@ export const ticketsListStyles = {
     color: '#495057',
     fontSize: '14px',
     textTransform: 'uppercase',
-    letterSpacing: '0.5px'
+    letterSpacing: '0.5px',
   },
 
   filterSelect: {
@@ -48,13 +48,13 @@ export const ticketsListStyles = {
     transition: 'all 0.3s ease',
     ':hover': {
       borderColor: '#FF6B00',
-      boxShadow: '0 0 0 3px rgba(255, 107, 0, 0.1)'
+      boxShadow: '0 0 0 3px rgba(255, 107, 0, 0.1)',
     },
     ':focus': {
       outline: 'none',
       borderColor: '#FF6B00',
-      boxShadow: '0 0 0 3px rgba(255, 107, 0, 0.1)'
-    }
+      boxShadow: '0 0 0 3px rgba(255, 107, 0, 0.1)',
+    },
   },
 
   loading: {
@@ -65,7 +65,7 @@ export const ticketsListStyles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '16px'
+    gap: '16px',
   },
 
   loadingSpinner: {
@@ -74,37 +74,37 @@ export const ticketsListStyles = {
     border: '4px solid #f3f3f3',
     borderTop: '4px solid #FF6B00',
     borderRadius: '50%',
-    animation: 'spin 1s linear infinite'
+    animation: 'spin 1s linear infinite',
   },
 
   emptyState: {
     textAlign: 'center',
     padding: '80px 20px',
-    color: '#6c757d'
+    color: '#6c757d',
   },
 
   emptyIcon: {
     fontSize: '64px',
     marginBottom: '16px',
-    opacity: '0.5'
+    opacity: '0.5',
   },
 
   emptyTitle: {
     fontSize: '24px',
     fontWeight: '600',
     marginBottom: '8px',
-    color: '#495057'
+    color: '#495057',
   },
 
   emptyText: {
     fontSize: '16px',
-    color: '#6c757d'
+    color: '#6c757d',
   },
 
   ticketsList: {
     display: 'grid',
     gap: '20px',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))'
+    gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
   },
 
   ticketCard: {
@@ -120,7 +120,7 @@ export const ticketsListStyles = {
     ':hover': {
       transform: 'translateY(-4px)',
       boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
-      borderColor: '#FF6B00'
+      borderColor: '#FF6B00',
     },
     ':before': {
       content: '""',
@@ -129,20 +129,20 @@ export const ticketsListStyles = {
       left: '0',
       width: '4px',
       height: '100%',
-      background: 'linear-gradient(135deg, #FF6B00, #FF8C42)'
-    }
+      background: 'linear-gradient(135deg, #FF6B00, #FF8C42)',
+    },
   },
 
   headerCard: {
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
-    marginBottom: '16px'
+    marginBottom: '16px',
   },
 
   ticketType: {
     fontSize: '24px',
-    filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
+    filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
   },
 
   titleCard: {
@@ -151,7 +151,7 @@ export const ticketsListStyles = {
     color: '#2c3e50',
     fontSize: '18px',
     fontWeight: '600',
-    lineHeight: '1.4'
+    lineHeight: '1.4',
   },
 
   statusBadge: {
@@ -162,7 +162,7 @@ export const ticketsListStyles = {
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: '0.5px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
   },
 
   statusOpen: { backgroundColor: '#28a745' },
@@ -178,7 +178,7 @@ export const ticketsListStyles = {
     display: '-webkit-box',
     WebkitLineClamp: 3,
     WebkitBoxOrient: 'vertical',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
 
   ticketMeta: {
@@ -189,18 +189,18 @@ export const ticketsListStyles = {
     fontSize: '12px',
     paddingTop: '16px',
     borderTop: '1px solid #e9ecef',
-    marginTop: '16px'
+    marginTop: '16px',
   },
 
   ticketId: {
     fontWeight: '600',
-    color: '#6c757d'
+    color: '#6c757d',
   },
 
   ticketDate: {
     display: 'flex',
     alignItems: 'center',
-    gap: '4px'
+    gap: '4px',
   },
 
   detailSection: {
@@ -208,11 +208,11 @@ export const ticketsListStyles = {
     borderRadius: '16px',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
     overflow: 'hidden',
-    border: '1px solid #e9ecef'
+    border: '1px solid #e9ecef',
   },
 
   detailCard: {
-    padding: '32px'
+    padding: '32px',
   },
 
   detailHeader: {
@@ -221,7 +221,7 @@ export const ticketsListStyles = {
     alignItems: 'center',
     marginBottom: '24px',
     borderBottom: '2px solid #e9ecef',
-    paddingBottom: '20px'
+    paddingBottom: '20px',
   },
 
   detailTitle: {
@@ -231,7 +231,7 @@ export const ticketsListStyles = {
     fontWeight: '700',
     display: 'flex',
     alignItems: 'center',
-    gap: '12px'
+    gap: '12px',
   },
 
   adminNotes: {
@@ -240,7 +240,7 @@ export const ticketsListStyles = {
     borderRadius: '8px',
     padding: '20px',
     marginBottom: '24px',
-    borderLeft: '4px solid #ffc107'
+    borderLeft: '4px solid #ffc107',
   },
 
   adminNotesTitle: {
@@ -249,7 +249,7 @@ export const ticketsListStyles = {
     marginBottom: '8px',
     display: 'flex',
     alignItems: 'center',
-    gap: '8px'
+    gap: '8px',
   },
 
   detailBody: {
@@ -260,12 +260,12 @@ export const ticketsListStyles = {
     backgroundColor: '#f8f9fa',
     padding: '20px',
     borderRadius: '8px',
-    border: '1px solid #e9ecef'
+    border: '1px solid #e9ecef',
   },
 
   commentsSection: {
     borderTop: '2px solid #e9ecef',
-    paddingTop: '24px'
+    paddingTop: '24px',
   },
 
   commentsTitle: {
@@ -275,7 +275,7 @@ export const ticketsListStyles = {
     marginBottom: '20px',
     display: 'flex',
     alignItems: 'center',
-    gap: '8px'
+    gap: '8px',
   },
 
   commentCard: {
@@ -284,14 +284,14 @@ export const ticketsListStyles = {
     borderRadius: '12px',
     marginBottom: '16px',
     border: '1px solid #e9ecef',
-    borderLeft: '4px solid #007bff'
+    borderLeft: '4px solid #007bff',
   },
 
   commentHeader: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '12px'
+    marginBottom: '12px',
   },
 
   commentRole: {
@@ -302,27 +302,27 @@ export const ticketsListStyles = {
     fontSize: '11px',
     fontWeight: '600',
     textTransform: 'uppercase',
-    letterSpacing: '0.5px'
+    letterSpacing: '0.5px',
   },
 
   commentRoleAdmin: {
-    backgroundColor: '#28a745'
+    backgroundColor: '#28a745',
   },
 
   commentRoleUser: {
-    backgroundColor: '#6c757d'
+    backgroundColor: '#6c757d',
   },
 
   commentText: {
     color: '#495057',
     lineHeight: '1.6',
-    fontSize: '14px'
+    fontSize: '14px',
   },
 
   commentDate: {
     color: '#6c757d',
     fontSize: '12px',
-    marginTop: '8px'
+    marginTop: '8px',
   },
 
   commentForm: {
@@ -333,7 +333,7 @@ export const ticketsListStyles = {
     backgroundColor: '#f8f9fa',
     padding: '20px',
     borderRadius: '12px',
-    border: '1px solid #e9ecef'
+    border: '1px solid #e9ecef',
   },
 
   commentInput: {
@@ -348,8 +348,8 @@ export const ticketsListStyles = {
     ':focus': {
       outline: 'none',
       borderColor: '#FF6B00',
-      boxShadow: '0 0 0 3px rgba(255, 107, 0, 0.1)'
-    }
+      boxShadow: '0 0 0 3px rgba(255, 107, 0, 0.1)',
+    },
   },
 
   submitComment: {
@@ -366,14 +366,14 @@ export const ticketsListStyles = {
     ':hover': {
       backgroundColor: '#e55a00',
       transform: 'translateY(-2px)',
-      boxShadow: '0 4px 12px rgba(255, 107, 0, 0.3)'
+      boxShadow: '0 4px 12px rgba(255, 107, 0, 0.3)',
     },
     ':disabled': {
       backgroundColor: '#6c757d',
       cursor: 'not-allowed',
-      transform: 'none'
-    }
-  }
+      transform: 'none',
+    },
+  },
 };
 
 // Animazione per lo spinner

@@ -1,4 +1,11 @@
-import { createPaymentIntent, confirmPayment, savePayment, saveCashPayment, getPayment, isStripeConfigured } from '../services/payment.js';
+import {
+  createPaymentIntent,
+  confirmPayment,
+  savePayment,
+  saveCashPayment,
+  getPayment,
+  isStripeConfigured,
+} from '../services/payment.js';
 import db from '../config/db.js';
 import { sendOrderConfirmation } from '../services/email.js';
 
@@ -10,7 +17,7 @@ export const createPayment = async (req, res) => {
     // Verify order exists
     const orderResult = await db.query(
       'SELECT o.*, u.email FROM orders o JOIN users u ON o.customer_id = u.id WHERE o.id = $1 AND o.customer_id = $2',
-      [orderId, userId]
+      [orderId, userId],
     );
 
     if (orderResult.rows.length === 0) {
@@ -35,7 +42,7 @@ export const createPayment = async (req, res) => {
 
     res.status(201).json({
       clientSecret: paymentIntent.client_secret,
-      paymentIntentId: paymentIntent.id
+      paymentIntentId: paymentIntent.id,
     });
   } catch (error) {
     res.status(500).json({ message: 'Error creating payment', error: error.message });
@@ -61,14 +68,14 @@ export const confirmOrderPayment = async (req, res) => {
     // Update order status
     await db.query(
       'UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2 AND customer_id = $3',
-      ['confirmed', orderId, userId]
+      ['confirmed', orderId, userId],
     );
 
     // Update payment status
-    await db.query(
-      'UPDATE payments SET status = $1 WHERE stripe_payment_id = $2',
-      ['completed', paymentIntentId]
-    );
+    await db.query('UPDATE payments SET status = $1 WHERE stripe_payment_id = $2', [
+      'completed',
+      paymentIntentId,
+    ]);
 
     // Get user email and send confirmation
     const userResult = await db.query('SELECT email FROM users WHERE id = $1', [userId]);
@@ -77,7 +84,7 @@ export const confirmOrderPayment = async (req, res) => {
     await sendOrderConfirmation(
       userResult.rows[0].email,
       orderId,
-      orderResult.rows[0].total_amount
+      orderResult.rows[0].total_amount,
     );
 
     res.status(200).json({ message: 'Payment confirmed successfully' });
@@ -90,10 +97,10 @@ export const createCashPayment = async (req, res) => {
   try {
     const { orderId } = req.body;
     const userId = req.user.userId;
-    const orderResult = await db.query(
-      'SELECT * FROM orders WHERE id = $1 AND customer_id = $2',
-      [orderId, userId]
-    );
+    const orderResult = await db.query('SELECT * FROM orders WHERE id = $1 AND customer_id = $2', [
+      orderId,
+      userId,
+    ]);
     if (orderResult.rows.length === 0) {
       return res.status(404).json({ message: 'Order not found' });
     }
@@ -106,11 +113,11 @@ export const createCashPayment = async (req, res) => {
     // Confirm order (can now be accepted by riders/managers)
     await db.query(
       'UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2 AND customer_id = $3',
-      ['pending', orderId, userId]
+      ['pending', orderId, userId],
     );
     res.status(201).json({ message: 'Cash payment created', payment });
   } catch (error) {
-    console.error("Error creating cash payment:", error);
+    console.error('Error creating cash payment:', error);
     res.status(500).json({ message: 'Error creating cash payment', error: error.message });
   }
 };
@@ -131,7 +138,7 @@ export const markCashCollected = async (req, res) => {
        SET status = 'completed', updated_at = NOW()
        WHERE order_id = $1 AND payment_method = 'cash'
        RETURNING *`,
-      [orderId]
+      [orderId],
     );
 
     if (payRes.rows.length === 0) {

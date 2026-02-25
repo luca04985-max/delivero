@@ -2,7 +2,7 @@
 const geocodeCache = new Map();
 
 // Geocoding service per ottenere coordinate da indirizzo
-export const geocodeAddress = async (address) => {
+export const geocodeAddress = async address => {
   try {
     // Controlla cache prima di fare la richiesta
     if (geocodeCache.has(address)) {
@@ -28,11 +28,14 @@ export const geocodeAddress = async (address) => {
         }
 
         const encodedAddress = encodeURIComponent(variant);
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1&countrycodes=IT&addressdetails=1`, {
-          headers: {
-            'User-Agent': 'DeliveroApp/1.0' // Aggiungi User-Agent per evitare blocking
-          }
-        });
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1&countrycodes=IT&addressdetails=1`,
+          {
+            headers: {
+              'User-Agent': 'DeliveroApp/1.0', // Aggiungi User-Agent per evitare blocking
+            },
+          },
+        );
 
         if (!response.ok) {
           console.warn(`⚠️ HTTP error for variant: ${variant}`, response.status);
@@ -46,7 +49,7 @@ export const geocodeAddress = async (address) => {
           const result = {
             latitude: parseFloat(lat),
             longitude: parseFloat(lon),
-            displayName: display_name || address
+            displayName: display_name || address,
           };
 
           // Salva in cache
@@ -74,12 +77,12 @@ export const geocodeAddress = async (address) => {
 };
 
 // Fallback per coordinate di Roma se geocoding fallisce
-export const getRomeFallbackCoordinates = (address) => {
+export const getRomeFallbackCoordinates = address => {
   // Coordinate approssimative per Roma centro
   return {
     latitude: 41.9028,
     longitude: 12.4964,
-    displayName: address || 'Roma, Italia'
+    displayName: address || 'Roma, Italia',
   };
 };
 

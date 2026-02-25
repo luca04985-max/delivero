@@ -19,15 +19,17 @@ export default function CustomerDashboard({ user }) {
   return (
     <div>
       {/* Top Navigation Tabs */}
-      <div style={{
-        display: 'flex',
-        gap: '1rem',
-        borderBottom: '2px solid var(--border-color)',
-        marginBottom: '2rem',
-        paddingBottom: '1rem',
-        justifyContent: 'center',
-        flexWrap: 'wrap'
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: '1rem',
+          borderBottom: '2px solid var(--border-color)',
+          marginBottom: '2rem',
+          paddingBottom: '1rem',
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+        }}
+      >
         <button
           onClick={() => setActiveTab('home')}
           style={{
@@ -39,7 +41,7 @@ export default function CustomerDashboard({ user }) {
             cursor: 'pointer',
             fontSize: '1rem',
             fontWeight: activeTab === 'home' ? 'bold' : 'normal',
-            transition: 'all 0.3s ease'
+            transition: 'all 0.3s ease',
           }}
         >
           🏠 Home
@@ -55,7 +57,7 @@ export default function CustomerDashboard({ user }) {
             cursor: 'pointer',
             fontSize: '1rem',
             fontWeight: activeTab === 'orders' ? 'bold' : 'normal',
-            transition: 'all 0.3s ease'
+            transition: 'all 0.3s ease',
           }}
         >
           📦 Ordini
@@ -71,7 +73,7 @@ export default function CustomerDashboard({ user }) {
             cursor: 'pointer',
             fontSize: '1rem',
             fontWeight: activeTab === 'favorites' ? 'bold' : 'normal',
-            transition: 'all 0.3s ease'
+            transition: 'all 0.3s ease',
           }}
         >
           ❤️ Preferiti

@@ -1,56 +1,36 @@
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { mobileTheme } from '../../../theme';
+import { unifiedStyles } from '../../../theme/UnifiedStyles';
 
 export const medicalTransportScreenStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: mobileTheme.colors.background,
-  },
+  // container: wrapper principale della schermata
+  container: unifiedStyles.container,
 
-  // INLINE STYLES FROM MedicalTransportScreen.js
+  // input: campo testo base del form
   input: {
-    borderWidth: 1,
-    borderColor: mobileTheme.colors.border,
-    padding: mobileTheme.spacing[3],
-    borderRadius: mobileTheme.borderRadius.md,
+    ...unifiedStyles.input,
     marginBottom: mobileTheme.spacing[4],
     backgroundColor: mobileTheme.colors.white,
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.primary,
   },
+  // btn: bottone generico (azioni rapide)
   btn: {
-    backgroundColor: '#007AFF',
-    padding: mobileTheme.spacing[4],
+    ...unifiedStyles.button,
     borderRadius: mobileTheme.borderRadius.lg,
-    alignItems: 'center',
-    ...mobileTheme.shadows.medium,
   },
+  // btnText: etichetta bottone generico
   btnText: {
-    color: mobileTheme.colors.white,
-    fontSize: mobileTheme.typography.fontSize.base,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
+    ...unifiedStyles.buttonText,
+    textTransform: 'none',
   },
 
-  // EXISTING STYLES FROM ORIGINAL FILE
-  header: {
-    backgroundColor: mobileTheme.colors.secondary,
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingBottom: mobileTheme.spacing[4],
-    borderBottomLeftRadius: mobileTheme.borderRadius.xl,
-    borderBottomRightRadius: mobileTheme.borderRadius.xl,
-    ...mobileTheme.shadows.medium,
-  },
-  headerContent: {
-    paddingHorizontal: mobileTheme.spacing[5],
-  },
-  title: {
-    fontSize: mobileTheme.typography.fontSize['2xl'],
-    fontWeight: mobileTheme.typography.fontWeight.black,
-    color: mobileTheme.colors.white,
-    letterSpacing: -0.5,
-  },
+  // header: header principale della schermata
+  header: unifiedStyles.header,
+  // headerContent: layout contenuti header
+  headerContent: unifiedStyles.headerContent,
+  // title: titolo principale header
+  title: unifiedStyles.title,
 
-  // EMERGENCY CARD
+  // emergencyCard: card dedicata alle urgenze
   emergencyCard: {
     backgroundColor: mobileTheme.colors.errorBg,
     borderRadius: mobileTheme.borderRadius.xl,
@@ -60,21 +40,25 @@ export const medicalTransportScreenStyles = StyleSheet.create({
     borderWidth: 2,
     borderColor: mobileTheme.colors.error,
   },
+  // emergencyHeader: riga header della card emergenza
   emergencyHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: mobileTheme.spacing[4],
   },
+  // emergencyIcon: icona/emoticon emergenza
   emergencyIcon: {
     fontSize: 32,
     marginRight: mobileTheme.spacing[3],
   },
+  // emergencyTitle: titolo card emergenza
   emergencyTitle: {
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.error,
     flex: 1,
   },
+  // emergencyDescription: descrizione card emergenza
   emergencyDescription: {
     fontSize: mobileTheme.typography.fontSize.base,
     color: mobileTheme.colors.text.secondary,
@@ -82,7 +66,7 @@ export const medicalTransportScreenStyles = StyleSheet.create({
     lineHeight: 20,
   },
 
-  // BOOKING FORM
+  // bookingCard: contenitore form prenotazione
   bookingCard: {
     backgroundColor: mobileTheme.colors.white,
     borderRadius: mobileTheme.borderRadius.xl,
@@ -92,36 +76,32 @@ export const medicalTransportScreenStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: mobileTheme.colors.border,
   },
+  // bookingTitle: titolo sezione prenotazione
   bookingTitle: {
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.text.primary,
     marginBottom: mobileTheme.spacing[4],
   },
+  // formGroup: wrapper singolo campo
   formGroup: {
     marginBottom: mobileTheme.spacing[4],
   },
+  // formLabel: label campo form
   formLabel: {
     fontSize: mobileTheme.typography.fontSize.sm,
     fontWeight: mobileTheme.typography.fontWeight.semibold,
     color: mobileTheme.colors.text.primary,
     marginBottom: mobileTheme.spacing[2],
   },
-  textInput: {
-    backgroundColor: mobileTheme.colors.white,
-    borderWidth: 1,
-    borderColor: mobileTheme.colors.border,
-    borderRadius: mobileTheme.borderRadius.md,
-    padding: mobileTheme.spacing[4],
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.primary,
-    ...mobileTheme.shadows.soft,
-  },
+  // textInput: input elevato per campi descrittivi
+  textInput: unifiedStyles.textInput,
 
-  // TRANSPORT OPTIONS
+  // optionsContainer: wrapper elenco opzioni trasporto
   optionsContainer: {
     marginTop: mobileTheme.spacing[4],
   },
+  // optionCard: card singola opzione trasporto
   optionCard: {
     backgroundColor: mobileTheme.colors.white,
     borderRadius: mobileTheme.borderRadius.lg,
@@ -133,47 +113,44 @@ export const medicalTransportScreenStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: mobileTheme.colors.border,
   },
+  // optionIcon: icona/emoji opzione
   optionIcon: {
     fontSize: 24,
     marginRight: mobileTheme.spacing[3],
   },
+  // optionInfo: contenitore info opzione
   optionInfo: {
     flex: 1,
   },
+  // optionName: nome opzione
   optionName: {
     fontSize: mobileTheme.typography.fontSize.base,
     fontWeight: mobileTheme.typography.fontWeight.semibold,
     color: mobileTheme.colors.text.primary,
     marginBottom: 2,
   },
+  // optionDescription: descrizione opzione
   optionDescription: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
     lineHeight: 16,
   },
+  // optionPrice: prezzo opzione
   optionPrice: {
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.primary,
   },
 
-  // ACTION BUTTONS
+  // bookButton: CTA prenotazione
   bookButton: {
-    backgroundColor: mobileTheme.colors.primary,
-    paddingVertical: mobileTheme.spacing[4],
-    borderRadius: mobileTheme.borderRadius.md,
-    alignItems: 'center',
+    ...unifiedStyles.button,
     marginTop: mobileTheme.spacing[4],
-    ...mobileTheme.shadows.medium,
     shadowColor: mobileTheme.colors.primary,
   },
-  bookButtonText: {
-    fontSize: mobileTheme.typography.fontSize.sm,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.white,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
+  // bookButtonText: label CTA prenotazione
+  bookButtonText: unifiedStyles.buttonText,
+  // emergencyButton: CTA emergenza
   emergencyButton: {
     backgroundColor: mobileTheme.colors.error,
     paddingVertical: mobileTheme.spacing[4],
@@ -183,6 +160,7 @@ export const medicalTransportScreenStyles = StyleSheet.create({
     ...mobileTheme.shadows.medium,
     shadowColor: mobileTheme.colors.error,
   },
+  // emergencyButtonText: label CTA emergenza
   emergencyButtonText: {
     fontSize: mobileTheme.typography.fontSize.sm,
     fontWeight: mobileTheme.typography.fontWeight.bold,
@@ -191,17 +169,10 @@ export const medicalTransportScreenStyles = StyleSheet.create({
     letterSpacing: 1,
   },
 
-  // LOADING STATES
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.secondary,
-    marginTop: mobileTheme.spacing[4],
-  },
+  // loadingContainer: wrapper stato loading
+  loadingContainer: unifiedStyles.loadingContainer,
+  // loadingText: testo stato loading
+  loadingText: unifiedStyles.loadingText,
 });
 
 export default medicalTransportScreenStyles;

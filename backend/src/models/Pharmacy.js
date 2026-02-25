@@ -2,14 +2,25 @@ import db from '../config/db.js';
 import { hashPassword } from '../utils/auth.js';
 
 // Create a new pharmacy
-export const createPharmacy = async (email, password, name, phone, address, city, postalCode, licenseNumber, lat, lon) => {
+export const createPharmacy = async (
+  email,
+  password,
+  name,
+  phone,
+  address,
+  city,
+  postalCode,
+  licenseNumber,
+  lat,
+  lon,
+) => {
   try {
     const hashedPassword = await hashPassword(password);
     const result = await db.query(
       `INSERT INTO pharmacies (email, password, name, phone, address, city, postal_code, license_number, lat, lon)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        RETURNING id, email, name, phone, address, city, postal_code, license_number, is_verified, is_active`,
-      [email, hashedPassword, name, phone, address, city, postalCode, licenseNumber, lat, lon]
+      [email, hashedPassword, name, phone, address, city, postalCode, licenseNumber, lat, lon],
     );
     return result.rows[0];
   } catch (error) {
@@ -18,12 +29,12 @@ export const createPharmacy = async (email, password, name, phone, address, city
 };
 
 // Get pharmacy by ID
-export const getPharmacyById = async (pharmacyId) => {
+export const getPharmacyById = async pharmacyId => {
   try {
     const result = await db.query(
       `SELECT id, email, name, phone, address, city, postal_code, license_number, lat, lon, is_verified, is_active, rating, created_at
        FROM pharmacies WHERE id = $1`,
-      [pharmacyId]
+      [pharmacyId],
     );
     return result.rows[0];
   } catch (error) {
@@ -32,7 +43,7 @@ export const getPharmacyById = async (pharmacyId) => {
 };
 
 // Get pharmacy by email
-export const getPharmacyByEmail = async (email) => {
+export const getPharmacyByEmail = async email => {
   try {
     const result = await db.query('SELECT * FROM pharmacies WHERE email = $1', [email]);
     return result.rows[0];
@@ -65,11 +76,11 @@ export const getAllPharmacies = async (lat = null, lon = null, radiusKm = 5) => 
 };
 
 // Verify pharmacy (admin only)
-export const verifyPharmacy = async (pharmacyId) => {
+export const verifyPharmacy = async pharmacyId => {
   try {
     const result = await db.query(
       `UPDATE pharmacies SET is_verified = TRUE, updated_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING *`,
-      [pharmacyId]
+      [pharmacyId],
     );
     return result.rows[0];
   } catch (error) {
@@ -78,13 +89,21 @@ export const verifyPharmacy = async (pharmacyId) => {
 };
 
 // Add pharmacy product
-export const addPharmacyProduct = async (pharmacyId, name, description, category, price, stockQuantity, imageUrl) => {
+export const addPharmacyProduct = async (
+  pharmacyId,
+  name,
+  description,
+  category,
+  price,
+  stockQuantity,
+  imageUrl,
+) => {
   try {
     const result = await db.query(
       `INSERT INTO pharmacy_products (pharmacy_id, name, description, category, price, stock_quantity, image_url)
        VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING *`,
-      [pharmacyId, name, description, category, price, stockQuantity, imageUrl]
+      [pharmacyId, name, description, category, price, stockQuantity, imageUrl],
     );
     return result.rows[0];
   } catch (error) {
@@ -93,11 +112,11 @@ export const addPharmacyProduct = async (pharmacyId, name, description, category
 };
 
 // Get pharmacy products
-export const getPharmacyProducts = async (pharmacyId) => {
+export const getPharmacyProducts = async pharmacyId => {
   try {
     const result = await db.query(
       `SELECT * FROM pharmacy_products WHERE pharmacy_id = $1 AND active = TRUE ORDER BY name ASC`,
-      [pharmacyId]
+      [pharmacyId],
     );
     return result.rows;
   } catch (error) {
@@ -110,7 +129,7 @@ export const updateProductStock = async (productId, newQuantity) => {
   try {
     const result = await db.query(
       `UPDATE pharmacy_products SET stock_quantity = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
-      [newQuantity, productId]
+      [newQuantity, productId],
     );
     return result.rows[0];
   } catch (error) {
@@ -119,13 +138,21 @@ export const updateProductStock = async (productId, newQuantity) => {
 };
 
 // Create pharmacy order
-export const createPharmacyOrder = async (userId, pharmacyId, items, totalAmount, deliveryAddress, lat, lon) => {
+export const createPharmacyOrder = async (
+  userId,
+  pharmacyId,
+  items,
+  totalAmount,
+  deliveryAddress,
+  lat,
+  lon,
+) => {
   try {
     const result = await db.query(
       `INSERT INTO pharmacy_orders (user_id, pharmacy_id, items, total_amount, delivery_address, delivery_lat, delivery_lon)
        VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING *`,
-      [userId, pharmacyId, JSON.stringify(items), totalAmount, deliveryAddress, lat, lon]
+      [userId, pharmacyId, JSON.stringify(items), totalAmount, deliveryAddress, lat, lon],
     );
     return result.rows[0];
   } catch (error) {
@@ -156,7 +183,7 @@ export const getPharmacyOrdersForPharmacy = async (pharmacyId, status = null) =>
 };
 
 // Get user pharmacy orders
-export const getUserPharmacyOrders = async (userId) => {
+export const getUserPharmacyOrders = async userId => {
   try {
     const result = await db.query(
       `SELECT po.*, p.name as pharmacy_name, p.phone, p.address
@@ -164,7 +191,7 @@ export const getUserPharmacyOrders = async (userId) => {
        JOIN pharmacies p ON po.pharmacy_id = p.id
        WHERE po.user_id = $1
        ORDER BY po.created_at DESC`,
-      [userId]
+      [userId],
     );
     return result.rows;
   } catch (error) {
@@ -200,7 +227,7 @@ export const assignRiderToPharmacyOrder = async (orderId, riderId) => {
   try {
     const result = await db.query(
       `UPDATE pharmacy_orders SET rider_id = $1, status = 'dispatched', updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
-      [riderId, orderId]
+      [riderId, orderId],
     );
     return result.rows[0];
   } catch (error) {

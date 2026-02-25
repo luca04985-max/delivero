@@ -6,7 +6,7 @@ const TicketForm = ({ onTicketCreated }) => {
     type: 'complaint',
     title: '',
     description: '',
-    attachmentUrls: []
+    attachmentUrls: [],
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
@@ -15,18 +15,18 @@ const TicketForm = ({ onTicketCreated }) => {
     { value: 'bug', label: '🐛 Bug/Errore tecnico' },
     { value: 'complaint', label: '😞 Reclamo' },
     { value: 'feature_request', label: '💡 Richiesta funzione' },
-    { value: 'support', label: '🆘 Supporto' }
+    { value: 'support', label: '🆘 Supporto' },
   ];
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
@@ -39,11 +39,11 @@ const TicketForm = ({ onTicketCreated }) => {
           type: formData.type,
           title: formData.title,
           description: formData.description,
-          attachmentUrls: formData.attachmentUrls
+          attachmentUrls: formData.attachmentUrls,
         },
         {
-          headers: { Authorization: `Bearer ${token}` }
-        }
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
 
       setMessage({ type: 'success', text: '✅ Ticket creato con successo!' });
@@ -51,7 +51,7 @@ const TicketForm = ({ onTicketCreated }) => {
         type: 'complaint',
         title: '',
         description: '',
-        attachmentUrls: []
+        attachmentUrls: [],
       });
 
       if (onTicketCreated) {
@@ -60,7 +60,7 @@ const TicketForm = ({ onTicketCreated }) => {
     } catch (error) {
       setMessage({
         type: 'error',
-        text: error.response?.data?.error || 'Errore nella creazione del ticket'
+        text: error.response?.data?.error || 'Errore nella creazione del ticket',
       });
     } finally {
       setLoading(false);
@@ -72,12 +72,14 @@ const TicketForm = ({ onTicketCreated }) => {
       <h2 style={styles.title}>📝 Crea una Segnalazione</h2>
 
       {message && (
-        <div style={{
-          ...styles.message,
-          backgroundColor: message.type === 'success' ? '#d4edda' : '#f8d7da',
-          color: message.type === 'success' ? '#155724' : '#721c24',
-          borderColor: message.type === 'success' ? '#c3e6cb' : '#f5c6cb'
-        }}>
+        <div
+          style={{
+            ...styles.message,
+            backgroundColor: message.type === 'success' ? '#d4edda' : '#f8d7da',
+            color: message.type === 'success' ? '#155724' : '#721c24',
+            borderColor: message.type === 'success' ? '#c3e6cb' : '#f5c6cb',
+          }}
+        >
           {message.text}
         </div>
       )}
@@ -85,12 +87,7 @@ const TicketForm = ({ onTicketCreated }) => {
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.formGroup}>
           <label style={styles.label}>Tipo di Segnalazione *</label>
-          <select
-            name="type"
-            value={formData.type}
-            onChange={handleChange}
-            style={styles.select}
-          >
+          <select name="type" value={formData.type} onChange={handleChange} style={styles.select}>
             {ticketTypes.map(type => (
               <option key={type.value} value={type.value}>
                 {type.label}
@@ -131,7 +128,7 @@ const TicketForm = ({ onTicketCreated }) => {
           style={{
             ...styles.button,
             opacity: loading ? 0.6 : 1,
-            cursor: loading ? 'not-allowed' : 'pointer'
+            cursor: loading ? 'not-allowed' : 'pointer',
           }}
         >
           {loading ? '⏳ Invio in corso...' : '📤 Invia Segnalazione'}
@@ -149,39 +146,39 @@ const styles = {
     backgroundColor: '#ffffff',
     borderRadius: '8px',
     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-    fontFamily: 'Arial, sans-serif'
+    fontFamily: 'Arial, sans-serif',
   },
   title: {
     color: '#333',
     marginTop: 0,
-    marginBottom: '20px'
+    marginBottom: '20px',
   },
   message: {
     padding: '10px 15px',
     borderRadius: '4px',
     marginBottom: '20px',
-    border: '1px solid'
+    border: '1px solid',
   },
   form: {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   formGroup: {
     marginBottom: '15px',
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   label: {
     marginBottom: '5px',
     color: '#555',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   input: {
     padding: '10px',
     borderRadius: '4px',
     border: '1px solid #ddd',
     fontSize: '14px',
-    fontFamily: 'Arial, sans-serif'
+    fontFamily: 'Arial, sans-serif',
   },
   textarea: {
     padding: '10px',
@@ -189,14 +186,14 @@ const styles = {
     border: '1px solid #ddd',
     fontSize: '14px',
     fontFamily: 'Arial, sans-serif',
-    resize: 'vertical'
+    resize: 'vertical',
   },
   select: {
     padding: '10px',
     borderRadius: '4px',
     border: '1px solid #ddd',
     fontSize: '14px',
-    fontFamily: 'Arial, sans-serif'
+    fontFamily: 'Arial, sans-serif',
   },
   button: {
     padding: '12px',
@@ -207,8 +204,8 @@ const styles = {
     fontSize: '16px',
     fontWeight: 'bold',
     cursor: 'pointer',
-    transition: 'background-color 0.3s'
-  }
+    transition: 'background-color 0.3s',
+  },
 };
 
 export default TicketForm;

@@ -51,7 +51,7 @@ function AuthStack() {
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
-        animationEnabled: true
+        animationEnabled: true,
       }}
     >
       <Stack.Screen name="Login" component={LoginScreen} />
@@ -477,7 +477,7 @@ export default function App() {
       isSignout: false,
       userToken: null,
       user: null,
-    }
+    },
   );
 
   useEffect(() => {
@@ -604,15 +604,19 @@ export default function App() {
             }}
           />
         ) : state.user?.role === 'manager' || state.user?.role === 'admin' ? (
-          <ManagerStack token={state.userToken} user={state.user} onLogout={async () => {
-            try {
-              await AsyncStorage.removeItem('token');
-              await AsyncStorage.removeItem('user');
-            } catch (e) {
-              console.warn('Errore durante logout:', e);
-            }
-            dispatch({ type: 'SIGN_OUT' });
-          }} />
+          <ManagerStack
+            token={state.userToken}
+            user={state.user}
+            onLogout={async () => {
+              try {
+                await AsyncStorage.removeItem('token');
+                await AsyncStorage.removeItem('user');
+              } catch (e) {
+                console.warn('Errore durante logout:', e);
+              }
+              dispatch({ type: 'SIGN_OUT' });
+            }}
+          />
         ) : (
           <AuthStack />
         )}

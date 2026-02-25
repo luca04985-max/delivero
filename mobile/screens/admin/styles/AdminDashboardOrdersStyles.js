@@ -5,12 +5,12 @@ import { unifiedStyles } from '../../../theme/UnifiedStyles';
 export const adminDashboardOrderStyles = StyleSheet.create({
   ...unifiedStyles,
 
-  // Orders specific styles
+  // ordersContainer: wrapper lista ordini
   ordersContainer: {
     padding: mobileTheme.spacing[4],
   },
 
-  // Tab bar for order filtering
+  // tabBar: filtro ordini
   tabBar: {
     flexDirection: 'row',
     backgroundColor: mobileTheme.colors.white,
@@ -21,6 +21,7 @@ export const adminDashboardOrderStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: mobileTheme.colors.border,
   },
+  // tabButton: pill tab filtro
   tabButton: {
     flex: 1,
     paddingVertical: mobileTheme.spacing[3],
@@ -28,98 +29,114 @@ export const adminDashboardOrderStyles = StyleSheet.create({
     borderRadius: mobileTheme.borderRadius.lg,
     marginHorizontal: 1,
   },
+  // tabButtonActive: tab attivo
   tabButtonActive: {
     backgroundColor: mobileTheme.colors.primary,
   },
+  // tabText: testo tab
   tabText: {
     fontSize: mobileTheme.typography.fontSize.sm,
     fontWeight: mobileTheme.typography.fontWeight.medium,
     color: mobileTheme.colors.text.secondary,
   },
+  // tabTextActive: testo tab attivo
   tabTextActive: {
     color: mobileTheme.colors.white,
     fontWeight: FONT_WEIGHTS.bold,
   },
 
-  // Order status colors
+  // statusPending: stato in attesa
   statusPending: {
     backgroundColor: mobileTheme.colors.warningBg,
     color: mobileTheme.colors.warning,
   },
+  // statusConfirmed: stato confermato
   statusConfirmed: {
-    backgroundColor: mobileTheme.colors.infoBg,
-    color: mobileTheme.colors.info,
-  },
-  statusPreparing: {
-    backgroundColor: mobileTheme.colors.primaryBg,
+    backgroundColor: mobileTheme.colors.primarySoft,
     color: mobileTheme.colors.primary,
   },
+  // statusPreparing: stato in preparazione
+  statusPreparing: {
+    backgroundColor: mobileTheme.colors.primarySoft,
+    color: mobileTheme.colors.primary,
+  },
+  // statusReady: stato pronto
   statusReady: {
     backgroundColor: mobileTheme.colors.successBg,
     color: mobileTheme.colors.success,
   },
+  // statusPickup: stato ritiro
   statusPickup: {
-    backgroundColor: mobileTheme.colors.secondaryBg,
+    backgroundColor: mobileTheme.colors.background,
     color: mobileTheme.colors.secondary,
   },
+  // statusInTransit: stato in transito
   statusInTransit: {
-    backgroundColor: mobileTheme.colors.infoBg,
-    color: mobileTheme.colors.info,
+    backgroundColor: mobileTheme.colors.primarySoft,
+    color: mobileTheme.colors.primary,
   },
+  // statusDelivered: stato consegnato
   statusDelivered: {
     backgroundColor: mobileTheme.colors.successBg,
     color: mobileTheme.colors.success,
   },
+  // statusCancelled: stato annullato
   statusCancelled: {
     backgroundColor: mobileTheme.colors.errorBg,
     color: mobileTheme.colors.error,
   },
 
-  // Order details
+  // orderDetails: dettaglio ordine
   orderDetails: {
     marginTop: mobileTheme.spacing[3],
     paddingTop: mobileTheme.spacing[3],
     borderTopWidth: 1,
     borderTopColor: mobileTheme.colors.border,
   },
+  // orderDetailRow: riga dettaglio
   orderDetailRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: mobileTheme.spacing[2],
   },
+  // orderDetailLabel: label dettaglio
   orderDetailLabel: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
   },
+  // orderDetailValue: valore dettaglio
   orderDetailValue: {
     fontSize: mobileTheme.typography.fontSize.sm,
     fontWeight: mobileTheme.typography.fontWeight.medium,
     color: mobileTheme.colors.text.primary,
   },
 
-  // Restaurant info
+  // restaurantInfo: box info ristorante
   restaurantInfo: {
     backgroundColor: mobileTheme.colors.background,
     padding: mobileTheme.spacing[3],
     borderRadius: mobileTheme.borderRadius.md,
     marginVertical: mobileTheme.spacing[2],
   },
+  // restaurantName: nome ristorante
   restaurantName: {
     fontSize: mobileTheme.typography.fontSize.base,
     fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.text.primary,
     marginBottom: mobileTheme.spacing[1],
   },
+  // restaurantAddress: indirizzo ristorante
   restaurantAddress: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
   },
 
-  // Order items
+  // orderItems: lista prodotti ordine
   orderItems: {
     marginTop: mobileTheme.spacing[3],
   },
+  // orderItem: riga prodotto ordine
   orderItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -128,6 +145,7 @@ export const adminDashboardOrderStyles = StyleSheet.create({
     backgroundColor: mobileTheme.colors.background,
     borderRadius: mobileTheme.borderRadius.sm,
   },
+  // itemQuantity: quantità prodotto
   itemQuantity: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
@@ -135,19 +153,21 @@ export const adminDashboardOrderStyles = StyleSheet.create({
     minWidth: 20,
     textAlign: 'center',
   },
+  // itemName: nome prodotto
   itemName: {
     fontSize: mobileTheme.typography.fontSize.base,
     fontWeight: mobileTheme.typography.fontWeight.medium,
     color: mobileTheme.colors.text.primary,
     flex: 1,
   },
+  // itemPrice: prezzo prodotto
   itemPrice: {
     fontSize: mobileTheme.typography.fontSize.sm,
     fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.text.secondary,
   },
 
-  // Special notes
+  // specialNotes: note speciali
   specialNotes: {
     backgroundColor: mobileTheme.colors.warningBg,
     padding: mobileTheme.spacing[3],
@@ -156,18 +176,20 @@ export const adminDashboardOrderStyles = StyleSheet.create({
     borderLeftWidth: 3,
     borderLeftColor: mobileTheme.colors.warning,
   },
+  // specialNotesTitle: titolo note speciali
   specialNotesTitle: {
     fontSize: mobileTheme.typography.fontSize.sm,
     fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.warning,
     marginBottom: mobileTheme.spacing[1],
   },
+  // specialNotesText: testo note speciali
   specialNotesText: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
   },
 
-  // Delivery info
+  // deliveryInfo: box info consegna
   deliveryInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -177,10 +199,12 @@ export const adminDashboardOrderStyles = StyleSheet.create({
     backgroundColor: mobileTheme.colors.background,
     borderRadius: mobileTheme.borderRadius.md,
   },
+  // deliveryTime: tempo consegna
   deliveryTime: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
   },
+  // deliveryAddress: indirizzo consegna
   deliveryAddress: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
@@ -188,52 +212,30 @@ export const adminDashboardOrderStyles = StyleSheet.create({
     marginLeft: mobileTheme.spacing[2],
   },
 
-  // Track button
+  // trackButton: CTA tracking ordine
   trackButton: {
-    backgroundColor: mobileTheme.colors.primary,
-    paddingVertical: mobileTheme.spacing[3],
-    paddingHorizontal: mobileTheme.spacing[4],
-    borderRadius: mobileTheme.borderRadius.md,
-    alignItems: 'center',
+    ...unifiedStyles.trackButton,
     marginTop: mobileTheme.spacing[3],
-    ...mobileTheme.shadows.medium,
   },
-  trackButtonText: {
-    fontSize: mobileTheme.typography.fontSize.sm,
-    fontWeight: FONT_WEIGHTS.bold,
-    color: mobileTheme.colors.white,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
+  // trackButtonText: testo CTA tracking
+  trackButtonText: unifiedStyles.trackButtonText,
 
-  // Delivered state
+  // deliveredCard: card ordine consegnato
   deliveredCard: {
     opacity: 0.7,
     backgroundColor: mobileTheme.colors.background,
   },
+  // deliveredStatus: testo stato consegnato
   deliveredStatus: {
     color: mobileTheme.colors.success,
   },
 
-  // Empty state
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: mobileTheme.spacing[5],
-    marginTop: mobileTheme.spacing[8],
-  },
-  emptyText: {
-    fontSize: mobileTheme.typography.fontSize.lg,
-    color: mobileTheme.colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: mobileTheme.spacing[2],
-  },
-  emptySubtext: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.tertiary,
-    textAlign: 'center',
-  },
+  // emptyContainer: stato vuoto ordini
+  emptyContainer: unifiedStyles.emptyContainer,
+  // emptyText: testo stato vuoto
+  emptyText: unifiedStyles.emptyText,
+  // emptySubtext: sottotesto stato vuoto
+  emptySubtext: unifiedStyles.emptySubtext,
 });
 
 export default adminDashboardOrderStyles;

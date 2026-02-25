@@ -6,7 +6,10 @@ export const getAdminStats = async (req, res) => {
 
     // Check if user is admin
     const userResult = await db.query('SELECT role FROM users WHERE id = $1', [userId]);
-    if (userResult.rows.length === 0 || (userResult.rows[0].role !== 'admin' && userResult.rows[0].role !== 'manager')) {
+    if (
+      userResult.rows.length === 0 ||
+      (userResult.rows[0].role !== 'admin' && userResult.rows[0].role !== 'manager')
+    ) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -17,18 +20,20 @@ export const getAdminStats = async (req, res) => {
     const ordersCount = await db.query('SELECT COUNT(*) FROM orders');
 
     // Total revenue
-    const totalRevenue = await db.query('SELECT SUM(total_amount) FROM orders WHERE status = $1', ['confirmed']);
+    const totalRevenue = await db.query('SELECT SUM(total_amount) FROM orders WHERE status = $1', [
+      'confirmed',
+    ]);
 
     // Recent orders
     const recentOrders = await db.query(
-      'SELECT o.id, o.total_amount, o.status, u.name, o.created_at FROM orders o JOIN users u ON o.customer_id = u.id ORDER BY o.created_at DESC LIMIT 10'
+      'SELECT o.id, o.total_amount, o.status, u.name, o.created_at FROM orders o JOIN users u ON o.customer_id = u.id ORDER BY o.created_at DESC LIMIT 10',
     );
 
     res.status(200).json({
       totalUsers: parseInt(usersCount.rows[0].count),
       totalOrders: parseInt(ordersCount.rows[0].count),
       totalRevenue: parseFloat(totalRevenue.rows[0].sum) || 0,
-      recentOrders: recentOrders.rows
+      recentOrders: recentOrders.rows,
     });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching stats', error: error.message });
@@ -47,7 +52,10 @@ export const updateUser = async (req, res) => {
 
     // Check if requester is admin/manager
     const adminResult = await db.query('SELECT role FROM users WHERE id = $1', [adminId]);
-    if (adminResult.rows.length === 0 || (adminResult.rows[0].role !== 'admin' && adminResult.rows[0].role !== 'manager')) {
+    if (
+      adminResult.rows.length === 0 ||
+      (adminResult.rows[0].role !== 'admin' && adminResult.rows[0].role !== 'manager')
+    ) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -71,7 +79,7 @@ export const updateUser = async (req, res) => {
 
     const result = await db.query(
       'UPDATE users SET name = $1, email = $2, role = COALESCE($3, role) WHERE id = $4 RETURNING id, email, name, role',
-      [name.trim(), email.trim().toLowerCase(), roleValue, targetId]
+      [name.trim(), email.trim().toLowerCase(), roleValue, targetId],
     );
 
     if (result.rows.length === 0) {
@@ -93,12 +101,15 @@ export const getAllOrders = async (req, res) => {
 
     // Check if user is admin
     const userResult = await db.query('SELECT role FROM users WHERE id = $1', [userId]);
-    if (userResult.rows.length === 0 || (userResult.rows[0].role !== 'admin' && userResult.rows[0].role !== 'manager')) {
+    if (
+      userResult.rows.length === 0 ||
+      (userResult.rows[0].role !== 'admin' && userResult.rows[0].role !== 'manager')
+    ) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
     const result = await db.query(
-      'SELECT o.*, u.name, u.email FROM orders o JOIN users u ON o.customer_id = u.id ORDER BY o.created_at DESC'
+      'SELECT o.*, u.name, u.email FROM orders o JOIN users u ON o.customer_id = u.id ORDER BY o.created_at DESC',
     );
     res.status(200).json(result.rows);
   } catch (error) {
@@ -112,12 +123,15 @@ export const getAllUsers = async (req, res) => {
 
     // Check if user is admin
     const userResult = await db.query('SELECT role FROM users WHERE id = $1', [userId]);
-    if (userResult.rows.length === 0 || (userResult.rows[0].role !== 'admin' && userResult.rows[0].role !== 'manager')) {
+    if (
+      userResult.rows.length === 0 ||
+      (userResult.rows[0].role !== 'admin' && userResult.rows[0].role !== 'manager')
+    ) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
     const result = await db.query(
-      'SELECT id, email, name, role, created_at FROM users ORDER BY created_at DESC'
+      'SELECT id, email, name, role, created_at FROM users ORDER BY created_at DESC',
     );
     res.status(200).json(result.rows);
   } catch (error) {
@@ -135,7 +149,10 @@ export const updateUserRole = async (req, res) => {
 
     // Check if requester is admin
     const adminResult = await db.query('SELECT role FROM users WHERE id = $1', [adminId]);
-    if (adminResult.rows.length === 0 || (adminResult.rows[0].role !== 'admin' && adminResult.rows[0].role !== 'manager')) {
+    if (
+      adminResult.rows.length === 0 ||
+      (adminResult.rows[0].role !== 'admin' && adminResult.rows[0].role !== 'manager')
+    ) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -145,7 +162,7 @@ export const updateUserRole = async (req, res) => {
 
     const result = await db.query(
       'UPDATE users SET role = $1 WHERE id = $2 RETURNING id, email, name, role',
-      [newRole, targetUserId]
+      [newRole, targetUserId],
     );
 
     if (result.rows.length === 0) {
@@ -169,7 +186,10 @@ export const deleteUser = async (req, res) => {
 
     // Check if requester is admin/manager
     const adminResult = await db.query('SELECT role FROM users WHERE id = $1', [adminId]);
-    if (adminResult.rows.length === 0 || (adminResult.rows[0].role !== 'admin' && adminResult.rows[0].role !== 'manager')) {
+    if (
+      adminResult.rows.length === 0 ||
+      (adminResult.rows[0].role !== 'admin' && adminResult.rows[0].role !== 'manager')
+    ) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -190,11 +210,14 @@ export const deleteUser = async (req, res) => {
     try {
       // First delete related records to avoid FK errors
       // Delete order_tracks where order belongs to user OR user is the rider
-      await db.query(`
+      await db.query(
+        `
         DELETE FROM order_tracks WHERE order_id IN (
           SELECT id FROM orders WHERE customer_id = $1 OR rider_id = $1
         )
-      `, [targetId]);
+      `,
+        [targetId],
+      );
 
       // Delete orders where user is the creator OR the rider
       await db.query('DELETE FROM orders WHERE customer_id = $1 OR rider_id = $1', [targetId]);
@@ -223,34 +246,41 @@ export const getFinanceReport = async (req, res) => {
 
     // Check if user is admin
     const userResult = await db.query('SELECT role FROM users WHERE id = $1', [userId]);
-    if (userResult.rows.length === 0 || (userResult.rows[0].role !== 'admin' && userResult.rows[0].role !== 'manager')) {
+    if (
+      userResult.rows.length === 0 ||
+      (userResult.rows[0].role !== 'admin' && userResult.rows[0].role !== 'manager')
+    ) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
     // Total revenue from orders
     const revenueResult = await db.query(
       'SELECT SUM(total_amount) as total_revenue FROM orders WHERE status = $1',
-      ['confirmed']
+      ['confirmed'],
     );
 
     // Payment methods breakdown
     const paymentMethodsResult = await db.query(
-      'SELECT payment_method, COUNT(*) as count, SUM(amount) as total FROM bill_payments GROUP BY payment_method'
+      'SELECT payment_method, COUNT(*) as count, SUM(amount) as total FROM bill_payments GROUP BY payment_method',
+    );
+
+    const billPaymentsResult = await db.query(
+      'SELECT COUNT(*) as total_bill_payments, SUM(amount) as total_amount FROM bill_payments',
     );
 
     // Orders by status
     const orderStatusResult = await db.query(
-      'SELECT status, COUNT(*) as count FROM orders GROUP BY status'
+      'SELECT status, COUNT(*) as count FROM orders GROUP BY status',
     );
 
     res.status(200).json({
       totalRevenue: parseFloat(revenueResult?.rows?.[0]?.total_revenue) || 0,
       billPayments: {
-        total: parseInt(billPaymentsResult?.rows?.[0]?.total_bill_payments),
-        amount: parseFloat(billPaymentsResult?.rows?.[0]?.total_amount) || 0
+        total: parseInt(billPaymentsResult?.rows?.[0]?.total_bill_payments || 0, 10),
+        amount: parseFloat(billPaymentsResult?.rows?.[0]?.total_amount) || 0,
       },
       paymentMethods: paymentMethodsResult.rows,
-      ordersByStatus: orderStatusResult.rows
+      ordersByStatus: orderStatusResult.rows,
     });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching finance report', error: error.message });
@@ -263,15 +293,23 @@ export const getServiceMetrics = async (req, res) => {
 
     // Check if user is admin
     const userResult = await db.query('SELECT role FROM users WHERE id = $1', [userId]);
-    if (userResult.rows.length === 0 || (userResult.rows[0].role !== 'admin' && userResult.rows[0].role !== 'manager')) {
+    if (
+      userResult.rows.length === 0 ||
+      (userResult.rows[0].role !== 'admin' && userResult.rows[0].role !== 'manager')
+    ) {
       return res.status(403).json({ message: 'Access denied' });
     }
+
+    const pharmacyMetrics = await db.query('SELECT COUNT(*) as total FROM pharmacies');
+    const transportMetrics = await db.query('SELECT COUNT(*) as total FROM medical_transports');
+    const pickupMetrics = await db.query('SELECT COUNT(*) as total FROM document_pickups');
+    const billMetrics = await db.query('SELECT COUNT(*) as total FROM bills');
 
     res.status(200).json({
       pharmacy: pharmacyMetrics?.rows[0] || null,
       medicalTransports: transportMetrics?.rows[0] || null,
       documentPickups: pickupMetrics?.rows[0] || null,
-      bills: billMetrics?.rows[0] || null
+      bills: billMetrics?.rows[0] || null,
     });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching service metrics', error: error.message });
@@ -284,7 +322,10 @@ export const getTicketStats = async (req, res) => {
 
     // Check if user is admin
     const userResult = await db.query('SELECT role FROM users WHERE id = $1', [userId]);
-    if (userResult.rows.length === 0 || (userResult.rows[0].role !== 'admin' && userResult.rows[0].role !== 'manager')) {
+    if (
+      userResult.rows.length === 0 ||
+      (userResult.rows[0].role !== 'admin' && userResult.rows[0].role !== 'manager')
+    ) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -293,23 +334,21 @@ export const getTicketStats = async (req, res) => {
 
     // Tickets by status
     const byStatus = await db.query(
-      'SELECT status, COUNT(*) as count FROM tickets GROUP BY status'
+      'SELECT status, COUNT(*) as count FROM tickets GROUP BY status',
     );
 
     // Tickets by priority
     const byPriority = await db.query(
-      'SELECT priority, COUNT(*) as count FROM tickets GROUP BY priority'
+      'SELECT priority, COUNT(*) as count FROM tickets GROUP BY priority',
     );
 
     // Tickets by type
-    const byType = await db.query(
-      'SELECT type, COUNT(*) as count FROM tickets GROUP BY type'
-    );
+    const byType = await db.query('SELECT type, COUNT(*) as count FROM tickets GROUP BY type');
 
     // Recent unresolved tickets
     const unresolved = await db.query(
       'SELECT id, title, type, priority, created_at FROM tickets WHERE status != $1 ORDER BY created_at DESC LIMIT 5',
-      ['closed']
+      ['closed'],
     );
 
     res.status(200).json({
@@ -317,7 +356,7 @@ export const getTicketStats = async (req, res) => {
       byStatus: byStatus.rows,
       byPriority: byPriority.rows,
       byType: byType.rows,
-      unresolvedTickets: unresolved.rows
+      unresolvedTickets: unresolved.rows,
     });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching ticket stats', error: error.message });

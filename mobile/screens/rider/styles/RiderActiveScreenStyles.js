@@ -1,43 +1,46 @@
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { mobileTheme } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
 
 export const riderActiveScreenStyles = StyleSheet.create({
   ...unifiedStyles,
 
-  // Override specifici per RiderActive
-  // HEADER
+  // header: wrapper header (RiderActiveScreen.js)
   header: {
     marginBottom: mobileTheme.spacing[4],
   },
+  // headerTitle: titolo header (RiderActiveScreen.js)
   headerTitle: {
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.text.primary,
   },
 
-  // RIDER SPECIFIC BUTTONS
+  // btnPickup: bottone ritiro (RiderActiveScreen.js)
   btnPickup: {
-    backgroundColor: '#FFA500',
+    backgroundColor: mobileTheme.colors.warning,
     padding: mobileTheme.spacing[3],
     borderRadius: mobileTheme.borderRadius.md,
     flex: 1,
     ...mobileTheme.shadows.sm,
   },
+  // btnTransit: bottone in transito (RiderActiveScreen.js)
   btnTransit: {
-    backgroundColor: '#0066FF',
+    backgroundColor: mobileTheme.colors.accent,
     padding: mobileTheme.spacing[3],
     borderRadius: mobileTheme.borderRadius.md,
     flex: 1,
     ...mobileTheme.shadows.sm,
   },
+  // btnComplete: bottone completato (RiderActiveScreen.js)
   btnComplete: {
-    backgroundColor: '#28A745',
+    backgroundColor: mobileTheme.colors.success,
     padding: mobileTheme.spacing[3],
     borderRadius: mobileTheme.borderRadius.md,
     flex: 1.5,
     ...mobileTheme.shadows.sm,
   },
+  // btnText: testo bottoni (RiderActiveScreen.js)
   btnText: {
     color: mobileTheme.colors.white,
     textAlign: 'center',
@@ -45,18 +48,19 @@ export const riderActiveScreenStyles = StyleSheet.create({
     fontSize: mobileTheme.typography.fontSize.xs,
   },
 
-  // CUSTOMER INFO
+  // customerName: nome cliente (RiderActiveScreen.js)
   customerName: {
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.text.primary,
     marginBottom: mobileTheme.spacing[2],
   },
+  // address: indirizzo cliente (RiderActiveScreen.js)
   address: {
     color: mobileTheme.colors.text.secondary,
     marginBottom: mobileTheme.spacing[3],
   },
 
-  // REFRESH CONTROL
+  // refreshContainer: wrapper refresh (RiderActiveScreen.js)
   refreshContainer: {
     flex: 1,
   },

@@ -27,38 +27,46 @@ export default function OrderSelectionScreen({ navigation, route }) {
       const data = await ordersAPI.getMyOrders();
       setOrders(data);
     } catch (e) {
-      Alert.alert("Errore", "Non ho potuto caricare i tuoi ordini.");
+      Alert.alert('Errore', 'Non ho potuto caricare i tuoi ordini.');
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
   };
 
-  const toggleSection = (status) => {
+  const toggleSection = status => {
     setExpandedSections(prev => ({
       ...prev,
-      [status]: !prev[status]
+      [status]: !prev[status],
     }));
   };
 
-  const selectOrder = (order) => {
+  const selectOrder = order => {
     // Torna indietro al CreateTicket con l'ordine selezionato
     navigation.navigate('CreateTicket', {
       orderId: order.id,
-      orderData: order
+      orderData: order,
     });
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     switch (status) {
-      case 'pending': return '#FF9800';
-      case 'accepted': return '#2196F3';
-      case 'preparing': return '#9C27B0';
-      case 'pickup': return '#FF5722';
-      case 'in_transit': return '#4CAF50';
-      case 'delivered': return '#607D8B';
-      case 'cancelled': return '#F44336';
-      default: return '#999';
+      case 'pending':
+        return '#FF9800';
+      case 'accepted':
+        return '#2196F3';
+      case 'preparing':
+        return '#9C27B0';
+      case 'pickup':
+        return '#FF5722';
+      case 'in_transit':
+        return '#4CAF50';
+      case 'delivered':
+        return '#607D8B';
+      case 'cancelled':
+        return '#F44336';
+      default:
+        return '#999';
     }
   };
 
@@ -68,7 +76,9 @@ export default function OrderSelectionScreen({ navigation, route }) {
       onPress={() => selectOrder(item)}
     >
       <View style={customerOrdersScreenStyles.orderHeader}>
-        <Text style={customerOrdersScreenStyles.orderId}>Ordine #{item.id.toString().slice(-5)}</Text>
+        <Text style={customerOrdersScreenStyles.orderId}>
+          Ordine #{item.id.toString().slice(-5)}
+        </Text>
         <View style={customerOrdersScreenStyles.orderStatus}>
           <Text style={customerOrdersScreenStyles.orderStatusText}>
             {item.status === 'pending' && '⏳ IN ATTESA'}
@@ -86,21 +96,27 @@ export default function OrderSelectionScreen({ navigation, route }) {
         <View style={customerOrdersScreenStyles.restaurantInfo}>
           <Text style={customerOrdersScreenStyles.restaurantName}>{item.restaurant_name}</Text>
           {item.restaurant_address && (
-            <Text style={customerOrdersScreenStyles.restaurantAddress}>📍 {item.restaurant_address}</Text>
+            <Text style={customerOrdersScreenStyles.restaurantAddress}>
+              📍 {item.restaurant_address}
+            </Text>
           )}
         </View>
       )}
 
       <View style={customerOrdersScreenStyles.orderInfo}>
         <Text style={customerOrdersScreenStyles.orderDate}>
-          {item.created_at ? new Date(item.created_at).toLocaleDateString('it-IT', {
-            day: '2-digit',
-            month: 'short',
-            hour: '2-digit',
-            minute: '2-digit'
-          }) : 'Data non disponibile'}
+          {item.created_at
+            ? new Date(item.created_at).toLocaleDateString('it-IT', {
+                day: '2-digit',
+                month: 'short',
+                hour: '2-digit',
+                minute: '2-digit',
+              })
+            : 'Data non disponibile'}
         </Text>
-        <Text style={customerOrdersScreenStyles.orderTotal}>€{item.total_amount || item.total_price || item.total}</Text>
+        <Text style={customerOrdersScreenStyles.orderTotal}>
+          €{item.total_amount || item.total_price || item.total}
+        </Text>
         {item.delivery_fee && (
           <Text style={customerOrdersScreenStyles.deliveryFee}>Consegna: €{item.delivery_fee}</Text>
         )}
@@ -116,7 +132,9 @@ export default function OrderSelectionScreen({ navigation, route }) {
           </View>
         ))}
         {item.items?.length > 3 && (
-          <Text style={customerOrdersScreenStyles.moreItems}>+{item.items.length - 3} altri articoli</Text>
+          <Text style={customerOrdersScreenStyles.moreItems}>
+            +{item.items.length - 3} altri articoli
+          </Text>
         )}
       </View>
 
@@ -132,23 +150,17 @@ export default function OrderSelectionScreen({ navigation, route }) {
       <TouchableOpacity
         style={[
           customerOrdersScreenStyles.statusSeparator,
-          { borderLeftColor: getStatusColor(status) }
+          { borderLeftColor: getStatusColor(status) },
         ]}
         onPress={() => toggleSection(status)}
       >
         <View style={customerOrdersScreenStyles.statusSeparatorContent}>
           <View style={customerOrdersScreenStyles.statusSeparatorLeft}>
-            <Text style={customerOrdersScreenStyles.statusSeparatorIcon}>
-              {statusInfo.icon}
-            </Text>
-            <Text style={customerOrdersScreenStyles.statusSeparatorTitle}>
-              {statusInfo.label}
-            </Text>
+            <Text style={customerOrdersScreenStyles.statusSeparatorIcon}>{statusInfo.icon}</Text>
+            <Text style={customerOrdersScreenStyles.statusSeparatorTitle}>{statusInfo.label}</Text>
           </View>
           <View style={customerOrdersScreenStyles.statusSeparatorRight}>
-            <Text style={customerOrdersScreenStyles.statusSeparatorCount}>
-              {count}
-            </Text>
+            <Text style={customerOrdersScreenStyles.statusSeparatorCount}>{count}</Text>
             <Text style={customerOrdersScreenStyles.statusSeparatorToggle}>
               {isExpanded ? '🔼' : '🔽'}
             </Text>
@@ -175,7 +187,7 @@ export default function OrderSelectionScreen({ navigation, route }) {
       pickup: { label: 'Pronti', icon: '📦' },
       in_transit: { label: 'In Consegna', icon: '🚗' },
       delivered: { label: 'Consegnati', icon: '✅' },
-      cancelled: { label: 'Cancellati', icon: '❌' }
+      cancelled: { label: 'Cancellati', icon: '❌' },
     };
 
     const result = [];
@@ -187,16 +199,12 @@ export default function OrderSelectionScreen({ navigation, route }) {
       result.push(
         <View key={`separator-${status}`}>
           {renderStatusSeparator(status, groupOrders.length, statusInfo[status], isExpanded)}
-        </View>
+        </View>,
       );
 
       if (isExpanded) {
         groupOrders.forEach(order => {
-          result.push(
-            <View key={`order-${order.id}`}>
-              {renderOrder({ item: order })}
-            </View>
-          );
+          result.push(<View key={`order-${order.id}`}>{renderOrder({ item: order })}</View>);
         });
       }
     });
@@ -204,12 +212,13 @@ export default function OrderSelectionScreen({ navigation, route }) {
     return result;
   };
 
-  if (loading) return (
-    <View style={customerOrdersScreenStyles.loadingContainer}>
-      <ActivityIndicator size="large" />
-      <Text style={customerOrdersScreenStyles.loadingText}>Caricamento ordini...</Text>
-    </View>
-  );
+  if (loading)
+    return (
+      <View style={customerOrdersScreenStyles.loadingContainer}>
+        <ActivityIndicator size="large" />
+        <Text style={customerOrdersScreenStyles.loadingText}>Caricamento ordini...</Text>
+      </View>
+    );
 
   return (
     <View style={customerOrdersScreenStyles.container}>
@@ -230,7 +239,9 @@ export default function OrderSelectionScreen({ navigation, route }) {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchOrders} />}
       >
         <View style={customerOrdersScreenStyles.separatorHeader}>
-          <Text style={customerOrdersScreenStyles.separatorTitle}>Scegli l'ordine da associare</Text>
+          <Text style={customerOrdersScreenStyles.separatorTitle}>
+            Scegli l'ordine da associare
+          </Text>
           <Text style={customerOrdersScreenStyles.separatorSubtitle}>
             {orders.length} ordini disponibili
           </Text>

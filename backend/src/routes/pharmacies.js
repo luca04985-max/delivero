@@ -19,10 +19,11 @@ router.get('/:pharmacyId', pharmacyController.getPharmacy);
 router.get('/:pharmacyId/products', pharmacyController.getPharmacyProducts);
 
 // Add pharmacy product (pharmacy admin)
-router.post('/:pharmacyId/products', 
+router.post(
+  '/:pharmacyId/products',
   authenticateToken,
   upload.single('image'),
-  pharmacyController.addProduct
+  pharmacyController.addProduct,
 );
 
 // Create pharmacy order

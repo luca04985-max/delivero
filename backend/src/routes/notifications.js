@@ -7,10 +7,7 @@ class NotificationService {
   static async sendPushNotification(userId, title, body, data = {}) {
     try {
       // Get user's push token
-      const userResult = await db.query(
-        'SELECT push_token FROM users WHERE id = $1',
-        [userId]
-      );
+      const userResult = await db.query('SELECT push_token FROM users WHERE id = $1', [userId]);
 
       if (!userResult.rows[0]?.push_token) {
         console.log('No push token found for user:', userId);
@@ -20,11 +17,14 @@ class NotificationService {
       const pushToken = userResult.rows[0].push_token;
 
       // Create notification record
-      const notificationResult = await db.query(`
+      const notificationResult = await db.query(
+        `
         INSERT INTO notifications (user_id, title, body, data, type, created_at, read)
         VALUES ($1, $2, $3, $4, NOW(), false)
         RETURNING id
-      `, [userId, title, body, JSON.stringify(data), 'push']);
+      `,
+        [userId, title, body, JSON.stringify(data), 'push'],
+      );
 
       const notificationId = notificationResult.rows[0].id;
 
@@ -35,9 +35,8 @@ class NotificationService {
       return {
         success: true,
         notificationId: notificationId,
-        message: 'Push notification sent successfully'
+        message: 'Push notification sent successfully',
       };
-
     } catch (error) {
       console.error('Failed to send push notification:', error);
       return { success: false, error: error.message };
@@ -67,11 +66,14 @@ class NotificationService {
 
   static async markAsRead(notificationId, userId) {
     try {
-      await db.query(`
+      await db.query(
+        `
         UPDATE notifications 
         SET read = true, read_at = NOW()
         WHERE id = $1 AND user_id = $2
-      `, [notificationId, userId]);
+      `,
+        [notificationId, userId],
+      );
 
       return { success: true };
     } catch (error) {
@@ -82,13 +84,13 @@ class NotificationService {
 
   static async createOrderNotification(userId, orderId, status) {
     const statusMessages = {
-      'pending': 'Il tuo ordine è in attesa',
-      'confirmed': 'Ordine confermato dal ristorante',
-      'preparing': 'Il rider sta preparando il tuo ordine',
-      'ready': 'Il tuo ordine è pronto per il ritiro',
-      'picked_up': 'Il rider ha ritirato il tuo ordine',
-      'in_transit': 'Il tuo ordine è in consegna',
-      'delivered': 'Ordine consegnato con successo!'
+      pending: 'Il tuo ordine è in attesa',
+      confirmed: 'Ordine confermato dal ristorante',
+      preparing: 'Il rider sta preparando il tuo ordine',
+      ready: 'Il tuo ordine è pronto per il ritiro',
+      picked_up: 'Il rider ha ritirato il tuo ordine',
+      in_transit: 'Il tuo ordine è in consegna',
+      delivered: 'Ordine consegnato con successo!',
     };
 
     return this.sendPushNotification(
@@ -98,31 +100,29 @@ class NotificationService {
       {
         orderId,
         status,
-        type: 'order_update'
-      }
+        type: 'order_update',
+      },
     );
   }
 
   static async createPromotionNotification(userId, promotion) {
-    return this.sendPushNotification(
-      userId,
-      '🎉 Offerta Speciale!',
-      promotion.title,
-      {
-        promotionId: promotion.id,
-        type: 'promotion',
-        discount: promotion.discount
-      }
-    );
+    return this.sendPushNotification(userId, '🎉 Offerta Speciale!', promotion.title, {
+      promotionId: promotion.id,
+      type: 'promotion',
+      discount: promotion.discount,
+    });
   }
 
   static async createSystemNotification(title, body, data = {}) {
     try {
-      const result = await db.query(`
+      const result = await db.query(
+        `
         INSERT INTO notifications (user_id, title, body, data, type, created_at, read)
         VALUES (NULL, $1, $2, $3, 'system', NOW(), false)
         RETURNING id
-      `, [title, JSON.stringify(data), 'system']);
+      `,
+        [title, JSON.stringify(data), 'system'],
+      );
 
       console.log('System notification created:', { title, body, data });
       return result.rows[0];
@@ -166,15 +166,20 @@ router.put('/read-all', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.userId;
 
-    await db.query(`
+    await db.query(
+      `
       UPDATE notifications 
       SET read = true, read_at = NOW()
       WHERE user_id = $1 AND read = false
-    `, [userId]);
+    `,
+      [userId],
+    );
 
     res.json({ success: true, message: 'All notifications marked as read' });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to mark all notifications as read', error: error.message });
+    res
+      .status(500)
+      .json({ message: 'Failed to mark all notifications as read', error: error.message });
   }
 });
 
@@ -202,12 +207,15 @@ router.put('/settings', authenticateToken, async (req, res) => {
     const userId = req.user.userId;
 
     for (const [key, value] of Object.entries(settings)) {
-      await db.query(`
+      await db.query(
+        `
         INSERT INTO notification_settings (user_id, setting_key, setting_value)
         VALUES ($1, $2, $3)
         ON CONFLICT (user_id, setting_key) 
         DO UPDATE SET setting_value = EXCLUDED.setting_value
-      `, [userId, key, value]);
+      `,
+        [userId, key, value],
+      );
     }
 
     res.json({ success: true, message: 'Settings updated successfully' });
@@ -221,11 +229,14 @@ router.get('/settings', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.userId;
 
-    const result = await db.query(`
+    const result = await db.query(
+      `
       SELECT setting_key, setting_value 
       FROM notification_settings 
       WHERE user_id = $1
-    `, [userId]);
+    `,
+      [userId],
+    );
 
     const settings = {};
     result.rows.forEach(row => {

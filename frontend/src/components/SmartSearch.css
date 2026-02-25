@@ -26,7 +26,7 @@
 }
 
 .search-btn {
-  background: #FF6B00;
+  background: #ff6b00;
   border: none;
   color: white;
   padding: 15px 20px;
@@ -36,7 +36,7 @@
 }
 
 .search-btn:hover {
-  background: #E55A00;
+  background: #e55a00;
   transform: scale(1.05);
 }
 
@@ -165,25 +165,25 @@
   .search-input-container {
     border-radius: 20px;
   }
-  
+
   .search-input {
     padding: 12px 15px;
     font-size: 14px;
   }
-  
+
   .search-btn {
     padding: 12px 15px;
     font-size: 14px;
   }
-  
+
   .suggestion-item {
     padding: 10px 15px;
   }
-  
+
   .recent-searches {
     border-radius: 12px;
   }
-  
+
   .recent-header {
     padding: 10px 15px;
   }

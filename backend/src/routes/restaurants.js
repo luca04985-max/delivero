@@ -1,5 +1,9 @@
 import express from 'express';
-import { getRestaurants, getRestaurant, getCategories } from '../controllers/restaurantsController.js';
+import {
+  getRestaurants,
+  getRestaurant,
+  getCategories,
+} from '../controllers/restaurantsController.js';
 
 const router = express.Router();
 

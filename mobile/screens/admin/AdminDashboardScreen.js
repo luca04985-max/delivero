@@ -1,7 +1,12 @@
 import React, { Modal, useState } from 'react';
 import {
-  View, Text, ScrollView, TouchableOpacity,
-  ActivityIndicator, Alert, RefreshControl
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+  RefreshControl,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AdminDashboardScreenStyles as styles } from './styles/AdminDashboardScreenStyles';
@@ -49,8 +54,8 @@ export default function AdminDashboardScreen({ navigation }) {
           { key: 'orders', label: 'Orders', icon: '📦' },
           { key: 'tickets', label: 'Tickets', icon: '🎫' },
           { key: 'finance', label: 'Finance', icon: '💰' },
-          { key: 'metrics', label: 'Metrics', icon: '📈' }
-        ].map((tab) => (
+          { key: 'metrics', label: 'Metrics', icon: '📈' },
+        ].map(tab => (
           <TouchableOpacity
             key={tab.key}
             style={[styles.tab, activeTab === tab.key && styles.activeTab]}
@@ -90,9 +95,7 @@ export default function AdminDashboardScreen({ navigation }) {
     <View style={styles.container}>
       {renderHeader()}
       {renderTabBar()}
-      <View style={styles.content}>
-        {renderContent()}
-      </View>
+      <View style={styles.content}>{renderContent()}</View>
     </View>
   );
 }

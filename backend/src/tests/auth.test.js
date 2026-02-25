@@ -21,13 +21,10 @@ describe('Authentication Endpoints', () => {
       const userData = {
         email: 'test@example.com',
         password: 'password123',
-        name: 'Test User'
+        name: 'Test User',
       };
 
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(userData)
-        .expect(201);
+      const response = await request(app).post('/api/auth/register').send(userData).expect(201);
 
       expect(response.body).toHaveProperty('message');
       expect(response.body).toHaveProperty('user');
@@ -40,13 +37,10 @@ describe('Authentication Endpoints', () => {
       const userData = {
         email: 'invalid-email',
         password: 'password123',
-        name: 'Test User'
+        name: 'Test User',
       };
 
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(userData)
-        .expect(400);
+      const response = await request(app).post('/api/auth/register').send(userData).expect(400);
 
       expect(response.body).toHaveProperty('message');
     });
@@ -55,13 +49,10 @@ describe('Authentication Endpoints', () => {
       const userData = {
         email: 'test2@example.com',
         password: '123',
-        name: 'Test User'
+        name: 'Test User',
       };
 
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(userData)
-        .expect(400);
+      const response = await request(app).post('/api/auth/register').send(userData).expect(400);
 
       expect(response.body).toHaveProperty('message');
     });
@@ -70,13 +61,10 @@ describe('Authentication Endpoints', () => {
       const userData = {
         email: 'test@example.com',
         password: 'password123',
-        name: 'Test User'
+        name: 'Test User',
       };
 
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(userData)
-        .expect(409);
+      const response = await request(app).post('/api/auth/register').send(userData).expect(409);
 
       expect(response.body).toHaveProperty('message');
     });
@@ -86,13 +74,10 @@ describe('Authentication Endpoints', () => {
     it('should login with valid credentials', async () => {
       const loginData = {
         email: 'test@example.com',
-        password: 'password123'
+        password: 'password123',
       };
 
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send(loginData)
-        .expect(200);
+      const response = await request(app).post('/api/auth/login').send(loginData).expect(200);
 
       expect(response.body).toHaveProperty('message');
       expect(response.body).toHaveProperty('user');
@@ -103,13 +88,10 @@ describe('Authentication Endpoints', () => {
     it('should not login with invalid credentials', async () => {
       const loginData = {
         email: 'test@example.com',
-        password: 'wrongpassword'
+        password: 'wrongpassword',
       };
 
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send(loginData)
-        .expect(401);
+      const response = await request(app).post('/api/auth/login').send(loginData).expect(401);
 
       expect(response.body).toHaveProperty('message');
     });
@@ -117,13 +99,10 @@ describe('Authentication Endpoints', () => {
     it('should not login with non-existent user', async () => {
       const loginData = {
         email: 'nonexistent@example.com',
-        password: 'password123'
+        password: 'password123',
       };
 
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send(loginData)
-        .expect(401);
+      const response = await request(app).post('/api/auth/login').send(loginData).expect(401);
 
       expect(response.body).toHaveProperty('message');
     });
@@ -143,9 +122,7 @@ describe('Authentication Endpoints', () => {
     });
 
     it('should not get current user without token', async () => {
-      const response = await request(app)
-        .get('/api/auth/me')
-        .expect(401);
+      const response = await request(app).get('/api/auth/me').expect(401);
 
       expect(response.body).toHaveProperty('message');
     });

@@ -67,9 +67,13 @@ export default function AdminMetrics({ navigation }) {
             {metrics.medicalTransports && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>🚑 Trasporti Medici</Text>
-                <Text style={styles.sectionValue}>{metrics.medicalTransports.total_transports || 0}</Text>
+                <Text style={styles.sectionValue}>
+                  {metrics.medicalTransports.total_transports || 0}
+                </Text>
                 <Text style={styles.sectionSubtext}>Trasporti completati</Text>
-                <Text style={styles.sectionSubtext}>Incasso: €{Number(metrics.medicalTransports.total_revenue || 0).toFixed(2)}</Text>
+                <Text style={styles.sectionSubtext}>
+                  Incasso: €{Number(metrics.medicalTransports.total_revenue || 0).toFixed(2)}
+                </Text>
               </View>
             )}
 
@@ -77,9 +81,13 @@ export default function AdminMetrics({ navigation }) {
             {metrics.documentPickups && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>📄 Ritiro Documenti</Text>
-                <Text style={styles.sectionValue}>{metrics.documentPickups.total_pickups || 0}</Text>
+                <Text style={styles.sectionValue}>
+                  {metrics.documentPickups.total_pickups || 0}
+                </Text>
                 <Text style={styles.sectionSubtext}>Ritiri completati</Text>
-                <Text style={styles.sectionSubtext}>Incasso: €{Number(metrics.documentPickups.total_revenue || 0).toFixed(2)}</Text>
+                <Text style={styles.sectionSubtext}>
+                  Incasso: €{Number(metrics.documentPickups.total_revenue || 0).toFixed(2)}
+                </Text>
               </View>
             )}
 
@@ -89,7 +97,9 @@ export default function AdminMetrics({ navigation }) {
                 <Text style={styles.sectionTitle}>🧾 Gestione Bollette</Text>
                 <Text style={styles.sectionValue}>{metrics.bills.total_bills || 0}</Text>
                 <Text style={styles.sectionSubtext}>Bolle create</Text>
-                <Text style={styles.sectionSubtext}>Incasso totale: €{Number(metrics.bills.total_amount || 0).toFixed(2)}</Text>
+                <Text style={styles.sectionSubtext}>
+                  Incasso totale: €{Number(metrics.bills.total_amount || 0).toFixed(2)}
+                </Text>
               </View>
             )}
 
@@ -99,7 +109,9 @@ export default function AdminMetrics({ navigation }) {
                 <Text style={styles.sectionTitle}>🍔️ Consegna Cibo</Text>
                 <Text style={styles.sectionValue}>{metrics.foodDelivery.total_orders || 0}</Text>
                 <Text style={styles.sectionSubtext}>Ordini cibo completati</Text>
-                <Text style={styles.sectionSubtext}>Incasso: €{Number(metrics.foodDelivery.total_revenue || 0).toFixed(2)}</Text>
+                <Text style={styles.sectionSubtext}>
+                  Incasso: €{Number(metrics.foodDelivery.total_revenue || 0).toFixed(2)}
+                </Text>
               </View>
             )}
 
@@ -107,18 +119,26 @@ export default function AdminMetrics({ navigation }) {
             {metrics.packageDelivery && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>📦 Consegna Pacchi</Text>
-                <Text style={styles.sectionValue}>{metrics.packageDelivery.total_deliveries || 0}</Text>
+                <Text style={styles.sectionValue}>
+                  {metrics.packageDelivery.total_deliveries || 0}
+                </Text>
                 <Text style={styles.sectionSubtext}>Consegne pacchi completate</Text>
-                <Text style={styles.sectionSubtext}>Incasso: €{Number(metrics.packageDelivery.total_revenue || 0).toFixed(2)}</Text>
+                <Text style={styles.sectionSubtext}>
+                  Incasso: €{Number(metrics.packageDelivery.total_revenue || 0).toFixed(2)}
+                </Text>
               </View>
             )}
 
             {/* Performance Metrics */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>⚡ Performance</Text>
-              <Text style={styles.sectionValue}>{metrics.performance?.avg_delivery_time || 'N/A'} min</Text>
+              <Text style={styles.sectionValue}>
+                {metrics.performance?.avg_delivery_time || 'N/A'} min
+              </Text>
               <Text style={styles.sectionSubtext}>Tempo medio consegna</Text>
-              <Text style={styles.sectionSubtext}>Tasso completamento: {metrics.performance?.completion_rate || 'N/A'}%</Text>
+              <Text style={styles.sectionSubtext}>
+                Tasso completamento: {metrics.performance?.completion_rate || 'N/A'}%
+              </Text>
             </View>
 
             {/* User Activity */}
@@ -126,7 +146,9 @@ export default function AdminMetrics({ navigation }) {
               <Text style={styles.sectionTitle}>👥 Attività Utenti</Text>
               <Text style={styles.sectionValue}>{metrics.users?.active_users || 0}</Text>
               <Text style={styles.sectionSubtext}>Utenti attivi oggi</Text>
-              <Text style={styles.sectionSubtext}>Nuovi utenti: {metrics.users?.new_users || 0}</Text>
+              <Text style={styles.sectionSubtext}>
+                Nuovi utenti: {metrics.users?.new_users || 0}
+              </Text>
             </View>
           </View>
         ) : (

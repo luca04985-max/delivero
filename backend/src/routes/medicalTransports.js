@@ -20,10 +20,18 @@ router.get('/appointments/upcoming', medicalTransportController.getUpcomingAppoi
 router.get('/:transportId', authenticateToken, medicalTransportController.getTransport);
 
 // Assign rider (admin only)
-router.post('/:transportId/assign-rider', authenticateToken, medicalTransportController.assignRider);
+router.post(
+  '/:transportId/assign-rider',
+  authenticateToken,
+  medicalTransportController.assignRider,
+);
 
 // Rider confirm transport
-router.patch('/:transportId/confirm', authenticateToken, medicalTransportController.confirmTransport);
+router.patch(
+  '/:transportId/confirm',
+  authenticateToken,
+  medicalTransportController.confirmTransport,
+);
 
 // Update transport status
 router.patch('/:transportId/status', authenticateToken, medicalTransportController.updateStatus);

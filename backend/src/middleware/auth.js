@@ -16,7 +16,9 @@ export const authenticateToken = async (req, res, next) => {
 
   // Verify user still exists and is active
   try {
-    const result = await db.query('SELECT id, role, email FROM users WHERE id = $1', [decoded.userId]);
+    const result = await db.query('SELECT id, role, email FROM users WHERE id = $1', [
+      decoded.userId,
+    ]);
     if (result.rows.length === 0) {
       return res.status(403).json({ message: 'User not found' });
     }
@@ -24,7 +26,7 @@ export const authenticateToken = async (req, res, next) => {
     req.user = {
       ...decoded,
       role: result.rows[0].role,
-      email: result.rows[0].email
+      email: result.rows[0].email,
     };
     next();
   } catch (error) {
@@ -32,7 +34,7 @@ export const authenticateToken = async (req, res, next) => {
   }
 };
 
-export const authorizeRole = (roles) => {
+export const authorizeRole = roles => {
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({ message: 'Unauthorized' });

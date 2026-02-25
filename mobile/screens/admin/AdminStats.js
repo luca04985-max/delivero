@@ -82,7 +82,9 @@ export default function AdminStats({ navigation }) {
               <Text style={styles.sectionTitle}>💰 Incasso</Text>
               <Text style={styles.sectionValue}>€{Number(stats.totalRevenue || 0).toFixed(2)}</Text>
               <Text style={styles.sectionSubtext}>Incasso totale</Text>
-              <Text style={styles.sectionSubtext}>Oggi: €{Number(stats.revenueToday || 0).toFixed(2)}</Text>
+              <Text style={styles.sectionSubtext}>
+                Oggi: €{Number(stats.revenueToday || 0).toFixed(2)}
+              </Text>
             </View>
 
             {/* Active Services */}
@@ -106,7 +108,9 @@ export default function AdminStats({ navigation }) {
               <Text style={styles.sectionTitle}>⚡ Performance</Text>
               <Text style={styles.sectionValue}>{stats.avgDeliveryTime || 'N/A'} min</Text>
               <Text style={styles.sectionSubtext}>Tempo medio consegna</Text>
-              <Text style={styles.sectionSubtext}>Tasso successo: {stats.successRate || 'N/A'}%</Text>
+              <Text style={styles.sectionSubtext}>
+                Tasso successo: {stats.successRate || 'N/A'}%
+              </Text>
             </View>
 
             {/* System Health */}

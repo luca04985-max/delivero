@@ -15,23 +15,23 @@ export const useGeolocation = () => {
     setError(null);
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      position => {
         setLocation({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
-          accuracy: position.coords.accuracy
+          accuracy: position.coords.accuracy,
         });
         setLoading(false);
       },
-      (error) => {
+      error => {
         setError(error.message);
         setLoading(false);
       },
       {
         enableHighAccuracy: true,
         timeout: 10000,
-        maximumAge: 300000
-      }
+        maximumAge: 300000,
+      },
     );
   }, []);
 
@@ -42,21 +42,21 @@ export const useGeolocation = () => {
     }
 
     return navigator.geolocation.watchPosition(
-      (position) => {
+      position => {
         setLocation({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
-          accuracy: position.coords.accuracy
+          accuracy: position.coords.accuracy,
         });
       },
-      (error) => {
+      error => {
         setError(error.message);
       },
       {
         enableHighAccuracy: true,
         timeout: 10000,
-        maximumAge: 300000
-      }
+        maximumAge: 300000,
+      },
     );
   }, []);
 
@@ -65,6 +65,6 @@ export const useGeolocation = () => {
     error,
     loading,
     getCurrentLocation,
-    watchPosition
+    watchPosition,
   };
 };

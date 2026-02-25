@@ -8,15 +8,15 @@ const BillPaymentUpload = ({ billId, onSuccess }) => {
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [message, setMessage] = useState('');
 
-  const handleBarcodeChange = (e) => {
+  const handleBarcodeChange = e => {
     setBarcodeFile(e.target.files[0]);
   };
 
-  const handleQrCodeChange = (e) => {
+  const handleQrCodeChange = e => {
     setQrCodeFile(e.target.files[0]);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
 
@@ -24,7 +24,7 @@ const BillPaymentUpload = ({ billId, onSuccess }) => {
       // First create the bill payment request
       const paymentResponse = await API.post('/bill-payments', {
         billId,
-        paymentMethod
+        paymentMethod,
       });
 
       const billPaymentId = paymentResponse.data.id;
@@ -35,17 +35,15 @@ const BillPaymentUpload = ({ billId, onSuccess }) => {
         if (barcodeFile) formData.append('barcode', barcodeFile);
         if (qrCodeFile) formData.append('qrCode', qrCodeFile);
 
-        await API.post(
-          `/bill-payments/${billPaymentId}/upload-images`,
-          formData,
-          { headers: { 'Content-Type': 'multipart/form-data' } }
-        );
+        await API.post(`/bill-payments/${billPaymentId}/upload-images`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
       }
 
       setMessage('Richiesta pagamento bolletta creata con successo!');
       setBarcodeFile(null);
       setQrCodeFile(null);
-      
+
       if (onSuccess) onSuccess(billPaymentId);
     } catch (error) {
       setMessage(`Errore: ${error.response?.data?.message || error.message}`);
@@ -60,11 +58,7 @@ const BillPaymentUpload = ({ billId, onSuccess }) => {
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Metodo di Pagamento:</label>
-          <select 
-            value={paymentMethod} 
-            onChange={(e) => setPaymentMethod(e.target.value)}
-            required
-          >
+          <select value={paymentMethod} onChange={e => setPaymentMethod(e.target.value)} required>
             <option value="cash">Contanti (Rider paga)</option>
             <option value="prepaid">Pre-pagamento</option>
           </select>
@@ -72,20 +66,12 @@ const BillPaymentUpload = ({ billId, onSuccess }) => {
 
         <div className="form-group">
           <label>Foto Barcode:</label>
-          <input 
-            type="file" 
-            accept="image/*"
-            onChange={handleBarcodeChange}
-          />
+          <input type="file" accept="image/*" onChange={handleBarcodeChange} />
         </div>
 
         <div className="form-group">
           <label>Foto Codice QR:</label>
-          <input 
-            type="file" 
-            accept="image/*"
-            onChange={handleQrCodeChange}
-          />
+          <input type="file" accept="image/*" onChange={handleQrCodeChange} />
         </div>
 
         <button type="submit" disabled={loading}>

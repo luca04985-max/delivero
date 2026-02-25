@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, View, Alert } from 'react-native';
-import { adminDashboardScreenStyles as styles } from '../styles/AdminDashboardScreenStyles';
+import { AdminDashboardScreenStyles as styles } from '../styles/AdminDashboardScreenStyles';
 
 // Componente per gli utenti
 export const UserItem = ({ item, onEdit, onDelete, currentUser }) => {
@@ -8,14 +8,12 @@ export const UserItem = ({ item, onEdit, onDelete, currentUser }) => {
   return (
     <View style={styles.card}>
       <Text style={styles.userName}>{item.name}</Text>
-      <Text style={styles.userEmail}>{item.email} - <Text style={{ color: '#FF6B00' }}>{item.role}</Text></Text>
+      <Text style={styles.userEmail}>
+        {item.email} - <Text style={{ color: '#FF6B00' }}>{item.role}</Text>
+      </Text>
 
       <View style={styles.row}>
-        <TouchableOpacity
-          onPress={() => onEdit(item)}
-          style={styles.btnEdit}
-          disabled={isSelf}
-        >
+        <TouchableOpacity onPress={() => onEdit(item)} style={styles.btnEdit} disabled={isSelf}>
           <Text style={styles.btnText}>Modifica</Text>
         </TouchableOpacity>
 
@@ -24,7 +22,7 @@ export const UserItem = ({ item, onEdit, onDelete, currentUser }) => {
           style={[styles.btnDelete, isSelf && styles.btnDisabled]}
           disabled={isSelf}
         >
-          <Text style={styles.btnText}>{isSelf ? "Can't Delete Self" : "Elimina"}</Text>
+          <Text style={styles.btnText}>{isSelf ? "Can't Delete Self" : 'Elimina'}</Text>
         </TouchableOpacity>
       </View>
     </View>

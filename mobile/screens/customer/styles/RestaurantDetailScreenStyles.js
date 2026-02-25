@@ -1,349 +1,389 @@
 import { StyleSheet, Platform } from 'react-native';
 import { mobileTheme } from '../../../theme';
+import { unifiedStyles } from '../../../theme/UnifiedStyles';
 
 export const restaurantDetailScreenStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: mobileTheme.colors.background,
-  },
+  // shared: base styles from unifiedStyles
+  ...unifiedStyles,
 
-  // INLINE STYLES FROM RestaurantDetailScreen.js
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 14,
-    color: '#666',
-  },
+  // header: barra superiore dettaglio ristorante
   header: {
-    backgroundColor: '#FF6B00',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    paddingTop: 16,
+    backgroundColor: mobileTheme.colors.primary,
+    paddingHorizontal: mobileTheme.spacing[4],
+    paddingVertical: mobileTheme.spacing[3],
+    paddingTop: mobileTheme.spacing[4],
     flexDirection: 'row',
     alignItems: 'center',
   },
+  // backButton: testo pulsante back in header
   backButton: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
+    fontSize: mobileTheme.typography.fontSize.sm,
+    fontWeight: mobileTheme.typography.fontWeight.semibold,
+    color: mobileTheme.colors.white,
   },
+  // restaurantName: nome ristorante in header
   restaurantName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontSize: mobileTheme.typography.fontSize.lg,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    color: mobileTheme.colors.white,
   },
+  // restaurantInfo: info ristorante (tempo, distanza)
   restaurantInfo: {
-    fontSize: 12,
-    color: '#fff',
+    fontSize: mobileTheme.typography.fontSize.xs,
+    color: mobileTheme.colors.white,
     opacity: 0.9,
-    marginTop: 4,
+    marginTop: mobileTheme.spacing[1],
   },
+  // categoriesList: contenitore tabs categorie
   categoriesList: {
-    backgroundColor: '#fff',
+    backgroundColor: mobileTheme.colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: mobileTheme.colors.border,
     maxHeight: 44,
   },
+  // categoriesContent: padding list categorie
   categoriesContent: {
-    paddingHorizontal: 6,
-    paddingVertical: 4,
+    paddingHorizontal: mobileTheme.spacing[2],
+    paddingVertical: mobileTheme.spacing[1],
     alignItems: 'center',
   },
+  // categoryTab: pill categoria
   categoryTab: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: mobileTheme.spacing[2],
+    paddingVertical: mobileTheme.spacing[1],
     marginHorizontal: 2,
-    borderRadius: 12,
-    backgroundColor: '#f0f0f0',
+    borderRadius: mobileTheme.borderRadius.md,
+    backgroundColor: mobileTheme.colors.background,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: mobileTheme.colors.border,
   },
+  // categoryTabActive: pill categoria attiva
   categoryTabActive: {
-    backgroundColor: '#FF6B00',
-    borderColor: '#FF6B00',
+    backgroundColor: mobileTheme.colors.primary,
+    borderColor: mobileTheme.colors.primary,
   },
+  // categoryTabText: testo categoria
   categoryTabText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#666',
+    fontSize: mobileTheme.typography.fontSize.xs,
+    fontWeight: mobileTheme.typography.fontWeight.semibold,
+    color: mobileTheme.colors.text.secondary,
   },
+  // categoryTabTextActive: testo categoria attiva
   categoryTabTextActive: {
-    color: '#fff',
+    color: mobileTheme.colors.white,
   },
+  // productsList: lista prodotti
   productsList: {
     flex: 1,
   },
+  // productsContent: padding interno lista prodotti
   productsContent: {
-    padding: 8,
-    paddingBottom: 12,
+    padding: mobileTheme.spacing[2],
+    paddingBottom: mobileTheme.spacing[3],
   },
+  // productCard: card prodotto
   productCard: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 8,
-    marginBottom: 6,
+    backgroundColor: mobileTheme.colors.white,
+    borderRadius: mobileTheme.borderRadius.sm,
+    padding: mobileTheme.spacing[2],
+    marginBottom: mobileTheme.spacing[2],
     borderWidth: 1,
-    borderColor: '#eee',
+    borderColor: mobileTheme.colors.border,
   },
+  // productHeader: header card prodotto
   productHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 4,
+    marginBottom: mobileTheme.spacing[1],
   },
+  // productName: nome prodotto
   productName: {
-    fontSize: 13,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: mobileTheme.typography.fontSize.sm,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    color: mobileTheme.colors.text.primary,
   },
+  // productDescription: descrizione prodotto
   productDescription: {
-    fontSize: 11,
-    color: '#666',
-    marginTop: 2,
+    fontSize: mobileTheme.typography.fontSize.xs,
+    color: mobileTheme.colors.text.secondary,
+    marginTop: mobileTheme.spacing[1],
   },
+  // productPrice: prezzo prodotto
   productPrice: {
-    fontSize: 13,
-    fontWeight: 'bold',
-    color: '#FF6B00',
+    fontSize: mobileTheme.typography.fontSize.sm,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    color: mobileTheme.colors.primary,
   },
+  // allergens: avviso allergeni
   allergens: {
-    fontSize: 10,
-    color: '#d32f2f',
-    marginTop: 6,
+    fontSize: mobileTheme.typography.fontSize.xs,
+    color: mobileTheme.colors.error,
+    marginTop: mobileTheme.spacing[2],
   },
+  // customizationHint: hint personalizzazione
   customizationHint: {
-    fontSize: 11,
-    color: '#2196f3',
-    marginTop: 4,
+    fontSize: mobileTheme.typography.fontSize.xs,
+    color: mobileTheme.colors.accent,
+    marginTop: mobileTheme.spacing[1],
   },
+  // emptyContainer: stato vuoto prodotti
   emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 40,
+    ...unifiedStyles.emptyContainer,
+    paddingVertical: mobileTheme.spacing[8],
+    marginTop: 0,
   },
-  emptyText: {
-    fontSize: 16,
-    color: '#999',
-  },
+  // emptyText: testo stato vuoto
+  emptyText: unifiedStyles.emptyText,
+  // modalContainer: overlay modale prodotto
   modalContainer: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
+  // modalContent: card modale dettagli prodotto
   modalContent: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: mobileTheme.colors.white,
     marginTop: 100,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     overflow: 'hidden',
   },
+  // modalHeader: header modale
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: mobileTheme.spacing[4],
+    paddingVertical: mobileTheme.spacing[3],
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: mobileTheme.colors.border,
   },
+  // closeButton: X di chiusura
   closeButton: {
     fontSize: 24,
-    color: '#999',
-    fontWeight: 'bold',
+    color: mobileTheme.colors.text.tertiary,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
   },
+  // modalTitle: titolo modale
   modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: mobileTheme.typography.fontSize.lg,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    color: mobileTheme.colors.text.primary,
     flex: 1,
     textAlign: 'center',
   },
+  // modalBody: contenuto modale
   modalBody: {
     flex: 1,
-    padding: 16,
+    padding: mobileTheme.spacing[4],
   },
+  // modalDescription: descrizione prodotto
   modalDescription: {
-    fontSize: 13,
-    color: '#666',
-    marginBottom: 12,
+    fontSize: mobileTheme.typography.fontSize.sm,
+    color: mobileTheme.colors.text.secondary,
+    marginBottom: mobileTheme.spacing[3],
   },
+  // modalPrice: prezzo base prodotto
   modalPrice: {
-    fontSize: 13,
-    color: '#666',
-    marginBottom: 12,
+    fontSize: mobileTheme.typography.fontSize.sm,
+    color: mobileTheme.colors.text.secondary,
+    marginBottom: mobileTheme.spacing[3],
   },
+  // priceValue: valore prezzo evidenziato
   priceValue: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#FF6B00',
+    fontSize: mobileTheme.typography.fontSize.base,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    color: mobileTheme.colors.primary,
   },
+  // allergenBlock: box allergeni
   allergenBlock: {
-    backgroundColor: '#ffebee',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 12,
+    backgroundColor: mobileTheme.colors.errorBg,
+    borderRadius: mobileTheme.borderRadius.sm,
+    padding: mobileTheme.spacing[3],
+    marginBottom: mobileTheme.spacing[3],
   },
+  // allergenLabel: label allergeni
   allergenLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#d32f2f',
+    fontSize: mobileTheme.typography.fontSize.xs,
+    fontWeight: mobileTheme.typography.fontWeight.semibold,
+    color: mobileTheme.colors.error,
   },
+  // allergenText: testo allergeni
   allergenText: {
-    fontSize: 11,
-    color: '#d32f2f',
-    marginTop: 4,
+    fontSize: mobileTheme.typography.fontSize.xs,
+    color: mobileTheme.colors.error,
+    marginTop: mobileTheme.spacing[1],
   },
+  // customizationsSection: sezione personalizzazioni
   customizationsSection: {
-    marginBottom: 16,
+    marginBottom: mobileTheme.spacing[4],
   },
+  // customizationsTitle: titolo personalizzazioni
   customizationsTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
+    fontSize: mobileTheme.typography.fontSize.sm,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    color: mobileTheme.colors.text.primary,
+    marginBottom: mobileTheme.spacing[3],
   },
+  // customizationBlock: blocco singola personalizzazione
   customizationBlock: {
-    marginBottom: 12,
-    paddingBottom: 12,
+    marginBottom: mobileTheme.spacing[3],
+    paddingBottom: mobileTheme.spacing[3],
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: mobileTheme.colors.border,
   },
+  // customizationLabel: label personalizzazione
   customizationLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 8,
+    fontSize: mobileTheme.typography.fontSize.xs,
+    fontWeight: mobileTheme.typography.fontWeight.semibold,
+    color: mobileTheme.colors.text.primary,
+    marginBottom: mobileTheme.spacing[2],
   },
+  // customizationOptions: lista opzioni
   customizationOptions: {
     flexDirection: 'column',
-    gap: 6,
+    gap: mobileTheme.spacing[2],
   },
+  // optionButton: pill opzione
   optionButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
+    paddingHorizontal: mobileTheme.spacing[3],
+    paddingVertical: mobileTheme.spacing[2],
+    borderRadius: mobileTheme.borderRadius.sm,
     borderWidth: 1,
-    borderColor: '#ddd',
-    backgroundColor: '#f8f8f8',
+    borderColor: mobileTheme.colors.border,
+    backgroundColor: mobileTheme.colors.background,
   },
+  // optionButtonSelected: pill opzione selezionata
   optionButtonSelected: {
-    borderColor: '#FF6B00',
-    backgroundColor: '#fff3e0',
+    borderColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.primarySoft,
   },
+  // optionText: testo opzione
   optionText: {
-    fontSize: 12,
-    color: '#666',
+    fontSize: mobileTheme.typography.fontSize.xs,
+    color: mobileTheme.colors.text.secondary,
   },
+  // optionTextSelected: testo opzione selezionata
   optionTextSelected: {
-    color: '#FF6B00',
-    fontWeight: '600',
+    color: mobileTheme.colors.primary,
+    fontWeight: mobileTheme.typography.fontWeight.semibold,
   },
+  // checkboxButton: checkbox opzione
   checkboxButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
+    paddingHorizontal: mobileTheme.spacing[3],
+    paddingVertical: mobileTheme.spacing[2],
+    borderRadius: mobileTheme.borderRadius.sm,
     borderWidth: 1,
-    borderColor: '#ddd',
-    backgroundColor: '#f8f8f8',
+    borderColor: mobileTheme.colors.border,
+    backgroundColor: mobileTheme.colors.background,
   },
+  // checkboxButtonSelected: checkbox selezionato
   checkboxButtonSelected: {
-    borderColor: '#FF6B00',
-    backgroundColor: '#fff3e0',
+    borderColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.primarySoft,
   },
+  // checkboxText: testo checkbox
   checkboxText: {
-    fontSize: 12,
-    color: '#333',
+    fontSize: mobileTheme.typography.fontSize.xs,
+    color: mobileTheme.colors.text.primary,
   },
+  // textInput: input note breve
   textInput: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    fontSize: 12,
-    backgroundColor: '#f8f8f8',
+    ...unifiedStyles.input,
+    paddingHorizontal: mobileTheme.spacing[3],
+    paddingVertical: mobileTheme.spacing[2],
+    fontSize: mobileTheme.typography.fontSize.xs,
+    backgroundColor: mobileTheme.colors.background,
   },
+  // notesSection: sezione note aggiuntive
   notesSection: {
-    marginBottom: 16,
+    marginBottom: mobileTheme.spacing[4],
   },
+  // notesLabel: label note
   notesLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 8,
+    fontSize: mobileTheme.typography.fontSize.xs,
+    fontWeight: mobileTheme.typography.fontWeight.semibold,
+    color: mobileTheme.colors.text.primary,
+    marginBottom: mobileTheme.spacing[2],
   },
+  // notesInput: textarea note
   notesInput: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 12,
-    backgroundColor: '#f8f8f8',
+    ...unifiedStyles.input,
+    paddingHorizontal: mobileTheme.spacing[3],
+    paddingVertical: mobileTheme.spacing[3],
+    fontSize: mobileTheme.typography.fontSize.xs,
+    backgroundColor: mobileTheme.colors.background,
     textAlignVertical: 'top',
   },
+  // quantitySection: sezione quantità
   quantitySection: {
-    marginBottom: 16,
+    marginBottom: mobileTheme.spacing[4],
   },
+  // quantityLabel: label quantità
   quantityLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 8,
+    fontSize: mobileTheme.typography.fontSize.xs,
+    fontWeight: mobileTheme.typography.fontWeight.semibold,
+    color: mobileTheme.colors.text.primary,
+    marginBottom: mobileTheme.spacing[2],
   },
+  // quantityControls: barra controlli quantità
   quantityControls: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f8f8f8',
-    borderRadius: 8,
+    backgroundColor: mobileTheme.colors.background,
+    borderRadius: mobileTheme.borderRadius.sm,
     width: 120,
   },
+  // quantityButton: pulsante +/-
   quantityButton: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 8,
+    paddingVertical: mobileTheme.spacing[2],
   },
+  // quantityButtonText: testo +/-
   quantityButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FF6B00',
+    fontSize: mobileTheme.typography.fontSize.lg,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    color: mobileTheme.colors.primary,
   },
+  // quantityValue: valore quantità
   quantityValue: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: mobileTheme.typography.fontSize.sm,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    color: mobileTheme.colors.text.primary,
     minWidth: 40,
     textAlign: 'center',
   },
+  // modalFooter: footer modale con CTA
   modalFooter: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: mobileTheme.spacing[4],
+    paddingVertical: mobileTheme.spacing[3],
     borderTopWidth: 1,
-    borderTopColor: '#eee',
+    borderTopColor: mobileTheme.colors.border,
   },
+  // addToCartButton: CTA aggiungi al carrello
   addToCartButton: {
-    backgroundColor: '#FF6B00',
-    borderRadius: 12,
-    paddingVertical: 14,
+    backgroundColor: mobileTheme.colors.primary,
+    borderRadius: mobileTheme.borderRadius.md,
+    paddingVertical: mobileTheme.spacing[4],
     alignItems: 'center',
   },
+  // addToCartText: testo CTA aggiungi al carrello
   addToCartText: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontSize: mobileTheme.typography.fontSize.sm,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    color: mobileTheme.colors.white,
   },
 
-  // EXISTING STYLES FROM ORIGINAL FILE
+  // headerImage: immagine hero ristorante
   headerImage: {
     width: '100%',
     height: 200,
     backgroundColor: mobileTheme.colors.border,
   },
+  // headerOverlay: overlay scuro su immagine
   headerOverlay: {
     position: 'absolute',
     top: 0,
@@ -352,6 +392,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     bottom: 0,
     backgroundColor: 'rgba(0,0,0,0.3)',
   },
+  // backButtonOverlay: bottone back sopra immagine
   backButtonOverlay: {
     position: 'absolute',
     top: Platform.OS === 'ios' ? 60 : 40,
@@ -363,6 +404,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  // favoriteButton: bottone preferiti sopra immagine
   favoriteButton: {
     position: 'absolute',
     top: Platform.OS === 'ios' ? 60 : 40,
@@ -376,50 +418,41 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     ...mobileTheme.shadows.soft,
   },
 
-  // RESTAURANT INFO
-  restaurantInfo: {
-    backgroundColor: mobileTheme.colors.white,
-    padding: mobileTheme.spacing[5],
-    marginTop: -20,
-    borderTopLeftRadius: mobileTheme.borderRadius.xl,
-    borderTopRightRadius: mobileTheme.borderRadius.xl,
-    ...mobileTheme.shadows.medium,
-  },
-  restaurantName: {
-    fontSize: mobileTheme.typography.fontSize['2xl'],
-    fontWeight: mobileTheme.typography.fontWeight.black,
-    color: mobileTheme.colors.text.primary,
-    marginBottom: mobileTheme.spacing[2],
-  },
+  // restaurantCategory: categoria ristorante
   restaurantCategory: {
     fontSize: mobileTheme.typography.fontSize.base,
     color: mobileTheme.colors.text.secondary,
     marginBottom: mobileTheme.spacing[3],
   },
+  // restaurantMeta: riga meta info (rating/tempo)
   restaurantMeta: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  // ratingContainer: wrapper rating stelle
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
+  // rating: valore rating
   rating: {
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.primary,
     marginLeft: 4,
   },
+  // deliveryInfo: info consegna
   deliveryInfo: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
   },
 
-  // MENU SECTION
+  // menuSection: sezione menu
   menuSection: {
     marginTop: mobileTheme.spacing[4],
   },
+  // sectionTitle: titolo sezione menu
   sectionTitle: {
     fontSize: mobileTheme.typography.fontSize.xl,
     fontWeight: mobileTheme.typography.fontWeight.bold,
@@ -428,9 +461,11 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     marginBottom: mobileTheme.spacing[4],
     letterSpacing: -0.2,
   },
+  // menuList: lista menu
   menuList: {
     paddingHorizontal: mobileTheme.spacing[5],
   },
+  // menuItem: card item menu
   menuItem: {
     backgroundColor: mobileTheme.colors.white,
     borderRadius: mobileTheme.borderRadius.lg,
@@ -442,6 +477,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: mobileTheme.colors.border,
   },
+  // itemImage: immagine prodotto
   itemImage: {
     width: 60,
     height: 60,
@@ -449,25 +485,30 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     backgroundColor: mobileTheme.colors.background,
     marginRight: mobileTheme.spacing[4],
   },
+  // itemInfo: contenitore testi prodotto
   itemInfo: {
     flex: 1,
   },
+  // itemName: nome prodotto
   itemName: {
     fontSize: mobileTheme.typography.fontSize.base,
     fontWeight: mobileTheme.typography.fontWeight.semibold,
     color: mobileTheme.colors.text.primary,
     marginBottom: 2,
   },
+  // itemDescription: descrizione prodotto
   itemDescription: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
     lineHeight: 16,
   },
+  // itemPrice: prezzo prodotto
   itemPrice: {
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.primary,
   },
+  // addButton: bottone aggiungi item
   addButton: {
     backgroundColor: mobileTheme.colors.primary,
     width: 30,
@@ -477,34 +518,39 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: mobileTheme.spacing[3],
   },
+  // addButtonText: testo bottone aggiungi
   addButtonText: {
     color: mobileTheme.colors.white,
     fontSize: 18,
     fontWeight: mobileTheme.typography.fontWeight.bold,
   },
 
-  // CART SUMMARY
+  // cartSummary: riepilogo carrello
   cartSummary: {
     backgroundColor: mobileTheme.colors.white,
     padding: mobileTheme.spacing[5],
     borderTopWidth: 1,
     borderTopColor: mobileTheme.colors.border,
   },
+  // summaryRow: riga riepilogo
   summaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: mobileTheme.spacing[2],
   },
+  // summaryLabel: label riepilogo
   summaryLabel: {
     fontSize: mobileTheme.typography.fontSize.base,
     color: mobileTheme.colors.text.secondary,
   },
+  // summaryValue: valore riepilogo
   summaryValue: {
     fontSize: mobileTheme.typography.fontSize.base,
     fontWeight: mobileTheme.typography.fontWeight.semibold,
     color: mobileTheme.colors.text.primary,
   },
+  // totalRow: riga totale
   totalRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -513,16 +559,19 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: mobileTheme.colors.border,
   },
+  // totalLabel: label totale
   totalLabel: {
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.text.primary,
   },
+  // totalValue: valore totale
   totalValue: {
     fontSize: mobileTheme.typography.fontSize.xl,
     fontWeight: mobileTheme.typography.fontWeight.black,
     color: mobileTheme.colors.primary,
   },
+  // checkoutButton: CTA checkout
   checkoutButton: {
     backgroundColor: mobileTheme.colors.primary,
     paddingVertical: mobileTheme.spacing[4],
@@ -532,6 +581,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     ...mobileTheme.shadows.medium,
     shadowColor: mobileTheme.colors.primary,
   },
+  // checkoutButtonText: testo CTA checkout
   checkoutButtonText: {
     fontSize: mobileTheme.typography.fontSize.base,
     fontWeight: mobileTheme.typography.fontWeight.black,
@@ -540,24 +590,6 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     letterSpacing: 1,
   },
 
-  // LOADING STATES
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: mobileTheme.spacing[5],
-  },
-  emptyText: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.tertiary,
-    textAlign: 'center',
-    lineHeight: 22,
-  },
 });
 
 export default restaurantDetailScreenStyles;

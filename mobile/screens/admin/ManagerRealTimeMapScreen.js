@@ -9,300 +9,305 @@ import { managerRealTimeMapScreenStyles } from './styles/ManagerRealTimeMapScree
 const SOCKET_URL = 'https://delivero-gyjx.onrender.com';
 
 export default function ManagerRealTimeMapScreen({ route }) {
-    const { orderId } = route.params || {}; // Get orderId from navigation params
-    const [riders, setRiders] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [mapKey, setMapKey] = useState(0); // Force WebView remount
-    const [region, setRegion] = useState({
-        latitude: 41.880025,
-        longitude: 12.67594,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-    });
+  const { orderId } = route.params || {}; // Get orderId from navigation params
+  const [riders, setRiders] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [mapKey, setMapKey] = useState(0); // Force WebView remount
+  const [region, setRegion] = useState({
+    latitude: 41.880025,
+    longitude: 12.67594,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
 
-    const loadActiveOrdersFallback = async () => {
-        try {
-            console.log('[ManagerRealTimeMap] === STARTING FALLBACK FETCH ===');
+  const loadActiveOrdersFallback = async () => {
+    try {
+      console.log('[ManagerRealTimeMap] === STARTING FALLBACK FETCH ===');
 
-            // If orderId is specified, fetch only that order
-            if (orderId) {
-                console.log('[ManagerRealTimeMap] fetching single order:', orderId);
-                const data = await makeRequest(`/orders/active/all`, { method: 'GET' });
-                const list = Array.isArray(data) ? data : (data?.data || []);
-                const targetOrder = list.find(o => String(o.id) === String(orderId));
+      // If orderId is specified, fetch only that order
+      if (orderId) {
+        console.log('[ManagerRealTimeMap] fetching single order:', orderId);
+        const data = await makeRequest(`/orders/active/all`, { method: 'GET' });
+        const list = Array.isArray(data) ? data : data?.data || [];
+        const targetOrder = list.find(o => String(o.id) === String(orderId));
 
-                if (targetOrder) {
-                    console.log('[ManagerRealTimeMap] found target order:', targetOrder);
-                    const next = {};
-                    const { rider_latitude, rider_longitude } = targetOrder;
+        if (targetOrder) {
+          console.log('[ManagerRealTimeMap] found target order:', targetOrder);
+          const next = {};
+          const { rider_latitude, rider_longitude } = targetOrder;
 
-                    if (rider_latitude != null && rider_longitude != null) {
-                        const lat = parseFloat(rider_latitude);
-                        const lng = parseFloat(rider_longitude);
+          if (rider_latitude != null && rider_longitude != null) {
+            const lat = parseFloat(rider_latitude);
+            const lng = parseFloat(rider_longitude);
 
-                        if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-                            console.log('[ManagerRealTimeMap] invalid coords for order:', orderId);
-                            setLoading(false);
-                            return;
-                        }
-
-                        next[String(orderId)] = {
-                            orderId: targetOrder.id,
-                            lat,
-                            lng,
-                            eta_minutes: targetOrder.eta_minutes,
-                            status: targetOrder.status,
-                            delivery_latitude: targetOrder.delivery_latitude,
-                            delivery_longitude: targetOrder.delivery_longitude,
-                            customer_id: targetOrder.customer_id,
-                            restaurant_id: targetOrder.restaurant_id,
-                        };
-
-                        console.log('[ManagerRealTimeMap] added single rider for order:', orderId);
-                        setRiders(next);
-                    } else {
-                        console.log('[ManagerRealTimeMap] no rider coords for order:', orderId);
-                    }
-                    setLoading(false);
-                    return;
-                }
+            if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+              console.log('[ManagerRealTimeMap] invalid coords for order:', orderId);
+              setLoading(false);
+              return;
             }
 
-            // Otherwise, fetch all orders (default behavior)
-            console.log('[ManagerRealTimeMap] fallback fetch /orders/active/all');
-            const data = await makeRequest('/orders/active/all', { method: 'GET' });
-            console.log('[ManagerRealTimeMap] raw response:', data);
+            next[String(orderId)] = {
+              orderId: targetOrder.id,
+              lat,
+              lng,
+              eta_minutes: targetOrder.eta_minutes,
+              status: targetOrder.status,
+              delivery_latitude: targetOrder.delivery_latitude,
+              delivery_longitude: targetOrder.delivery_longitude,
+              customer_id: targetOrder.customer_id,
+              restaurant_id: targetOrder.restaurant_id,
+            };
 
-            const list = Array.isArray(data) ? data : (data?.data || []);
-            console.log('[ManagerRealTimeMap] parsed list length:', list.length);
-            if (list.length > 0) {
-                console.log('[ManagerRealTimeMap] first item:', list[0]);
-            }
-
-            // Process all orders (only if no specific orderId)
-            const next = {};
-            for (const o of list) {
-                console.log('[ManagerRealTimeMap] processing order:', o);
-                console.log('[ManagerRealTimeMap] FULL ORDER DATA:', JSON.stringify(o, null, 2));
-                console.log('[ManagerRealTimeMap] AVAILABLE FIELDS:', Object.keys(o));
-                console.log('[ManagerRealTimeMap] RIDER COORDS CHECK:', {
-                    rider_latitude: o?.rider_latitude,
-                    rider_longitude: o?.rider_longitude,
-                    delivery_latitude: o?.delivery_latitude,
-                    delivery_longitude: o?.delivery_longitude
-                });
-                if (o?.rider_latitude == null || o?.rider_longitude == null) {
-                    console.log('[ManagerRealTimeMap] skipping order - missing coords:', o.id);
-                    continue;
-                }
-                const lat = parseFloat(o.rider_latitude);
-                const lng = parseFloat(o.rider_longitude);
-                console.log('[ManagerRealTimeMap] parsed coords:', lat, lng);
-                console.log('[ManagerRealTimeMap] delivery coords available:', {
-                    delivery_lat: o.delivery_latitude,
-                    delivery_lon: o.delivery_longitude,
-                    customer_id: o.customer_id,
-                    restaurant_id: o.restaurant_id
-                });
-                if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-                    console.log('[ManagerRealTimeMap] skipping order - invalid coords:', o.id);
-                    continue;
-                }
-                next[String(o.id)] = {
-                    orderId: o.id,
-                    lat,
-                    lng,
-                    eta_minutes: o.eta_minutes,
-                    status: o.status,
-                    delivery_latitude: o.delivery_latitude,
-                    delivery_longitude: o.delivery_longitude,
-                    customer_id: o.customer_id,
-                    restaurant_id: o.restaurant_id,
-                };
-                console.log('[ManagerRealTimeMap] added rider for order:', o.id);
-            }
-
-            const nextCount = Object.keys(next).length;
-            console.log('[ManagerRealTimeMap] final riders count:', nextCount);
-            console.log('[ManagerRealTimeMap] riders data:', next);
-
-            // Debug dettagliato per ogni rider
-            Object.values(next).forEach(rider => {
-                console.log(`[ManagerRealTimeMap] Rider #${rider.orderId}:`, {
-                    lat: rider.lat,
-                    lng: rider.lng,
-                    hasDeliveryCoords: !!(rider.delivery_latitude && rider.delivery_longitude),
-                    delivery_lat: rider.delivery_latitude,
-                    delivery_lon: rider.delivery_longitude,
-                    status: rider.status,
-                    eta: rider.eta_minutes
-                });
-            });
-
-            if (nextCount > 0) {
-                console.log('[ManagerRealTimeMap] setting riders state...');
-                setRiders(prev => {
-                    console.log('[ManagerRealTimeMap] previous riders:', prev);
-                    const updated = { ...prev, ...next };
-                    console.log('[ManagerRealTimeMap] updated riders:', updated);
-                    // Force WebView remount to show new markers
-                    setMapKey(k => {
-                        const newKey = k + 1;
-                        console.log('[ManagerRealTimeMap] mapKey changing from', k, 'to', newKey);
-                        return newKey;
-                    });
-                    return updated;
-                });
-            }
-
-            setLoading(false);
-        } catch (e) {
-            console.log('[ManagerRealTimeMap] fallback fetch error', e?.message || e);
-            setLoading(false);
+            console.log('[ManagerRealTimeMap] added single rider for order:', orderId);
+            setRiders(next);
+          } else {
+            console.log('[ManagerRealTimeMap] no rider coords for order:', orderId);
+          }
+          setLoading(false);
+          return;
         }
+      }
+
+      // Otherwise, fetch all orders (default behavior)
+      console.log('[ManagerRealTimeMap] fallback fetch /orders/active/all');
+      const data = await makeRequest('/orders/active/all', { method: 'GET' });
+      console.log('[ManagerRealTimeMap] raw response:', data);
+
+      const list = Array.isArray(data) ? data : data?.data || [];
+      console.log('[ManagerRealTimeMap] parsed list length:', list.length);
+      if (list.length > 0) {
+        console.log('[ManagerRealTimeMap] first item:', list[0]);
+      }
+
+      // Process all orders (only if no specific orderId)
+      const next = {};
+      for (const o of list) {
+        console.log('[ManagerRealTimeMap] processing order:', o);
+        console.log('[ManagerRealTimeMap] FULL ORDER DATA:', JSON.stringify(o, null, 2));
+        console.log('[ManagerRealTimeMap] AVAILABLE FIELDS:', Object.keys(o));
+        console.log('[ManagerRealTimeMap] RIDER COORDS CHECK:', {
+          rider_latitude: o?.rider_latitude,
+          rider_longitude: o?.rider_longitude,
+          delivery_latitude: o?.delivery_latitude,
+          delivery_longitude: o?.delivery_longitude,
+        });
+        if (o?.rider_latitude == null || o?.rider_longitude == null) {
+          console.log('[ManagerRealTimeMap] skipping order - missing coords:', o.id);
+          continue;
+        }
+        const lat = parseFloat(o.rider_latitude);
+        const lng = parseFloat(o.rider_longitude);
+        console.log('[ManagerRealTimeMap] parsed coords:', lat, lng);
+        console.log('[ManagerRealTimeMap] delivery coords available:', {
+          delivery_lat: o.delivery_latitude,
+          delivery_lon: o.delivery_longitude,
+          customer_id: o.customer_id,
+          restaurant_id: o.restaurant_id,
+        });
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+          console.log('[ManagerRealTimeMap] skipping order - invalid coords:', o.id);
+          continue;
+        }
+        next[String(o.id)] = {
+          orderId: o.id,
+          lat,
+          lng,
+          eta_minutes: o.eta_minutes,
+          status: o.status,
+          delivery_latitude: o.delivery_latitude,
+          delivery_longitude: o.delivery_longitude,
+          customer_id: o.customer_id,
+          restaurant_id: o.restaurant_id,
+        };
+        console.log('[ManagerRealTimeMap] added rider for order:', o.id);
+      }
+
+      const nextCount = Object.keys(next).length;
+      console.log('[ManagerRealTimeMap] final riders count:', nextCount);
+      console.log('[ManagerRealTimeMap] riders data:', next);
+
+      // Debug dettagliato per ogni rider
+      Object.values(next).forEach(rider => {
+        console.log(`[ManagerRealTimeMap] Rider #${rider.orderId}:`, {
+          lat: rider.lat,
+          lng: rider.lng,
+          hasDeliveryCoords: !!(rider.delivery_latitude && rider.delivery_longitude),
+          delivery_lat: rider.delivery_latitude,
+          delivery_lon: rider.delivery_longitude,
+          status: rider.status,
+          eta: rider.eta_minutes,
+        });
+      });
+
+      if (nextCount > 0) {
+        console.log('[ManagerRealTimeMap] setting riders state...');
+        setRiders(prev => {
+          console.log('[ManagerRealTimeMap] previous riders:', prev);
+          const updated = { ...prev, ...next };
+          console.log('[ManagerRealTimeMap] updated riders:', updated);
+          // Force WebView remount to show new markers
+          setMapKey(k => {
+            const newKey = k + 1;
+            console.log('[ManagerRealTimeMap] mapKey changing from', k, 'to', newKey);
+            return newKey;
+          });
+          return updated;
+        });
+      }
+
+      setLoading(false);
+    } catch (e) {
+      console.log('[ManagerRealTimeMap] fallback fetch error', e?.message || e);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    let socket;
+
+    const initSocket = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        console.log('[ManagerRealTimeMap] init socket', SOCKET_URL, 'token?', !!token);
+
+        if (!token) {
+          console.log('[ManagerRealTimeMap] missing token: cannot connect socket');
+          setLoading(false);
+          return;
+        }
+
+        socket = io(SOCKET_URL, {
+          auth: { token },
+          transports: ['websocket'],
+          reconnection: true,
+          reconnectionDelay: 1000,
+          reconnectionDelayMax: 5000,
+          reconnectionAttempts: 5,
+        });
+
+        socket.on('connect', () => {
+          console.log('[ManagerRealTimeMap] socket connected', socket.id);
+          try {
+            socket.emit('joinManagerRoom');
+            console.log('[ManagerRealTimeMap] emitted joinManagerRoom');
+          } catch (e) {
+            console.log('[ManagerRealTimeMap] failed to emit joinManagerRoom', e?.message || e);
+          }
+        });
+
+        socket.on('disconnect', reason => {
+          console.log('[ManagerRealTimeMap] socket disconnected', reason);
+        });
+
+        socket.on('connect_error', err => {
+          console.log('[ManagerRealTimeMap] socket connect_error', err?.message || err);
+        });
+
+        socket.on('error', err => {
+          console.log('[ManagerRealTimeMap] socket error', err?.message || err);
+        });
+
+        // Backend emits updates to managers room on rider location/order status
+        socket.on('activeOrderUpdate', data => {
+          console.log('[ManagerRealTimeMap] activeOrderUpdate', data);
+          const orderId = data?.orderId;
+          const lat = data?.latitude;
+          const lng = data?.longitude;
+          if (!orderId || lat == null || lng == null) {
+            setLoading(false);
+            return;
+          }
+          setRiders(prev => ({
+            ...prev,
+            [String(orderId)]: {
+              orderId,
+              lat,
+              lng,
+              eta_minutes: data?.eta_minutes,
+              status: data?.status,
+              delivery_latitude: data?.delivery_latitude,
+              delivery_longitude: data?.delivery_longitude,
+              customer_id: data?.customer_id,
+              restaurant_id: data?.restaurant_id,
+            },
+          }));
+          setLoading(false);
+        });
+      } catch (e) {
+        console.log('[ManagerRealTimeMap] init socket error', e?.message || e);
+        setLoading(false);
+      }
     };
 
-    useEffect(() => {
-        let socket;
+    initSocket();
 
-        const initSocket = async () => {
-            try {
-                const token = await AsyncStorage.getItem('token');
-                console.log('[ManagerRealTimeMap] init socket', SOCKET_URL, 'token?', !!token);
+    // Fallback: populate markers even if socket updates are not arriving yet
+    loadActiveOrdersFallback();
+    const interval = setInterval(loadActiveOrdersFallback, 15000);
 
-                if (!token) {
-                    console.log('[ManagerRealTimeMap] missing token: cannot connect socket');
-                    setLoading(false);
-                    return;
-                }
+    return () => {
+      try {
+        socket?.disconnect();
+      } catch (e) {
+        // ignore
+      }
 
-                socket = io(SOCKET_URL, {
-                    auth: { token },
-                    transports: ['websocket'],
-                    reconnection: true,
-                    reconnectionDelay: 1000,
-                    reconnectionDelayMax: 5000,
-                    reconnectionAttempts: 5,
-                });
+      try {
+        clearInterval(interval);
+      } catch (e) {
+        // ignore
+      }
+    };
+  }, []);
 
-                socket.on('connect', () => {
-                    console.log('[ManagerRealTimeMap] socket connected', socket.id);
-                    try {
-                        socket.emit('joinManagerRoom');
-                        console.log('[ManagerRealTimeMap] emitted joinManagerRoom');
-                    } catch (e) {
-                        console.log('[ManagerRealTimeMap] failed to emit joinManagerRoom', e?.message || e);
-                    }
-                });
+  // Temporaneamente disabilitato per test
+  // if (Platform.OS === 'web') {
+  //     console.log('[ManagerRealTimeMap] PLATFORM IS WEB - showing web message');
+  //     return <View style={managerRealTimeMapScreenStyles.center}><Text>Usa la Dashboard Web per la mappa interattiva</Text></View>;
+  // }
 
-                socket.on('disconnect', (reason) => {
-                    console.log('[ManagerRealTimeMap] socket disconnected', reason);
-                });
+  console.log('[ManagerRealTimeMap] PLATFORM IS MOBILE - rendering map');
 
-                socket.on('connect_error', (err) => {
-                    console.log('[ManagerRealTimeMap] socket connect_error', err?.message || err);
-                });
+  // Generate HTML for OpenStreetMap with riders tracking
+  const generateMapHtml = () => {
+    // Calcola il centro basato sulla posizione dei rider
+    const riderPositions = Object.values(riders);
+    let centerLat = 41.880025; // Default Roma
+    let centerLon = 12.67594;
+    let zoomLevel = 13;
 
-                socket.on('error', (err) => {
-                    console.log('[ManagerRealTimeMap] socket error', err?.message || err);
-                });
+    if (riderPositions.length > 0) {
+      // Calcola il centro medio di tutti i rider
+      const avgLat = riderPositions.reduce((sum, r) => sum + r.lat, 0) / riderPositions.length;
+      const avgLon = riderPositions.reduce((sum, r) => sum + r.lng, 0) / riderPositions.length;
+      centerLat = avgLat;
+      centerLon = avgLon;
+      zoomLevel = 14; // Zoom più ravvicinato se ci sono rider
+    }
 
-                // Backend emits updates to managers room on rider location/order status
-                socket.on('activeOrderUpdate', (data) => {
-                    console.log('[ManagerRealTimeMap] activeOrderUpdate', data);
-                    const orderId = data?.orderId;
-                    const lat = data?.latitude;
-                    const lng = data?.longitude;
-                    if (!orderId || lat == null || lng == null) {
-                        setLoading(false);
-                        return;
-                    }
-                    setRiders(prev => ({
-                        ...prev,
-                        [String(orderId)]: {
-                            orderId,
-                            lat,
-                            lng,
-                            eta_minutes: data?.eta_minutes,
-                            status: data?.status,
-                            delivery_latitude: data?.delivery_latitude,
-                            delivery_longitude: data?.delivery_longitude,
-                            customer_id: data?.customer_id,
-                            restaurant_id: data?.restaurant_id,
-                        }
-                    }));
-                    setLoading(false);
-                });
-            } catch (e) {
-                console.log('[ManagerRealTimeMap] init socket error', e?.message || e);
-                setLoading(false);
-            }
-        };
+    console.log('[ManagerRealTimeMap] generating HTML with', riderPositions.length, 'riders');
+    console.log('[ManagerRealTimeMap] map center:', centerLat, centerLon, 'zoom:', zoomLevel);
+    console.log('[ManagerRealTimeMap] HTML length:', generateMapHtml().length);
+    console.log('[ManagerRealTimeMap] HTML preview:', generateMapHtml().substring(0, 200) + '...');
 
-        initSocket();
-
-        // Fallback: populate markers even if socket updates are not arriving yet
-        loadActiveOrdersFallback();
-        const interval = setInterval(loadActiveOrdersFallback, 15000);
-
-        return () => {
-            try {
-                socket?.disconnect();
-            } catch (e) {
-                // ignore
-            }
-
-            try {
-                clearInterval(interval);
-            } catch (e) {
-                // ignore
-            }
-        };
-    }, []);
-
-    // Temporaneamente disabilitato per test
-    // if (Platform.OS === 'web') {
-    //     console.log('[ManagerRealTimeMap] PLATFORM IS WEB - showing web message');
-    //     return <View style={managerRealTimeMapScreenStyles.center}><Text>Usa la Dashboard Web per la mappa interattiva</Text></View>;
-    // }
-
-    console.log('[ManagerRealTimeMap] PLATFORM IS MOBILE - rendering map');
-
-    // Generate HTML for OpenStreetMap with riders tracking
-    const generateMapHtml = () => {
-        // Calcola il centro basato sulla posizione dei rider
-        const riderPositions = Object.values(riders);
-        let centerLat = 41.880025; // Default Roma
-        let centerLon = 12.67594;
-        let zoomLevel = 13;
-
-        if (riderPositions.length > 0) {
-            // Calcola il centro medio di tutti i rider
-            const avgLat = riderPositions.reduce((sum, r) => sum + r.lat, 0) / riderPositions.length;
-            const avgLon = riderPositions.reduce((sum, r) => sum + r.lng, 0) / riderPositions.length;
-            centerLat = avgLat;
-            centerLon = avgLon;
-            zoomLevel = 14; // Zoom più ravvicinato se ci sono rider
-        }
-
-        console.log('[ManagerRealTimeMap] generating HTML with', riderPositions.length, 'riders');
-        console.log('[ManagerRealTimeMap] map center:', centerLat, centerLon, 'zoom:', zoomLevel);
-        console.log('[ManagerRealTimeMap] HTML length:', generateMapHtml().length);
-        console.log('[ManagerRealTimeMap] HTML preview:', generateMapHtml().substring(0, 200) + '...');
-
-        // Marker per ogni rider (senza popup)
-        const riderMarkers = riderPositions.map(r => `
+    // Marker per ogni rider (senza popup)
+    const riderMarkers = riderPositions
+      .map(
+        r => `
             L.marker([${r.lat}, ${r.lng}])
                 .addTo(map);
-        `).join('\n');
+        `,
+      )
+      .join('\n');
 
-        // Aggiungi percorsi per ogni rider verso la sua destinazione
-        const routes = riderPositions.map(r => {
-            // Se non ci sono coordinate delivery, usa coordinate di fallback basate sulla posizione rider
-            const deliveryLat = r.delivery_latitude || (r.lat + 0.01);
-            const deliveryLon = r.delivery_longitude || (r.lng + 0.01);
+    // Aggiungi percorsi per ogni rider verso la sua destinazione
+    const routes = riderPositions
+      .map(r => {
+        // Se non ci sono coordinate delivery, usa coordinate di fallback basate sulla posizione rider
+        const deliveryLat = r.delivery_latitude || r.lat + 0.01;
+        const deliveryLon = r.delivery_longitude || r.lng + 0.01;
 
-            return `
+        return `
                 L.polyline([
                     [${r.lat}, ${r.lng}],
                     [${deliveryLat}, ${deliveryLon}]
@@ -313,9 +318,10 @@ export default function ManagerRealTimeMapScreen({ route }) {
                     smoothFactor: 1
                 }).addTo(map);
             `;
-        }).join('\n');
+      })
+      .join('\n');
 
-        return `
+    return `
             <!DOCTYPE html>
             <html>
             <head>
@@ -374,18 +380,20 @@ export default function ManagerRealTimeMapScreen({ route }) {
             </html>
         `;
 
-        return (
-            <View style={managerRealTimeMapScreenStyles.container}>
-                <WebView
-                    key={mapKey} // Force complete remount when riders change
-                    style={managerRealTimeMapScreenStyles.map}
-                    source={{ html: generateMapHtml() }}
-                    javaScriptEnabled={true}
-                    domStorageEnabled={true}
-                    startInLoadingState={true}
-                    renderLoading={() => <ActivityIndicator style={managerRealTimeMapScreenStyles.loader} size="large" />}
-                />
-            </View>
-        );
-    }
+    return (
+      <View style={managerRealTimeMapScreenStyles.container}>
+        <WebView
+          key={mapKey} // Force complete remount when riders change
+          style={managerRealTimeMapScreenStyles.map}
+          source={{ html: generateMapHtml() }}
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+          startInLoadingState={true}
+          renderLoading={() => (
+            <ActivityIndicator style={managerRealTimeMapScreenStyles.loader} size="large" />
+          )}
+        />
+      </View>
+    );
+  };
 }

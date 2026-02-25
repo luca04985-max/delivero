@@ -10,12 +10,12 @@ const getToken = () => {
 const apiClient = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+  },
 });
 
 // Add token to requests
-apiClient.interceptors.request.use((config) => {
+apiClient.interceptors.request.use(config => {
   const token = getToken();
   if (token) {
     config.headers.Authorization = token;
@@ -25,9 +25,10 @@ apiClient.interceptors.request.use((config) => {
 
 // Auth
 export const authAPI = {
-  register: (email, password, name, role = 'customer') => apiClient.post('/auth/register', { email, password, name, role }),
+  register: (email, password, name, role = 'customer') =>
+    apiClient.post('/auth/register', { email, password, name, role }),
   login: (email, password) => apiClient.post('/auth/login', { email, password }),
-  getCurrentUser: () => apiClient.get('/auth/me')
+  getCurrentUser: () => apiClient.get('/auth/me'),
 };
 
 // Orders
@@ -36,7 +37,7 @@ export const ordersAPI = {
     const res = await apiClient.get('/orders');
     return res.data;
   },
-  getById: async (id) => {
+  getById: async id => {
     const res = await apiClient.get(`/orders/${id}`);
     return res.data;
   },
@@ -44,7 +45,7 @@ export const ordersAPI = {
     const res = await apiClient.get('/orders/my');
     return res.data;
   },
-  create: async (data) => {
+  create: async data => {
     const res = await apiClient.post('/orders', data);
     return res.data;
   },
@@ -58,11 +59,11 @@ export const ordersAPI = {
     const res = await apiClient.get('/orders/available');
     return res.data;
   },
-  trackOrder: async (id) => {
+  trackOrder: async id => {
     const res = await apiClient.get(`/orders/${id}/track`);
     return res.data;
   },
-  cancelOrder: async (id) => {
+  cancelOrder: async id => {
     const res = await apiClient.put(`/orders/${id}/cancel`);
     return res.data;
   },
@@ -76,22 +77,22 @@ export const ordersAPI = {
     const res = await apiClient.get('/orders/rider/active');
     return res.data;
   },
-  acceptOrder: async (id) => {
+  acceptOrder: async id => {
     const res = await apiClient.put(`/orders/${id}/accept`);
     return res.data;
   },
-  completeDelivery: async (id) => {
+  completeDelivery: async id => {
     const res = await apiClient.put(`/orders/${id}/delivered`);
     return res.data;
   },
   getActiveOrdersTracking: async () => {
     const res = await apiClient.get('/orders/active/all');
     return res.data;
-  }
+  },
 };
 
 // Track history endpoint
-ordersAPI.getTrackHistory = async (orderId) => {
+ordersAPI.getTrackHistory = async orderId => {
   const res = await apiClient.get(`/orders/${orderId}/track-history`);
   return res.data;
 };
@@ -99,14 +100,15 @@ ordersAPI.getTrackHistory = async (orderId) => {
 // Bills
 export const billsAPI = {
   getAll: () => apiClient.get('/bills'),
-  create: (data) => apiClient.post('/bills', data),
-  delete: (id) => apiClient.delete(`/bills/${id}`)
+  create: data => apiClient.post('/bills', data),
+  delete: id => apiClient.delete(`/bills/${id}`),
 };
 
 // Payments
 export const paymentsAPI = {
   createPayment: (orderId, amount) => apiClient.post('/payments/create', { orderId, amount }),
-  confirmPayment: (paymentIntentId, orderId) => apiClient.post('/payments/confirm', { paymentIntentId, orderId })
+  confirmPayment: (paymentIntentId, orderId) =>
+    apiClient.post('/payments/confirm', { paymentIntentId, orderId }),
 };
 
 // Admin
@@ -136,25 +138,25 @@ export const adminAPI = {
     return res.data;
   },
   updateUserRole: (userId, newRole) => apiClient.put(`/admin/users/${userId}/role`, { newRole }),
-  deleteUser: (userId) => apiClient.delete(`/admin/users/${userId}`)
+  deleteUser: userId => apiClient.delete(`/admin/users/${userId}`),
 };
 
 // Tickets
 export const ticketsAPI = {
-  create: (data) => apiClient.post('/tickets', data),
+  create: data => apiClient.post('/tickets', data),
   getAll: () => apiClient.get('/tickets'),
-  getById: (id) => apiClient.get(`/tickets/${id}`),
+  getById: id => apiClient.get(`/tickets/${id}`),
   updateStatus: (id, status) => apiClient.put(`/tickets/${id}/status`, { status }),
   addComment: (id, comment) => apiClient.post(`/tickets/${id}/comments`, { comment }),
-  getAdminTickets: () => apiClient.get('/tickets/admin')
+  getAdminTickets: () => apiClient.get('/tickets/admin'),
 };
 
 export default apiClient;
 
 // User helpers
 export const userAPI = {
-  setPushToken: async (token) => {
+  setPushToken: async token => {
     const res = await apiClient.put('/auth/push-token', { push_token: token });
     return res.data;
-  }
+  },
 };

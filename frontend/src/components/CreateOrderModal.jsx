@@ -6,24 +6,24 @@ export default function CreateOrderModal({ category, onOrderCreated, onClose }) 
     description: '',
     address: '',
     total_price: '',
-    notes: ''
+    notes: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
     try {
       await ordersAPI.create({
         ...formData,
         category,
-        status: 'pending'
+        status: 'pending',
       });
       setError(null);
       setFormData({ description: '', address: '', total_price: '', notes: '' });
@@ -99,20 +99,10 @@ export default function CreateOrderModal({ category, onOrderCreated, onClose }) 
         </div>
 
         <div className="flex gap-2">
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn btn-primary"
-            style={{ flex: 1 }}
-          >
+          <button type="submit" disabled={loading} className="btn btn-primary" style={{ flex: 1 }}>
             {loading ? '⏳ Creazione...' : '🚀 Conferma Ordine'}
           </button>
-          <button
-            type="button"
-            onClick={onClose}
-            className="btn btn-outline"
-            style={{ flex: 1 }}
-          >
+          <button type="button" onClick={onClose} className="btn btn-outline" style={{ flex: 1 }}>
             ❌ Annulla
           </button>
         </div>

@@ -108,7 +108,7 @@ export default function RegisterScreen({ navigation }) {
                 {/* 2. IL COMPONENTE ORA USA LA LIBRERIA ESTERNA */}
                 <Picker
                   selectedValue={role}
-                  onValueChange={(itemValue) => setRole(itemValue)}
+                  onValueChange={itemValue => setRole(itemValue)}
                   style={RegisterScreenStyles.picker}
                   enabled={!loading} // Su Android funziona correttamente qui
                 >

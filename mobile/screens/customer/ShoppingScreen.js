@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, TextInput, ActivityIndicator, Image } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  TextInput,
+  ActivityIndicator,
+  Image,
+} from 'react-native';
 import { useCart } from '../../context/CartContext';
 import { shoppingScreenStyles } from './styles/ShoppingScreenStyles';
 import { sharedCategoryStyles } from './styles/SharedCategoryStyles';
@@ -56,35 +64,41 @@ export default function ShoppingScreen({ navigation }) {
         key={item}
         style={[
           shoppingScreenStyles.categoryCard,
-          isActive && sharedCategoryStyles.categoryCardActive
+          isActive && sharedCategoryStyles.categoryCardActive,
         ]}
         onPress={() => setSelectedCategory(item.name)}
       >
-        <Text style={[
-          shoppingScreenStyles.categoryButtonText,
-          isActive && sharedCategoryStyles.categoryButtonTextActive
-        ]}>
+        <Text
+          style={[
+            shoppingScreenStyles.categoryButtonText,
+            isActive && sharedCategoryStyles.categoryButtonTextActive,
+          ]}
+        >
           {item.name}
         </Text>
 
         {/* Badge speciale per categoria attiva */}
         {isActive && (
-          <View style={{
-            position: 'absolute',
-            top: -5,
-            right: -5,
-            backgroundColor: mobileTheme.colors.primary,
-            borderRadius: 10,
-            width: 20,
-            height: 20,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-            <Text style={{
-              color: mobileTheme.colors.white,
-              fontSize: 10,
-              fontWeight: 'bold',
-            }}>
+          <View
+            style={{
+              position: 'absolute',
+              top: -5,
+              right: -5,
+              backgroundColor: mobileTheme.colors.primary,
+              borderRadius: 10,
+              width: 20,
+              height: 20,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Text
+              style={{
+                color: mobileTheme.colors.white,
+                fontSize: 10,
+                fontWeight: 'bold',
+              }}
+            >
               ✓
             </Text>
           </View>
@@ -103,7 +117,9 @@ export default function ShoppingScreen({ navigation }) {
       </View>
       <View style={shoppingScreenStyles.brandInfo}>
         <Text style={shoppingScreenStyles.brandName}>{item.name}</Text>
-        <Text style={shoppingScreenStyles.brandDetails}>{item.products} prodotti • ⭐ {item.rating}</Text>
+        <Text style={shoppingScreenStyles.brandDetails}>
+          {item.products} prodotti • ⭐ {item.rating}
+        </Text>
         <View style={shoppingScreenStyles.deliveryBadge}>
           <Text style={shoppingScreenStyles.deliveryText}>30-45 min</Text>
         </View>
@@ -144,7 +160,7 @@ export default function ShoppingScreen({ navigation }) {
           data={categories}
           horizontal
           showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={item => item.id.toString()}
           renderItem={renderCategory}
           contentContainerStyle={shoppingScreenStyles.categoriesList}
         />
@@ -153,11 +169,10 @@ export default function ShoppingScreen({ navigation }) {
       <View style={shoppingScreenStyles.section}>
         <Text style={shoppingScreenStyles.sectionTitle}>Supermercati</Text>
         <FlatList
-          data={brands.filter(b =>
-            b.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            searchText === ''
+          data={brands.filter(
+            b => b.name.toLowerCase().includes(searchText.toLowerCase()) || searchText === '',
           )}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={item => item.id.toString()}
           renderItem={renderBrand}
           contentContainerStyle={shoppingScreenStyles.brandsList}
           showsVerticalScrollIndicator={false}

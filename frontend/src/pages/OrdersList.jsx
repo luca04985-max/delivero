@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { ordersAPI } from "../services/api";
-import OrderTracking from "../components/OrderTracking";
+import { useEffect, useState } from 'react';
+import { ordersAPI } from '../services/api';
+import OrderTracking from '../components/OrderTracking';
 
 export default function OrdersList({ userId }) {
   const [orders, setOrders] = useState([]);
@@ -35,7 +35,7 @@ export default function OrdersList({ userId }) {
   };
 
   if (loading) return <p>Caricamento ordini...</p>;
-  if (error) return <p style={{ color: "red" }}>Errore: {error}</p>;
+  if (error) return <p style={{ color: 'red' }}>Errore: {error}</p>;
 
   const filteredOrders = orders.filter(o => {
     // search by id, customer name or email
@@ -62,11 +62,15 @@ export default function OrdersList({ userId }) {
   });
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: '20px' }}>
       <h2>I tuoi Ordini</h2>
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 12, alignItems: 'center' }}>
-        <input placeholder="Cerca per id, nome, email" value={search} onChange={e => setSearch(e.target.value)} />
+        <input
+          placeholder="Cerca per id, nome, email"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
           <option value="all">Tutti gli stati</option>
           <option value="pending">Pending</option>
@@ -81,31 +85,39 @@ export default function OrdersList({ userId }) {
       {filteredOrders.length === 0 ? (
         <p>Nessun ordine</p>
       ) : (
-        <ul style={{ listStyle: "none", padding: 0 }}>
+        <ul style={{ listStyle: 'none', padding: 0 }}>
           {filteredOrders.map(order => (
             <li
               key={order.id}
               style={{
-                border: "1px solid #ddd",
-                padding: "15px",
-                marginBottom: "10px",
-                borderRadius: "8px",
-                cursor: "pointer",
-                backgroundColor: selectedOrder?.id === order.id ? "#f5f5f5" : "white"
+                border: '1px solid #ddd',
+                padding: '15px',
+                marginBottom: '10px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                backgroundColor: selectedOrder?.id === order.id ? '#f5f5f5' : 'white',
               }}
               onClick={() => setSelectedOrder(selectedOrder?.id === order.id ? null : order)}
             >
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div>
                   <strong>Ordine #{order.id}</strong> - €{order.total_amount}
-                  <p style={{ margin: "5px 0", color: "#666" }}>
-                    Stato: <span style={{
-                      color: order.status === "completed" ? "green" : order.status === "pending" ? "orange" : "blue"
-                    }}>
-                      {order.status.toUpperCase().replace("_", " ")}
+                  <p style={{ margin: '5px 0', color: '#666' }}>
+                    Stato:{' '}
+                    <span
+                      style={{
+                        color:
+                          order.status === 'completed'
+                            ? 'green'
+                            : order.status === 'pending'
+                              ? 'orange'
+                              : 'blue',
+                      }}
+                    >
+                      {order.status.toUpperCase().replace('_', ' ')}
                     </span>
                   </p>
-                  <small>{new Date(order.created_at).toLocaleDateString("it-IT")}</small>
+                  <small>{new Date(order.created_at).toLocaleDateString('it-IT')}</small>
                 </div>
               </div>
 

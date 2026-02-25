@@ -76,31 +76,44 @@ export default function TicketDetailScreen({ navigation, route }) {
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     switch (status) {
-      case 'open': return '#4CAF50';
-      case 'in_progress': return '#FF9800';
-      case 'resolved': return '#2196F3';
-      default: return '#757575';
+      case 'open':
+        return '#4CAF50';
+      case 'in_progress':
+        return '#FF9800';
+      case 'resolved':
+        return '#2196F3';
+      default:
+        return '#757575';
     }
   };
 
-  const getStatusText = (status) => {
+  const getStatusText = status => {
     switch (status) {
-      case 'open': return 'Aperto';
-      case 'in_progress': return 'In corso';
-      case 'resolved': return 'Risolto';
-      default: return status;
+      case 'open':
+        return 'Aperto';
+      case 'in_progress':
+        return 'In corso';
+      case 'resolved':
+        return 'Risolto';
+      default:
+        return status;
     }
   };
 
-  const getTypeEmoji = (type) => {
+  const getTypeEmoji = type => {
     switch (type) {
-      case 'complaint': return '😞';
-      case 'praise': return '😊';
-      case 'suggestion': return '💡';
-      case 'issue': return '⚠️';
-      default: return '📋';
+      case 'complaint':
+        return '😞';
+      case 'praise':
+        return '😊';
+      case 'suggestion':
+        return '💡';
+      case 'issue':
+        return '⚠️';
+      default:
+        return '📋';
     }
   };
 
@@ -135,27 +148,36 @@ export default function TicketDetailScreen({ navigation, route }) {
     <View style={ticketDetailScreenStyles.container}>
       {/* Toast Notification */}
       {toast.visible && (
-        <View style={[
-          ticketDetailScreenStyles.toast,
-          { backgroundColor: toast.type === 'error' ? '#FF3B30' : toast.type === 'success' ? '#34C759' : '#007AFF' }
-        ]}>
+        <View
+          style={[
+            ticketDetailScreenStyles.toast,
+            {
+              backgroundColor:
+                toast.type === 'error'
+                  ? '#FF3B30'
+                  : toast.type === 'success'
+                    ? '#34C759'
+                    : '#007AFF',
+            },
+          ]}
+        >
           <Text style={ticketDetailScreenStyles.toastText}>{toast.message}</Text>
         </View>
       )}
 
       <ScrollView
         style={ticketDetailScreenStyles.scrollView}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         {/* Header del Ticket */}
         <View style={ticketDetailScreenStyles.headerCard}>
           <View style={ticketDetailScreenStyles.headerCardTop}>
-            <View style={[
-              ticketDetailScreenStyles.statusBadge,
-              { backgroundColor: getStatusColor(ticket.status) }
-            ]}>
+            <View
+              style={[
+                ticketDetailScreenStyles.statusBadge,
+                { backgroundColor: getStatusColor(ticket.status) },
+              ]}
+            >
               <Text style={ticketDetailScreenStyles.statusText}>
                 {getStatusText(ticket.status)}
               </Text>
@@ -173,7 +195,7 @@ export default function TicketDetailScreen({ navigation, route }) {
                 month: 'long',
                 year: 'numeric',
                 hour: '2-digit',
-                minute: '2-digit'
+                minute: '2-digit',
               })}
             </Text>
             <Text style={ticketDetailScreenStyles.ticketId}>#{ticket.id}</Text>
@@ -186,14 +208,16 @@ export default function TicketDetailScreen({ navigation, route }) {
           {ticket.order_id && (
             <View style={ticketDetailScreenStyles.section}>
               <Text style={ticketDetailScreenStyles.sectionTitle}>📦 Ordine Associato</Text>
-              <View style={{
-                backgroundColor: '#f8f9fa',
-                borderRadius: 10,
-                padding: 15,
-                marginBottom: 20,
-                borderLeftWidth: 4,
-                borderLeftColor: '#FF6B00',
-              }}>
+              <View
+                style={{
+                  backgroundColor: '#f8f9fa',
+                  borderRadius: 10,
+                  padding: 15,
+                  marginBottom: 20,
+                  borderLeftWidth: 4,
+                  borderLeftColor: '#FF6B00',
+                }}
+              >
                 <Text style={{ fontWeight: 'bold', color: '#333', marginBottom: 5 }}>
                   Ordine #{ticket.order_id?.toString().slice(-5)}
                 </Text>
@@ -211,9 +235,7 @@ export default function TicketDetailScreen({ navigation, route }) {
           )}
           <Text style={ticketDetailScreenStyles.sectionTitle}>📋 Descrizione</Text>
           <View style={ticketDetailScreenStyles.descriptionBox}>
-            <Text style={ticketDetailScreenStyles.ticketDescription}>
-              {ticket.description}
-            </Text>
+            <Text style={ticketDetailScreenStyles.ticketDescription}>{ticket.description}</Text>
           </View>
         </View>
 
@@ -223,7 +245,8 @@ export default function TicketDetailScreen({ navigation, route }) {
             💬 Risposte {(ticket.comments || ticket.responses)?.length || 0}
           </Text>
 
-          {(ticket.comments || ticket.responses) && (ticket.comments || ticket.responses).length > 0 ? (
+          {(ticket.comments || ticket.responses) &&
+          (ticket.comments || ticket.responses).length > 0 ? (
             (ticket.comments || ticket.responses).map((response, index) => (
               <View key={response.id || index} style={ticketDetailScreenStyles.responseCard}>
                 <View style={ticketDetailScreenStyles.responseHeader}>
@@ -242,7 +265,7 @@ export default function TicketDetailScreen({ navigation, route }) {
                       day: '2-digit',
                       month: 'short',
                       hour: '2-digit',
-                      minute: '2-digit'
+                      minute: '2-digit',
                     })}
                   </Text>
                 </View>
@@ -282,7 +305,7 @@ export default function TicketDetailScreen({ navigation, route }) {
               <TouchableOpacity
                 style={[
                   ticketDetailScreenStyles.submitButton,
-                  { opacity: submitting || !newResponse.trim() ? 0.6 : 1 }
+                  { opacity: submitting || !newResponse.trim() ? 0.6 : 1 },
                 ]}
                 onPress={addResponse}
                 disabled={submitting || !newResponse.trim()}

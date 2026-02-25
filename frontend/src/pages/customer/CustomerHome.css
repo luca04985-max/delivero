@@ -4,7 +4,7 @@
 }
 
 .navbar {
-  background: linear-gradient(135deg, #FF6B00 0%, #FF8C00 100%);
+  background: linear-gradient(135deg, #ff6b00 0%, #ff8c00 100%);
   color: white;
   padding: 16px 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -91,7 +91,7 @@
 
 .search-input:focus {
   outline: none;
-  border-color: #FF6B00;
+  border-color: #ff6b00;
   box-shadow: 0 2px 12px rgba(255, 107, 0, 0.15);
 }
 
@@ -131,12 +131,12 @@
 }
 
 .promos-carousel::-webkit-scrollbar-thumb {
-  background: #FF6B00;
+  background: #ff6b00;
   border-radius: 3px;
 }
 
 .promo-card {
-  background: linear-gradient(135deg, #FF6B00 0%, #FFB347 100%);
+  background: linear-gradient(135deg, #ff6b00 0%, #ffb347 100%);
   color: white;
   padding: 16px;
   border-radius: 10px;
@@ -179,7 +179,7 @@
 }
 
 .filter-bar::-webkit-scrollbar-thumb {
-  background: #FF6B00;
+  background: #ff6b00;
 }
 
 .filter-btn {
@@ -200,9 +200,9 @@
 }
 
 .filter-btn.active {
-  background-color: #FF6B00;
+  background-color: #ff6b00;
   color: white;
-  border-color: #FF6B00;
+  border-color: #ff6b00;
 }
 
 .categories-section {
@@ -335,8 +335,8 @@
 }
 
 .stat-badge.time {
-  background-color: #FFE5CC;
-  color: #FF6B00;
+  background-color: #ffe5cc;
+  color: #ff6b00;
 }
 
 .no-results {

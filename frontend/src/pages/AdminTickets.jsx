@@ -24,7 +24,7 @@ const AdminTickets = () => {
 
       const [ticketsRes, statsRes] = await Promise.all([
         axios.get('https://delivero-gyjx.onrender.com/api/tickets/admin/all', { headers }),
-        axios.get('https://delivero-gyjx.onrender.com/api/tickets/admin/stats', { headers })
+        axios.get('https://delivero-gyjx.onrender.com/api/tickets/admin/stats', { headers }),
       ]);
 
       setTickets(ticketsRes.data);
@@ -36,12 +36,12 @@ const AdminTickets = () => {
     }
   };
 
-  const handleSelectTicket = async (ticketId) => {
+  const handleSelectTicket = async ticketId => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(
         `https://delivero-gyjx.onrender.com/api/tickets/${ticketId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setSelectedTicket(response.data);
       setUpdateStatus(response.data.status);
@@ -58,9 +58,9 @@ const AdminTickets = () => {
         `https://delivero-gyjx.onrender.com/api/tickets/${selectedTicket.id}/status`,
         {
           status: updateStatus,
-          adminNotes: adminNotes
+          adminNotes: adminNotes,
         },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       await handleSelectTicket(selectedTicket.id);
       await fetchTicketsAndStats();
@@ -77,7 +77,7 @@ const AdminTickets = () => {
       await axios.post(
         `https://delivero-gyjx.onrender.com/api/tickets/${selectedTicket.id}/comments`,
         { comment: newComment },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setNewComment('');
       await handleSelectTicket(selectedTicket.id);
@@ -86,22 +86,22 @@ const AdminTickets = () => {
     }
   };
 
-  const getTypeIcon = (type) => {
+  const getTypeIcon = type => {
     const icons = {
-      'bug': '🐛',
-      'complaint': '😞',
-      'feature_request': '💡',
-      'support': '🆘'
+      bug: '🐛',
+      complaint: '😞',
+      feature_request: '💡',
+      support: '🆘',
     };
     return icons[type] || '📝';
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     const colors = {
-      'open': '#ff9800',
-      'in_progress': '#2196f3',
-      'resolved': '#4caf50',
-      'closed': '#757575'
+      open: '#ff9800',
+      in_progress: '#2196f3',
+      resolved: '#4caf50',
+      closed: '#757575',
     };
     return colors[status] || '#999';
   };
@@ -150,7 +150,7 @@ const AdminTickets = () => {
           <div style={styles.filterSection}>
             <select
               value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
+              onChange={e => setFilterType(e.target.value)}
               style={styles.filterSelect}
             >
               <option value="all">Tutti i Tipi</option>
@@ -162,7 +162,7 @@ const AdminTickets = () => {
 
             <select
               value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
+              onChange={e => setFilterStatus(e.target.value)}
               style={styles.filterSelect}
             >
               <option value="all">Tutti gli Stati</option>
@@ -192,7 +192,7 @@ const AdminTickets = () => {
                     <span
                       style={{
                         ...styles.statusBadge,
-                        backgroundColor: getStatusColor(ticket.status)
+                        backgroundColor: getStatusColor(ticket.status),
                       }}
                     >
                       {ticket.status}
@@ -217,11 +217,22 @@ const AdminTickets = () => {
               </h3>
 
               <div style={styles.metaInfo}>
-                <p><strong>Utente:</strong> {selectedTicket.user_name}</p>
-                <p><strong>Email:</strong> {selectedTicket.user_email}</p>
-                <p><strong>Tipo:</strong> {selectedTicket.type}</p>
-                <p><strong>Priorità:</strong> {selectedTicket.priority}</p>
-                <p><strong>Data:</strong> {new Date(selectedTicket.created_at).toLocaleDateString('it-IT')}</p>
+                <p>
+                  <strong>Utente:</strong> {selectedTicket.user_name}
+                </p>
+                <p>
+                  <strong>Email:</strong> {selectedTicket.user_email}
+                </p>
+                <p>
+                  <strong>Tipo:</strong> {selectedTicket.type}
+                </p>
+                <p>
+                  <strong>Priorità:</strong> {selectedTicket.priority}
+                </p>
+                <p>
+                  <strong>Data:</strong>{' '}
+                  {new Date(selectedTicket.created_at).toLocaleDateString('it-IT')}
+                </p>
               </div>
 
               <div style={styles.description}>
@@ -238,13 +249,15 @@ const AdminTickets = () => {
                       {c.role === 'admin' && <span style={styles.adminBadge}>🔐 Admin</span>}
                     </div>
                     <p style={styles.commentText}>{c.comment}</p>
-                    <small style={styles.commentMeta}>{new Date(c.created_at).toLocaleDateString('it-IT')}</small>
+                    <small style={styles.commentMeta}>
+                      {new Date(c.created_at).toLocaleDateString('it-IT')}
+                    </small>
                   </div>
                 ))}
 
                 <textarea
                   value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
+                  onChange={e => setNewComment(e.target.value)}
                   placeholder="Aggiungi un commento..."
                   rows="3"
                   style={styles.commentInput}
@@ -263,7 +276,7 @@ const AdminTickets = () => {
                   <label style={styles.label}>Stato</label>
                   <select
                     value={updateStatus}
-                    onChange={(e) => setUpdateStatus(e.target.value)}
+                    onChange={e => setUpdateStatus(e.target.value)}
                     style={styles.select}
                   >
                     <option value="open">Aperto</option>
@@ -277,7 +290,7 @@ const AdminTickets = () => {
                   <label style={styles.label}>Note Admin</label>
                   <textarea
                     value={adminNotes}
-                    onChange={(e) => setAdminNotes(e.target.value)}
+                    onChange={e => setAdminNotes(e.target.value)}
                     rows="5"
                     style={styles.textarea}
                   />
@@ -297,59 +310,59 @@ const AdminTickets = () => {
 
 const styles = {
   container: {
-    padding: '20px'
+    padding: '20px',
   },
   title: {
     marginTop: 0,
     marginBottom: '20px',
-    color: '#333'
+    color: '#333',
   },
   loading: {
     textAlign: 'center',
     padding: '50px',
-    color: '#666'
+    color: '#666',
   },
   statsGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
     gap: '15px',
-    marginBottom: '20px'
+    marginBottom: '20px',
   },
   statCard: {
     backgroundColor: '#f9f9f9',
     padding: '15px',
     borderRadius: '8px',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   statNumber: {
     fontSize: '24px',
     fontWeight: 'bold',
     color: '#333',
-    margin: 0
+    margin: 0,
   },
   statLabel: {
     fontSize: '12px',
     color: '#666',
-    marginTop: '5px'
+    marginTop: '5px',
   },
   filterSection: {
     display: 'flex',
     gap: '10px',
-    marginBottom: '20px'
+    marginBottom: '20px',
   },
   filterSelect: {
     padding: '8px',
     borderRadius: '4px',
-    border: '1px solid #ddd'
+    border: '1px solid #ddd',
   },
   ticketsList: {
     display: 'grid',
-    gap: '10px'
+    gap: '10px',
   },
   emptyState: {
     textAlign: 'center',
     color: '#999',
-    padding: '30px'
+    padding: '30px',
   },
   ticketCard: {
     backgroundColor: '#fff',
@@ -358,30 +371,30 @@ const styles = {
     boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
     cursor: 'pointer',
     transition: 'all 0.2s',
-    border: '1px solid #eee'
+    border: '1px solid #eee',
   },
   headerCard: {
     display: 'flex',
     alignItems: 'center',
     gap: '15px',
-    marginBottom: '10px'
+    marginBottom: '10px',
   },
   ticketTypeIcon: {
-    fontSize: '24px'
+    fontSize: '24px',
   },
   ticketContent: {
     flex: 1,
-    minWidth: 0
+    minWidth: 0,
   },
   titleCard: {
     margin: '0 0 5px 0',
     color: '#333',
-    fontSize: '16px'
+    fontSize: '16px',
   },
   ticketUser: {
     margin: '0',
     color: '#666',
-    fontSize: '12px'
+    fontSize: '12px',
   },
   statusBadge: {
     color: 'white',
@@ -389,7 +402,7 @@ const styles = {
     borderRadius: '12px',
     fontSize: '12px',
     fontWeight: 'bold',
-    whiteSpace: 'nowrap'
+    whiteSpace: 'nowrap',
   },
   ticketDescription: {
     margin: '5px 0',
@@ -399,18 +412,18 @@ const styles = {
     textOverflow: 'ellipsis',
     display: '-webkit-box',
     WebkitLineClamp: 2,
-    WebkitBoxOrient: 'vertical'
+    WebkitBoxOrient: 'vertical',
   },
   ticketMeta: {
     display: 'flex',
     gap: '20px',
     color: '#999',
-    fontSize: '12px'
+    fontSize: '12px',
   },
   detailPanel: {
     backgroundColor: '#fff',
     borderRadius: '8px',
-    padding: '20px'
+    padding: '20px',
   },
   backButton: {
     padding: '8px 16px',
@@ -419,63 +432,63 @@ const styles = {
     color: 'white',
     border: 'none',
     borderRadius: '4px',
-    cursor: 'pointer'
+    cursor: 'pointer',
   },
   detailGrid: {
     display: 'grid',
     gridTemplateColumns: '1fr 300px',
-    gap: '20px'
+    gap: '20px',
   },
   detailLeft: {
-    minWidth: 0
+    minWidth: 0,
   },
   detailRight: {
     borderLeft: '1px solid #eee',
-    paddingLeft: '20px'
+    paddingLeft: '20px',
   },
   detailTitle: {
     margin: '0 0 15px 0',
-    color: '#333'
+    color: '#333',
   },
   metaInfo: {
     backgroundColor: '#f9f9f9',
     padding: '12px',
     borderRadius: '4px',
     marginBottom: '15px',
-    fontSize: '14px'
+    fontSize: '14px',
   },
   description: {
-    marginBottom: '20px'
+    marginBottom: '20px',
   },
   comments: {
-    marginTop: '20px'
+    marginTop: '20px',
   },
   commentItem: {
     backgroundColor: '#f9f9f9',
     padding: '10px',
     borderRadius: '4px',
     marginBottom: '10px',
-    borderLeft: '3px solid #2196f3'
+    borderLeft: '3px solid #2196f3',
   },
   commentHeader: {
     display: 'flex',
     alignItems: 'center',
     gap: '10px',
-    marginBottom: '5px'
+    marginBottom: '5px',
   },
   adminBadge: {
     backgroundColor: '#007bff',
     color: 'white',
     padding: '2px 6px',
     borderRadius: '3px',
-    fontSize: '11px'
+    fontSize: '11px',
   },
   commentText: {
     margin: '5px 0',
-    fontSize: '13px'
+    fontSize: '13px',
   },
   commentMeta: {
-    color: '#999'
+    color: '#999',
   },
   commentInput: {
     width: '100%',
@@ -483,7 +496,7 @@ const styles = {
     borderRadius: '4px',
     border: '1px solid #ddd',
     marginTop: '10px',
-    marginBottom: '10px'
+    marginBottom: '10px',
   },
   commentButton: {
     width: '100%',
@@ -493,36 +506,36 @@ const styles = {
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-    fontSize: '14px'
+    fontSize: '14px',
   },
   updatePanel: {
     backgroundColor: '#f5f5f5',
     padding: '15px',
-    borderRadius: '4px'
+    borderRadius: '4px',
   },
   formGroup: {
-    marginBottom: '15px'
+    marginBottom: '15px',
   },
   label: {
     display: 'block',
     marginBottom: '5px',
     color: '#555',
     fontWeight: 'bold',
-    fontSize: '13px'
+    fontSize: '13px',
   },
   select: {
     width: '100%',
     padding: '6px',
     borderRadius: '4px',
     border: '1px solid #ddd',
-    fontSize: '13px'
+    fontSize: '13px',
   },
   textarea: {
     width: '100%',
     padding: '6px',
     borderRadius: '4px',
     border: '1px solid #ddd',
-    fontSize: '13px'
+    fontSize: '13px',
   },
   updateButton: {
     width: '100%',
@@ -532,8 +545,8 @@ const styles = {
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 };
 
 export default AdminTickets;

@@ -31,12 +31,14 @@ export default function AdminDashboardTickets({ navigation }) {
       const ticketsData = Array.isArray(data) ? data : data.data || [];
 
       // Filtra solo ticket validi
-      const validTickets = ticketsData.filter(ticket => ticket.id != null || ticket.ticket_status != null);
+      const validTickets = ticketsData.filter(
+        ticket => ticket.id != null || ticket.ticket_status != null,
+      );
 
       setTickets(validTickets);
     } catch (error) {
       console.error('Error loading tickets:', error);
-      Alert.alert("Errore", "Non ho potuto caricare tutti i ticket.");
+      Alert.alert('Errore', 'Non ho potuto caricare tutti i ticket.');
     } finally {
       setLoading(false);
     }
@@ -81,31 +83,41 @@ export default function AdminDashboardTickets({ navigation }) {
   }, [tickets]);
 
   // Funzione per toggle delle sezioni
-  const toggleSection = useCallback((ticket_status) => {
+  const toggleSection = useCallback(ticket_status => {
     setExpandedSections(prev => ({
       ...prev,
-      [ticket_status]: !prev[ticket_status]
+      [ticket_status]: !prev[ticket_status],
     }));
   }, []);
 
   // Funzioni helper
-  const getStatusColor = useCallback((status) => {
+  const getStatusColor = useCallback(status => {
     switch (status) {
-      case 'open': return '#4CAF50';
-      case 'in_progress': return '#FF9800';
-      case 'closed': return '#9E9E9E';
-      case 'resolved': return '#2196F3';
-      default: return '#666';
+      case 'open':
+        return '#4CAF50';
+      case 'in_progress':
+        return '#FF9800';
+      case 'closed':
+        return '#9E9E9E';
+      case 'resolved':
+        return '#2196F3';
+      default:
+        return '#666';
     }
   }, []);
 
-  const getStatusText = useCallback((status) => {
+  const getStatusText = useCallback(status => {
     switch (status) {
-      case 'open': return '🟢 Aperti';
-      case 'in_progress': return '🟠 In corso';
-      case 'closed': return '🔴 Chiusi';
-      case 'resolved': return '🔵 Risolti';
-      default: return status;
+      case 'open':
+        return '🟢 Aperti';
+      case 'in_progress':
+        return '🟠 In corso';
+      case 'closed':
+        return '🔴 Chiusi';
+      case 'resolved':
+        return '🔵 Risolti';
+      default:
+        return status;
     }
   }, []);
 
@@ -113,28 +125,17 @@ export default function AdminDashboardTickets({ navigation }) {
   const renderStatusSeparator = (status, count, statusInfo, isExpanded) => {
     return (
       <TouchableOpacity
-        style={[
-          styles.statusSeparator,
-          { borderLeftColor: getStatusColor(status) }
-        ]}
+        style={[styles.statusSeparator, { borderLeftColor: getStatusColor(status) }]}
         onPress={() => toggleSection(status)}
       >
         <View style={styles.statusSeparatorContent}>
           <View style={styles.statusSeparatorLeft}>
-            <Text style={styles.statusSeparatorIcon}>
-              {statusInfo.icon}
-            </Text>
-            <Text style={styles.statusSeparatorTitle}>
-              {statusInfo.label}
-            </Text>
+            <Text style={styles.statusSeparatorIcon}>{statusInfo.icon}</Text>
+            <Text style={styles.statusSeparatorTitle}>{statusInfo.label}</Text>
           </View>
           <View style={styles.statusSeparatorRight}>
-            <Text style={styles.statusSeparatorCount}>
-              {count}
-            </Text>
-            <Text style={styles.statusSeparatorToggle}>
-              {isExpanded ? '🔼' : '🔽'}
-            </Text>
+            <Text style={styles.statusSeparatorCount}>{count}</Text>
+            <Text style={styles.statusSeparatorToggle}>{isExpanded ? '🔼' : '🔽'}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -155,10 +156,10 @@ export default function AdminDashboardTickets({ navigation }) {
     });
 
     const statusInfo = {
-      'open': { label: 'Aperti', icon: '🔓' },
-      'in_progress': { label: 'In Corso', icon: '⚙️' },
-      'closed': { label: 'Chiusi', icon: '✅' },
-      'resolved': { label: 'Risolti', icon: '🎯' }
+      open: { label: 'Aperti', icon: '🔓' },
+      in_progress: { label: 'In Corso', icon: '⚙️' },
+      closed: { label: 'Chiusi', icon: '✅' },
+      resolved: { label: 'Risolti', icon: '🎯' },
     };
 
     const result = [];
@@ -169,17 +170,18 @@ export default function AdminDashboardTickets({ navigation }) {
 
       result.push(
         <View key={`separator-${status}`}>
-          {renderStatusSeparator(status, groupTickets.length, statusInfo[status] || { label: status, icon: '📋' }, isExpanded)}
-        </View>
+          {renderStatusSeparator(
+            status,
+            groupTickets.length,
+            statusInfo[status] || { label: status, icon: '📋' },
+            isExpanded,
+          )}
+        </View>,
       );
 
       if (isExpanded) {
         groupTickets.forEach(ticket => {
-          result.push(
-            <View key={`ticket-${ticket.id}`}>
-              {renderTicket({ item: ticket })}
-            </View>
-          );
+          result.push(<View key={`ticket-${ticket.id}`}>{renderTicket({ item: ticket })}</View>);
         });
       }
     });
@@ -197,13 +199,17 @@ export default function AdminDashboardTickets({ navigation }) {
         <View style={styles.headerCard}>
           <Text style={styles.titleCard}>{item.title}</Text>
           <View style={styles.statusBadge}>
-            <Text style={styles.statusText}>{getStatusText(item.ticket_status || item.status || 'open')}</Text>
+            <Text style={styles.statusText}>
+              {getStatusText(item.ticket_status || item.status || 'open')}
+            </Text>
           </View>
         </View>
         <Text style={styles.ticketDescription}>{item.description}</Text>
         <View style={styles.ticketFooter}>
           <Text style={styles.ticketDate}>#{item.id}</Text>
-          <Text style={styles.ticketId}>{item.created_at ? new Date(item.created_at).toLocaleDateString() : ''}</Text>
+          <Text style={styles.ticketId}>
+            {item.created_at ? new Date(item.created_at).toLocaleDateString() : ''}
+          </Text>
         </View>
       </TouchableOpacity>
     );
@@ -283,8 +289,22 @@ export default function AdminDashboardTickets({ navigation }) {
 
                   <View style={styles.fieldRow}>
                     <Text style={styles.fieldLabel}>Tipo:</Text>
-                    <View style={[styles.priorityBadge, { backgroundColor: selectedTicket?.type === 'bug' ? '#dc3545' : selectedTicket?.type === 'complaint' ? '#ffc107' : '#17a2b8' }]}>
-                      <Text style={styles.priorityText}>{selectedTicket?.type?.toUpperCase() || '—'}</Text>
+                    <View
+                      style={[
+                        styles.priorityBadge,
+                        {
+                          backgroundColor:
+                            selectedTicket?.type === 'bug'
+                              ? '#dc3545'
+                              : selectedTicket?.type === 'complaint'
+                                ? '#ffc107'
+                                : '#17a2b8',
+                        },
+                      ]}
+                    >
+                      <Text style={styles.priorityText}>
+                        {selectedTicket?.type?.toUpperCase() || '—'}
+                      </Text>
                     </View>
                   </View>
                 </View>
@@ -294,15 +314,43 @@ export default function AdminDashboardTickets({ navigation }) {
 
                   <View style={styles.fieldRow}>
                     <Text style={styles.fieldLabel}>Stato:</Text>
-                    <View style={[styles.priorityBadge, { backgroundColor: selectedTicket?.status === 'open' ? '#28a745' : selectedTicket?.status === 'resolved' ? '#17a2b8' : '#ffc107' }]}>
-                      <Text style={styles.priorityText}>{selectedTicket?.status?.toUpperCase() || '—'}</Text>
+                    <View
+                      style={[
+                        styles.priorityBadge,
+                        {
+                          backgroundColor:
+                            selectedTicket?.status === 'open'
+                              ? '#28a745'
+                              : selectedTicket?.status === 'resolved'
+                                ? '#17a2b8'
+                                : '#ffc107',
+                        },
+                      ]}
+                    >
+                      <Text style={styles.priorityText}>
+                        {selectedTicket?.status?.toUpperCase() || '—'}
+                      </Text>
                     </View>
                   </View>
 
                   <View style={styles.fieldRow}>
                     <Text style={styles.fieldLabel}>Priorità:</Text>
-                    <View style={[styles.priorityBadge, { backgroundColor: selectedTicket?.priority === 'high' ? '#dc3545' : selectedTicket?.priority === 'medium' ? '#ffc107' : '#6c757d' }]}>
-                      <Text style={styles.priorityText}>{selectedTicket?.priority?.toUpperCase() || '—'}</Text>
+                    <View
+                      style={[
+                        styles.priorityBadge,
+                        {
+                          backgroundColor:
+                            selectedTicket?.priority === 'high'
+                              ? '#dc3545'
+                              : selectedTicket?.priority === 'medium'
+                                ? '#ffc107'
+                                : '#6c757d',
+                        },
+                      ]}
+                    >
+                      <Text style={styles.priorityText}>
+                        {selectedTicket?.priority?.toUpperCase() || '—'}
+                      </Text>
                     </View>
                   </View>
                 </View>
@@ -326,22 +374,27 @@ export default function AdminDashboardTickets({ navigation }) {
 
                   <View style={styles.fieldRow}>
                     <Text style={styles.fieldLabel}>Creato:</Text>
-                    <Text style={styles.fieldValue}>{selectedTicket?.created_at ? new Date(selectedTicket.created_at).toLocaleString() : '—'}</Text>
+                    <Text style={styles.fieldValue}>
+                      {selectedTicket?.created_at
+                        ? new Date(selectedTicket.created_at).toLocaleString()
+                        : '—'}
+                    </Text>
                   </View>
 
                   <View style={styles.fieldRow}>
                     <Text style={styles.fieldLabel}>Aggiornato:</Text>
-                    <Text style={styles.fieldValue}>{selectedTicket?.updated_at ? new Date(selectedTicket.updated_at).toLocaleString() : '—'}</Text>
+                    <Text style={styles.fieldValue}>
+                      {selectedTicket?.updated_at
+                        ? new Date(selectedTicket.updated_at).toLocaleString()
+                        : '—'}
+                    </Text>
                   </View>
                 </View>
               </ScrollView>
             )}
 
             <View style={styles.editActions}>
-              <TouchableOpacity
-                style={styles.cancelButton}
-                onPress={() => setSelectedTicket(null)}
-              >
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setSelectedTicket(null)}>
                 <Text style={styles.btnCancelText}>Chiudi</Text>
               </TouchableOpacity>
             </View>

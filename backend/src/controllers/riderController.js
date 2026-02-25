@@ -19,10 +19,7 @@ export const sendRiderLocation = async (req, res) => {
     }
 
     // Check if rider is assigned to this order
-    const orderResult = await db.query(
-      'SELECT rider_id FROM orders WHERE id = $1',
-      [orderId]
-    );
+    const orderResult = await db.query('SELECT rider_id FROM orders WHERE id = $1', [orderId]);
 
     if (orderResult.rows.length === 0) {
       return res.status(404).json({ error: 'Order not found' });
@@ -43,7 +40,7 @@ export const sendRiderLocation = async (req, res) => {
          eta_minutes = $5, 
          timestamp = CURRENT_TIMESTAMP
        RETURNING *`,
-      [orderId, userId, latitude, longitude, eta_minutes || null]
+      [orderId, userId, latitude, longitude, eta_minutes || null],
     );
 
     res.json(locationResult.rows[0]);
@@ -73,7 +70,7 @@ export const getRiderLocation = async (req, res) => {
        WHERE rl.rider_id = $1
        ORDER BY rl.timestamp DESC
        LIMIT 1`,
-      [riderId]
+      [riderId],
     );
 
     if (locationResult.rows.length === 0) {
@@ -107,7 +104,7 @@ export const getMyActiveOrderLocation = async (req, res) => {
        WHERE rl.rider_id = $1 AND o.status IN ('accepted', 'preparing', 'in_transit')
        ORDER BY rl.timestamp DESC
        LIMIT 1`,
-      [userId]
+      [userId],
     );
 
     if (locationResult.rows.length === 0) {

@@ -24,7 +24,7 @@ const PharmacyOrder = () => {
     }
   };
 
-  const handlePharmacySelect = async (pharmacyId) => {
+  const handlePharmacySelect = async pharmacyId => {
     setSelectedPharmacy(pharmacyId);
     try {
       const response = await API.get(`/pharmacies/${pharmacyId}/products`);
@@ -34,24 +34,24 @@ const PharmacyOrder = () => {
     }
   };
 
-  const addToCart = (product) => {
+  const addToCart = product => {
     const existingItem = cart.find(item => item.id === product.id);
     if (existingItem) {
-      setCart(cart.map(item =>
-        item.id === product.id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      ));
+      setCart(
+        cart.map(item =>
+          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item,
+        ),
+      );
     } else {
       setCart([...cart, { ...product, quantity: 1 }]);
     }
   };
 
-  const removeFromCart = (productId) => {
+  const removeFromCart = productId => {
     setCart(cart.filter(item => item.id !== productId));
   };
 
-  const handleCheckout = async (e) => {
+  const handleCheckout = async e => {
     e.preventDefault();
     if (!selectedPharmacy || cart.length === 0) {
       setMessage('Seleziona una farmacia e aggiungi prodotti');
@@ -65,7 +65,7 @@ const PharmacyOrder = () => {
         items: cart,
         deliveryAddress,
         lat: 0, // Get from geolocation
-        lon: 0
+        lon: 0,
       });
 
       setMessage('Ordine creato con successo!');
@@ -78,7 +78,7 @@ const PharmacyOrder = () => {
     }
   };
 
-  const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
     <div className="pharmacy-order">
@@ -109,10 +109,7 @@ const PharmacyOrder = () => {
                 <p>{product.description}</p>
                 <p className="price">€{product.price.toFixed(2)}</p>
                 <p className="stock">Stock: {product.stock_quantity}</p>
-                <button
-                  onClick={() => addToCart(product)}
-                  disabled={product.stock_quantity === 0}
-                >
+                <button onClick={() => addToCart(product)} disabled={product.stock_quantity === 0}>
                   Aggiungi al Carrello
                 </button>
               </div>
@@ -124,12 +121,11 @@ const PharmacyOrder = () => {
             <div className="cart-items">
               {cart.map(item => (
                 <div key={item.id} className="cart-item">
-                  <span>{item.name} x {item.quantity}</span>
+                  <span>
+                    {item.name} x {item.quantity}
+                  </span>
                   <span>€{(item.price * item.quantity).toFixed(2)}</span>
-                  <button
-                    type="button"
-                    onClick={() => removeFromCart(item.id)}
-                  >
+                  <button type="button" onClick={() => removeFromCart(item.id)}>
                     Rimuovi
                   </button>
                 </div>
@@ -144,7 +140,7 @@ const PharmacyOrder = () => {
               type="text"
               placeholder="Indirizzo di consegna"
               value={deliveryAddress}
-              onChange={(e) => setDeliveryAddress(e.target.value)}
+              onChange={e => setDeliveryAddress(e.target.value)}
               required
             />
 

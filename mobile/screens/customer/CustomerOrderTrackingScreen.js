@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  Alert,
-  TouchableOpacity,
-  Platform,
-} from 'react-native';
+import { View, Text, ActivityIndicator, Alert, TouchableOpacity, Platform } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { ordersAPI } from '../../services/api';
 import * as Location from 'expo-location';
 import { mobileTheme } from '../../theme';
 import { customerOrderTrackingScreenStyles } from './styles/CustomerOrderTrackingScreenStyles';
+
+const styles = customerOrderTrackingScreenStyles;
 
 // Leaflet Map for Web
 const LeafletTrackingMap = ({ riderLocation, customerLocation, order, history = [] }) => {
@@ -34,9 +29,9 @@ const LeafletTrackingMap = ({ riderLocation, customerLocation, order, history = 
       if (!L || !document.getElementById(mapContainerId)) return;
 
       const riderLat = riderLocation?.latitude || 40.7128;
-      const riderLng = riderLocation?.longitude || -74.0060;
-      const customerLat = customerLocation?.latitude || 40.7100;
-      const customerLng = customerLocation?.longitude || -74.0070;
+      const riderLng = riderLocation?.longitude || -74.006;
+      const customerLat = customerLocation?.latitude || 40.71;
+      const customerLng = customerLocation?.longitude || -74.007;
 
       // Create map centered between rider and customer
       const centerLat = (riderLat + customerLat) / 2;
@@ -105,16 +100,25 @@ const LeafletTrackingMap = ({ riderLocation, customerLocation, order, history = 
         const pts = history.map(p => [parseFloat(p.latitude), parseFloat(p.longitude)]);
         L.polyline(pts, { color: '#ef4444', weight: 3 }).addTo(map);
       } else {
-        L.polyline([[riderLat, riderLng], [customerLat, customerLng]], {
-          color: '#3b82f6',
-          weight: 2,
-          opacity: 0.7,
-          dashArray: '5, 5',
-        }).addTo(map);
+        L.polyline(
+          [
+            [riderLat, riderLng],
+            [customerLat, customerLng],
+          ],
+          {
+            color: '#3b82f6',
+            weight: 2,
+            opacity: 0.7,
+            dashArray: '5, 5',
+          },
+        ).addTo(map);
       }
 
       // Fit bounds to show both
-      const bounds = L.latLngBounds([[riderLat, riderLng], [customerLat, customerLng]]);
+      const bounds = L.latLngBounds([
+        [riderLat, riderLng],
+        [customerLat, customerLng],
+      ]);
       map.fitBounds(bounds, { padding: [100, 100] });
     };
 
@@ -180,7 +184,9 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') return;
-        const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+        const loc = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced,
+        });
         setCustomerLocation({
           latitude: loc.coords.latitude,
           longitude: loc.coords.longitude,
@@ -196,14 +202,12 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
 
     // Get real customer location if on web
     if (Platform.OS === 'web' && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setCustomerLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
-        }
-      );
+      navigator.geolocation.getCurrentPosition(position => {
+        setCustomerLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      });
     }
 
     // Refresh tracking every 10 seconds
@@ -255,7 +259,9 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
       try {
         const pts = await ordersAPI.getTrackHistory(orderId);
         console.log('📍 Track history received:', pts);
-        setTrackHistory(pts.map(p => ({ latitude: parseFloat(p.latitude), longitude: parseFloat(p.longitude) })));
+        setTrackHistory(
+          pts.map(p => ({ latitude: parseFloat(p.latitude), longitude: parseFloat(p.longitude) })),
+        );
       } catch (e) {
         console.warn('📍 Could not load track history', e.message);
       }
@@ -268,7 +274,10 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
             latitude: parseFloat(order.delivery_latitude),
             longitude: parseFloat(order.delivery_longitude),
           });
-          console.log('📍 Using exact delivery coordinates:', { latitude: order.delivery_latitude, longitude: order.delivery_longitude });
+          console.log('📍 Using exact delivery coordinates:', {
+            latitude: order.delivery_latitude,
+            longitude: order.delivery_longitude,
+          });
         }
         // Priority 2: Use approximate Rome coordinates for delivery address
         else if (order?.delivery_address) {
@@ -302,7 +311,9 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
     return (
       <View style={customerOrderTrackingScreenStyles.loadingContainer}>
         <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
-        <Text style={customerOrderTrackingScreenStyles.loadingText}>Caricamento tracciamento...</Text>
+        <Text style={customerOrderTrackingScreenStyles.loadingText}>
+          Caricamento tracciamento...
+        </Text>
       </View>
     );
   }
@@ -319,9 +330,12 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
     const centerLon = riderLon ? (riderLon + customerLon) / 2 : customerLon;
     const zoomLevel = riderLat ? 14 : 16; // Zoom più alto se solo cliente
 
-    const polyline = trackHistory.length > 0
-      ? trackHistory.map(p => `[${p.latitude}, ${p.longitude}]`).join(',')
-      : (riderLat ? `[[${riderLat}, ${riderLon}], [${customerLat}, ${customerLon}]]` : null);
+    const polyline =
+      trackHistory.length > 0
+        ? trackHistory.map(p => `[${p.latitude}, ${p.longitude}]`).join(',')
+        : riderLat
+          ? `[[${riderLat}, ${riderLon}], [${customerLat}, ${customerLon}]]`
+          : null;
 
     return `
       <!DOCTYPE html>
@@ -345,11 +359,15 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
               }).addTo(map);
               
               // Rider marker - only if we have real location
-              ${riderLat ? `
+              ${
+                riderLat
+                  ? `
               L.marker([${riderLat}, ${riderLon}])
                   .addTo(map)
                   .bindPopup('<b>🏍️ Rider</b><br/>Stato: ${order?.status || 'In viaggio'}<br/>ETA: ${order?.eta_minutes || '--'} min');
-              ` : ''}
+              `
+                  : ''
+              }
               
               // Customer marker
               L.marker([${customerLat}, ${customerLon}])
@@ -357,13 +375,17 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
                   .bindPopup('<b>🏠 Area di consegna</b><br/>${order?.delivery_address || 'Indirizzo non disponibile'}');
               
               // Route polyline - only if we have both points
-              ${polyline ? `
+              ${
+                polyline
+                  ? `
               L.polyline([${polyline}], { color: '#ef4444', weight: 3 }).addTo(map);
               
               // Fit bounds to show both
               var bounds = L.latLngBounds([[${riderLat}, ${riderLon}], [${customerLat}, ${customerLon}]]);
               map.fitBounds(bounds, { padding: [50, 50] });
-              ` : ''}
+              `
+                  : ''
+              }
           </script>
       </body>
       </html>
@@ -393,16 +415,22 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
         <View style={customerOrderTrackingScreenStyles.headerContent}>
           <Text style={customerOrderTrackingScreenStyles.title}>📍 Tracciamento Ordine</Text>
           <View style={customerOrderTrackingScreenStyles.statusBadge}>
-            <Text style={customerOrderTrackingScreenStyles.statusText}>{statusEmoji[order?.status] || '📦'}</Text>
+            <Text style={customerOrderTrackingScreenStyles.statusText}>
+              {statusEmoji[order?.status] || '📦'}
+            </Text>
           </View>
         </View>
       </View>
 
       {/* Status Badge */}
       <View style={customerOrderTrackingScreenStyles.statusContainer}>
-        <Text style={customerOrderTrackingScreenStyles.statusText}>{statusText[order?.status] || 'Non disponibile'}</Text>
+        <Text style={customerOrderTrackingScreenStyles.statusText}>
+          {statusText[order?.status] || 'Non disponibile'}
+        </Text>
         {order?.eta_minutes && order?.status === 'in_transit' && (
-          <Text style={customerOrderTrackingScreenStyles.etaText}>ETA: {order.eta_minutes} minuti</Text>
+          <Text style={customerOrderTrackingScreenStyles.etaText}>
+            ETA: {order.eta_minutes} minuti
+          </Text>
         )}
       </View>
 
@@ -412,17 +440,19 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
         // Show map if we have any location data or at least the order
         return customerLocation || order;
       })() && (
-          <View style={customerOrderTrackingScreenStyles.mapContainer}>
-            <WebView
-              style={customerOrderTrackingScreenStyles.map}
-              source={{ html: generateCustomerTrackingMapHtml() }}
-              javaScriptEnabled={true}
-              domStorageEnabled={true}
-              startInLoadingState={true}
-              renderLoading={() => <ActivityIndicator style={customerOrderTrackingScreenStyles.mapLoader} size="large" />}
-            />
-          </View>
-        )}
+        <View style={customerOrderTrackingScreenStyles.mapContainer}>
+          <WebView
+            style={customerOrderTrackingScreenStyles.map}
+            source={{ html: generateCustomerTrackingMapHtml() }}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            startInLoadingState={true}
+            renderLoading={() => (
+              <ActivityIndicator style={customerOrderTrackingScreenStyles.mapLoader} size="large" />
+            )}
+          />
+        </View>
+      )}
 
       {/* Order Details */}
       <View style={customerOrderTrackingScreenStyles.detailsContainer}>
@@ -435,12 +465,16 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
 
         <View style={customerOrderTrackingScreenStyles.detailRow}>
           <Text style={customerOrderTrackingScreenStyles.detailLabel}>Importo:</Text>
-          <Text style={customerOrderTrackingScreenStyles.detailValue}>€{parseFloat(order?.total_amount || 0).toFixed(2)}</Text>
+          <Text style={customerOrderTrackingScreenStyles.detailValue}>
+            €{parseFloat(order?.total_amount || 0).toFixed(2)}
+          </Text>
         </View>
 
         <View style={customerOrderTrackingScreenStyles.detailRow}>
           <Text style={customerOrderTrackingScreenStyles.detailLabel}>Consegna a:</Text>
-          <Text style={customerOrderTrackingScreenStyles.detailValue}>{order?.delivery_address || 'Indirizzo non disponibile'}</Text>
+          <Text style={customerOrderTrackingScreenStyles.detailValue}>
+            {order?.delivery_address || 'Indirizzo non disponibile'}
+          </Text>
         </View>
 
         {order?.rider_id && (
@@ -452,8 +486,12 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
 
         {order?.eta_minutes && (
           <View style={customerOrderTrackingScreenStyles.etaBox}>
-            <Text style={customerOrderTrackingScreenStyles.etaBoxTitle}>⏱️ Tempo Stimato di Arrivo</Text>
-            <Text style={customerOrderTrackingScreenStyles.etaBoxValue}>{order.eta_minutes} minuti</Text>
+            <Text style={customerOrderTrackingScreenStyles.etaBoxTitle}>
+              ⏱️ Tempo Stimato di Arrivo
+            </Text>
+            <Text style={customerOrderTrackingScreenStyles.etaBoxValue}>
+              {order.eta_minutes} minuti
+            </Text>
           </View>
         )}
       </View>

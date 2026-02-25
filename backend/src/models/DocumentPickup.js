@@ -6,7 +6,19 @@ const generateTrackingNumber = () => {
 };
 
 // Create document pickup request
-export const createDocumentPickup = async (userId, documentType, pickupLocation, pickupLat, pickupLon, deliveryAddress, deliveryLat, deliveryLon, estimatedCost, description, signatureRequired) => {
+export const createDocumentPickup = async (
+  userId,
+  documentType,
+  pickupLocation,
+  pickupLat,
+  pickupLon,
+  deliveryAddress,
+  deliveryLat,
+  deliveryLon,
+  estimatedCost,
+  description,
+  signatureRequired,
+) => {
   try {
     const trackingNumber = generateTrackingNumber();
     const result = await db.query(
@@ -14,7 +26,20 @@ export const createDocumentPickup = async (userId, documentType, pickupLocation,
        (user_id, document_type, pickup_location, pickup_lat, pickup_lon, delivery_address, delivery_lat, delivery_lon, estimated_cost, description, signature_required, tracking_number)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
        RETURNING *`,
-      [userId, documentType, pickupLocation, pickupLat, pickupLon, deliveryAddress, deliveryLat, deliveryLon, estimatedCost, description, signatureRequired, trackingNumber]
+      [
+        userId,
+        documentType,
+        pickupLocation,
+        pickupLat,
+        pickupLon,
+        deliveryAddress,
+        deliveryLat,
+        deliveryLon,
+        estimatedCost,
+        description,
+        signatureRequired,
+        trackingNumber,
+      ],
     );
     return result.rows[0];
   } catch (error) {
@@ -23,7 +48,7 @@ export const createDocumentPickup = async (userId, documentType, pickupLocation,
 };
 
 // Get document pickup by ID
-export const getDocumentPickupById = async (pickupId) => {
+export const getDocumentPickupById = async pickupId => {
   try {
     const result = await db.query(
       `SELECT dp.*, u.name as customer_name, u.phone as customer_phone, u.email as customer_email,
@@ -32,7 +57,7 @@ export const getDocumentPickupById = async (pickupId) => {
        JOIN users u ON dp.user_id = u.id
        LEFT JOIN users r ON dp.rider_id = r.id
        WHERE dp.id = $1`,
-      [pickupId]
+      [pickupId],
     );
     return result.rows[0];
   } catch (error) {
@@ -41,7 +66,7 @@ export const getDocumentPickupById = async (pickupId) => {
 };
 
 // Get document pickup by tracking number
-export const getDocumentPickupByTracking = async (trackingNumber) => {
+export const getDocumentPickupByTracking = async trackingNumber => {
   try {
     const result = await db.query(
       `SELECT dp.*, u.name as customer_name, u.phone as customer_phone, u.email as customer_email,
@@ -50,7 +75,7 @@ export const getDocumentPickupByTracking = async (trackingNumber) => {
        JOIN users u ON dp.user_id = u.id
        LEFT JOIN users r ON dp.rider_id = r.id
        WHERE dp.tracking_number = $1`,
-      [trackingNumber]
+      [trackingNumber],
     );
     return result.rows[0];
   } catch (error) {
@@ -59,7 +84,7 @@ export const getDocumentPickupByTracking = async (trackingNumber) => {
 };
 
 // Get user document pickups
-export const getUserDocumentPickups = async (userId) => {
+export const getUserDocumentPickups = async userId => {
   try {
     const result = await db.query(
       `SELECT dp.*, r.name as rider_name, r.phone as rider_phone
@@ -67,7 +92,7 @@ export const getUserDocumentPickups = async (userId) => {
        LEFT JOIN users r ON dp.rider_id = r.id
        WHERE dp.user_id = $1
        ORDER BY dp.created_at DESC`,
-      [userId]
+      [userId],
     );
     return result.rows;
   } catch (error) {
@@ -102,7 +127,7 @@ export const assignRiderToDocumentPickup = async (pickupId, riderId) => {
   try {
     const result = await db.query(
       `UPDATE document_pickups SET rider_id = $1, status = 'confirmed', updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
-      [riderId, pickupId]
+      [riderId, pickupId],
     );
     return result.rows[0];
   } catch (error) {
@@ -115,7 +140,7 @@ export const updateDocumentPickupStatus = async (pickupId, status) => {
   try {
     const result = await db.query(
       `UPDATE document_pickups SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
-      [status, pickupId]
+      [status, pickupId],
     );
     return result.rows[0];
   } catch (error) {
@@ -124,7 +149,7 @@ export const updateDocumentPickupStatus = async (pickupId, status) => {
 };
 
 // Get active document pickups for rider
-export const getRiderActivePickups = async (riderId) => {
+export const getRiderActivePickups = async riderId => {
   try {
     const result = await db.query(
       `SELECT dp.*, u.name as customer_name, u.phone as customer_phone
@@ -132,7 +157,7 @@ export const getRiderActivePickups = async (riderId) => {
        JOIN users u ON dp.user_id = u.id
        WHERE dp.rider_id = $1 AND dp.status IN ('confirmed', 'picked_up')
        ORDER BY dp.created_at ASC`,
-      [riderId]
+      [riderId],
     );
     return result.rows;
   } catch (error) {
@@ -172,7 +197,7 @@ export const getDocumentTypeStats = async () => {
       `SELECT document_type, COUNT(*) as count, COUNT(CASE WHEN status = 'delivered' THEN 1 END) as delivered_count
        FROM document_pickups
        GROUP BY document_type
-       ORDER BY count DESC`
+       ORDER BY count DESC`,
     );
     return result.rows;
   } catch (error) {

@@ -1,70 +1,68 @@
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { mobileTheme } from '../../../theme';
-import { sharedHeaderStyles } from './SharedHeaderStyles';
+import { unifiedStyles } from '../../../theme/UnifiedStyles';
 import { sharedCategoryStyles } from './SharedCategoryStyles';
 
 export const restaurantsScreenStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: mobileTheme.colors.background,
-  },
+  // shared: base styles from unifiedStyles
+  ...unifiedStyles,
 
-  // HEADER
-  header: sharedHeaderStyles.header,
-  headerContent: sharedHeaderStyles.headerContent,
-  title: sharedHeaderStyles.title,
-  subtitle: sharedHeaderStyles.subtitle,
+  // header: header standard (RestaurantsScreen.js)
+  header: unifiedStyles.header,
+  // headerContent: contenuto header (RestaurantsScreen.js)
+  headerContent: unifiedStyles.headerContent,
+  // title: titolo header (RestaurantsScreen.js)
+  title: unifiedStyles.title,
+  // subtitle: sottotitolo header (RestaurantsScreen.js)
+  subtitle: unifiedStyles.subtitle,
 
-  // SEARCH BAR
+  // searchContainer: wrapper ricerca con offset (RestaurantsScreen.js)
   searchContainer: {
+    ...unifiedStyles.searchContainer,
     paddingHorizontal: mobileTheme.spacing[5],
     marginTop: -30,
     marginBottom: mobileTheme.spacing[4],
   },
+  // searchInput: input ricerca con radius xl (RestaurantsScreen.js)
   searchInput: {
-    backgroundColor: mobileTheme.colors.white,
+    ...unifiedStyles.searchInput,
     padding: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.xl,
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.primary,
     ...mobileTheme.shadows.medium,
-    borderWidth: 1,
     borderColor: 'rgba(0,0,0,0.05)',
   },
 
-  // FILTERS
-  filterContainer: {
-    flexDirection: 'row',
+  // categoriesContainer: wrapper filtri/categorie (RestaurantsScreen.js)
+  categoriesContainer: {
     paddingHorizontal: mobileTheme.spacing[5],
+    paddingVertical: mobileTheme.spacing[3],
+    backgroundColor: mobileTheme.colors.white,
+    marginBottom: mobileTheme.spacing[3],
+    marginTop: mobileTheme.spacing[2],
+  },
+  // categoriesList: lista pills categorie (RestaurantsScreen.js)
+  categoriesList: {
+    paddingLeft: mobileTheme.spacing[5],
     marginBottom: mobileTheme.spacing[4],
-    gap: mobileTheme.spacing[2],
   },
-  filterButton: {
-    paddingHorizontal: mobileTheme.spacing[3],
-    paddingVertical: mobileTheme.spacing[2],
-    borderRadius: mobileTheme.borderRadius.full,
-    backgroundColor: mobileTheme.colors.background,
-    borderWidth: 1,
-    borderColor: mobileTheme.colors.border,
-  },
-  filterButtonActive: {
-    backgroundColor: mobileTheme.colors.primary,
-    borderColor: mobileTheme.colors.primary,
-  },
-  filterText: {
-    fontSize: mobileTheme.typography.fontSize.sm,
-    color: mobileTheme.colors.text.secondary,
-    fontWeight: mobileTheme.typography.fontWeight.medium,
-  },
-  filterTextActive: {
-    color: mobileTheme.colors.white,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
-  },
+  // categoryCard: pill base (sharedCategoryStyles)
+  categoryCard: sharedCategoryStyles.categoryCard,
+  // categoryCardActive: pill attiva (sharedCategoryStyles)
+  categoryCardActive: sharedCategoryStyles.categoryCardActive,
+  // categoryEmoji: emoji categoria (sharedCategoryStyles)
+  categoryEmoji: sharedCategoryStyles.categoryEmoji,
+  // categoryName: testo categoria (sharedCategoryStyles)
+  categoryName: sharedCategoryStyles.categoryName,
+  // categoryButton: bottone categoria (sharedCategoryStyles)
+  categoryButton: sharedCategoryStyles.categoryButton,
+  // categoryButtonText: testo bottone categoria (sharedCategoryStyles)
+  categoryButtonText: sharedCategoryStyles.categoryButtonText,
 
-  // RESTAURANT LIST
+  // restaurantsList: lista ristoranti (RestaurantsScreen.js)
   restaurantsList: {
     paddingHorizontal: mobileTheme.spacing[5],
   },
+  // restaurantCard: card ristorante (RestaurantsScreen.js)
   restaurantCard: {
     backgroundColor: mobileTheme.colors.white,
     borderRadius: mobileTheme.borderRadius.lg,
@@ -74,138 +72,80 @@ export const restaurantsScreenStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: mobileTheme.colors.border,
   },
+  // restaurantImage: hero immagine card (RestaurantsScreen.js)
   restaurantImage: {
     width: '100%',
     height: 140,
     backgroundColor: mobileTheme.colors.border,
   },
+  // restaurantContent: contenuto card (RestaurantsScreen.js)
   restaurantContent: {
     padding: mobileTheme.spacing[4],
   },
+  // restaurantHeader: header card con nome e azioni (RestaurantsScreen.js)
   restaurantHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: mobileTheme.spacing[2],
   },
+  // restaurantName: nome ristorante (RestaurantsScreen.js)
   restaurantName: {
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.text.primary,
     flex: 1,
   },
+  // favoriteButton: bottone preferito (RestaurantsScreen.js)
   favoriteButton: {
     padding: mobileTheme.spacing[2],
   },
+  // restaurantInfo: categoria/descrizione breve (RestaurantsScreen.js)
   restaurantInfo: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
     marginBottom: mobileTheme.spacing[3],
     lineHeight: 18,
   },
+  // restaurantFooter: footer card con rating e badge (RestaurantsScreen.js)
   restaurantFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  // ratingContainer: wrapper rating (RestaurantsScreen.js)
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
+  // rating: testo rating (RestaurantsScreen.js)
   rating: {
     fontSize: mobileTheme.typography.fontSize.sm,
-    fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
-    marginLeft: 4,
+    color: mobileTheme.colors.text.secondary,
   },
+  // deliveryInfo: info consegna (RestaurantsScreen.js)
   deliveryInfo: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
   },
+  // deliveryBadge: pill costo consegna (RestaurantsScreen.js)
   deliveryBadge: {
-    backgroundColor: mobileTheme.colors.successBg,
+    backgroundColor: mobileTheme.colors.primarySoft,
     paddingHorizontal: mobileTheme.spacing[2],
-    paddingVertical: 4,
-    borderRadius: mobileTheme.borderRadius.sm,
-    alignSelf: 'flex-start',
-  },
-  deliveryText: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: mobileTheme.colors.success,
-  },
-
-  // LOADING STATES
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.secondary,
-    marginTop: mobileTheme.spacing[4],
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: mobileTheme.spacing[5],
-  },
-  emptyText: {
-    fontSize: mobileTheme.typography.fontSize.base,
-    color: mobileTheme.colors.text.tertiary,
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-
-  // CATEGORY PILLS
-  categoriesList: {
-    paddingLeft: mobileTheme.spacing[5],
-    marginBottom: mobileTheme.spacing[4],
-  },
-  categoryCard: sharedCategoryStyles.categoryCard,
-  categoryCardActive: sharedCategoryStyles.categoryCardActive,
-  categoryEmoji: sharedCategoryStyles.categoryEmoji,
-  categoryName: sharedCategoryStyles.categoryName,
-  categoryButton: sharedCategoryStyles.categoryButton,
-  categoryButtonActive: sharedCategoryStyles.categoryButtonActive,
-  categoryButtonText: sharedCategoryStyles.categoryButtonText,
-  categoryButtonTextActive: sharedCategoryStyles.categoryButtonTextActive,
-
-  // CATEGORIES CONTAINER
-  categoriesContainer: {
-    paddingHorizontal: mobileTheme.spacing[5],
-    paddingVertical: mobileTheme.spacing[3], // Ridotto da 4 a 3
-    backgroundColor: mobileTheme.colors.white,
-    marginBottom: mobileTheme.spacing[3], // Ridotto da 4 a 3
-    marginTop: mobileTheme.spacing[2],
-  },
-  categoriesList: {
-    paddingHorizontal: mobileTheme.spacing[2],
-  },
-  categoryButton: {
-    backgroundColor: mobileTheme.colors.background,
-    paddingHorizontal: mobileTheme.spacing[3], // Ridotto da 4 a 3
-    paddingVertical: mobileTheme.spacing[2], // Ridotto da 3 a 2
+    paddingVertical: 2,
     borderRadius: mobileTheme.borderRadius.full,
-    marginRight: mobileTheme.spacing[3],
-    borderWidth: 1,
-    borderColor: mobileTheme.colors.border,
   },
-  categoryButtonActive: {
-    backgroundColor: mobileTheme.colors.primary,
-    borderColor: mobileTheme.colors.primary,
-  },
-  categoryButtonText: {
-    fontSize: mobileTheme.typography.fontSize.xs, // Ridotto da sm a xs
-    fontWeight: mobileTheme.typography.fontWeight.medium,
-    color: mobileTheme.colors.text.secondary,
-  },
-  categoryButtonTextActive: {
-    color: mobileTheme.colors.white,
+  // deliveryText: testo badge consegna (RestaurantsScreen.js)
+  deliveryText: {
+    fontSize: mobileTheme.typography.fontSize.xs,
+    color: mobileTheme.colors.primary,
     fontWeight: mobileTheme.typography.fontWeight.bold,
   },
+
+  // emptyContainer: stato vuoto lista (RestaurantsScreen.js)
+  emptyContainer: unifiedStyles.emptyContainer,
+  // emptyText: testo stato vuoto (RestaurantsScreen.js)
+  emptyText: unifiedStyles.emptyText,
 });
 
 export default restaurantsScreenStyles;

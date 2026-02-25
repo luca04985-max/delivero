@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View, Text, ScrollView, TouchableOpacity, FlatList,
-  TextInput, Alert, ActivityIndicator, RefreshControl, Dimensions
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  FlatList,
+  TextInput,
+  Alert,
+  ActivityIndicator,
+  RefreshControl,
+  Dimensions,
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -44,8 +52,13 @@ export default function CustomerHomeScreen({ navigation }) {
     const maxRetries = 2;
 
     try {
-      console.log(`📍 CustomerHomeScreen: Getting GPS location... (attempt ${retryCount + 1}/${maxRetries + 1})`);
-      const location = await locationService.getCurrentLocation(retryCount > 0, 'CustomerHomeScreen');
+      console.log(
+        `📍 CustomerHomeScreen: Getting GPS location... (attempt ${retryCount + 1}/${maxRetries + 1})`,
+      );
+      const location = await locationService.getCurrentLocation(
+        retryCount > 0,
+        'CustomerHomeScreen',
+      );
 
       if (location) {
         setUserLocation(location);
@@ -58,7 +71,9 @@ export default function CustomerHomeScreen({ navigation }) {
         console.log('✅ CustomerHomeScreen: GPS location set');
       } else {
         if (retryCount < maxRetries) {
-          console.log(`📍 CustomerHomeScreen: GPS failed, retrying in 2 seconds... (${retryCount + 1}/${maxRetries})`);
+          console.log(
+            `📍 CustomerHomeScreen: GPS failed, retrying in 2 seconds... (${retryCount + 1}/${maxRetries})`,
+          );
           setTimeout(() => requestLocation(retryCount + 1), 2000);
         } else {
           console.warn('⚠️ CustomerHomeScreen: No GPS location available after retries');
@@ -85,7 +100,9 @@ export default function CustomerHomeScreen({ navigation }) {
       console.error('❌ CustomerHomeScreen: Error getting location:', error);
 
       if (retryCount < maxRetries) {
-        console.log(`📍 CustomerHomeScreen: GPS error, retrying in 2 seconds... (${retryCount + 1}/${maxRetries})`);
+        console.log(
+          `📍 CustomerHomeScreen: GPS error, retrying in 2 seconds... (${retryCount + 1}/${maxRetries})`,
+        );
         setTimeout(() => requestLocation(retryCount + 1), 2000);
       } else {
         // NON resettare la posizione se c'è già una nel service
@@ -134,13 +151,14 @@ export default function CustomerHomeScreen({ navigation }) {
     }
   };
 
-  const filteredRestaurants = restaurants.filter(r =>
-    r.name.toLowerCase().includes(searchText.toLowerCase()) ||
-    r.category.toLowerCase().includes(searchText.toLowerCase())
+  const filteredRestaurants = restaurants.filter(
+    r =>
+      r.name.toLowerCase().includes(searchText.toLowerCase()) ||
+      r.category.toLowerCase().includes(searchText.toLowerCase()),
   );
 
   // GESTIONE CLIC SU MAPPA
-  const handleMapMessage = (event) => {
+  const handleMapMessage = event => {
     const data = event.nativeEvent.data;
     if (data.startsWith('restaurant:')) {
       const restaurantId = data.split(':')[1];
@@ -156,7 +174,9 @@ export default function CustomerHomeScreen({ navigation }) {
     const centerLon = userLocation?.longitude || 12.67594;
 
     // Generazione marker con postMessage corretto
-    const markers = filteredRestaurants.map(rest => `
+    const markers = filteredRestaurants
+      .map(
+        rest => `
         L.marker([${rest.latitude || 41.88}, ${rest.longitude || 12.67}])
             .addTo(map)
             .bindPopup(\`
@@ -171,7 +191,9 @@ export default function CustomerHomeScreen({ navigation }) {
                     </button>
                 </div>
             \`);
-    `).join('\n');
+    `,
+      )
+      .join('\n');
 
     return `
         <!DOCTYPE html>
@@ -205,7 +227,9 @@ export default function CustomerHomeScreen({ navigation }) {
       <View style={customerHomeScreenStyles.header}>
         <View>
           <Text style={customerHomeScreenStyles.title}>Delivero Roma</Text>
-          <Text style={customerHomeScreenStyles.subtitle}>📍 {userLocation ? 'Roma Est Attiva' : 'Ricerca posizione...'}</Text>
+          <Text style={customerHomeScreenStyles.subtitle}>
+            📍 {userLocation ? 'Roma Est Attiva' : 'Ricerca posizione...'}
+          </Text>
         </View>
         <TouchableOpacity
           style={customerHomeScreenStyles.mapToggleBtn}
@@ -225,14 +249,20 @@ export default function CustomerHomeScreen({ navigation }) {
           {/* 1. Servizi Rapidi (Orizzontali) */}
           <View style={customerHomeScreenStyles.whiteSection}>
             <Text style={customerHomeScreenStyles.sectionTitle}>Servizi Extra</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ paddingLeft: 15 }}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={{ paddingLeft: 15 }}
+            >
               {specialServices.map(service => (
                 <TouchableOpacity
                   key={service.id}
                   style={customerHomeScreenStyles.serviceCircle}
                   onPress={() => navigation.navigate(service.screen)}
                 >
-                  <View style={customerHomeScreenStyles.iconCircle}><Text style={{ fontSize: 24 }}>{service.emoji}</Text></View>
+                  <View style={customerHomeScreenStyles.iconCircle}>
+                    <Text style={{ fontSize: 24 }}>{service.emoji}</Text>
+                  </View>
                   <Text style={customerHomeScreenStyles.serviceText}>{service.name}</Text>
                 </TouchableOpacity>
               ))}
@@ -256,9 +286,12 @@ export default function CustomerHomeScreen({ navigation }) {
               data={categories}
               horizontal
               showsHorizontalScrollIndicator={false}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={item => item.id.toString()}
               renderItem={({ item }) => (
-                <TouchableOpacity style={customerHomeScreenStyles.categoryPill} onPress={() => navigation.navigate('Restaurants', { category: item.name })}>
+                <TouchableOpacity
+                  style={customerHomeScreenStyles.categoryPill}
+                  onPress={() => navigation.navigate('Restaurants', { category: item.name })}
+                >
                   <Text style={customerHomeScreenStyles.categoryText}>{item.name}</Text>
                 </TouchableOpacity>
               )}
@@ -277,9 +310,13 @@ export default function CustomerHomeScreen({ navigation }) {
               >
                 <View style={customerHomeScreenStyles.restInfo}>
                   <Text style={customerHomeScreenStyles.restName}>{rest.name}</Text>
-                  <Text style={customerHomeScreenStyles.restSub}>{rest.category} • ⭐ {rest.rating}</Text>
+                  <Text style={customerHomeScreenStyles.restSub}>
+                    {rest.category} • ⭐ {rest.rating}
+                  </Text>
                 </View>
-                <View style={customerHomeScreenStyles.restBadge}><Text style={customerHomeScreenStyles.badgeText}>{rest.time || '25'} min</Text></View>
+                <View style={customerHomeScreenStyles.restBadge}>
+                  <Text style={customerHomeScreenStyles.badgeText}>{rest.time || '25'} min</Text>
+                </View>
               </TouchableOpacity>
             ))}
           </View>
@@ -299,4 +336,3 @@ export default function CustomerHomeScreen({ navigation }) {
     </View>
   );
 }
-

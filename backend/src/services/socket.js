@@ -6,7 +6,8 @@ let io;
 
 // Middleware: Authenticate socket connection via JWT token
 const authenticateSocketMiddleware = (socket, next) => {
-  const token = socket.handshake.auth.token || socket.handshake.headers.authorization?.split(' ')[1];
+  const token =
+    socket.handshake.auth.token || socket.handshake.headers.authorization?.split(' ')[1];
   if (!token) {
     return next(new Error('Authentication token required'));
   }
@@ -21,27 +22,29 @@ const authenticateSocketMiddleware = (socket, next) => {
   }
 };
 
-export const initializeSocket = (httpServer) => {
+export const initializeSocket = httpServer => {
   io = new Server(httpServer, {
     cors: {
-      origin: process.env.FRONTEND_ORIGINS ? process.env.FRONTEND_ORIGINS.split(',') : [
-        'http://localhost:5173',
-        'http://localhost:3000',
-        'http://localhost:3001',
-        'http://localhost:19007',
-        'https://delivero-dubw.vercel.app'
-      ],
-      methods: ['GET', 'POST', 'OPTIONS']
+      origin: process.env.FRONTEND_ORIGINS
+        ? process.env.FRONTEND_ORIGINS.split(',')
+        : [
+            'http://localhost:5173',
+            'http://localhost:3000',
+            'http://localhost:3001',
+            'http://localhost:19007',
+            'https://delivero-dubw.vercel.app',
+          ],
+      methods: ['GET', 'POST', 'OPTIONS'],
     },
-    auth: { required: true }
+    auth: { required: true },
   });
 
   // Apply auth middleware
   io.use(authenticateSocketMiddleware);
 
-  io.on('connection', (socket) => {
+  io.on('connection', socket => {
     // Join user room for receiving their order updates
-    socket.on('joinUserRoom', (userId) => {
+    socket.on('joinUserRoom', userId => {
       socket.join(`user_${userId}`);
     });
 
@@ -53,12 +56,12 @@ export const initializeSocket = (httpServer) => {
     });
 
     // Subscribe to tracking for a specific order (customer, rider, or manager)
-    socket.on('joinOrderTracking', async (orderId) => {
+    socket.on('joinOrderTracking', async orderId => {
       try {
         // Fetch order to verify authorization
         const result = await db.query(
           'SELECT id, user_id, rider_id, status FROM orders WHERE id = $1',
-          [orderId]
+          [orderId],
         );
 
         if (result.rows.length === 0) {
@@ -84,13 +87,15 @@ export const initializeSocket = (httpServer) => {
         // Join order-specific room
         const roomName = `order_${orderId}`;
         socket.join(roomName);
-        console.log(`User ${socket.userId} (${socket.userRole}) joined tracking for order ${orderId}`);
+        console.log(
+          `User ${socket.userId} (${socket.userRole}) joined tracking for order ${orderId}`,
+        );
 
         // Send current order state
         socket.emit('orderTrackingState', {
           orderId,
           status: order.status,
-          timestamp: new Date()
+          timestamp: new Date(),
         });
       } catch (e) {
         console.error('Error in joinOrderTracking:', e);
@@ -99,24 +104,29 @@ export const initializeSocket = (httpServer) => {
     });
 
     // Leave order tracking
-    socket.on('leaveOrderTracking', (orderId) => {
+    socket.on('leaveOrderTracking', orderId => {
       const roomName = `order_${orderId}`;
       socket.leave(roomName);
       console.log(`User ${socket.userId} left tracking for order ${orderId}`);
     });
 
     // Track order delivery (manual emit)
-    socket.on('updateOrderStatus', (data) => {
+    socket.on('updateOrderStatus', data => {
       const { orderId, userId, status, location } = data;
       // This is for manual updates; riders should use PUT /orders/:id/location instead
       io.to(`user_${userId}`).emit('orderStatusUpdate', {
         orderId,
         status,
         location,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
       // also notify managers
-      io.to('managers').emit('activeOrderUpdate', { orderId, status, location, timestamp: new Date() });
+      io.to('managers').emit('activeOrderUpdate', {
+        orderId,
+        status,
+        location,
+        timestamp: new Date(),
+      });
     });
 
     socket.on('disconnect', () => {
@@ -143,9 +153,15 @@ export const broadcastLocationUpdate = (orderId, latitude, longitude, eta_minute
     latitude,
     longitude,
     eta_minutes,
-    timestamp: new Date()
+    timestamp: new Date(),
   });
-  io.to('managers').emit('activeOrderUpdate', { orderId, latitude, longitude, eta_minutes, timestamp: new Date() });
+  io.to('managers').emit('activeOrderUpdate', {
+    orderId,
+    latitude,
+    longitude,
+    eta_minutes,
+    timestamp: new Date(),
+  });
 };
 
 // Emit order status change
@@ -155,7 +171,7 @@ export const broadcastOrderStatusChange = (orderId, customerId, status) => {
   io.to(roomName).emit('orderStatusUpdate', {
     orderId,
     status,
-    timestamp: new Date()
+    timestamp: new Date(),
   });
   // Stop tracking immediately after delivery for privacy
   if (status === 'delivered') {
@@ -170,6 +186,6 @@ export const emitOrderUpdate = (userId, orderId, status, location = null) => {
     orderId,
     status,
     location,
-    timestamp: new Date()
+    timestamp: new Date(),
   });
 };

@@ -10,7 +10,7 @@ import {
   getTicketComments,
   getTicketStats,
   searchTickets,
-  deleteTicket
+  deleteTicket,
 } from '../controllers/ticketsController.js';
 import { authenticateToken } from '../middleware/auth.js';
 import db from '../config/db.js';
@@ -40,8 +40,8 @@ router.post('/', authenticateToken, async (req, res) => {
 router.post('/customer', authenticateToken, async (req, res) => {
   try {
     const { type, title, description, order_id, attachmentUrls, user_id } = req.body;
-    console.log("Request body:", req.body);
-    console.log("User from middleware:", req.user);
+    console.log('Request body:', req.body);
+    console.log('User from middleware:', req.user);
 
     if (!type || !title || !description) {
       return res.status(400).json({ error: 'Type, title, and description are required' });
@@ -49,7 +49,7 @@ router.post('/customer', authenticateToken, async (req, res) => {
 
     // Usa user_id dal body se presente, altrimenti dal middleware
     const userId = user_id || req.user?.userId;
-    console.log("Extracted userId:", userId);
+    console.log('Extracted userId:', userId);
     if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
     // Check if user is customer
@@ -59,7 +59,14 @@ router.post('/customer', authenticateToken, async (req, res) => {
       return res.status(403).json({ error: 'Customer access required' });
     }
 
-    const ticket = await createTicket(userId, type, title, description, attachmentUrls || [], order_id);
+    const ticket = await createTicket(
+      userId,
+      type,
+      title,
+      description,
+      attachmentUrls || [],
+      order_id,
+    );
     res.status(201).json(ticket);
   } catch (error) {
     console.error('Error creating customer ticket:', error);
@@ -352,7 +359,7 @@ router.patch('/:id/priority', authenticateToken, async (req, res) => {
 // Add comment to ticket
 router.post('/:id/comments', authenticateToken, async (req, res) => {
   try {
-    console.log("-----------Add comment to ticket----------------");
+    console.log('-----------Add comment to ticket----------------');
     const { comment } = req.body;
 
     if (!comment) {
@@ -375,7 +382,7 @@ router.post('/:id/comments', authenticateToken, async (req, res) => {
     }
 
     const newComment = await addTicketComment(req.params.id, userId, comment);
-    console.log("NEW COMMENT")
+    console.log('NEW COMMENT');
     res.status(201).json(newComment);
   } catch (error) {
     console.error('Error adding comment:', error);

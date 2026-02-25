@@ -20,17 +20,71 @@ export default function CustomerHomeEnhanced() {
   ];
 
   const allRestaurants = [
-    { id: 1, name: 'Pizzeria Roma', category: 'Pizza', rating: 4.8, distance: 0.5, time: 20, price: '€', reviews: 324 },
-    { id: 2, name: 'Burger House', category: 'Burger', rating: 4.6, distance: 0.8, time: 15, price: '€€', reviews: 256 },
-    { id: 3, name: 'Sushi Master', category: 'Sushi', rating: 4.9, distance: 1.2, time: 30, price: '€€€', reviews: 412 },
-    { id: 4, name: 'Poke Bowl', category: 'Poke', rating: 4.7, distance: 0.6, time: 15, price: '€€', reviews: 189 },
-    { id: 5, name: 'Kebab Palace', category: 'Kebab', rating: 4.5, distance: 0.9, time: 10, price: '€', reviews: 145 },
-    { id: 6, name: 'Pasticceria Dolce', category: 'Dessert', rating: 4.9, distance: 0.4, time: 5, price: '€€', reviews: 267 },
+    {
+      id: 1,
+      name: 'Pizzeria Roma',
+      category: 'Pizza',
+      rating: 4.8,
+      distance: 0.5,
+      time: 20,
+      price: '€',
+      reviews: 324,
+    },
+    {
+      id: 2,
+      name: 'Burger House',
+      category: 'Burger',
+      rating: 4.6,
+      distance: 0.8,
+      time: 15,
+      price: '€€',
+      reviews: 256,
+    },
+    {
+      id: 3,
+      name: 'Sushi Master',
+      category: 'Sushi',
+      rating: 4.9,
+      distance: 1.2,
+      time: 30,
+      price: '€€€',
+      reviews: 412,
+    },
+    {
+      id: 4,
+      name: 'Poke Bowl',
+      category: 'Poke',
+      rating: 4.7,
+      distance: 0.6,
+      time: 15,
+      price: '€€',
+      reviews: 189,
+    },
+    {
+      id: 5,
+      name: 'Kebab Palace',
+      category: 'Kebab',
+      rating: 4.5,
+      distance: 0.9,
+      time: 10,
+      price: '€',
+      reviews: 145,
+    },
+    {
+      id: 6,
+      name: 'Pasticceria Dolce',
+      category: 'Dessert',
+      rating: 4.9,
+      distance: 0.4,
+      time: 5,
+      price: '€€',
+      reviews: 267,
+    },
   ];
 
   // Local sample data is provided by `allRestaurants`
 
-  const toggleFavorite = (restaurant) => {
+  const toggleFavorite = restaurant => {
     const isFavorited = favorites.some(f => f.id === restaurant.id);
     if (isFavorited) {
       setFavorites(favorites.filter(f => f.id !== restaurant.id));
@@ -43,9 +97,10 @@ export default function CustomerHomeEnhanced() {
     let results = [...allRestaurants];
 
     if (searchText) {
-      results = results.filter(r =>
-        r.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        r.category.toLowerCase().includes(searchText.toLowerCase())
+      results = results.filter(
+        r =>
+          r.name.toLowerCase().includes(searchText.toLowerCase()) ||
+          r.category.toLowerCase().includes(searchText.toLowerCase()),
       );
     }
 
@@ -113,7 +168,7 @@ export default function CustomerHomeEnhanced() {
                 className="search-input"
                 placeholder="Cerca ristorante, piatto..."
                 value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
+                onChange={e => setSearchText(e.target.value)}
               />
               <span className="search-icon">🔍</span>
             </div>
@@ -178,9 +233,7 @@ export default function CustomerHomeEnhanced() {
 
             {/* Restaurants */}
             <div className="restaurants-section">
-              <h3>
-                {searchText ? `🔍 Risultati per "${searchText}"` : '🌟 Consigliati per Te'}
-              </h3>
+              <h3>{searchText ? `🔍 Risultati per "${searchText}"` : '🌟 Consigliati per Te'}</h3>
               {filteredRestaurants.length === 0 ? (
                 <p className="no-results">Nessun ristorante trovato 📭</p>
               ) : (
@@ -205,7 +258,9 @@ export default function CustomerHomeEnhanced() {
                         </div>
 
                         <div className="restaurant-stats">
-                          <span className="stat-badge">⭐ {restaurant.rating} ({restaurant.reviews})</span>
+                          <span className="stat-badge">
+                            ⭐ {restaurant.rating} ({restaurant.reviews})
+                          </span>
                           <span className="stat-badge">📍 {restaurant.distance}km</span>
                           <span className="stat-badge time">⏱️ {restaurant.time}min</span>
                         </div>
@@ -234,10 +289,7 @@ export default function CustomerHomeEnhanced() {
                           {restaurant.category} • {restaurant.price}
                         </p>
                       </div>
-                      <button
-                        className="favorite-btn"
-                        onClick={() => toggleFavorite(restaurant)}
-                      >
+                      <button className="favorite-btn" onClick={() => toggleFavorite(restaurant)}>
                         ❤️
                       </button>
                     </div>

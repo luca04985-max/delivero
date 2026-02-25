@@ -1,29 +1,34 @@
-import { useState } from "react";
-import { authAPI } from "../services/api";
+import { useState } from 'react';
+import { authAPI } from '../services/api';
 
 export default function RegisterForm({ onRegisterSuccess }) {
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    name: "",
-    role: "customer"
+    email: '',
+    password: '',
+    name: '',
+    role: 'customer',
   });
 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await authAPI.register(formData.email, formData.password, formData.name, formData.role);
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      const response = await authAPI.register(
+        formData.email,
+        formData.password,
+        formData.name,
+        formData.role,
+      );
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
       onRegisterSuccess(response.data.user);
       setError(null);
     } catch (err) {
@@ -91,7 +96,7 @@ export default function RegisterForm({ onRegisterSuccess }) {
               padding: '0.75rem',
               borderRadius: '4px',
               border: '1px solid #ddd',
-              fontSize: '1rem'
+              fontSize: '1rem',
             }}
           >
             <option value="customer">👤 Cliente</option>
@@ -99,13 +104,13 @@ export default function RegisterForm({ onRegisterSuccess }) {
             <option value="manager">👨‍💼 Manager/Admin</option>
           </select>
         </div>
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           disabled={loading}
           className="btn btn-primary"
-          style={{ width: "100%" }}
+          style={{ width: '100%' }}
         >
-          {loading ? "⏳ Registrazione..." : "🚀 Registrati"}
+          {loading ? '⏳ Registrazione...' : '🚀 Registrati'}
         </button>
       </form>
     </div>

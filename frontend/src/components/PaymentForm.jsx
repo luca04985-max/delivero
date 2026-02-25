@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { paymentsAPI, ordersAPI } from "../services/api";
+import { useState, useEffect } from 'react';
+import { paymentsAPI, ordersAPI } from '../services/api';
 
 export default function PaymentForm({ orderId, totalAmount }) {
   const [clientSecret, setClientSecret] = useState(null);
@@ -41,27 +41,31 @@ export default function PaymentForm({ orderId, totalAmount }) {
   if (loading) return <div>Caricamento...</div>;
 
   return (
-    <div style={{ padding: "20px", border: "1px solid #ddd", borderRadius: "5px", marginTop: "20px" }}>
+    <div
+      style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '5px', marginTop: '20px' }}
+    >
       <h3>Pagamento Ordine #{orderId}</h3>
-      <p><strong>Importo:</strong> €{totalAmount}</p>
+      <p>
+        <strong>Importo:</strong> €{totalAmount}
+      </p>
 
-      {error && <p style={{ color: "red" }}>Errore: {error}</p>}
-      {success && <p style={{ color: "green" }}>Pagamento effettuato con successo!</p>}
+      {error && <p style={{ color: 'red' }}>Errore: {error}</p>}
+      {success && <p style={{ color: 'green' }}>Pagamento effettuato con successo!</p>}
 
       {!success && clientSecret && (
         <button
           onClick={handleConfirmPayment}
           disabled={loading}
           style={{
-            padding: "10px 20px",
-            backgroundColor: "#4CAF50",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: loading ? "not-allowed" : "pointer"
+            padding: '10px 20px',
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: loading ? 'not-allowed' : 'pointer',
           }}
         >
-          {loading ? "Elaborazione..." : "Conferma Pagamento"}
+          {loading ? 'Elaborazione...' : 'Conferma Pagamento'}
         </button>
       )}
     </div>

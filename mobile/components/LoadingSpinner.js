@@ -17,7 +17,7 @@ const LoadingSpinner = ({
   size = 'large',
   color = mobileTheme.colors.primary,
   message = '',
-  style = {}
+  style = {},
 }) => {
   if (!loading) return null;
 
@@ -31,21 +31,12 @@ const LoadingSpinner = ({
     }
   };
 
-  const spinnerStyle = [
-    loadingSpinnerStyles.container,
-    style
-  ];
+  const spinnerStyle = [loadingSpinnerStyles.container, style];
 
   return (
     <View style={spinnerStyle}>
-      <ActivityIndicator
-        size={getSize()}
-        color={color}
-        style={loadingSpinnerStyles.spinner}
-      />
-      {message && (
-        <Text style={loadingSpinnerStyles.message}>{message}</Text>
-      )}
+      <ActivityIndicator size={getSize()} color={color} style={loadingSpinnerStyles.spinner} />
+      {message && <Text style={loadingSpinnerStyles.message}>{message}</Text>}
     </View>
   );
 };

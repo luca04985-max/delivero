@@ -32,13 +32,13 @@
 }
 
 .search-input:focus {
-  border-color: #FF6B00;
+  border-color: #ff6b00;
   box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
 }
 
 .filter-btn {
   padding: 12px 20px;
-  background: #FF6B00;
+  background: #ff6b00;
   color: white;
   border: none;
   border-radius: 10px;
@@ -48,7 +48,7 @@
 }
 
 .filter-btn:hover {
-  background: #E55A00;
+  background: #e55a00;
   transform: translateY(-2px);
 }
 
@@ -122,7 +122,7 @@
 }
 
 .promotion-card {
-  background: linear-gradient(135deg, #FF6B00, #FF8C00);
+  background: linear-gradient(135deg, #ff6b00, #ff8c00);
   color: white;
   padding: 20px;
   border-radius: 15px;
@@ -188,7 +188,7 @@
   padding: 15px;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  border-left: 4px solid #FF6B00;
+  border-left: 4px solid #ff6b00;
   transition: all 0.3s ease;
 }
 
@@ -205,7 +205,7 @@
 
 .order-id {
   font-weight: 600;
-  color: #FF6B00;
+  color: #ff6b00;
 }
 
 .order-status {
@@ -282,7 +282,7 @@
 }
 
 .rating {
-  color: #FF6B00;
+  color: #ff6b00;
   font-weight: 600;
   font-size: 14px;
 }
@@ -330,7 +330,7 @@
 .order-btn {
   flex: 1;
   padding: 12px;
-  background: #FF6B00;
+  background: #ff6b00;
   color: white;
   border: none;
   border-radius: 8px;
@@ -340,7 +340,7 @@
 }
 
 .order-btn:hover {
-  background: #E55A00;
+  background: #e55a00;
   transform: translateY(-2px);
 }
 
@@ -373,27 +373,27 @@
   .customer-home-advanced {
     padding: 15px;
   }
-  
+
   .categories-grid {
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: 10px;
   }
-  
+
   .promotions-grid {
     grid-template-columns: 1fr;
     gap: 15px;
   }
-  
+
   .recent-orders-grid {
     grid-template-columns: 1fr;
     gap: 15px;
   }
-  
+
   .restaurants-grid {
     grid-template-columns: 1fr;
     gap: 15px;
   }
-  
+
   .restaurant-actions {
     flex-direction: column;
   }

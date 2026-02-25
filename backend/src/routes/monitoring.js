@@ -28,22 +28,24 @@ router.get('/health', (req, res) => {
     system: {
       cpu: metrics.system.cpu[metrics.system.cpu.length - 1] || 0,
       memory: metrics.system.memory[metrics.system.memory.length - 1] || 0,
-      loadAverage: metrics.system.loadAverage[metrics.system.loadAverage.length - 1] || 0
+      loadAverage: metrics.system.loadAverage[metrics.system.loadAverage.length - 1] || 0,
     },
     application: {
       requests: monitor.getMetrics().application.requests,
       errors: monitor.getMetrics().application.errors,
-      avgResponseTime: monitor.getMetrics().application.responseTime.length > 0
-        ? monitor.getMetrics().application.responseTime.reduce((a, b) => a + b, 0) / monitor.getMetrics().application.responseTime.length
-        : 0
+      avgResponseTime:
+        monitor.getMetrics().application.responseTime.length > 0
+          ? monitor.getMetrics().application.responseTime.reduce((a, b) => a + b, 0) /
+            monitor.getMetrics().application.responseTime.length
+          : 0,
     },
     database: {
       queryCount: metrics.database.queryCount,
       avgResponseTime: metrics.database.avgResponseTime,
-      connectionPool: metrics.database.connectionPool
+      connectionPool: metrics.database.connectionPool,
     },
     stress,
-    recommendations: monitor.getRecommendations()
+    recommendations: monitor.getRecommendations(),
   };
 
   res.status(stress.isStressed ? 200 : 200).json(health);
@@ -64,8 +66,8 @@ router.get('/metrics', (req, res) => {
       platform: process.platform,
       nodeVersion: process.version,
       pid: process.pid,
-      memory: process.memoryUsage()
-    }
+      memory: process.memoryUsage(),
+    },
   });
 });
 
@@ -92,7 +94,7 @@ Status:      ${stress.isStressed ? '⚠️  STRESSED' : '✅ HEALTHY'}
 📊  APPLICATION METRICS
 ═══════════════════════════════════════════════════════════════
 Total Requests:    ${monitor.getStats().requests.total}
-Error Rate:         ${monitor.getStats().requests.total > 0 ? (monitor.getStats().requests.errors / monitor.getStats().requests.total * 100).toFixed(2) : 0}%
+Error Rate:         ${monitor.getStats().requests.total > 0 ? ((monitor.getStats().requests.errors / monitor.getStats().requests.total) * 100).toFixed(2) : 0}%
 Avg Response Time:  ${metrics.application.responseTime.length > 0 ? (metrics.application.responseTime.reduce((a, b) => a + b, 0) / metrics.application.responseTime.length).toFixed(1) : 0}ms
 
 🗄️  DATABASE PERFORMANCE
@@ -148,8 +150,8 @@ router.get('/system', (req, res) => {
     analysis,
     recommendations: {
       scaling: optimizer.getScalingRecommendations(),
-      optimization: optimizer.getOptimizationRecommendations()
-    }
+      optimization: optimizer.getOptimizationRecommendations(),
+    },
   });
 });
 
@@ -167,7 +169,7 @@ router.post('/track-request', (req, res) => {
 
   res.json({
     message: 'Request tracked successfully',
-    metrics: monitor.getStats()
+    metrics: monitor.getStats(),
   });
 });
 
@@ -185,7 +187,7 @@ router.post('/track-db-query', (req, res) => {
 
   res.json({
     message: 'Database query tracked successfully',
-    metrics: monitor.getMetrics()
+    metrics: monitor.getMetrics(),
   });
 });
 
@@ -204,11 +206,13 @@ router.get('/recommendations', (req, res) => {
     optimization: optimizationRecs,
     summary: {
       total: performanceRecs.length + scalingRecs.length + optimizationRecs.length,
-      critical: scalingRecs.filter(r => r.priority === 'high').length +
+      critical:
+        scalingRecs.filter(r => r.priority === 'high').length +
         optimizationRecs.filter(r => r.priority === 'high').length,
-      warning: scalingRecs.filter(r => r.priority === 'medium').length +
-        optimizationRecs.filter(r => r.priority === 'medium').length
-    }
+      warning:
+        scalingRecs.filter(r => r.priority === 'medium').length +
+        optimizationRecs.filter(r => r.priority === 'medium').length,
+    },
   });
 });
 
@@ -232,7 +236,7 @@ router.get('/stress-test', (req, res) => {
     // Memory allocation
     const largeArray = new Array(10000).fill(0).map(() => ({
       id: Math.random(),
-      data: new Array(100).fill(Math.random())
+      data: new Array(100).fill(Math.random()),
     }));
 
     if (Date.now() - startTime > duration) {
@@ -241,7 +245,7 @@ router.get('/stress-test', (req, res) => {
       res.json({
         message: 'Stress test completed',
         duration: duration,
-        finalMetrics: monitor.getMetrics()
+        finalMetrics: monitor.getMetrics(),
       });
     }
   }, 100);
@@ -285,9 +289,9 @@ router.get('/benchmark', (req, res) => {
       totalTime: `${totalTime}ms`,
       cpuOperations: `${cpuTime}ms`,
       memoryOperations: `${memTime}ms`,
-      opsPerSecond: Math.floor(operations / (totalTime / 1000))
+      opsPerSecond: Math.floor(operations / (totalTime / 1000)),
     },
-    systemMetrics: monitor.getMetrics()
+    systemMetrics: monitor.getMetrics(),
   });
 });
 
@@ -306,7 +310,7 @@ router.get('/alerts', (req, res) => {
       category: 'cpu',
       message: 'High CPU usage detected',
       value: `${(monitor.getMetrics().system.cpu[monitor.getMetrics().system.cpu.length - 1] || 0).toFixed(1)}%`,
-      recommendation: 'Consider scaling up or optimizing CPU-intensive operations'
+      recommendation: 'Consider scaling up or optimizing CPU-intensive operations',
     });
   }
 
@@ -317,7 +321,7 @@ router.get('/alerts', (req, res) => {
       category: 'memory',
       message: 'High memory usage detected',
       value: `${(monitor.getMetrics().system.memory[monitor.getMetrics().system.memory.length - 1] || 0).toFixed(1)}%`,
-      recommendation: 'Check for memory leaks or increase available memory'
+      recommendation: 'Check for memory leaks or increase available memory',
     });
   }
 
@@ -327,14 +331,20 @@ router.get('/alerts', (req, res) => {
       type: 'warning',
       category: 'load',
       message: 'High system load detected',
-      value: (monitor.getMetrics().system.loadAverage[monitor.getMetrics().system.loadAverage.length - 1] || 0).toFixed(2),
-      recommendation: 'Consider horizontal scaling'
+      value: (
+        monitor.getMetrics().system.loadAverage[
+          monitor.getMetrics().system.loadAverage.length - 1
+        ] || 0
+      ).toFixed(2),
+      recommendation: 'Consider horizontal scaling',
     });
   }
 
   // Application alerts
-  const errorRate = monitor.getStats().requests.total > 0 ?
-    (monitor.getStats().requests.errors / monitor.getStats().requests.total) : 0;
+  const errorRate =
+    monitor.getStats().requests.total > 0
+      ? monitor.getStats().requests.errors / monitor.getStats().requests.total
+      : 0;
 
   if (errorRate > 0.05) {
     alerts.push({
@@ -342,7 +352,7 @@ router.get('/alerts', (req, res) => {
       category: 'application',
       message: 'High error rate detected',
       value: `${(errorRate * 100).toFixed(2)}%`,
-      recommendation: 'Check application logs for errors'
+      recommendation: 'Check application logs for errors',
     });
   }
 
@@ -352,8 +362,8 @@ router.get('/alerts', (req, res) => {
     summary: {
       total: alerts.length,
       critical: alerts.filter(a => a.type === 'critical').length,
-      warning: alerts.filter(a => a.type === 'warning').length
-    }
+      warning: alerts.filter(a => a.type === 'warning').length,
+    },
   });
 });
 

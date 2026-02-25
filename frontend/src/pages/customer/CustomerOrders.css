@@ -5,7 +5,7 @@
 }
 
 .header {
-  background: linear-gradient(135deg, #FF6B00 0%, #FF8C00 100%);
+  background: linear-gradient(135deg, #ff6b00 0%, #ff8c00 100%);
   color: white;
   padding: 20px 16px;
   text-align: center;
@@ -43,8 +43,8 @@
 }
 
 .tab.active {
-  color: #FF6B00;
-  border-bottom-color: #FF6B00;
+  color: #ff6b00;
+  border-bottom-color: #ff6b00;
 }
 
 .orders-container {
@@ -71,7 +71,7 @@
   background: white;
   border-radius: 12px;
   padding: 14px;
-  border-left: 4px solid #0066FF;
+  border-left: 4px solid #0066ff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
 }
@@ -135,7 +135,7 @@
 
 .total-price {
   font-weight: bold;
-  color: #0066FF;
+  color: #0066ff;
 }
 
 .timestamp-row {
@@ -148,7 +148,7 @@
 }
 
 .eta {
-  color: #FF6B00;
+  color: #ff6b00;
   font-weight: 600;
 }
 
@@ -170,43 +170,43 @@
 }
 
 .btn-track {
-  background-color: #E0ECFF;
-  color: #0066FF;
-  border: 1px solid #0066FF;
+  background-color: #e0ecff;
+  color: #0066ff;
+  border: 1px solid #0066ff;
 }
 
 .btn-track:hover {
-  background-color: #C5E0FF;
+  background-color: #c5e0ff;
 }
 
 .btn-cancel {
-  background-color: #FFE5E5;
-  color: #FF6B6B;
-  border: 1px solid #FF6B6B;
+  background-color: #ffe5e5;
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
 }
 
 .btn-cancel:hover {
-  background-color: #FFC5C5;
+  background-color: #ffc5c5;
 }
 
 .btn-rate {
-  background-color: #E8F5E9;
-  color: #4CAF50;
-  border: 1px solid #4CAF50;
+  background-color: #e8f5e9;
+  color: #4caf50;
+  border: 1px solid #4caf50;
 }
 
 .btn-rate:hover {
-  background-color: #C8E6C9;
+  background-color: #c8e6c9;
 }
 
 .btn-reorder {
-  background-color: #E0ECFF;
-  color: #0066FF;
-  border: 1px solid #0066FF;
+  background-color: #e0ecff;
+  color: #0066ff;
+  border: 1px solid #0066ff;
 }
 
 .btn-reorder:hover {
-  background-color: #C5E0FF;
+  background-color: #c5e0ff;
 }
 
 /* Modal Styles */
@@ -299,7 +299,7 @@
 }
 
 .timeline-dot.active {
-  background-color: #0066FF;
+  background-color: #0066ff;
 }
 
 .timeline-icon {
@@ -316,7 +316,7 @@
 }
 
 .timeline-line.active {
-  background-color: #0066FF;
+  background-color: #0066ff;
 }
 
 .timeline-label {
@@ -326,7 +326,7 @@
 }
 
 .timeline-label.active {
-  color: #0066FF;
+  color: #0066ff;
   font-weight: 600;
 }
 
@@ -364,7 +364,7 @@
 
 .btn-contact {
   width: 100%;
-  background-color: #0066FF;
+  background-color: #0066ff;
   color: white;
   border: none;
   padding: 8px;
@@ -375,7 +375,7 @@
 }
 
 .btn-contact:hover {
-  background-color: #0052CC;
+  background-color: #0052cc;
 }
 
 .btn-close-modal {
@@ -435,7 +435,7 @@
 
 .note-input:focus {
   outline: none;
-  border-color: #0066FF;
+  border-color: #0066ff;
   box-shadow: 0 0 8px rgba(0, 102, 255, 0.1);
 }
 
@@ -466,12 +466,12 @@
 }
 
 .btn-modal-save {
-  background-color: #0066FF;
+  background-color: #0066ff;
   color: white;
 }
 
 .btn-modal-save:hover {
-  background-color: #0052CC;
+  background-color: #0052cc;
 }
 
 @media (max-width: 768px) {

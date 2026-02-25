@@ -9,7 +9,7 @@ export const getUserProfile = async (req, res) => {
     const result = await db.query(
       `SELECT id, email, name, role, phone, address, created_at, updated_at 
        FROM users WHERE id = $1`,
-      [userId]
+      [userId],
     );
 
     if (result.rows.length === 0) {
@@ -30,7 +30,7 @@ export const updateUserProfile = async (req, res) => {
     if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
     const { name, phone, address } = req.body;
-    
+
     // Build dynamic update query
     const updateFields = [];
     const updateValues = [];
@@ -41,13 +41,13 @@ export const updateUserProfile = async (req, res) => {
       updateValues.push(name);
       paramIndex++;
     }
-    
+
     if (phone !== undefined) {
       updateFields.push(`phone = $${paramIndex}`);
       updateValues.push(phone);
       paramIndex++;
     }
-    
+
     if (address !== undefined) {
       updateFields.push(`address = $${paramIndex}`);
       updateValues.push(address);

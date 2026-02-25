@@ -15,8 +15,11 @@ class LocationService {
     // Se abbiamo già la posizione e non è troppo vecchia (5 minuti), ritorna quella
     if (!forceRefresh && this.currentLocation && this.lastUpdate) {
       const age = Date.now() - this.lastUpdate;
-      if (age < 5 * 60 * 1000) { // 5 minuti
-        console.log(`📍 [${screenName}] Using cached location (age: ${Math.round(age / 1000)} seconds)`);
+      if (age < 5 * 60 * 1000) {
+        // 5 minuti
+        console.log(
+          `📍 [${screenName}] Using cached location (age: ${Math.round(age / 1000)} seconds)`,
+        );
         return this.currentLocation;
       }
     }
@@ -133,7 +136,7 @@ class LocationService {
 
   // Aspetta che la posizione sia disponibile
   async waitForLocation(timeout = 15000) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const startTime = Date.now();
 
       const checkLocation = () => {
