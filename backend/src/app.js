@@ -75,6 +75,9 @@ initializeSocket(server);
 // Health check endpoint
 app.get('/health', performanceMiddleware.healthCheck());
 
+// Compatibility: expose monitoring health endpoint expected by external monitors
+app.get('/api/monitoring/health', performanceMiddleware.healthCheck());
+
 // Monitoring routes
 
 // Routes
