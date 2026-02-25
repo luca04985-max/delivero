@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
-  FlatList,
+  
   TextInput,
   ActivityIndicator,
   Alert,
@@ -58,10 +58,10 @@ export default function CartScreen({ navigation }) {
         tryGetLocationWithRetry();
       }
     }
-  }, [checkoutVisible]);
+  }, [checkoutVisible, tryGetLocationWithRetry]);
 
   // Funzione per ottenere posizione con retry
-  const tryGetLocationWithRetry = async (retryCount = 0) => {
+  const tryGetLocationWithRetry = useCallback(async (retryCount = 0) => {
     const maxRetries = 2;
 
     try {
@@ -90,10 +90,10 @@ export default function CartScreen({ navigation }) {
         setTimeout(() => tryGetLocationWithRetry(retryCount + 1), 2000);
       }
     }
-  };
+  }, [getCurrentLocation]);
 
   // Ottieni la posizione corrente del cliente (usa locationService)
-  const getCurrentLocation = async (showLoading = true) => {
+  const getCurrentLocation = useCallback(async (showLoading = true) => {
     try {
       if (showLoading) {
         setLoadingLocation(true);
@@ -118,7 +118,7 @@ export default function CartScreen({ navigation }) {
         setLoadingLocation(false);
       }
     }
-  };
+  }, []);
 
   // Funzione per usare la posizione corrente come indirizzo
   const useCurrentLocationAsAddress = async () => {

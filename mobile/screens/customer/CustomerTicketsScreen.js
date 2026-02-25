@@ -1,19 +1,15 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
-  FlatList,
   ScrollView,
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+// useFocusEffect removed (unused)
 import { makeRequest } from '../../services/api';
 import { customerTicketsScreenStyles } from './styles/CustomerTicketsScreenStyles';
-import { useToast } from '../../hooks/useToast';
-import { useUserRole } from '../../hooks/useUserRole';
 
 export default function CustomerTicketsScreen({ navigation }) {
   const [tickets, setTickets] = useState([]);
@@ -23,7 +19,7 @@ export default function CustomerTicketsScreen({ navigation }) {
 
   useEffect(() => {
     loadTickets();
-  }, []);
+  }, [loadTickets]);
 
   const loadTickets = useCallback(async () => {
     try {
@@ -49,38 +45,7 @@ export default function CustomerTicketsScreen({ navigation }) {
     loadTickets().finally(() => setRefreshing(false));
   }, [loadTickets]);
 
-  // Ottimizzazione: memoizza il raggruppamento dei ticket per stato
-  const groupedTickets = useMemo(() => {
-    const grouped = {};
-
-    // Raggruppa ticket per stato
-    tickets.forEach(ticket => {
-      const status = ticket.ticket_status || ticket.status || 'unknown';
-      if (!grouped[status]) {
-        grouped[status] = [];
-      }
-      grouped[status].push(ticket);
-    });
-
-    // Ordina gli stati in modo logico
-    const statusOrder = ['open', 'in_progress', 'closed', 'unknown'];
-    const orderedGrouped = {};
-
-    statusOrder.forEach(status => {
-      if (grouped[status]) {
-        orderedGrouped[status] = grouped[status];
-      }
-    });
-
-    // Aggiunge eventuali stati non previsti
-    Object.keys(grouped).forEach(status => {
-      if (!statusOrder.includes(status)) {
-        orderedGrouped[status] = grouped[status];
-      }
-    });
-
-    return orderedGrouped;
-  }, [tickets]);
+  // groupedTickets removed (unused) to reduce warnings
 
   // Funzione per toggle delle sezioni - ottimizzata con useCallback
   const toggleSection = useCallback(ticket_status => {

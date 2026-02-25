@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, RefreshControl, Text, ScrollView, ActivityIndicator } from 'react-native';
+import { View, RefreshControl, Text, ScrollView, ActivityIndicator } from 'react-native';
 import { adminAPI } from '../../services/api';
 import { adminStatsStyles as styles } from './styles/AdminStatsStyles';
 
-export default function AdminStats({ navigation }) {
+export default function AdminStats({ navigation: _navigation }) {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);

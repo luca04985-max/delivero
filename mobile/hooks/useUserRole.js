@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import logger from '../utils/logger';
 
 /**
  * Hook custom per gestire il ruolo dell'utente
@@ -19,12 +20,12 @@ export const useUserRole = () => {
         if (userStr) {
           const user = JSON.parse(userStr);
           setUserRole(user.role);
-          console.log(`👤 User role loaded: ${user.role}`);
+          logger.debug(`User role loaded: ${user.role}`);
         } else {
-          console.log('👤 No user found in storage');
+          logger.debug('No user found in storage');
         }
       } catch (error) {
-        console.error('❌ Error loading user role:', error);
+        logger.error('Error loading user role:', error);
         setError(error);
       } finally {
         setIsLoading(false);

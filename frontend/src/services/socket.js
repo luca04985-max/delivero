@@ -1,4 +1,5 @@
 import { io } from 'socket.io-client';
+import logger from '../utils/logger';
 
 const URL = process.env.REACT_APP_WS_URL || 'http://localhost:5000';
 
@@ -18,13 +19,13 @@ export function initSocket(token) {
     });
 
     socket.on('connect', () => {
-      console.log('✓ Socket connected');
+      logger.info('Socket connected');
       connectionAttempts = 0;
     });
 
     socket.on('connect_error', err => {
       connectionAttempts++;
-      console.warn(`Socket connection error (attempt ${connectionAttempts}):`, err.message);
+      logger.warn(`Socket connection error (attempt ${connectionAttempts}):`, err.message);
       // Stop trying after max attempts
       if (connectionAttempts >= 3) {
         socket?.disconnect();
@@ -32,12 +33,12 @@ export function initSocket(token) {
     });
 
     socket.on('disconnect', () => {
-      console.log('✗ Socket disconnected');
+      logger.info('Socket disconnected');
     });
 
     return socket;
   } catch (error) {
-    console.error('Error initializing socket:', error);
+    logger.error('Error initializing socket:', error);
     return null;
   }
 }

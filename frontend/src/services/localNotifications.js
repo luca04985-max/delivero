@@ -2,9 +2,11 @@
 // Mostra notifiche locali quando WebSocket riceve tracking updates
 // Fallback per browser web che non hanno FCM configurato
 
+import logger from '../utils/logger';
+
 function requestNotificationPermission() {
   if (!('Notification' in window)) {
-    console.log('Browser non supporta Notifications API');
+    logger.warn('Browser does not support Notifications API');
     return;
   }
 
@@ -13,13 +15,13 @@ function requestNotificationPermission() {
   }
 
   if (Notification.permission !== 'denied') {
-    Notification.requestPermission().catch(e => console.warn('Permission error:', e));
+    Notification.requestPermission().catch(e => logger.warn('Permission error:', e));
   }
 }
 
 export function showLocalNotification(title, options = {}) {
   if (!('Notification' in window) || Notification.permission !== 'granted') {
-    console.log('[LocalNotif] Notifications disabled or not available');
+    logger.warn('[LocalNotif] Notifications disabled or not available');
     return;
   }
 
@@ -30,7 +32,7 @@ export function showLocalNotification(title, options = {}) {
       ...options,
     });
   } catch (e) {
-    console.error('Notification error:', e);
+    logger.error('Notification error:', e);
   }
 }
 
@@ -41,7 +43,7 @@ export function initLocalNotifications(socket) {
 
   // Listen for tracking updates and show banner/toast (handled by UI)
   socket.on('trackingUpdate', data => {
-    console.log('[LocalNotif] Rider update:', data);
+    logger.debug('[LocalNotif] Rider update:', data);
     // UI shows banner automatically; we could add sound here
   });
 

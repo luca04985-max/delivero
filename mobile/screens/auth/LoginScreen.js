@@ -11,7 +11,7 @@ import {
   Animated,
 } from 'react-native';
 import { authAPI } from '../../services/api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// AsyncStorage imported previously but not used in this screen
 import LoginScreenStyles from './styles/LoginScreenStyles.js';
 
 export default function LoginScreen({ navigation }) {

@@ -267,6 +267,34 @@ use delivero
 # Le migrations verranno eseguite automaticamente all'avvio
 ```
 
+## Esecuzione sicura degli script DB
+
+- Scopo: assicurare che lo schema del database contenga le colonne richieste e, opzionalmente, popolare dati demo in modo idempotente.
+- Script esistenti:
+	- `backend/scripts/ensure-db-schema.js` — esegue `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` per verificare e aggiungere colonne mancanti. Lo script ora deduplica le definizioni delle colonne prima di tentare gli ALTER per evitare ripetizioni.
+	- `backend/scripts/seed-demo-data.js` — seeder demo che utilizza upsert (`ON CONFLICT`) quando possibile.
+
+Utilizzo (dry-run di default):
+
+```bash
+# Mostra cosa verrebbe eseguito (nessuna modifica):
+node backend/scripts/run-db-scripts.js
+
+# Esegue realmente schema + seed (eseguire solo dopo backup):
+node backend/scripts/run-db-scripts.js --force
+```
+
+Note di sicurezza:
+- Eseguire prima su database di sviluppo/staging.
+- Effettuare un backup prima di eseguire su produzione.
+- `run-db-scripts.js` è un wrapper che per default stampa le azioni e le esegue solo se viene passato `--force`.
+- Impostare la variabile `DATABASE_URL` (o le variabili richieste dal progetto) prima di eseguire. Esempio (PowerShell):
+
+```powershell
+$env:DATABASE_URL = "postgres://user:pass@localhost:5432/dbname"
+node backend/scripts/run-db-scripts.js --force
+```
+
 ## 🧪 Testing
 
 ### Mobile

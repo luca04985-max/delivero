@@ -12,13 +12,13 @@ import {
 import { ordersAPI } from '../../services/api';
 import { customerOrdersScreenStyles } from './styles/CustomerOrdersScreenStyles';
 
-export default function CustomerOrdersScreen({ navigation, route }) {
+export default function CustomerOrdersScreen({ navigation, route: _route }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [activeTab, setActiveTab] = useState('all'); // 'all', 'pending', 'preparing', 'in_transit', 'delivered', 'cancelled'
+  const [activeTab] = useState('all'); // 'all', 'pending', 'preparing', 'in_transit', 'delivered', 'cancelled'
   const [userRole, setUserRole] = useState(null);
-  const [selectMode, setSelectMode] = useState(route.params?.selectMode || false); // Modalità selezione ordine
+  // selectMode removed (unused)
   // Aggiungi questa riga insieme agli altri useState
   const [expandedSections, setExpandedSections] = useState({});
 

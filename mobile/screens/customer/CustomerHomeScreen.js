@@ -6,29 +6,23 @@ import {
   TouchableOpacity,
   FlatList,
   TextInput,
-  Alert,
-  ActivityIndicator,
   RefreshControl,
-  Dimensions,
 } from 'react-native';
 import { WebView } from 'react-native-webview';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// AsyncStorage not used after recent cleanup
 import { makeRequest } from '../../services/api';
 import locationService from '../../services/locationService';
 // Correzione import tema (2 livelli su)
 import { mobileTheme } from '../../theme';
 import { customerHomeScreenStyles } from './styles/CustomerHomeScreenStyles';
 
-const { width } = Dimensions.get('window');
-
 export default function CustomerHomeScreen({ navigation }) {
   const [searchText, setSearchText] = useState('');
-  const [activeFilter, setActiveFilter] = useState('all');
-  const [favorites, setFavorites] = useState([]);
+  
   const [categories, setCategories] = useState([]);
   const [viewMode, setViewMode] = useState('list'); // 'list' o 'map'
   const [userLocation, setUserLocation] = useState(null);
-  const [mapRegion, setMapRegion] = useState(null);
+  // removed unused mapRegion and favorites states (not read anywhere)
   const [restaurants, setRestaurants] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -40,6 +34,10 @@ export default function CustomerHomeScreen({ navigation }) {
 
   useEffect(() => {
     initApp();
+    // initApp orchestrates startup (location + loads). It's intentionally
+    // not included in deps because it is recreated on each render and
+    // depends on several local helpers. We intentionally run it once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const initApp = async () => {
@@ -50,7 +48,6 @@ export default function CustomerHomeScreen({ navigation }) {
 
   const requestLocation = async (retryCount = 0) => {
     const maxRetries = 2;
-
     try {
       console.log(
         `📍 CustomerHomeScreen: Getting GPS location... (attempt ${retryCount + 1}/${maxRetries + 1})`,
@@ -62,38 +59,21 @@ export default function CustomerHomeScreen({ navigation }) {
 
       if (location) {
         setUserLocation(location);
-        setMapRegion({
-          latitude: location.latitude,
-          longitude: location.longitude,
-          latitudeDelta: 0.04,
-          longitudeDelta: 0.04,
-        });
         console.log('✅ CustomerHomeScreen: GPS location set');
+      } else if (retryCount < maxRetries) {
+        console.log(
+          `📍 CustomerHomeScreen: GPS failed, retrying in 2 seconds... (${retryCount + 1}/${maxRetries})`,
+        );
+        setTimeout(() => requestLocation(retryCount + 1), 2000);
       } else {
-        if (retryCount < maxRetries) {
-          console.log(
-            `📍 CustomerHomeScreen: GPS failed, retrying in 2 seconds... (${retryCount + 1}/${maxRetries})`,
-          );
-          setTimeout(() => requestLocation(retryCount + 1), 2000);
+        console.warn('⚠️ CustomerHomeScreen: No GPS location available after retries');
+        const existingLocation = locationService.getLocationSync();
+        if (existingLocation) {
+          console.log('✅ CustomerHomeScreen: Using existing location from service');
+          setUserLocation(existingLocation);
         } else {
-          console.warn('⚠️ CustomerHomeScreen: No GPS location available after retries');
-          // NON resettare la posizione se il GPS fallisce - lascia quella esistente o null
-          // Se abbiamo già una posizione dal service, usala
-          const existingLocation = locationService.getLocationSync();
-          if (existingLocation) {
-            console.log('✅ CustomerHomeScreen: Using existing location from service');
-            setUserLocation(existingLocation);
-            setMapRegion({
-              latitude: existingLocation.latitude,
-              longitude: existingLocation.longitude,
-              latitudeDelta: 0.04,
-              longitudeDelta: 0.04,
-            });
-          } else {
-            console.log('✅ CustomerHomeScreen: No location available - waiting for GPS');
-            setUserLocation(null);
-            setMapRegion(null);
-          }
+          console.log('✅ CustomerHomeScreen: No location available - waiting for GPS');
+          setUserLocation(null);
         }
       }
     } catch (error) {
@@ -105,21 +85,13 @@ export default function CustomerHomeScreen({ navigation }) {
         );
         setTimeout(() => requestLocation(retryCount + 1), 2000);
       } else {
-        // NON resettare la posizione se c'è già una nel service
         const existingLocation = locationService.getLocationSync();
         if (existingLocation) {
           console.log('✅ CustomerHomeScreen: Using existing location after error');
           setUserLocation(existingLocation);
-          setMapRegion({
-            latitude: existingLocation.latitude,
-            longitude: existingLocation.longitude,
-            latitudeDelta: 0.04,
-            longitudeDelta: 0.04,
-          });
         } else {
           console.log('✅ CustomerHomeScreen: No location set after error - waiting for GPS');
           setUserLocation(null);
-          setMapRegion(null);
         }
       }
     }
@@ -142,8 +114,7 @@ export default function CustomerHomeScreen({ navigation }) {
       const res = await makeRequest('/restaurants');
       if (res) setRestaurants(res);
 
-      const savedFavs = await AsyncStorage.getItem('favorites');
-      if (savedFavs) setFavorites(JSON.parse(savedFavs));
+        // saved favorites not used in UI currently
     } catch (e) {
       console.error('Error loading data:', e);
     } finally {

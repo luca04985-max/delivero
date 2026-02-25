@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ordersAPI } from '../services/api';
+import logger from '../utils/logger';
 import { MapContainer, TileLayer, Marker, Polyline, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -106,7 +107,7 @@ export default function TrackingMap({ orderId, title = `Tracciamento Ordine #${o
         setMapCenter(firstPoint);
       }
     } catch (err) {
-      console.error('Error loading tracking data:', err);
+      logger.error('Error loading tracking data:', err);
       setError(
         err.response?.data?.message ||
           err.message ||

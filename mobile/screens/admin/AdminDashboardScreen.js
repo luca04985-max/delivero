@@ -1,14 +1,10 @@
-import React, { Modal, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
-  Alert,
-  RefreshControl,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AdminDashboardScreenStyles as styles } from './styles/AdminDashboardScreenStyles';
 
 // Import all the separate screen components
@@ -21,16 +17,7 @@ import AdminDashboardUsers from './AdminDashboardUsers';
 
 export default function AdminDashboardScreen({ navigation }) {
   const [activeTab, setActiveTab] = useState('stats');
-  const [currentUser, setCurrentUser] = useState(null);
-
-  const loadCurrentUser = async () => {
-    const userStr = await AsyncStorage.getItem('user');
-    if (userStr) setCurrentUser(JSON.parse(userStr));
-  };
-
-  React.useEffect(() => {
-    loadCurrentUser();
-  }, []);
+  // currentUser removed: not used in this screen
 
   const renderHeader = () => (
     <View style={styles.header}>

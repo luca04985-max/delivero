@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ordersAPI } from '../../services/api';
+import logger from '../../utils/logger';
 
 export default function RiderDashboard({ user }) {
   const [orders, setOrders] = useState([]);
@@ -20,7 +21,7 @@ export default function RiderDashboard({ user }) {
             accuracy: position.coords.accuracy,
           });
         },
-        error => console.error('Errore geolocalizzazione:', error),
+        error => logger.warn('Errore geolocalizzazione:', error),
       );
     }
 
@@ -39,7 +40,7 @@ export default function RiderDashboard({ user }) {
       setMyOrders(mine);
       setLoading(false);
     } catch (err) {
-      console.error('Errore:', err);
+      logger.error('Errore:', err);
       setLoading(false);
     }
   };

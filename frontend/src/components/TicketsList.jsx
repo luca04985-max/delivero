@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import logger from '../utils/logger';
 import { ticketsListStyles } from '../styles/TicketsListStyles';
 
 const TicketsList = () => {
@@ -26,7 +27,7 @@ const TicketsList = () => {
       );
       setTickets(response.data);
     } catch (error) {
-      console.error('Error fetching tickets:', error);
+      logger.error('Error fetching tickets:', error);
     } finally {
       setLoading(false);
     }
@@ -43,7 +44,7 @@ const TicketsList = () => {
       );
       setSelectedTicket(response.data);
     } catch (error) {
-      console.error('Error fetching ticket details:', error);
+      logger.error('Error fetching ticket details:', error);
     }
   };
 
@@ -65,7 +66,7 @@ const TicketsList = () => {
       // Refresh ticket details
       await getTicketDetails(selectedTicket.id);
     } catch (error) {
-      console.error('Error adding comment:', error);
+      logger.error('Error adding comment:', error);
     } finally {
       setAddingComment(false);
     }

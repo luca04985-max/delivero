@@ -50,7 +50,7 @@ export default function RegisterScreen({ navigation }) {
 
     setLoading(true);
     try {
-      const response = await authAPI.register(email, password, name, role);
+      await authAPI.register(email, password, name, role);
       showToast('✅ Account creato con successo!', 'success');
       navigation.navigate('Login');
     } catch (error) {

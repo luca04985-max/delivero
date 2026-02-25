@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  RefreshControl,
-  ActivityIndicator,
-  Alert,
-  ScrollView,
-} from 'react-native';
+import { View, Text, TouchableOpacity, RefreshControl, ActivityIndicator, Alert, ScrollView } from 'react-native';
 import { adminAPI } from '../../services/api';
 import { adminDashboardOrderStyles as styles } from './styles/AdminDashboardOrdersStyles';
 

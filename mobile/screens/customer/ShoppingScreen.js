@@ -6,9 +6,8 @@ import {
   FlatList,
   TextInput,
   ActivityIndicator,
-  Image,
 } from 'react-native';
-import { useCart } from '../../context/CartContext';
+// cart hook not used in this screen yet
 import { shoppingScreenStyles } from './styles/ShoppingScreenStyles';
 import { sharedCategoryStyles } from './styles/SharedCategoryStyles';
 import { mobileTheme } from '../../theme';
@@ -19,7 +18,6 @@ export default function ShoppingScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
-  const { addToCart } = useCart();
 
   useEffect(() => {
     loadShoppingData();

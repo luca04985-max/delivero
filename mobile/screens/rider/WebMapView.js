@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import { View, Platform } from 'react-native';
 
 export default function WebMapView({ orders = [], riderLocation }) {
   const isWeb = Platform.OS === 'web';

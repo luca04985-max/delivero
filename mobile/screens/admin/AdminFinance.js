@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, RefreshControl, Text, ScrollView, ActivityIndicator } from 'react-native';
+import { View, RefreshControl, Text, ScrollView, ActivityIndicator } from 'react-native';
 import { adminAPI } from '../../services/api';
 import { adminFinanceStyles as styles } from './styles/AdminFinanceStyles';
 
-export default function AdminFinance({ navigation }) {
+export default function AdminFinance({ navigation: _navigation }) {
   const [finance, setFinance] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);

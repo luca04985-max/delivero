@@ -2,9 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
-  FlatList,
   TouchableOpacity,
-  Alert,
   RefreshControl,
   ActivityIndicator,
   ScrollView,
@@ -21,7 +19,7 @@ export default function RiderTicketsScreen({ navigation }) {
 
   useEffect(() => {
     loadTickets();
-  }, []);
+  }, [loadTickets]);
 
   // Refresh automatico quando lo screen diventa visibile
   useFocusEffect(

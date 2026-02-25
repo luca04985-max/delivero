@@ -8,14 +8,13 @@ import {
   ActivityIndicator,
   Alert,
   Modal,
-  Image,
   TextInput,
 } from 'react-native';
 import { restaurantDetailScreenStyles } from './styles/RestaurantDetailScreenStyles';
 import { makeRequest } from '../../services/api';
 import { useCart } from '../../context/CartContext';
 
-export default function RestaurantDetailScreen({ route, navigation }) {
+export default function RestaurantDetailScreen({ route, navigation: _navigation }) {
   const { restaurant } = route.params;
   const { addToCart } = useCart();
 
@@ -29,13 +28,7 @@ export default function RestaurantDetailScreen({ route, navigation }) {
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState('');
 
-  useEffect(() => {
-    if (restaurant?.id) {
-      loadRestaurantDetail();
-    }
-  }, [restaurant?.id]);
-
-  const loadRestaurantDetail = async () => {
+  const loadRestaurantDetail = React.useCallback(async () => {
     try {
       setLoading(true);
       const data = await makeRequest(`/restaurants/${restaurant.id}`, { method: 'GET' });
@@ -53,7 +46,13 @@ export default function RestaurantDetailScreen({ route, navigation }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [restaurant?.id]);
+
+  useEffect(() => {
+    if (restaurant?.id) {
+      loadRestaurantDetail();
+    }
+  }, [restaurant?.id, loadRestaurantDetail]);
 
   const openProductModal = product => {
     setSelectedProduct(product);

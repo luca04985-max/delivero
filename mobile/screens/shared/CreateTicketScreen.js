@@ -15,6 +15,7 @@ import { createTicketScreenStyles } from './styles/CreateTicketScreenStyles';
 import { decode } from 'base-64';
 import { useToast } from '../../hooks/useToast';
 import { useUserRole } from '../../hooks/useUserRole';
+import logger from '../../utils/logger';
 
 /**
  * Schermata creazione ticket - condivisa tra customer e rider
@@ -34,7 +35,7 @@ export default function CreateTicketScreen({ navigation, route }) {
 
   // Hook custom
   const { toast, showToast } = useToast();
-  const { userRole, isRider, isCustomer } = useUserRole();
+  const { isRider, isCustomer } = useUserRole();
 
   // Ottieni user_id dal token JWT e carica ordini
   useEffect(() => {
@@ -42,7 +43,7 @@ export default function CreateTicketScreen({ navigation, route }) {
       try {
         const token = await AsyncStorage.getItem('token');
         if (token) {
-          console.log('Token found:', token);
+          logger.debug('Token found:', token);
           // Decodifica il token JWT per ottenere user_id
           const parts = token.split('.');
           const payload = parts[1];
@@ -51,14 +52,14 @@ export default function CreateTicketScreen({ navigation, route }) {
 
           // Carica gli ordini del cliente solo se è un customer
           if (isCustomer) {
-            console.log('Loading orders for customer:', decoded.userId);
+            logger.info('Loading orders for customer:', decoded.userId);
             loadCustomerOrders(decoded.userId);
           }
         } else {
-          console.log('No token found');
+          logger.debug('No token found');
         }
       } catch (error) {
-        console.error('Error getting user ID:', error);
+        logger.error('Error getting user ID:', error);
       }
     };
 
@@ -68,7 +69,7 @@ export default function CreateTicketScreen({ navigation, route }) {
   // Carica gli ordini del rider quando cambia il tipo di ticket
   useEffect(() => {
     if (isRider && newTicket.type === 'delivery_issue') {
-      console.log('Loading delivering orders for rider');
+      logger.info('Loading delivering orders for rider');
       loadRiderOrders();
     }
   }, [isRider, newTicket.type]);
@@ -77,29 +78,29 @@ export default function CreateTicketScreen({ navigation, route }) {
   const loadRiderOrders = async () => {
     try {
       const response = await makeRequest('/orders/rider/active');
-      console.log('Rider orders response:', response);
+      logger.debug('Rider orders response:', response);
       if (response && response.length > 0) {
-        console.log('First rider order fields:', Object.keys(response[0]));
+        logger.debug('First rider order fields:', Object.keys(response[0]));
       }
       // Filtra solo gli ordini in stato 'accepted' o 'in_transit'
       const activeOrders = response.filter(order => order.status === 'in_transit');
       setOrders(activeOrders || []);
     } catch (error) {
-      console.error('Error loading rider orders:', error);
+      logger.error('Error loading rider orders:', error);
     }
   };
 
   // Carica gli ordini del cliente
-  const loadCustomerOrders = async customerId => {
+  const loadCustomerOrders = async _customerId => {
     try {
       const response = await makeRequest('/orders/my');
-      console.log('Orders response:', response); // Debug log
+      logger.debug('Orders response:', response); // Debug log
       if (response && response.length > 0) {
-        console.log('First order fields:', Object.keys(response[0])); // Mostra i campi disponibili
+        logger.debug('First order fields:', Object.keys(response[0])); // Mostra i campi disponibili
       }
       setOrders(response || []); // La risposta è direttamente l'array di ordini
     } catch (error) {
-      console.error('Error loading orders:', error);
+      logger.error('Error loading orders:', error);
     }
   };
 
@@ -172,7 +173,7 @@ export default function CreateTicketScreen({ navigation, route }) {
       // Determina l'endpoint basato sul ruolo
       const endpoint = isRider ? '/tickets/rider' : '/tickets/customer';
 
-      const response = await makeRequest(endpoint, {
+      await makeRequest(endpoint, {
         method: 'POST',
         body: JSON.stringify(ticketData),
       });
@@ -188,7 +189,7 @@ export default function CreateTicketScreen({ navigation, route }) {
         }
       }, 1500);
     } catch (error) {
-      console.error('Error creating ticket:', error);
+      logger.error('Error creating ticket:', error);
       showToast('❌ Impossibile creare il ticket', 'error');
     } finally {
       setSubmitting(false);

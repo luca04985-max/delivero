@@ -6,12 +6,12 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
-  Alert,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { ordersAPI } from '../../services/api';
 import { riderHomeScreenStyles } from './styles/RiderHomeScreenStyles';
 import { useToast } from '../../hooks/useToast';
+import logger from '../../utils/logger';
 
 export default function RiderHomeScreen({ navigation }) {
   const [availableOrders, setAvailableOrders] = useState([]);
@@ -19,14 +19,15 @@ export default function RiderHomeScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
 
   // Hook custom per toast
-  const { toast, showToast } = useToast();
+  const { showToast } = useToast();
 
   const fetchAvailable = async () => {
     try {
+      setRefreshing(true);
       const data = await ordersAPI.getAvailable();
       setAvailableOrders(data);
     } catch (e) {
-      console.error('Error fetching available orders:', e);
+      logger.error('Error fetching available orders:', e);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -40,7 +41,7 @@ export default function RiderHomeScreen({ navigation }) {
   // Refresh automatico quando lo screen diventa visibile
   useFocusEffect(
     useCallback(() => {
-      console.log('🔄 RiderHomeScreen focused - refreshing available orders');
+      logger.debug('RiderHomeScreen focused - refreshing available orders');
       fetchAvailable();
     }, []),
   );
@@ -75,6 +76,14 @@ export default function RiderHomeScreen({ navigation }) {
       </TouchableOpacity>
     </View>
   );
+
+  if (loading) {
+    return (
+      <View style={riderHomeScreenStyles.loadingContainer}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <View style={riderHomeScreenStyles.container}>

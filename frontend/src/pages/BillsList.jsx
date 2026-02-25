@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { billsAPI } from '../services/api';
+import logger from '../utils/logger';
 
 export default function BillsList() {
   const [bills, setBills] = useState([]);
@@ -18,7 +19,7 @@ export default function BillsList() {
       setBills(billsData);
       setLoading(false);
     } catch (err) {
-      console.error('Errore caricamento bollette:', err);
+      logger.error('Errore caricamento bollette:', err);
       setError(err.message);
       setLoading(false);
     }

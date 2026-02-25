@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { io } from 'socket.io-client';
 import Constants from 'expo-constants';
+import logger from '../utils/logger';
 
 // Backend configuration
 // Use Expo Constants to get API URL from app.json extra
@@ -32,14 +33,14 @@ async function makeRequest(endpoint, options = {}) {
     // Se options.data esiste, convertilo a stringa JSON
     if (options.data) {
       requestOptions.body = JSON.stringify(options.data);
-      console.log('Request body: ' + requestOptions.body);
+      logger.debug('Request body: ' + requestOptions.body);
     }
 
     const response = await fetch(fullUrl, requestOptions);
 
     const data = await response.json();
     if (!response.ok) {
-      console.error('❌ Request failed:', data);
+      logger.error('Request failed:', data);
       throw data || { message: 'Errore nella richiesta' };
     }
 
@@ -54,7 +55,7 @@ export const initializeTrackingSocket = async () => {
   try {
     const token = await AsyncStorage.getItem('token');
     if (!token) {
-      console.warn('No token available for socket connection');
+      logger.warn('No token available for socket connection');
       return null;
     }
 
@@ -72,20 +73,20 @@ export const initializeTrackingSocket = async () => {
     });
 
     socket.on('connect', () => {
-      console.log('✓ Connected to tracking socket');
+      logger.info('Connected to tracking socket');
     });
 
     socket.on('disconnect', () => {
-      console.log('✗ Disconnected from tracking socket');
+      logger.info('Disconnected from tracking socket');
     });
 
     socket.on('error', err => {
-      console.error('Socket error:', err);
+      logger.error('Socket error:', err);
     });
 
     return socket;
   } catch (error) {
-    console.error('Failed to initialize tracking socket:', error);
+    logger.error('Failed to initialize tracking socket:', error);
     return null;
   }
 };
@@ -99,7 +100,7 @@ export const joinOrderTracking = async orderId => {
     }
     sock.emit('joinOrderTracking', orderId);
   } catch (error) {
-    console.error('Failed to join order tracking:', error);
+    logger.error('Failed to join order tracking:', error);
     throw error;
   }
 };
@@ -110,7 +111,7 @@ export const leaveOrderTracking = orderId => {
     if (!socket) return;
     socket.emit('leaveOrderTracking', orderId);
   } catch (error) {
-    console.error('Failed to leave order tracking:', error);
+    logger.error('Failed to leave order tracking:', error);
   }
 };
 
@@ -238,7 +239,7 @@ export const ordersAPI = {
     return makeRequest(`/orders/${id}/accept`, { method: 'PUT' });
   },
   updateOrderStatus: async (id, status) => {
-    console.log('🚀 API Call: updateOrderStatus', {
+    logger.debug('API Call: updateOrderStatus', {
       url: `/orders/${id}/status`,
       method: 'PUT',
       body: { status },
@@ -249,7 +250,7 @@ export const ordersAPI = {
     });
   },
   updateOrderRiderStatus: async (id, status) => {
-    console.log('🚀 API Call: updateOrderRiderStatus', {
+    logger.debug('API Call: updateOrderRiderStatus', {
       url: `/orders/${id}/rider-status`,
       method: 'PUT',
       body: { status },
@@ -364,7 +365,7 @@ export const adminAPI = {
 
 export const paymentsAPI = {
   createCashPayment: orderId => {
-    console.log('🌐 API: Making cash payment request for order:', orderId);
+    logger.info('API: Making cash payment request for order:', orderId);
     return makeRequest('/payments/cash/create', {
       method: 'POST',
       body: JSON.stringify({ orderId }),

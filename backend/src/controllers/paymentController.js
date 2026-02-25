@@ -8,6 +8,7 @@ import {
 } from '../services/payment.js';
 import db from '../config/db.js';
 import { sendOrderConfirmation } from '../services/email.js';
+import logger from '../utils/logger.js';
 
 export const createPayment = async (req, res) => {
   try {
@@ -117,7 +118,7 @@ export const createCashPayment = async (req, res) => {
     );
     res.status(201).json({ message: 'Cash payment created', payment });
   } catch (error) {
-    console.error('Error creating cash payment:', error);
+    logger.error('Error creating cash payment:', error);
     res.status(500).json({ message: 'Error creating cash payment', error: error.message });
   }
 };

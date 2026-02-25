@@ -6,8 +6,11 @@
  */
 import db from '../src/config/db.js';
 
+// Support an internal dry-run mode: pass --dry-run or set env DRY_RUN=1
+const DRY_RUN = process.argv.includes('--dry-run') || process.env.DRY_RUN === '1';
+
 const ensureOrderTrackingColumns = async () => {
-  console.log('🔧 Verifying all database tables and columns...');
+  console.log(`🔧 Verifying all database tables and columns...${DRY_RUN ? ' (DRY-RUN - no changes will be applied)' : ''}`);
 
   // Define all table columns from schema
   const tableColumns = {
@@ -297,6 +300,17 @@ const ensureOrderTrackingColumns = async () => {
       'created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP'
     ]
   };
+  // Deduplicate columns per table by column name (first token) to avoid
+  // repeated ALTER attempts when similar column definitions appear.
+  for (const tableName of Object.keys(tableColumns)) {
+    const seen = new Set();
+    tableColumns[tableName] = tableColumns[tableName].filter(col => {
+      const key = col.split(' ')[0].replace(/[,;]$/g, '');
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
 
   // Check each table and add missing columns
   for (const [tableName, columns] of Object.entries(tableColumns)) {
@@ -304,11 +318,16 @@ const ensureOrderTrackingColumns = async () => {
 
     for (const column of columns) {
       const [colDef] = column.split(' ');
+      const sql = `ALTER TABLE ${tableName} ADD COLUMN IF NOT EXISTS ${column};`;
       try {
-        await db.query(`ALTER TABLE ${tableName} ADD COLUMN IF NOT EXISTS ${column};`);
-        console.log(`  ✅ Column ${colDef} verified/added`);
+        if (DRY_RUN) {
+          console.log(`  🔁 DRY-RUN SQL: ${sql}`);
+        } else {
+          await db.query(sql);
+          console.log(`  ✅ Column ${colDef} verified/added`);
+        }
       } catch (e) {
-        console.log(`  ⚠️ Column ${colDef} already exists or failed: ${e.message}`);
+        console.log(`  ⚠️ Column ${colDef} failed to add: ${e.message}`);
       }
     }
   }

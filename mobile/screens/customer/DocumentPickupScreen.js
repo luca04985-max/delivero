@@ -5,12 +5,10 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
   Switch,
   Alert,
 } from 'react-native';
 import { makeRequest } from '../../services/api';
-import { documentPickupScreenStyles } from './styles/DocumentPickupScreenStyles';
 
 const DocumentPickupScreen = () => {
   const [formData, setFormData] = useState({

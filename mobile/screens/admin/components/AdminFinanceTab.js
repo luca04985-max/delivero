@@ -2,7 +2,7 @@ import React from 'react';
 import { View, FlatList, RefreshControl, Text } from 'react-native';
 import { AdminDashboardScreenStyles as styles } from '../styles/AdminDashboardScreenStyles';
 
-const AdminFinanceTab = ({ finance, loading, refreshing, onRefresh, StatCard }) => {
+const AdminFinanceTab = ({ finance, loading: _loading, refreshing, onRefresh, StatCard }) => {
   return (
     <FlatList
       data={[]}

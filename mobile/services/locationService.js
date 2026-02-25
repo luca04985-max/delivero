@@ -1,5 +1,6 @@
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import logger from '../utils/logger';
 
 // Servizio globale per la gestione della posizione GPS
 class LocationService {
@@ -17,33 +18,31 @@ class LocationService {
       const age = Date.now() - this.lastUpdate;
       if (age < 5 * 60 * 1000) {
         // 5 minuti
-        console.log(
-          `📍 [${screenName}] Using cached location (age: ${Math.round(age / 1000)} seconds)`,
-        );
+        logger.debug(`[${screenName}] Using cached location (age: ${Math.round(age / 1000)} seconds)`);
         return this.currentLocation;
       }
     }
 
     if (this.isGettingLocation) {
-      console.log(`📍 [${screenName}] Location already being requested, waiting...`);
+      logger.debug(`[${screenName}] Location already being requested, waiting...`);
       return this.waitForLocation();
     }
 
     this.isGettingLocation = true;
 
     try {
-      console.log(`📍 [${screenName}] Getting fresh GPS location...`);
-      console.log(`📍 [${screenName}] Requesting foreground permissions...`);
+      logger.debug(`[${screenName}] Getting fresh GPS location...`);
+      logger.debug(`[${screenName}] Requesting foreground permissions...`);
       const { status } = await Location.requestForegroundPermissionsAsync();
-      console.log(`📍 [${screenName}] Permission status:`, status);
+      logger.debug(`[${screenName}] Permission status:`, status);
 
       if (status !== 'granted') {
-        console.warn(`📍 [${screenName}] Location permission denied (${status})`);
+        logger.warn(`[${screenName}] Location permission denied (${status})`);
         this.isGettingLocation = false;
         return null;
       }
 
-      console.log(`📍 [${screenName}] Permission granted, getting current position...`);
+      logger.debug(`[${screenName}] Permission granted, getting current position...`);
       const loc = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
         timeoutInterval: 5000, // Ridotto a 5 secondi
@@ -63,17 +62,17 @@ class LocationService {
       // Salva in AsyncStorage per persistenza tra sessioni
       await AsyncStorage.setItem('lastLocation', JSON.stringify(coords));
 
-      console.log(`✅ [${screenName}] Fresh GPS location obtained:`, coords);
+      logger.info(`[${screenName}] Fresh GPS location obtained:`, coords);
       this.notifyListeners(coords);
 
       return coords;
     } catch (error) {
-      console.error(`❌ [${screenName}] Error getting location:`, error);
+    logger.error(`[${screenName}] Error getting location:`, error);
 
       // Prova con accuracy più bassa per emulator
       if (error.message && error.message.includes('unavailable')) {
         try {
-          console.log(`📍 [${screenName}] Retrying with lower accuracy for emulator...`);
+          logger.debug(`[${screenName}] Retrying with lower accuracy for emulator...`);
           const loc = await Location.getCurrentPositionAsync({
             accuracy: Location.Accuracy.Low,
             timeoutInterval: 3000,
@@ -92,19 +91,19 @@ class LocationService {
 
           await AsyncStorage.setItem('lastLocation', JSON.stringify(coords));
 
-          console.log(`✅ [${screenName}] Low accuracy location obtained:`, coords);
+          logger.info(`[${screenName}] Low accuracy location obtained:`, coords);
           this.notifyListeners(coords);
 
           return coords;
         } catch (retryError) {
-          console.error(`❌ [${screenName}] Low accuracy retry also failed:`, retryError);
+          logger.error(`[${screenName}] Low accuracy retry also failed:`, retryError);
         }
       }
 
       // Prova a recuperare dalla cache persistente
       const cached = await this.getCachedLocation();
       if (cached) {
-        console.log(`📍 [${screenName}] Using persistent cache as fallback`);
+        logger.info(`[${screenName}] Using persistent cache as fallback`);
         this.currentLocation = cached;
         return cached;
       }
@@ -129,7 +128,7 @@ class LocationService {
         }
       }
     } catch (error) {
-      console.warn('Error reading cached location:', error);
+      logger.warn('Error reading cached location:', error);
     }
     return null;
   }
@@ -146,7 +145,7 @@ class LocationService {
         }
 
         if (Date.now() - startTime > timeout) {
-          console.warn('📍 Location timeout');
+          logger.warn('Location timeout');
           resolve(null);
           return;
         }
@@ -178,7 +177,7 @@ class LocationService {
       try {
         callback(location);
       } catch (error) {
-        console.error('Error in location listener:', error);
+        logger.error('Error in location listener:', error);
       }
     });
   }
@@ -188,7 +187,7 @@ class LocationService {
     this.currentLocation = null;
     this.lastUpdate = null;
     AsyncStorage.removeItem('lastLocation');
-    console.log('📍 Location cache cleared');
+    logger.info('Location cache cleared');
   }
 
   // Verifica se abbiamo una posizione valida

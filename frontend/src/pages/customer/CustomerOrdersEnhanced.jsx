@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ordersAPI } from '../../services/api';
 import './CustomerOrders.css';
+import logger from '../../utils/logger';
 
 export default function CustomerOrdersEnhanced() {
   const [orders, setOrders] = useState([]);
@@ -31,7 +32,7 @@ export default function CustomerOrdersEnhanced() {
       const response = await ordersAPI.getMyOrders();
       setOrders(response.data || []);
     } catch (error) {
-      console.error('Error loading orders:', error);
+      logger.error('Error loading orders:', error);
     } finally {
       setLoading(false);
     }

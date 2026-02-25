@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, Animated, Dimensions } from 'react-native';
+import React, { useEffect, useRef, useCallback } from 'react';
+import { Text, Animated } from 'react-native';
 import { mobileTheme } from '../theme';
 
 /**
@@ -14,7 +14,23 @@ import { mobileTheme } from '../theme';
 const ToastNotification = ({ visible, message, type = 'info', onHide, duration = 3000 }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(-100)).current;
-  const { width: screenWidth } = Dimensions.get('window');
+  const hideToast = useCallback(() => {
+    // Animazione di uscita
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: -100,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      if (onHide) onHide();
+    });
+  }, [onHide, fadeAnim, slideAnim]);
 
   useEffect(() => {
     if (visible) {
@@ -39,25 +55,7 @@ const ToastNotification = ({ visible, message, type = 'info', onHide, duration =
 
       return () => clearTimeout(timer);
     }
-  }, [visible, duration]);
-
-  const hideToast = () => {
-    // Animazione di uscita
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: -100,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      if (onHide) onHide();
-    });
-  };
+  }, [visible, duration, hideToast, fadeAnim, slideAnim]);
 
   if (!visible) return null;
 

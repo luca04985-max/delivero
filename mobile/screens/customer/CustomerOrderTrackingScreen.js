@@ -9,8 +9,9 @@ import { customerOrderTrackingScreenStyles } from './styles/CustomerOrderTrackin
 const styles = customerOrderTrackingScreenStyles;
 
 // Leaflet Map for Web
-const LeafletTrackingMap = ({ riderLocation, customerLocation, order, history = [] }) => {
-  const mapContainerId = 'customer-tracking-map-' + Math.random().toString(36).slice(2);
+/* eslint-disable-next-line no-unused-vars */
+const _LeafletTrackingMap = ({ riderLocation, customerLocation, order, history = [] }) => {
+  const mapContainerId = React.useMemo(() => 'customer-tracking-map-' + Math.random().toString(36).slice(2), []);
 
   React.useEffect(() => {
     if (Platform.OS !== 'web') return;
@@ -143,7 +144,7 @@ const LeafletTrackingMap = ({ riderLocation, customerLocation, order, history = 
         }
       }
     };
-  }, [riderLocation, customerLocation, order?.eta_minutes]);
+  }, [riderLocation, customerLocation, order?.eta_minutes, history, mapContainerId]);
 
   return (
     <View style={styles.mapContainer}>
@@ -163,12 +164,45 @@ const LeafletTrackingMap = ({ riderLocation, customerLocation, order, history = 
 export default function CustomerOrderTrackingScreen({ route, navigation }) {
   const { orderId } = route.params || {};
   const [order, setOrder] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading] = useState(true);
   const [riderLocation, setRiderLocation] = useState(null);
   const [customerLocation, setCustomerLocation] = useState(null);
   const [trackHistory, setTrackHistory] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
-  const [timeRemaining, setTimeRemaining] = useState(null);
+  const [, setRefreshing] = useState(false);
+
+  const loadTrackingInfo = React.useCallback(async () => {
+    try {
+      setRefreshing(true);
+      console.log('📍 Loading tracking info for order:', orderId);
+      const trackingData = await ordersAPI.getTrackingInfo(orderId);
+      console.log('📍 Tracking data received:', trackingData);
+
+      setOrder(trackingData);
+
+      if (trackingData.rider_latitude && trackingData.rider_longitude) {
+        const riderLoc = {
+          latitude: parseFloat(trackingData.rider_latitude),
+          longitude: parseFloat(trackingData.rider_longitude),
+        };
+        console.log('📍 Setting rider location:', riderLoc);
+        setRiderLocation(riderLoc);
+      } else {
+        console.warn('📍 No rider location in tracking data');
+      }
+
+      // fetch track history
+      try {
+        const pts = await ordersAPI.getTrackHistory(orderId);
+        setTrackHistory(pts || []);
+      } catch (e) {
+        console.warn('📍 Could not fetch track history', e);
+      }
+    } catch (error) {
+      console.error('📍 Error loading tracking info:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [orderId]);
 
   useEffect(() => {
     if (!orderId) {
@@ -213,7 +247,7 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
     // Refresh tracking every 10 seconds
     const interval = setInterval(loadTrackingInfo, 10000);
     return () => clearInterval(interval);
-  }, [orderId]);
+  }, [orderId, loadTrackingInfo, navigation]);
 
   // Update ETA countdown
   useEffect(() => {
@@ -235,77 +269,7 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
     return () => clearInterval(etaInterval);
   }, [order?.eta_minutes]);
 
-  const loadTrackingInfo = async () => {
-    try {
-      setRefreshing(true);
-      console.log('📍 Loading tracking info for order:', orderId);
-      const trackingData = await ordersAPI.getTrackingInfo(orderId);
-      console.log('📍 Tracking data received:', trackingData);
-
-      setOrder(trackingData);
-
-      if (trackingData.rider_latitude && trackingData.rider_longitude) {
-        const riderLoc = {
-          latitude: parseFloat(trackingData.rider_latitude),
-          longitude: parseFloat(trackingData.rider_longitude),
-        };
-        console.log('📍 Setting rider location:', riderLoc);
-        setRiderLocation(riderLoc);
-      } else {
-        console.warn('📍 No rider location in tracking data');
-      }
-
-      // fetch track history
-      try {
-        const pts = await ordersAPI.getTrackHistory(orderId);
-        console.log('📍 Track history received:', pts);
-        setTrackHistory(
-          pts.map(p => ({ latitude: parseFloat(p.latitude), longitude: parseFloat(p.longitude) })),
-        );
-      } catch (e) {
-        console.warn('📍 Could not load track history', e.message);
-      }
-
-      // Set customer location from delivery coordinates or fallback
-      if (!customerLocation) {
-        // Priority 1: Use exact delivery coordinates if available
-        if (order?.delivery_latitude && order?.delivery_longitude) {
-          setCustomerLocation({
-            latitude: parseFloat(order.delivery_latitude),
-            longitude: parseFloat(order.delivery_longitude),
-          });
-          console.log('📍 Using exact delivery coordinates:', {
-            latitude: order.delivery_latitude,
-            longitude: order.delivery_longitude,
-          });
-        }
-        // Priority 2: Use approximate Rome coordinates for delivery address
-        else if (order?.delivery_address) {
-          // Approximate coordinates for Via Milano 456, 00100 Roma
-          setCustomerLocation({
-            latitude: 41.9028,
-            longitude: 12.4964,
-          });
-          console.log('📍 Using approximate Rome coordinates for:', order.delivery_address);
-        }
-        // Priority 3: Use Rome default coordinates
-        else {
-          setCustomerLocation({
-            latitude: 41.9028,
-            longitude: 12.4964,
-          });
-          console.log('📍 Using Rome default coordinates');
-        }
-      }
-
-      setLoading(false);
-    } catch (error) {
-      console.error('📍 Error loading tracking:', error);
-      Alert.alert('Errore', 'Non è possibile caricare i dettagli della consegna');
-    } finally {
-      setRefreshing(false);
-    }
-  };
+  
 
   if (loading) {
     return (

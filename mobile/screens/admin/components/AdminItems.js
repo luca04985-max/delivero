@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Text, View, Alert } from 'react-native';
+import { TouchableOpacity, Text, View } from 'react-native';
 import { AdminDashboardScreenStyles as styles } from '../styles/AdminDashboardScreenStyles';
 
 // Componente per gli utenti

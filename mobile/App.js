@@ -1,19 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { userAPI } from './services/api';
 import { CartProvider } from './context/CartContext';
-
-let Device = null;
-if (Platform.OS !== 'web') {
-  try {
-    Device = require('expo-device');
-  } catch (e) {
-    // dynamic require failed (e.g. running in web bundler) — leave Device null
-    Device = null;
-  }
-}
+import logger from './utils/logger';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -38,9 +28,21 @@ import RiderHomeScreen from './screens/rider/RiderHomeScreen';
 import RiderActiveScreen from './screens/rider/RiderActiveScreen';
 import RiderTicketsScreen from './screens/rider/RiderTicketsScreen';
 import AdminDashboardScreen from './screens/admin/AdminDashboardScreen';
+import ProfileScreen from './screens/shared/ProfileScreen';
+import PaymentMethodsScreen from './screens/shared/PaymentMethodsScreen';
 import { ActivityIndicator, View, Text, TouchableOpacity } from 'react-native';
 import AdminDashboardTickets from './screens/admin/AdminDashboardTickets';
 import ManagerRealTimeMapScreen from './screens/admin/ManagerRealTimeMapScreen';
+
+let Device = null;
+if (Platform.OS !== 'web') {
+  try {
+    Device = require('expo-device');
+  } catch (e) {
+    // dynamic require failed (e.g. running in web bundler) — leave Device null
+    Device = null;
+  }
+}
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -61,12 +63,12 @@ function AuthStack() {
 }
 
 // Customer Stack
-function CustomerTabs({ onLogout, user }) {
+function CustomerTabs({ user }) {
   const cart = useCart();
 
   return (
     <Tab.Navigator
-      screenOptions={{
+      screenOptions={({ navigation }) => ({
         headerShown: true,
         tabBarActiveTintColor: '#FF6B00',
         tabBarInactiveTintColor: '#000',
@@ -77,7 +79,15 @@ function CustomerTabs({ onLogout, user }) {
         headerTitleStyle: {
           fontWeight: '700',
         },
-      }}
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile')}
+            style={{ marginRight: 12 }}
+          >
+            <Text style={{ fontSize: 20 }}>👤</Text>
+          </TouchableOpacity>
+        ),
+      })}
     >
       <Tab.Screen
         name="Home"
@@ -85,12 +95,7 @@ function CustomerTabs({ onLogout, user }) {
         options={{
           title: user?.name || 'Home',
           tabBarLabel: '🍔 Home',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🏠</Text>,
-          headerRight: () => (
-            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
-            </TouchableOpacity>
-          ),
+          tabBarIcon: () => <Text style={{ fontSize: 20 }}>🏠</Text>,
         }}
       />
       <Tab.Screen
@@ -99,12 +104,7 @@ function CustomerTabs({ onLogout, user }) {
         options={{
           title: user?.name || 'Ristoranti',
           tabBarLabel: '🍽️ Ristoranti',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🍽️</Text>,
-          headerRight: () => (
-            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
-            </TouchableOpacity>
-          ),
+          tabBarIcon: () => <Text style={{ fontSize: 20 }}>🍽️</Text>,
         }}
       />
       <Tab.Screen
@@ -113,12 +113,7 @@ function CustomerTabs({ onLogout, user }) {
         options={{
           title: user?.name || 'Shopping',
           tabBarLabel: '🛍️ Shopping',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🛍️</Text>,
-          headerRight: () => (
-            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
-            </TouchableOpacity>
-          ),
+          tabBarIcon: () => <Text style={{ fontSize: 20 }}>🛍️</Text>,
         }}
       />
       <Tab.Screen
@@ -127,12 +122,7 @@ function CustomerTabs({ onLogout, user }) {
         options={{
           title: user?.name || 'Carrello',
           tabBarLabel: '🛒 Carrello',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🛒</Text>,
-          headerRight: () => (
-            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
-            </TouchableOpacity>
-          ),
+          tabBarIcon: () => <Text style={{ fontSize: 20 }}>🛒</Text>,
           tabBarBadge: cart?.itemCount > 0 ? cart.itemCount : null,
         }}
       />
@@ -142,26 +132,7 @@ function CustomerTabs({ onLogout, user }) {
         options={{
           title: user?.name || 'Ordini',
           tabBarLabel: '📦 Ordini',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>📦</Text>,
-          headerRight: () => (
-            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Tickets"
-        component={CustomerTicketsScreen}
-        options={{
-          title: user?.name || 'Ticket',
-          tabBarLabel: '🎫 Ticket',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🎫</Text>,
-          headerRight: () => (
-            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
-            </TouchableOpacity>
-          ),
+          tabBarIcon: () => <Text style={{ fontSize: 20 }}>📦</Text>,
         }}
       />
     </Tab.Navigator>
@@ -170,12 +141,54 @@ function CustomerTabs({ onLogout, user }) {
 
 function CustomerStack({ onLogout, user }) {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={({ navigation }) => ({
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile')}
+            style={{ marginRight: 12 }}
+          >
+            <Text style={{ fontSize: 20 }}>👤</Text>
+          </TouchableOpacity>
+        ),
+      })}
+    >
       <Stack.Screen
         name="CustomerTabs"
-        // pass onLogout down to tabs so header button can call it
-        children={() => <CustomerTabs onLogout={onLogout} user={user} />}
+        children={() => <CustomerTabs user={user} />}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Profile"
+        children={({ navigation }) => (
+          <ProfileScreen navigation={navigation} user={user} onLogout={onLogout} />
+        )}
+        options={{
+          title: 'Profilo',
+          headerStyle: { backgroundColor: '#FF6B00' },
+          headerTintColor: '#fff',
+          headerTitleStyle: { fontWeight: '700' },
+        }}
+      />
+      <Stack.Screen
+        name="PaymentMethods"
+        component={PaymentMethodsScreen}
+        options={{
+          title: 'Metodi di pagamento',
+          headerStyle: { backgroundColor: '#FF6B00' },
+          headerTintColor: '#fff',
+          headerTitleStyle: { fontWeight: '700' },
+        }}
+      />
+      <Stack.Screen
+        name="CustomerTickets"
+        component={CustomerTicketsScreen}
+        options={{
+          title: '🎫 I miei ticket',
+          headerStyle: { backgroundColor: '#FF6B00' },
+          headerTintColor: '#fff',
+          headerTitleStyle: { fontWeight: '700' },
+        }}
       />
       <Stack.Screen
         name="BrandProducts"
@@ -271,10 +284,10 @@ function CustomerStack({ onLogout, user }) {
 }
 
 // Rider Stack
-function RiderStack({ onLogout, user }) {
+function RiderStack({ user }) {
   return (
     <Tab.Navigator
-      screenOptions={{
+      screenOptions={({ navigation }) => ({
         headerShown: true,
         tabBarActiveTintColor: '#0066FF',
         tabBarInactiveTintColor: '#999',
@@ -285,7 +298,15 @@ function RiderStack({ onLogout, user }) {
         headerTitleStyle: {
           fontWeight: '700',
         },
-      }}
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile')}
+            style={{ marginRight: 12 }}
+          >
+            <Text style={{ fontSize: 20 }}>👤</Text>
+          </TouchableOpacity>
+        ),
+      })}
     >
       <Tab.Screen
         name="Available"
@@ -293,12 +314,7 @@ function RiderStack({ onLogout, user }) {
         options={{
           title: user?.name || 'Disponibili',
           tabBarLabel: '📦 Disponibili',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>📦</Text>,
-          headerRight: () => (
-            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
-            </TouchableOpacity>
-          ),
+          tabBarIcon: () => <Text style={{ fontSize: 20 }}>📦</Text>,
         }}
       />
       <Tab.Screen
@@ -307,26 +323,7 @@ function RiderStack({ onLogout, user }) {
         options={{
           title: user?.name || 'Consegne',
           tabBarLabel: '🚚 Consegne',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🚚</Text>,
-          headerRight: () => (
-            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Tickets"
-        component={RiderTicketsScreen}
-        options={{
-          title: user?.name || 'Ticket',
-          tabBarLabel: '🎫 Ticket',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>🎫</Text>,
-          headerRight: () => (
-            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
-            </TouchableOpacity>
-          ),
+          tabBarIcon: () => <Text style={{ fontSize: 20 }}>🚚</Text>,
         }}
       />
     </Tab.Navigator>
@@ -336,11 +333,44 @@ function RiderStack({ onLogout, user }) {
 // Rider Stack con schermate aggiuntive
 function RiderStackWithScreens({ onLogout, user }) {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={({ navigation }) => ({
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile')}
+            style={{ marginRight: 12 }}
+          >
+            <Text style={{ fontSize: 20 }}>👤</Text>
+          </TouchableOpacity>
+        ),
+      })}
+    >
       <Stack.Screen
         name="RiderTabs"
-        children={() => <RiderStack onLogout={onLogout} user={user} />}
+        children={() => <RiderStack user={user} />}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Profile"
+        children={({ navigation }) => (
+          <ProfileScreen navigation={navigation} user={user} onLogout={onLogout} />
+        )}
+        options={{
+          title: 'Profilo',
+          headerStyle: { backgroundColor: '#0066FF' },
+          headerTintColor: '#fff',
+          headerTitleStyle: { fontWeight: '700' },
+        }}
+      />
+      <Stack.Screen
+        name="RiderTickets"
+        component={RiderTicketsScreen}
+        options={{
+          title: '🎫 I miei ticket',
+          headerStyle: { backgroundColor: '#0066FF' },
+          headerTintColor: '#fff',
+          headerTitleStyle: { fontWeight: '700' },
+        }}
       />
       <Stack.Screen
         name="CreateTicket"
@@ -378,7 +408,7 @@ function RiderStackWithScreens({ onLogout, user }) {
 function ManagerStack({ token, user, onLogout }) {
   return (
     <Stack.Navigator
-      screenOptions={{
+      screenOptions={({ navigation }) => ({
         headerShown: true,
         headerStyle: {
           backgroundColor: '#FF6B00',
@@ -387,31 +417,41 @@ function ManagerStack({ token, user, onLogout }) {
         headerTitleStyle: {
           fontWeight: '700',
         },
-      }}
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile')}
+            style={{ marginRight: 12 }}
+          >
+            <Text style={{ fontSize: 20 }}>👤</Text>
+          </TouchableOpacity>
+        ),
+      })}
     >
       <Stack.Screen
         name="AdminDashboard"
         component={AdminDashboardScreen}
         options={{
           title: user?.name || 'Admin Dashboard',
-          headerRight: () => (
-            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
-            </TouchableOpacity>
-          ),
         }}
         initialParams={{ token, user }}
+      />
+      <Stack.Screen
+        name="Profile"
+        children={({ navigation }) => (
+          <ProfileScreen navigation={navigation} user={user} onLogout={onLogout} />
+        )}
+        options={{
+          title: 'Profilo',
+          headerStyle: { backgroundColor: '#FF6B00' },
+          headerTintColor: '#fff',
+          headerTitleStyle: { fontWeight: '700' },
+        }}
       />
       <Stack.Screen
         name="AdminTickets"
         component={AdminDashboardTickets}
         options={{
           title: user?.name || 'Tickets',
-          headerRight: () => (
-            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
-            </TouchableOpacity>
-          ),
         }}
         initialParams={{ token }}
       />
@@ -420,11 +460,6 @@ function ManagerStack({ token, user, onLogout }) {
         component={CustomerOrderTrackingScreen}
         options={{
           title: user?.name || 'Tracciamento Ordine',
-          headerRight: () => (
-            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
-            </TouchableOpacity>
-          ),
         }}
         initialParams={{ token }}
       />
@@ -433,11 +468,6 @@ function ManagerStack({ token, user, onLogout }) {
         component={ManagerRealTimeMapScreen}
         options={{
           title: user?.name || 'Mappa Real-Time',
-          headerRight: () => (
-            <TouchableOpacity onPress={onLogout} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Logout</Text>
-            </TouchableOpacity>
-          ),
         }}
         initialParams={{ token }}
       />
@@ -519,7 +549,7 @@ export default function App() {
           }
         }
       } catch (e) {
-        console.error('Error checking storage changes:', e);
+        logger.error('Error checking storage changes:', e);
       }
     };
 
@@ -529,12 +559,12 @@ export default function App() {
     const registerPush = async () => {
       try {
         if (Device && !Device.isDevice) {
-          console.log('Push notifications require a physical device');
+          logger.info('Push notifications require a physical device');
           return;
         }
 
         if (!Device) {
-          console.log('Push notifications on web - skipping native device check');
+          logger.info('Push notifications on web - skipping native device check');
         }
         const { status: existingStatus } = await Notifications.getPermissionsAsync();
         let finalStatus = existingStatus;
@@ -552,10 +582,10 @@ export default function App() {
         try {
           await userAPI.setPushToken(token);
         } catch (e) {
-          console.warn('Could not send push token to backend', e.message);
+          logger.warn('Could not send push token to backend', e.message);
         }
       } catch (e) {
-        console.warn('registerPush error', e.message);
+        logger.warn('registerPush error', e.message);
       }
     };
 

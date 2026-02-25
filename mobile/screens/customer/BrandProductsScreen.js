@@ -1,28 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
   FlatList,
   TouchableOpacity,
-  Image,
   ActivityIndicator,
   Alert,
 } from 'react-native';
 import { useCart } from '../../context/CartContext';
 import { brandProductsScreenStyles } from './styles/BrandProductsScreenStyles';
 
-export default function BrandProductsScreen({ route, navigation }) {
+export default function BrandProductsScreen({ route, navigation: _navigation }) {
   const { brand } = route.params || {};
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const { addToCart, itemCount } = useCart();
+  const { addToCart } = useCart();
 
-  useEffect(() => {
-    loadProducts();
-  }, [brand]);
-
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     setLoading(true);
     try {
       // Prodotti realistici basati sul brand
@@ -34,7 +29,11 @@ export default function BrandProductsScreen({ route, navigation }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [brand]);
+
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts]);
 
   const generateProductsForBrand = brand => {
     const baseProducts = {

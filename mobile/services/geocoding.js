@@ -1,3 +1,5 @@
+import logger from '../utils/logger';
+
 // Cache per evitare richieste duplicate
 const geocodeCache = new Map();
 
@@ -6,7 +8,7 @@ export const geocodeAddress = async address => {
   try {
     // Controlla cache prima di fare la richiesta
     if (geocodeCache.has(address)) {
-      console.log('🗺️ Using cached result for:', address);
+      logger.debug('Using cached geocode result for:', address);
       return geocodeCache.get(address);
     }
 
@@ -18,7 +20,7 @@ export const geocodeAddress = async address => {
       address, // Indirizzo originale come ultima opzione
     ];
 
-    console.log('🗺️ Trying geocoding for address variants:', addressVariants);
+    logger.debug('Trying geocoding for address variants:', addressVariants);
 
     for (const variant of addressVariants) {
       try {
@@ -38,7 +40,7 @@ export const geocodeAddress = async address => {
         );
 
         if (!response.ok) {
-          console.warn(`⚠️ HTTP error for variant: ${variant}`, response.status);
+          logger.warn(`HTTP error for variant: ${variant}`, response.status);
           continue;
         }
 
@@ -56,22 +58,21 @@ export const geocodeAddress = async address => {
           geocodeCache.set(address, result);
           geocodeCache.set(variant, result); // Cache anche per la variante funzionante
 
-          console.log('✅ Geocoding successful for variant:', variant);
-          console.log('📍 Coordinates:', result);
+          logger.info('Geocoding successful for variant:', variant);
+          logger.debug('Coordinates:', result);
           return result;
         } else {
-          console.warn(`⚠️ No results for variant: ${variant}`);
+          logger.warn(`No results for variant: ${variant}`);
         }
       } catch (variantError) {
-        console.warn(`⚠️ Variant failed: ${variant}`, variantError.message);
+        logger.warn(`Variant failed: ${variant}`, variantError.message);
         continue;
       }
     }
-
-    console.warn('❌ All geocoding variants failed for address:', address);
+    logger.warn('All geocoding variants failed for address:', address);
     return null;
   } catch (error) {
-    console.warn('Geocoding error:', error.message);
+    logger.error('Geocoding error:', error.message);
     return null;
   }
 };
@@ -89,5 +90,5 @@ export const getRomeFallbackCoordinates = address => {
 // Funzione per pulire la cache (opzionale)
 export const clearGeocodeCache = () => {
   geocodeCache.clear();
-  console.log('🗺️ Geocode cache cleared');
+  logger.info('Geocode cache cleared');
 };

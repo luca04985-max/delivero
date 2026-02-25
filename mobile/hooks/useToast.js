@@ -36,7 +36,7 @@ export const useToast = () => {
     toastTimeoutRef.current = setTimeout(() => {
       hideToast();
     }, duration);
-  }, []);
+  }, [hideToast]);
 
   /**
    * Nasconde il toast notification

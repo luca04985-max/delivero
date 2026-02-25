@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import logger from '../utils/logger';
 import { adminAPI, ordersAPI, ticketsAPI } from '../services/api';
 import ManagerTrackingDashboard from './ManagerTrackingDashboard';
 import TrackingMap from '../components/TrackingMap';
@@ -130,7 +131,7 @@ export default function AdminDashboard() {
       setMetrics(metrics);
       setTicketStats(tickets);
     } catch (err) {
-      console.error('Error loading dashboard data:', err);
+      logger.error('Error loading dashboard data:', err);
       setError(err.response?.data?.message || 'Error loading dashboard data');
     } finally {
       setLoading(false);

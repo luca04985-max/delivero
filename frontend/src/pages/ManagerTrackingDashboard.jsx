@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ordersAPI } from '../services/api';
 import socketService from '../services/socket';
+import logger from '../utils/logger';
 import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -208,7 +209,7 @@ export default function ManagerTrackingDashboard() {
       const activeOrders = await ordersAPI.getActiveOrdersTracking();
       setOrders(Array.isArray(activeOrders) ? activeOrders : []);
     } catch (error) {
-      console.error('Error loading active orders:', error);
+      logger.error('Error loading active orders:', error);
     }
   };
 
@@ -219,7 +220,7 @@ export default function ManagerTrackingDashboard() {
       const trackPoints = Array.isArray(pts) ? pts : [];
 
       if (trackPoints.length === 0) {
-        console.warn(`No tracking history found for order ${orderId}`);
+        logger.warn(`No tracking history found for order ${orderId}`);
         alert('Nessuna cronologia di tracciamento disponibile');
         return;
       }
@@ -228,7 +229,7 @@ export default function ManagerTrackingDashboard() {
       const poly = trackPoints.map(p => [parseFloat(p.latitude), parseFloat(p.longitude)]);
       setSelectedTrack({ orderId, poly });
     } catch (e) {
-      console.error('Could not fetch track history', e);
+      logger.error('Could not fetch track history', e);
       alert(`Errore nel caricamento della cronologia: ${e.message || 'Riprova più tardi'}`);
     }
   };

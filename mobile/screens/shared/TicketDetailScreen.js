@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,14 +7,14 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// AsyncStorage not used here
 import { makeRequest } from '../../services/api';
 import { ticketDetailScreenStyles } from './styles/TicketDetailScreenStyles';
 import { useUserRole } from '../../hooks/useUserRole';
 import { useToast } from '../../hooks/useToast';
 import { useTicketDetail } from '../../hooks/useTicketDetail';
+import logger from '../../utils/logger';
 
 /**
  * Schermata dettagli ticket - condivisa tra customer e rider
@@ -26,7 +26,7 @@ export default function TicketDetailScreen({ navigation, route }) {
   const [submitting, setSubmitting] = useState(false);
 
   // Hook custom
-  const { userRole, isRider, isCustomer } = useUserRole();
+  const { userRole } = useUserRole();
   const { toast, showToast } = useToast();
   const { ticket, loading, refreshing, error, onRefresh } = useTicketDetail(ticketId, userRole);
 
@@ -69,7 +69,7 @@ export default function TicketDetailScreen({ navigation, route }) {
         showToast('❌ Impossibile inviare la risposta', 'error');
       }
     } catch (error) {
-      console.error('Error adding response:', error);
+      logger.error('Error adding response:', error);
       showToast('❌ Impossibile inviare la risposta', 'error');
     } finally {
       setSubmitting(false);

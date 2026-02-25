@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  FlatList,
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
@@ -12,7 +11,7 @@ import {
 import { ordersAPI } from '../../services/api';
 import { customerOrdersScreenStyles } from './styles/CustomerOrdersScreenStyles';
 
-export default function OrderSelectionScreen({ navigation, route }) {
+export default function OrderSelectionScreen({ navigation, route: _route }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);

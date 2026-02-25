@@ -1,4 +1,4 @@
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
 

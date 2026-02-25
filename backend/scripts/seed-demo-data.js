@@ -7,6 +7,9 @@
 import db from '../src/config/db.js';
 import bcrypt from 'bcryptjs';
 
+// Support an internal dry-run mode: pass --dry-run or set env DRY_RUN=1
+const DRY_RUN = process.argv.includes('--dry-run') || process.env.DRY_RUN === '1';
+
 const CENTER = { lat: 41.880025, lon: 12.67594 };
 
 const jitter = (v, meters) => {
@@ -254,6 +257,22 @@ const insertReview = async ({ restaurantId, userId, foodRating, deliveryRating, 
         const count = parseInt(userCount.rows[0].cnt, 10);
         if (count > 0) {
             console.log('Database already has users; skipping demo data seeding.');
+            process.exit(0);
+        }
+
+        if (DRY_RUN) {
+            console.log('🌱 DRY-RUN: Empty DB detected; demo seeding would perform the following actions:');
+            console.log('  - Create users: demo.customer, demo.rider, demo.manager');
+            console.log('  - Create restaurants: 2 (Demo Pizza Roma Est, Demo Sushi Roma Est)');
+            console.log('  - Create restaurant categories: 4');
+            console.log('  - Create menu items: ~5');
+            console.log('  - Create orders: 1, with 2 order items');
+            console.log('  - Create payments: 1');
+            console.log('  - Create tickets and comments: 1 each');
+            console.log('  - Create notifications: 2');
+            console.log('  - Create rider location entries: 1');
+            console.log('  - Create reviews: 1');
+            console.log('\nRun the script without --dry-run to actually apply these changes.');
             process.exit(0);
         }
 

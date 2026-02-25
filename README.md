@@ -267,6 +267,34 @@ use delivero
 # Migrations will run automatically on startup
 ```
 
+## Safe DB scripts
+
+- Purpose: ensure the database schema has required columns and optionally seed demo data in an idempotent way.
+- Existing scripts:
+	- `backend/scripts/ensure-db-schema.js` — runs `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` checks and attempts to add missing columns. The script deduplicates column definitions before attempting ALTERs to avoid repeated attempts on the same column name.
+	- `backend/scripts/seed-demo-data.js` — demo seeder that uses upserts (`ON CONFLICT`) where possible.
+
+Usage (dry-run by default):
+
+```bash
+# Show what would run (no changes):
+node backend/scripts/run-db-scripts.js
+
+# Actually execute schema + seed (run only after backups):
+node backend/scripts/run-db-scripts.js --force
+```
+
+Notes and safety:
+- Always run against a development/staging database first.
+- Make a backup before running against production.
+- `run-db-scripts.js` is a small wrapper that prints the actions by default and only executes the two scripts when `--force` is provided.
+- Set the DB connection with `DATABASE_URL` (or project-specific env vars) before running. Example (PowerShell):
+
+```powershell
+$env:DATABASE_URL = "postgres://user:pass@localhost:5432/dbname"
+node backend/scripts/run-db-scripts.js --force
+```
+
 ## 🧪 Testing
 
 ### Mobile

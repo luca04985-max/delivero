@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ordersAPI } from '../../services/api';
+import logger from '../../utils/logger';
 
 export default function ManagerDashboard({ user }) {
   const [orders, setOrders] = useState([]);
@@ -128,7 +129,7 @@ export default function ManagerDashboard({ user }) {
       };
       setStats(stats);
     } catch (err) {
-      console.error('Errore:', err);
+      logger.error('Errore:', err);
     }
   };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -6,14 +6,10 @@ import {
   FlatList,
   ScrollView,
   TextInput,
-  ActivityIndicator,
-  Alert,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { makeRequest } from '../../services/api';
 import debounce from 'lodash.debounce';
 import { restaurantsScreenStyles } from './styles/RestaurantsScreenStyles';
-import { sharedHeaderStyles } from './styles/SharedHeaderStyles';
 import { sharedCategoryStyles } from './styles/SharedCategoryStyles';
 import { mobileTheme } from '../../theme';
 
@@ -23,7 +19,8 @@ export default function RestaurantsScreen({ navigation, route }) {
   const [restaurants, setRestaurants] = useState([]);
   const [categories, setCategories] = useState(['All']);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({
+  /* eslint-disable-next-line no-unused-vars */
+  const [filters, _setFilters] = useState({
     rating_min: 0,
     max_delivery_time: 60,
     max_delivery_cost: 100,
@@ -33,6 +30,8 @@ export default function RestaurantsScreen({ navigation, route }) {
   useEffect(() => {
     loadCategories();
     loadRestaurants('', 'All');
+    // Intentionally run once on mount to bootstrap categories + restaurants.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // 1.1. Gestione categoria passata dalla navigazione
@@ -62,32 +61,34 @@ export default function RestaurantsScreen({ navigation, route }) {
         setTimeout(checkAndSetCategory, 1000);
       }
     }
-  }, [route.params?.category, categories]);
+  }, [route.params?.category, categories, loadRestaurants]);
 
-  const loadCategories = async () => {
+  const loadCategories = useCallback(async () => {
     try {
       const data = await makeRequest('/restaurants/categories', { method: 'GET' });
       setCategories(['All', ...(data || [])]);
     } catch (error) {
       console.error('Error loading categories:', error);
     }
-  };
+  }, []);
 
   // 2. Funzione principale di fetch (modificata per essere più robusta)
-  const loadRestaurants = async (searchQuery = searchText, category = selectedCategory) => {
+  const loadRestaurants = useCallback(async (searchQuery, category) => {
+    const searchQueryEffective = typeof searchQuery === 'undefined' ? searchText : searchQuery;
+    const categoryEffective = typeof category === 'undefined' ? selectedCategory : category;
     try {
       setLoading(true);
       const params = new URLSearchParams();
 
-      if (searchQuery) params.append('search', searchQuery);
-      if (category !== 'All') params.append('category', category);
+      if (searchQueryEffective) params.append('search', searchQueryEffective);
+      if (categoryEffective !== 'All') params.append('category', categoryEffective);
       if (filters.rating_min > 0) params.append('rating_min', filters.rating_min);
 
       params.append('max_delivery_time', filters.max_delivery_time);
       params.append('max_delivery_cost', filters.max_delivery_cost);
 
       // Limita i risultati quando "All" è selezionato per ridurre il sovraccarico
-      if (category === 'All') {
+      if (categoryEffective === 'All') {
         params.append('limit', '20');
       }
 
@@ -100,16 +101,23 @@ export default function RestaurantsScreen({ navigation, route }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters, searchText, selectedCategory]);
 
   // 3. Implementazione DEBOUNCE
   // Usiamo useCallback per evitare che la funzione venga ricreata ad ogni render
-  const debouncedSearch = useCallback(
-    debounce((query, cat) => {
+  const debouncedSearch = useMemo(() => {
+    const fn = debounce((query, cat) => {
       loadRestaurants(query, cat);
-    }, 500),
-    [filters], // Si aggiorna se cambiano i filtri
-  );
+    }, 500);
+    return fn;
+  }, [loadRestaurants]);
+
+  // cleanup for debounce on unmount
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel && debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
 
   const handleSearch = text => {
     setSearchText(text);
@@ -121,57 +129,7 @@ export default function RestaurantsScreen({ navigation, route }) {
     loadRestaurants(searchText, category); // Al click cambiamo subito, no debounce
   };
 
-  const renderCategoryItem = ({ item }) => {
-    // Ref per controllare se questa è la categoria attiva
-    const isActive = selectedCategory === item;
-
-    return (
-      <TouchableOpacity
-        key={item}
-        style={[
-          restaurantsScreenStyles.categoryCard,
-          isActive && sharedCategoryStyles.categoryCardActive,
-        ]}
-        onPress={() => handleCategoryChange(item)}
-      >
-        <Text
-          style={[
-            restaurantsScreenStyles.categoryButtonText,
-            isActive && sharedCategoryStyles.categoryButtonTextActive,
-          ]}
-        >
-          {item}
-        </Text>
-
-        {/* Badge speciale per categoria attiva */}
-        {isActive && (
-          <View
-            style={{
-              position: 'absolute',
-              top: -5,
-              right: -5,
-              backgroundColor: 'primary',
-              borderRadius: 10,
-              width: 20,
-              height: 20,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <Text
-              style={{
-                color: 'white',
-                fontSize: 10,
-                fontWeight: 'bold',
-              }}
-            >
-              ✓
-            </Text>
-          </View>
-        )}
-      </TouchableOpacity>
-    );
-  };
+  // categories rendered inline below; helper removed
 
   const renderRestaurantItem = ({ item }) => (
     <TouchableOpacity

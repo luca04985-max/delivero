@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import logger from '../utils/logger';
 
 const AdminTickets = () => {
   const [tickets, setTickets] = useState([]);
@@ -30,7 +31,7 @@ const AdminTickets = () => {
       setTickets(ticketsRes.data);
       setStats(statsRes.data);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      logger.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
@@ -47,7 +48,7 @@ const AdminTickets = () => {
       setUpdateStatus(response.data.status);
       setAdminNotes(response.data.admin_notes || '');
     } catch (error) {
-      console.error('Error fetching ticket:', error);
+      logger.error('Error fetching ticket:', error);
     }
   };
 
@@ -65,7 +66,7 @@ const AdminTickets = () => {
       await handleSelectTicket(selectedTicket.id);
       await fetchTicketsAndStats();
     } catch (error) {
-      console.error('Error updating ticket:', error);
+      logger.error('Error updating ticket:', error);
     }
   };
 
@@ -82,7 +83,7 @@ const AdminTickets = () => {
       setNewComment('');
       await handleSelectTicket(selectedTicket.id);
     } catch (error) {
-      console.error('Error adding comment:', error);
+      logger.error('Error adding comment:', error);
     }
   };
 

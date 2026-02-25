@@ -1,13 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import logger from '../utils/logger';
 import {
   joinOrderTracking,
   leaveOrderTracking,
   onRiderLocationUpdate,
   onOrderStatusUpdate,
   onTrackingStopped,
-  calculateDistance,
-  calculateETA,
-  disconnectTrackingSocket,
 } from '../services/api';
 
 /**
@@ -65,7 +63,7 @@ export const useOrderTracking = (orderId, enabled = true) => {
         setIsTracking(true);
         setTrackingState(prev => ({ ...prev, error: null }));
       } catch (error) {
-        console.error('Failed to join tracking:', error);
+          logger.error('Failed to join tracking:', error);
         setTrackingState(prev => ({
           ...prev,
           error: error.message || 'Failed to connect to tracking',
@@ -100,7 +98,7 @@ export const useOrderTracking = (orderId, enabled = true) => {
     });
 
     const unsubStopped = onTrackingStopped(data => {
-      console.log('Tracking stopped:', data.reason);
+      logger.info('Tracking stopped:', data.reason);
       setTrackingState(prev => ({
         ...prev,
         trackingStopped: true,
@@ -164,6 +162,13 @@ export const useOrderTracking = (orderId, enabled = true) => {
     },
     [trackingState.interpolatedLocation, interpolateLocation],
   );
+
+  // Trigger animation whenever a new rider location arrives
+  useEffect(() => {
+    if (trackingState.riderLocation) {
+      animateLocationUpdate(trackingState.riderLocation);
+    }
+  }, [trackingState.riderLocation, animateLocationUpdate]);
 
   return {
     ...trackingState,

@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { makeRequest } from '../services/api';
+import logger from '../utils/logger';
 
 /**
  * Hook custom per gestire il caricamento dei dettagli ticket
@@ -15,7 +16,7 @@ export const useTicketDetail = (ticketId, userRole) => {
 
   const loadTicketDetail = useCallback(async () => {
     if (!ticketId) {
-      console.error('❌ No ticketId provided');
+      logger.error('No ticketId provided');
       return;
     }
 
@@ -26,12 +27,12 @@ export const useTicketDetail = (ticketId, userRole) => {
       const endpoint =
         userRole === 'rider' ? `/tickets/rider/${ticketId}` : `/tickets/customer/${ticketId}`;
 
-      console.log(`🌐 Loading ticket from API: ${endpoint} (${userRole})`);
+      logger.debug(`Loading ticket from API: ${endpoint} (${userRole})`);
 
       const data = await makeRequest(endpoint, { method: 'GET' });
       setTicket(data);
     } catch (err) {
-      console.error('❌ Error loading ticket detail:', err);
+      logger.error('Error loading ticket detail:', err);
       setError(err);
     } finally {
       setLoading(false);

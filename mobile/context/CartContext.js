@@ -156,7 +156,14 @@ export const CartProvider = ({ children }) => {
 
   // Save cart to AsyncStorage whenever it changes
   useEffect(() => {
-    saveCart();
+    const persist = async () => {
+      try {
+        await AsyncStorage.setItem('cart', JSON.stringify(cart));
+      } catch (error) {
+        console.error('Error saving cart:', error);
+      }
+    };
+    persist();
   }, [cart]);
 
   const loadCart = async () => {
@@ -170,13 +177,7 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const saveCart = async () => {
-    try {
-      await AsyncStorage.setItem('cart', JSON.stringify(cart));
-    } catch (error) {
-      console.error('Error saving cart:', error);
-    }
-  };
+  // saveCart removed; persistence handled by effect above
 
   const addToCart = (item, restaurantId = null, customizations = []) => {
     dispatch({

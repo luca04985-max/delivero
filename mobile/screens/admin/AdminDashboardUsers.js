@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  FlatList,
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
@@ -15,7 +14,7 @@ import { adminAPI } from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { adminDashboardUsersStyles as styles } from './styles/AdminDashboardUsersStyles';
 
-export default function AdminDashboardUsers({ navigation }) {
+export default function AdminDashboardUsers({ navigation: _navigation }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);

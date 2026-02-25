@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  FlatList,
   TouchableOpacity,
-  ActivityIndicator,
   RefreshControl,
   ScrollView,
 } from 'react-native';
@@ -14,6 +12,7 @@ import { paymentsAPI } from '../../services/api';
 import { riderActiveScreenStyles } from './styles/RiderActiveScreenStyles';
 import { useToast } from '../../hooks/useToast';
 import { useRiderLocationSender } from '../../hooks/useRiderLocationSender';
+import logger from '../../utils/logger';
 
 export default function RiderActiveScreen() {
   const [activeOrders, setActiveOrders] = useState([]);
@@ -21,7 +20,7 @@ export default function RiderActiveScreen() {
   const [expandedSections, setExpandedSections] = useState({}); // Stato per sezioni espanse
 
   // Hook custom per toast
-  const { toast, showToast } = useToast();
+  const { showToast } = useToast();
 
   useEffect(() => {
     fetchActiveOrders();
@@ -30,7 +29,7 @@ export default function RiderActiveScreen() {
   // Refresh automatico quando lo screen diventa visibile
   useFocusEffect(
     React.useCallback(() => {
-      console.log('🔄 RiderActiveScreen focused - refreshing orders');
+      logger.debug('RiderActiveScreen focused - refreshing orders');
       fetchActiveOrders();
     }, []),
   );
@@ -45,12 +44,13 @@ export default function RiderActiveScreen() {
 
   const fetchActiveOrders = async () => {
     try {
-      console.log('🔄 Fetching active orders...');
+      setRefreshing(true);
+      logger.debug('Fetching active orders...');
       const data = await ordersAPI.getActiveRiderOrders();
-      console.log('📊 Received orders:', data);
-      console.log('📊 Orders count:', data?.length || 0);
+      logger.debug('Received orders:', data);
+      logger.debug('Orders count:', data?.length || 0);
       data?.forEach((order, index) => {
-        console.log(`📊 Order ${index + 1}:`, {
+        logger.debug(`Order ${index + 1}:`, {
           id: order.id,
           status: order.status,
           rider_id: order.rider_id,
@@ -58,14 +58,16 @@ export default function RiderActiveScreen() {
       });
       setActiveOrders(data);
     } catch (e) {
-      console.error('❌ Error fetching active orders:', e);
+      logger.error('Error fetching active orders:', e);
+    } finally {
+      setRefreshing(false);
     }
   };
 
   const updateStatus = async (orderId, newStatus) => {
     try {
       const response = await ordersAPI.updateOrderRiderStatus(orderId, newStatus);
-      console.log('🔄 Updated order status:', response);
+      logger.info('Updated order status:', response);
       showToast(`✅ Stato aggiornato: ${newStatus}`, 'success');
       fetchActiveOrders();
       if (newStatus === 'delivered') {

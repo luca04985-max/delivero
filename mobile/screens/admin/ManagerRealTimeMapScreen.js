@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Platform, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, ActivityIndicator } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { io } from 'socket.io-client';
 import { makeRequest } from '../../services/api';
@@ -11,16 +11,11 @@ const SOCKET_URL = 'https://delivero-gyjx.onrender.com';
 export default function ManagerRealTimeMapScreen({ route }) {
   const { orderId } = route.params || {}; // Get orderId from navigation params
   const [riders, setRiders] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [mapKey, setMapKey] = useState(0); // Force WebView remount
-  const [region, setRegion] = useState({
-    latitude: 41.880025,
-    longitude: 12.67594,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
+  // region state removed (not used)
 
-  const loadActiveOrdersFallback = async () => {
+  const loadActiveOrdersFallback = useCallback(async () => {
     try {
       console.log('[ManagerRealTimeMap] === STARTING FALLBACK FETCH ===');
 
@@ -82,28 +77,14 @@ export default function ManagerRealTimeMapScreen({ route }) {
       // Process all orders (only if no specific orderId)
       const next = {};
       for (const o of list) {
-        console.log('[ManagerRealTimeMap] processing order:', o);
-        console.log('[ManagerRealTimeMap] FULL ORDER DATA:', JSON.stringify(o, null, 2));
-        console.log('[ManagerRealTimeMap] AVAILABLE FIELDS:', Object.keys(o));
-        console.log('[ManagerRealTimeMap] RIDER COORDS CHECK:', {
-          rider_latitude: o?.rider_latitude,
-          rider_longitude: o?.rider_longitude,
-          delivery_latitude: o?.delivery_latitude,
-          delivery_longitude: o?.delivery_longitude,
-        });
         if (o?.rider_latitude == null || o?.rider_longitude == null) {
           console.log('[ManagerRealTimeMap] skipping order - missing coords:', o.id);
           continue;
         }
         const lat = parseFloat(o.rider_latitude);
         const lng = parseFloat(o.rider_longitude);
-        console.log('[ManagerRealTimeMap] parsed coords:', lat, lng);
-        console.log('[ManagerRealTimeMap] delivery coords available:', {
-          delivery_lat: o.delivery_latitude,
-          delivery_lon: o.delivery_longitude,
-          customer_id: o.customer_id,
-          restaurant_id: o.restaurant_id,
-        });
+        // keep only concise debug info
+        console.log('[ManagerRealTimeMap] parsed coords for order', o.id);
         if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
           console.log('[ManagerRealTimeMap] skipping order - invalid coords:', o.id);
           continue;
@@ -126,31 +107,15 @@ export default function ManagerRealTimeMapScreen({ route }) {
       console.log('[ManagerRealTimeMap] final riders count:', nextCount);
       console.log('[ManagerRealTimeMap] riders data:', next);
 
-      // Debug dettagliato per ogni rider
-      Object.values(next).forEach(rider => {
-        console.log(`[ManagerRealTimeMap] Rider #${rider.orderId}:`, {
-          lat: rider.lat,
-          lng: rider.lng,
-          hasDeliveryCoords: !!(rider.delivery_latitude && rider.delivery_longitude),
-          delivery_lat: rider.delivery_latitude,
-          delivery_lon: rider.delivery_longitude,
-          status: rider.status,
-          eta: rider.eta_minutes,
-        });
-      });
+      // brief summary per run
+      console.log('[ManagerRealTimeMap] riders prepared count:', Object.keys(next).length);
 
       if (nextCount > 0) {
         console.log('[ManagerRealTimeMap] setting riders state...');
         setRiders(prev => {
-          console.log('[ManagerRealTimeMap] previous riders:', prev);
           const updated = { ...prev, ...next };
-          console.log('[ManagerRealTimeMap] updated riders:', updated);
           // Force WebView remount to show new markers
-          setMapKey(k => {
-            const newKey = k + 1;
-            console.log('[ManagerRealTimeMap] mapKey changing from', k, 'to', newKey);
-            return newKey;
-          });
+          setMapKey(k => k + 1);
           return updated;
         });
       }
@@ -160,7 +125,7 @@ export default function ManagerRealTimeMapScreen({ route }) {
       console.log('[ManagerRealTimeMap] fallback fetch error', e?.message || e);
       setLoading(false);
     }
-  };
+  }, [orderId]);
 
   useEffect(() => {
     let socket;
@@ -258,7 +223,7 @@ export default function ManagerRealTimeMapScreen({ route }) {
         // ignore
       }
     };
-  }, []);
+  }, [loadActiveOrdersFallback]);
 
   // Temporaneamente disabilitato per test
   // if (Platform.OS === 'web') {
@@ -287,8 +252,6 @@ export default function ManagerRealTimeMapScreen({ route }) {
 
     console.log('[ManagerRealTimeMap] generating HTML with', riderPositions.length, 'riders');
     console.log('[ManagerRealTimeMap] map center:', centerLat, centerLon, 'zoom:', zoomLevel);
-    console.log('[ManagerRealTimeMap] HTML length:', generateMapHtml().length);
-    console.log('[ManagerRealTimeMap] HTML preview:', generateMapHtml().substring(0, 200) + '...');
 
     // Marker per ogni rider (senza popup)
     const riderMarkers = riderPositions
@@ -321,7 +284,7 @@ export default function ManagerRealTimeMapScreen({ route }) {
       })
       .join('\n');
 
-    return `
+    const html = `
             <!DOCTYPE html>
             <html>
             <head>
@@ -379,21 +342,24 @@ export default function ManagerRealTimeMapScreen({ route }) {
             </body>
             </html>
         `;
-
-    return (
-      <View style={managerRealTimeMapScreenStyles.container}>
-        <WebView
-          key={mapKey} // Force complete remount when riders change
-          style={managerRealTimeMapScreenStyles.map}
-          source={{ html: generateMapHtml() }}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-          startInLoadingState={true}
-          renderLoading={() => (
-            <ActivityIndicator style={managerRealTimeMapScreenStyles.loader} size="large" />
-          )}
-        />
-      </View>
-    );
+    console.log('[ManagerRealTimeMap] HTML length:', html.length);
+    console.log('[ManagerRealTimeMap] HTML preview:', html.substring(0, 200) + '...');
+    return html;
   };
+
+  return (
+    <View style={managerRealTimeMapScreenStyles.container}>
+      <WebView
+        key={mapKey} // Force complete remount when riders change
+        style={managerRealTimeMapScreenStyles.map}
+        source={{ html: generateMapHtml() }}
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
+        startInLoadingState={true}
+        renderLoading={() => (
+          <ActivityIndicator style={managerRealTimeMapScreenStyles.loader} size="large" />
+        )}
+      />
+    </View>
+  );
 }

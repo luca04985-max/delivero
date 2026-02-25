@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ordersAPI, restaurantsAPI } from '../../services/api';
 import './CustomerHome.css';
+import logger from '../../utils/logger';
 
 export default function CustomerHomeAdvanced() {
   const [searchText, setSearchText] = useState('');
@@ -38,7 +39,7 @@ export default function CustomerHomeAdvanced() {
       const data = await restaurantsAPI.getAll();
       setRestaurants(data || []);
     } catch (error) {
-      console.error('Error loading restaurants:', error);
+      logger.error('Error loading restaurants:', error);
     } finally {
       setLoading(false);
     }
@@ -49,7 +50,7 @@ export default function CustomerHomeAdvanced() {
       const data = await ordersAPI.getMyOrders();
       setRecentOrders(data?.slice(0, 5) || []);
     } catch (error) {
-      console.error('Error loading recent orders:', error);
+      logger.error('Error loading recent orders:', error);
     }
   };
 

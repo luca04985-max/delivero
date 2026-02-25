@@ -1,19 +1,9 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  ScrollView,
-  TouchableOpacity,
-  RefreshControl,
-  ActivityIndicator,
-  Alert,
-  Modal,
-} from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator, Alert, Modal } from 'react-native';
 import { adminAPI } from '../../services/api';
 import { adminDashboardTicketsStyles as styles } from './styles/AdminDashboardTicketsStyles';
 
-export default function AdminDashboardTickets({ navigation }) {
+export default function AdminDashboardTickets({ navigation: _navigation }) {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -22,7 +12,7 @@ export default function AdminDashboardTickets({ navigation }) {
 
   useEffect(() => {
     loadTickets();
-  }, []);
+  }, [loadTickets]);
 
   const loadTickets = useCallback(async () => {
     try {
@@ -50,37 +40,7 @@ export default function AdminDashboardTickets({ navigation }) {
   }, [loadTickets]);
 
   // Ottimizzazione: memoizza il raggruppamento dei ticket per stato
-  const groupedTickets = useMemo(() => {
-    const grouped = {};
-
-    // Raggruppa ticket per stato
-    tickets.forEach(ticket => {
-      const status = ticket.ticket_status || ticket.status || 'unknown';
-      if (!grouped[status]) {
-        grouped[status] = [];
-      }
-      grouped[status].push(ticket);
-    });
-
-    // Ordina gli stati in modo logico
-    const statusOrder = ['open', 'in_progress', 'closed', 'resolved'];
-    const orderedGrouped = {};
-
-    statusOrder.forEach(status => {
-      if (grouped[status]) {
-        orderedGrouped[status] = grouped[status];
-      }
-    });
-
-    // Aggiunge eventuali stati non previsti
-    Object.keys(grouped).forEach(status => {
-      if (!statusOrder.includes(status)) {
-        orderedGrouped[status] = grouped[status];
-      }
-    });
-
-    return orderedGrouped;
-  }, [tickets]);
+  // grouped tickets memo removed — grouping is done inline where needed
 
   // Funzione per toggle delle sezioni
   const toggleSection = useCallback(ticket_status => {
