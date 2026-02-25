@@ -144,11 +144,11 @@ const TicketsList = () => {
                   style={ticketsListStyles.ticketCard}
                   onClick={() => getTicketDetails(ticket.id)}
                 >
-                  <div style={ticketsListStyles.ticketHeader}>
+                  <div style={ticketsListStyles.headerCard}>
                     <span style={ticketsListStyles.ticketType}>
                       {getTypeIcon(ticket.type)}
                     </span>
-                    <h3 style={ticketsListStyles.ticketTitle}>{ticket.title}</h3>
+                    <h3 style={ticketsListStyles.titleCard}>{ticket.title}</h3>
                   </div>
 
                   <p style={ticketsListStyles.ticketDescription}>

@@ -183,10 +183,10 @@ const AdminTickets = () => {
                   style={styles.ticketCard}
                   onClick={() => handleSelectTicket(ticket.id)}
                 >
-                  <div style={styles.ticketHeader}>
+                  <div style={styles.headerCard}>
                     <div style={styles.ticketTypeIcon}>{getTypeIcon(ticket.type)}</div>
                     <div style={styles.ticketContent}>
-                      <h3 style={styles.ticketTitle}>{ticket.title}</h3>
+                      <h3 style={styles.titleCard}>{ticket.title}</h3>
                       <p style={styles.ticketUser}>Utente: {ticket.user_name}</p>
                     </div>
                     <span
@@ -360,7 +360,7 @@ const styles = {
     transition: 'all 0.2s',
     border: '1px solid #eee'
   },
-  ticketHeader: {
+  headerCard: {
     display: 'flex',
     alignItems: 'center',
     gap: '15px',
@@ -373,7 +373,7 @@ const styles = {
     flex: 1,
     minWidth: 0
   },
-  ticketTitle: {
+  titleCard: {
     margin: '0 0 5px 0',
     color: '#333',
     fontSize: '16px'

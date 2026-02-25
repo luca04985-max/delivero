@@ -133,7 +133,7 @@ export const ticketsListStyles = {
     }
   },
 
-  ticketHeader: {
+  headerCard: {
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
@@ -145,7 +145,7 @@ export const ticketsListStyles = {
     filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
   },
 
-  ticketTitle: {
+  titleCard: {
     margin: 0,
     flex: 1,
     color: '#2c3e50',

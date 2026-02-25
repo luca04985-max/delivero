@@ -169,7 +169,7 @@ export const AdminDashboardScreenStyles = StyleSheet.create({
   },
 
   // TICKET MODAL SPECIFIC
-  ticketHeader: {
+  headerCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

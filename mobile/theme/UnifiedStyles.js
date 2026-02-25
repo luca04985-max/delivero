@@ -89,13 +89,12 @@ export const unifiedStyles = StyleSheet.create({
 
   // CARD UNIFICATE (come CustomerOrdersScreen)
   card: {
-    backgroundColor: mobileTheme.colors.white,
-    borderRadius: mobileTheme.borderRadius.lg,
-    padding: mobileTheme.spacing[4],
-    marginBottom: mobileTheme.spacing[4],
-    ...mobileTheme.shadows.soft,
-    borderWidth: 1,
-    borderColor: mobileTheme.colors.border,
+    backgroundColor: mobileTheme.colors.primaryLight,
+    padding: mobileTheme.spacing[2],
+    borderRadius: mobileTheme.borderRadius.md,
+    marginBottom: mobileTheme.spacing[3],
+    borderLeftWidth: 3,
+    borderLeftColor: mobileTheme.colors.primary,
   },
   activeCard: {
     backgroundColor: mobileTheme.colors.white,
@@ -114,7 +113,7 @@ export const unifiedStyles = StyleSheet.create({
     alignItems: 'flex-start',
     marginBottom: mobileTheme.spacing[3],
   },
-  ticketHeader: {
+  headerCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
@@ -155,6 +154,7 @@ export const unifiedStyles = StyleSheet.create({
     fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.success,
     textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
 
   // TEXT ELEMENTS
@@ -170,8 +170,10 @@ export const unifiedStyles = StyleSheet.create({
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.primary,
+    textAlign: 'right',
+    marginTop: mobileTheme.spacing[2],
   },
-  ticketTitle: {
+  titleCard: {
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.text.primary,
@@ -344,6 +346,7 @@ export const unifiedStyles = StyleSheet.create({
     margin: mobileTheme.spacing[4],
     maxHeight: '80%',
     ...mobileTheme.shadows.xl,
+
   },
   modalTitle: {
     fontSize: mobileTheme.typography.fontSize.lg,
@@ -411,6 +414,7 @@ export const unifiedStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: mobileTheme.spacing[5],
+    marginTop: mobileTheme.spacing[8],
   },
   emptyText: {
     fontSize: mobileTheme.typography.fontSize.lg,

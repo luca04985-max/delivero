@@ -105,13 +105,13 @@ export const riderTicketsScreenStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: mobileTheme.colors.border,
   },
-  ticketHeader: {
+  headerCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: mobileTheme.spacing[3],
   },
-  ticketTitle: {
+  titleCard: {
     fontWeight: mobileTheme.typography.fontWeight.bold,
     fontSize: mobileTheme.typography.fontSize.base,
     color: mobileTheme.colors.text.primary,

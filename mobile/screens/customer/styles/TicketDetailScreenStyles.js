@@ -22,14 +22,14 @@ export const ticketDetailScreenStyles = StyleSheet.create({
   },
 
   // TICKET HEADER
-  ticketHeader: {
+  headerCard: {
     backgroundColor: mobileTheme.colors.white,
     padding: mobileTheme.spacing[5],
     borderBottomWidth: 1,
     borderBottomColor: mobileTheme.colors.border,
     ...mobileTheme.shadows.sm,
   },
-  ticketHeaderTop: {
+  headerCardTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -50,7 +50,7 @@ export const ticketDetailScreenStyles = StyleSheet.create({
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.white,
   },
-  ticketTitle: {
+  titleCard: {
     fontSize: mobileTheme.typography.fontSize.xl,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.text.primary,

@@ -79,10 +79,10 @@ export default function CustomerOrdersScreen({ navigation, route }) {
 
   const renderOrder = ({ item }) => (
     <View style={customerOrdersScreenStyles.card}>
-      <View style={customerOrdersScreenStyles.orderHeader}>
-        <Text style={customerOrdersScreenStyles.orderId}>Ordine #{item.id.toString().slice(-5)}</Text>
-        <View style={customerOrdersScreenStyles.orderStatus}>
-          <Text style={customerOrdersScreenStyles.orderStatusText}>
+      <View style={customerOrdersScreenStyles.headerCard}>
+        <Text style={customerOrdersScreenStyles.titleCard}>Ordine #{item.id.toString().slice(-5)}</Text>
+        <View style={customerOrdersScreenStyles.statusBadge}>
+          <Text style={customerOrdersScreenStyles.statusText}>
             {item.status === 'pending' && '⏳ IN ATTESA'}
             {item.status === 'accepted' && '✓ ACCETTATO'}
             {item.status === 'preparing' && '👨‍🍳 IN PREPARAZIONE'}
@@ -96,6 +96,7 @@ export default function CustomerOrdersScreen({ navigation, route }) {
 
       {item.restaurant_name && (
         <View style={customerOrdersScreenStyles.restaurantInfo}>
+          <Text style={customerOrdersScreenStyles.restaurantLabel}>Ristorante :</Text>
           <Text style={customerOrdersScreenStyles.restaurantName}>{item.restaurant_name}</Text>
           {item.restaurant_address && (
             <Text style={customerOrdersScreenStyles.restaurantAddress}>📍 {item.restaurant_address}</Text>
@@ -190,22 +191,37 @@ export default function CustomerOrdersScreen({ navigation, route }) {
     </View>
   );
 
-  const renderStatusSeparator = (status, count, info, isExpanded) => {
+  const renderStatusSeparator = (status, count, statusInfo, isExpanded) => {
     // Fallback per status non definiti
-    const safeInfo = info || {
+    const safeInfo = statusInfo || {
       label: status.charAt(0).toUpperCase() + status.slice(1),
       icon: '📋'
     };
 
     return (
       <TouchableOpacity
-        style={customerOrdersScreenStyles.statusSeparator}
-        onPress={() => toggleSection(status)} // Chiama la funzione toggle
+        style={[
+          customerOrdersScreenStyles.statusSeparator
+        ]}
+        onPress={() => toggleSection(status)}
       >
         <View style={customerOrdersScreenStyles.statusSeparatorContent}>
-          <Text>{safeInfo.icon} {safeInfo.label} ({count})</Text>
-          {/* Cambia l'icona in base allo stato aperto/chiuso */}
-          <Text>{isExpanded ? '🔼' : '🔽'}</Text>
+          <View style={customerOrdersScreenStyles.statusSeparatorLeft}>
+            <Text style={customerOrdersScreenStyles.statusSeparatorIcon}>
+              {safeInfo.icon}
+            </Text>
+            <Text style={customerOrdersScreenStyles.statusSeparatorTitle}>
+              {safeInfo.label}
+            </Text>
+          </View>
+          <View style={customerOrdersScreenStyles.statusSeparatorRight}>
+            <Text style={customerOrdersScreenStyles.statusSeparatorCount}>
+              {count}
+            </Text>
+            <Text style={customerOrdersScreenStyles.statusSeparatorToggle}>
+              {isExpanded ? '🔼' : '🔽'}
+            </Text>
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -284,15 +300,6 @@ export default function CustomerOrdersScreen({ navigation, route }) {
           style={customerOrdersScreenStyles.statusTabsContainer}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchOrders} />}
         >
-          <View style={customerOrdersScreenStyles.separatorHeader}>
-            <Text style={customerOrdersScreenStyles.separatorTitle}>Stato Ordini Assegnati</Text>
-            <Text style={customerOrdersScreenStyles.separatorSubtitle}>
-              {activeTab === 'all'
-                ? `${orders.length} ordini totali`
-                : `${getFilteredOrders().length} ordini ${activeTab}`
-              }
-            </Text>
-          </View>
           {renderOrdersWithSeparators()}
         </ScrollView>
       )}

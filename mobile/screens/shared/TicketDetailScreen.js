@@ -150,8 +150,8 @@ export default function TicketDetailScreen({ navigation, route }) {
         }
       >
         {/* Header del Ticket */}
-        <View style={ticketDetailScreenStyles.ticketHeader}>
-          <View style={ticketDetailScreenStyles.ticketHeaderTop}>
+        <View style={ticketDetailScreenStyles.headerCard}>
+          <View style={ticketDetailScreenStyles.headerCardTop}>
             <View style={[
               ticketDetailScreenStyles.statusBadge,
               { backgroundColor: getStatusColor(ticket.status) }
@@ -166,7 +166,7 @@ export default function TicketDetailScreen({ navigation, route }) {
           </View>
 
           <View style={ticketDetailScreenStyles.ticketMeta}>
-            <Text style={ticketDetailScreenStyles.ticketTitle}>{ticket.title}</Text>
+            <Text style={ticketDetailScreenStyles.titleCard}>{ticket.title}</Text>
             <Text style={ticketDetailScreenStyles.ticketDate}>
               {new Date(ticket.created_at).toLocaleDateString('it-IT', {
                 day: '2-digit',

@@ -194,11 +194,11 @@ export default function CustomerTicketsScreen({ navigation }) {
   const renderTicket = ({ item }) => {
     return (
       <TouchableOpacity
-        style={customerTicketsScreenStyles.ticketCard}
+        style={customerTicketsScreenStyles.card}
         onPress={() => navigation.navigate('TicketDetail', { ticketId: item.id })}
       >
-        <View style={customerTicketsScreenStyles.ticketHeader}>
-          <Text style={customerTicketsScreenStyles.ticketTitle}>{item.title}</Text>
+        <View style={customerTicketsScreenStyles.headerCard}>
+          <Text style={customerTicketsScreenStyles.titleCard}>{item.title}</Text>
           <View style={[
             customerTicketsScreenStyles.statusBadge,
             { backgroundColor: getStatusColor(item.ticket_status) }
@@ -246,7 +246,9 @@ export default function CustomerTicketsScreen({ navigation }) {
   return (
     <View style={customerTicketsScreenStyles.container}>
       <View style={customerTicketsScreenStyles.header}>
-        <Text style={customerTicketsScreenStyles.title}>🎫 I Miei Ticket</Text>
+        <View style={customerTicketsScreenStyles.headerContent}>
+          <Text style={customerTicketsScreenStyles.title}>🎫 I Miei Ticket</Text>
+        </View>
       </View>
 
       <ScrollView
@@ -258,7 +260,6 @@ export default function CustomerTicketsScreen({ navigation }) {
         {tickets.length === 0 ? (
           <View style={customerTicketsScreenStyles.emptyContainer}>
             <Text style={customerTicketsScreenStyles.emptyText}>Nessun ticket trovato</Text>
-            <Text style={customerTicketsScreenStyles.emptySubtext}>Crea il tuo primo ticket</Text>
           </View>
         ) : (
           renderTicketsWithSeparators()

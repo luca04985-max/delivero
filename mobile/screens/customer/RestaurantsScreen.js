@@ -35,6 +35,34 @@ export default function RestaurantsScreen({ navigation, route }) {
     loadRestaurants('', 'All');
   }, []);
 
+  // 1.1. Gestione categoria passata dalla navigazione
+  useEffect(() => {
+    if (route.params?.category) {
+      const categoryFromRoute = route.params.category;
+      console.log('Category from route:', categoryFromRoute);
+
+      // Attendi che le categorie siano caricate, poi imposta quella corretta
+      const checkAndSetCategory = () => {
+        if (categories.length > 1) { // Più di 'All' significa che sono caricate
+          if (categories.includes(categoryFromRoute)) {
+            setSelectedCategory(categoryFromRoute);
+            loadRestaurants('', categoryFromRoute);
+          } else {
+            console.log('Category not found in available categories:', categoryFromRoute);
+          }
+        }
+      };
+
+      // Se le categorie sono già caricate, imposta subito, altrimenti aspetta
+      if (categories.length > 1) {
+        checkAndSetCategory();
+      } else {
+        // Aspetta un po' e riprova (perché le categorie potrebbero caricarsi dopo)
+        setTimeout(checkAndSetCategory, 1000);
+      }
+    }
+  }, [route.params?.category, categories]);
+
   const loadCategories = async () => {
     try {
       const data = await makeRequest('/restaurants/categories', { method: 'GET' });

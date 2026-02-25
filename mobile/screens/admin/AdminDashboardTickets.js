@@ -194,8 +194,8 @@ export default function AdminDashboardTickets({ navigation }) {
 
     return (
       <TouchableOpacity style={styles.ticketCard} onPress={handlePress}>
-        <View style={styles.ticketHeader}>
-          <Text style={styles.ticketTitle}>{item.title}</Text>
+        <View style={styles.headerCard}>
+          <Text style={styles.titleCard}>{item.title}</Text>
           <View style={styles.statusBadge}>
             <Text style={styles.statusText}>{getStatusText(item.ticket_status || item.status || 'open')}</Text>
           </View>
@@ -257,7 +257,7 @@ export default function AdminDashboardTickets({ navigation }) {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
-            <View style={styles.ticketHeader}>
+            <View style={styles.headerCard}>
               <Text style={styles.ticketId}>#{selectedTicket?.id}</Text>
               <Text style={styles.modalTitle}>Dettagli Ticket</Text>
             </View>

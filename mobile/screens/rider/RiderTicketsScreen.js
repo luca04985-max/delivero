@@ -169,8 +169,8 @@ export default function RiderTicketsScreen({ navigation }) {
         style={riderTicketsScreenStyles.ticketCard}
         onPress={() => navigation.navigate('TicketDetail', { ticketId: item.id })}
       >
-        <View style={riderTicketsScreenStyles.ticketHeader}>
-          <Text style={riderTicketsScreenStyles.ticketTitle}>{item.title}</Text>
+        <View style={riderTicketsScreenStyles.headerCard}>
+          <Text style={riderTicketsScreenStyles.titleCard}>{item.title}</Text>
           <View style={[
             riderTicketsScreenStyles.statusBadge,
             { backgroundColor: getStatusColor(item.ticket_status) }

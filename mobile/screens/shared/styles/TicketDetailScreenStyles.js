@@ -19,14 +19,14 @@ export const ticketDetailScreenStyles = StyleSheet.create({
   },
 
   // TICKET HEADER
-  ticketHeader: {
+  headerCard: {
     backgroundColor: mobileTheme.colors.white,
     padding: mobileTheme.spacing[5],
     borderBottomWidth: 1,
     borderBottomColor: mobileTheme.colors.border,
     ...mobileTheme.shadows.sm,
   },
-  ticketHeaderTop: {
+  headerCardTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
