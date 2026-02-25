@@ -1,0 +1,45 @@
+Ecco una sintesi tecnica e strutturata dell'intero ecosistema Just Eat, pronta per essere salvata come documento di riferimento o analizzata da un'altra IA.
+
+DOCUMENTO TECNICO: ECOSISTEMA JUST EAT (REVERSE ENGINEERING)
+1. ARCHITETTURA DI SISTEMA
+L'infrastruttura opera come un marketplace tripartito interconnesso tramite API RESTful:
+
+Front-end Utente: App per l'ordinazione e tracciamento GPS.
+
+Partner Hub (Ristoratore): Dashboard gestionale (SaaS) per inventario, prezzi e monitoraggio vendite.
+
+App Courier & Hub (Logistica): Sistema di gestione turni, flotta elettrica e routing per i rider (modello subordinato).
+
+2. GESTIONE PRODOTTI E OPERATIVITÀ (BACKEND)
+I ristoranti interagiscono con la piattaforma attraverso:
+
+Inserimento Dati: Manuale (via Partner Hub) o automatico (integrazione API con software POS di cassa).
+
+Dynamic Inventory: Possibilità di disattivare piatti istantaneamente in caso di esaurimento scorte (Stock-out management).
+
+Hardware Proprietario: Terminale dedicato con stampante termica per la ricezione ordini in cucina.
+
+3. MODELLO ECONOMICO (REVENUE MODEL)
+Commissioni (Take Rate):
+
+15-20%: Modello "Marketplace" (consegna gestita dal ristorante).
+
+25-30%: Modello "Full Service" (logistica Just Eat).
+
+Ranking Algorithm: Il posizionamento in app è influenzato da: Recensioni (Rating), Tempo di preparazione (SLA) e Tasso di accettazione ordini.
+
+4. LOGISTICA E INFRASTRUTTURA FISICA
+Modello Rider: Dipendenti con paga oraria e tutele sindacali (in Italia).
+
+City Hub: Centri fisici per il check-in/out, ricarica flotta elettrica (e-bike/scooter) e manutenzione DPI.
+
+Dispatching: Algoritmo che calcola il punto di incontro ottimale tra tempo di cottura del cibo e posizione del rider.
+
+5. STRATEGIE DI OTTIMIZZAZIONE (SCALING)
+Per massimizzare l'efficienza del sistema:
+
+Logistica Predittiva: Batching degli ordini (consegne multiple per rotta) e chiamata del rider basata su tempi di cottura storici.
+
+Smart Menu: A/B testing delle immagini e Cross-selling suggerito dall'IA per aumentare lo scontrino medio.
+
+Dark Kitchens: Utilizzo degli Hub per produzione di cibo "delivery-only" basata sui dati della domanda locale.
