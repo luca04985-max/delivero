@@ -151,6 +151,30 @@ export const ticketsAPI = {
   getAdminTickets: () => apiClient.get('/tickets/admin'),
 };
 
+// Inventory
+export const inventoryAPI = {
+  listItems: async restaurantId => {
+    const res = await apiClient.get(`/inventory/${restaurantId}/items`);
+    return res.data;
+  },
+  setAvailability: async (itemId, isAvailable) => {
+    const res = await apiClient.put(`/inventory/items/${itemId}/availability`, { is_available: isAvailable });
+    return res.data;
+  },
+};
+
+// Dispatch
+export const dispatchAPI = {
+  estimate: async payload => {
+    const res = await apiClient.post('/dispatch/estimate', payload);
+    return res.data;
+  },
+  simulateRiders: async payload => {
+    const res = await apiClient.post('/dispatch/simulate', payload);
+    return res.data;
+  },
+};
+
 export default apiClient;
 
 // User helpers

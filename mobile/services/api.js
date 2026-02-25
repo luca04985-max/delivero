@@ -310,6 +310,25 @@ export const ordersAPI = {
     }),
 };
 
+// Inventory endpoints
+export const inventoryAPI = {
+  listItems: async restaurantId => {
+    return makeRequest(`/inventory/${restaurantId}/items`, { method: 'GET' });
+  },
+  setAvailability: async (itemId, isAvailable) => {
+    return makeRequest(`/inventory/items/${itemId}/availability`, {
+      method: 'PUT',
+      body: JSON.stringify({ is_available: isAvailable }),
+    });
+  },
+};
+
+// Dispatch endpoints
+export const dispatchAPI = {
+  estimate: async payload => makeRequest('/dispatch/estimate', { method: 'POST', body: JSON.stringify(payload) }),
+  simulateRiders: async payload => makeRequest('/dispatch/simulate', { method: 'POST', body: JSON.stringify(payload) }),
+};
+
 export const userAPI = {
   getProfile: () => makeRequest('/user/profile', { method: 'GET' }),
   updateProfile: data =>

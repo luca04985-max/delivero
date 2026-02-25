@@ -18,11 +18,15 @@ import medicalTransportsRoutes from './routes/medicalTransports.js';
 import documentPickupsRoutes from './routes/documentPickups.js';
 import ticketsRoutes from './routes/tickets.js';
 import restaurantsRoutes from './routes/restaurants.js';
+import inventoryRoutes from './routes/inventory.js';
+import dispatchRoutes from './routes/dispatch.js';
 import userAddressesRoutes from './routes/userAddresses.js';
 // monitoring, notifications, analytics, bills and billPayments routes
 // removed: not referenced by mobile frontend
 import { initializeSocket } from './services/socket.js';
 import { authenticateToken } from './middleware/auth.js';
+import client from './middleware/metrics.js';
+import { metricsMiddleware } from './middleware/metrics.js';
 
 import db from './config/db.js';
 
@@ -64,6 +68,9 @@ app.use(
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Metrics middleware (collect per-request metrics)
+app.use(metricsMiddleware);
+
 // Performance monitoring middleware
 app.use(performanceMiddleware.middleware());
 
@@ -76,6 +83,16 @@ initializeSocket(server);
 // Health check endpoint
 app.get('/health', performanceMiddleware.healthCheck());
 
+// Expose Prometheus metrics
+app.get('/metrics', async (req, res) => {
+  try {
+    res.set('Content-Type', client.register.contentType);
+    res.end(await client.register.metrics());
+  } catch (e) {
+    res.status(500).end(e.message);
+  }
+});
+
 // Compatibility: expose monitoring health endpoint expected by external monitors
 app.get('/api/monitoring/health', performanceMiddleware.healthCheck());
 
@@ -86,6 +103,8 @@ app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/rider', riderRoutes);
 app.use('/api/restaurants', restaurantsRoutes);
+app.use('/api/inventory', inventoryRoutes);
+app.use('/api/dispatch', dispatchRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/admin', adminRoutes);

@@ -295,6 +295,13 @@ $env:DATABASE_URL = "postgres://user:pass@localhost:5432/dbname"
 node backend/scripts/run-db-scripts.js --force
 ```
 
+Or run the comprehensive JS seeder (creates demo users, restaurants, menu items, orders):
+
+```bash
+cd backend
+node scripts/seed-demo-data.js
+```
+
 ## 🧪 Testing
 
 ### Mobile
@@ -342,6 +349,38 @@ npm run build
 - **CORS Configured**: Authorized domains only
 - **Input Validation**: Data input sanitization
 - **Rate Limiting**: DDoS attack protection
+
+## 🔎 Logging
+
+- The backend uses `winston` and writes logs under `logs/` (combined.log, error.log).
+- Set `LOG_LEVEL` env var to `debug|info|warn|error` to control verbosity.
+
+## 📈 Metrics (Prometheus)
+
+- The backend exposes a Prometheus metrics endpoint at `GET /metrics` (Prometheus text format).
+- Metrics collected:
+	- `delivero_http_request_duration_seconds` (histogram) — per-route request duration.
+	- `delivero_http_requests_total` (counter) — total requests by method/route/status.
+	- `delivero_inventory_toggles_total` (counter) — inventory availability toggles (label `by_role`).
+	- `delivero_dispatch_estimates_total` (counter) — number of dispatch estimate requests (batched counts increment accordingly).
+	- `delivero_dispatch_simulations_total` (counter) — number of simulation requests.
+
+To scrape metrics with Prometheus, add a job pointing to your backend host, e.g.:
+
+```yaml
+scrape_configs:
+	- job_name: 'delivero-backend'
+		static_configs:
+			- targets: ['host.docker.internal:5000']
+		metrics_path: /metrics
+```
+
+Note: install `prom-client` in the backend before running:
+
+```bash
+cd backend
+npm install prom-client
+```
 
 ## 📝 Troubleshooting
 
@@ -392,3 +431,117 @@ For support and questions:
 ---
 
 **Delivero** - Your favorite delivery platform 🚀📦
+
+## Prototype: Inventory & Dispatch Endpoints
+
+This repository includes a lightweight prototype for two backend features described in the technical document:
+
+- Dynamic Inventory: toggle menu item availability at runtime.
+- Dispatch estimate: simple algorithm that suggests a rider and meetup point.
+
+API endpoints (backend):
+
+- `GET /api/inventory/:restaurantId/items` — list menu items with availability and preparation time.
+- `PUT /api/inventory/items/:itemId/availability` — body `{ "is_available": true|false }` to toggle availability.
+- `POST /api/dispatch/estimate` — body `{ "restaurantLat": number, "restaurantLon": number, "prepMinutes": number, "riders": [{"id":...,"latitude":...,"longitude":...}] }` — returns suggested rider and meetup coordinates.
+
+Protected endpoints and auth
+- Endpoints that modify data are protected with JWT-based authentication. Include header: `Authorization: Bearer <TOKEN>`.
+- Example: toggling availability requires a user with role `restaurant` or `admin`.
+
+Dispatch advanced features
+- `POST /api/dispatch/estimate` supports batching: provide an `orders` array to assign riders to multiple orders. Example:
+
+```json
+{
+	"orders": [
+		{ "id": "o1", "restaurantLat": 45.46427, "restaurantLon": 9.18951, "prepMinutes": 12 },
+		{ "id": "o2", "restaurantLat": 45.462, "restaurantLon": 9.19, "prepMinutes": 8 }
+	],
+	"riders": [ { "id": 1, "latitude": 45.47, "longitude": 9.18 } ]
+}
+```
+
+- `POST /api/dispatch/simulate` — protected. Generate mock riders around a center point (useful for local testing tools).
+
+How to try locally:
+
+1. Ensure the backend database is available and migrations applied (see `backend/db/schema.sql`).
+2. Start the backend:
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+3. Example `curl` for inventory:
+
+```bash
+curl http://localhost:5000/api/inventory/1/items
+
+curl -X PUT http://localhost:5000/api/inventory/items/42/availability \
+	-H "Content-Type: application/json" \
+	-d '{"is_available": false}'
+```
+
+4. Example `curl` for dispatch estimate:
+
+```bash
+curl -X POST http://localhost:5000/api/dispatch/estimate \
+	-H "Content-Type: application/json" \
+	-d '{"restaurantLat":45.46427, "restaurantLon":9.18951, "prepMinutes":12, "riders":[{"id":1,"latitude":45.470,"longitude":9.180},{"id":2,"latitude":45.460,"longitude":9.200}] }'
+```
+
+These endpoints are intentionally small and easy to extend for production logic (authentication, DB transaction safety, richer dispatch heuristics, rider availability streams, etc.).
+
+**Developer notes / recent prototype changes**
+
+- Purpose: small end-to-end prototype for Dynamic Inventory + Dispatch estimation, with frontend and mobile integration.
+- Key backend files added/updated:
+	- `backend/src/controllers/inventoryController.js` — list menu items, toggle availability (protected).
+	- `backend/src/controllers/dispatchController.js` — estimate (single + batching) and simulate riders.
+	- `backend/src/routes/inventory.js` and `backend/src/routes/dispatch.js` — routes registered in `backend/src/app.js`.
+	- `backend/src/middleware/metrics.js` — Prometheus metrics instrumentation and middleware; `/metrics` endpoint exposed.
+
+- Seed and DB:
+	- Schema: `backend/db/schema.sql` (idempotent schema).
+	- Demo seeder: `backend/scripts/seed-demo-data.js` (JS seeder with bcrypt hashed passwords). Prefer running this for realistic demo data.
+
+- Frontend (web) integration:
+	- API helpers: `frontend/src/services/api.js` — added `inventoryAPI` and `dispatchAPI` clients.
+	- UI: `frontend/src/pages/manager/InventoryManager.jsx` — manager-facing inventory UI; integrated into `ManagerDashboard.jsx` via an "Inventory" tab and a hero button.
+
+- Mobile integration:
+	- API helpers: `mobile/services/api.js` — added `inventoryAPI` and `dispatchAPI` clients.
+	- Screen: `mobile/screens/restaurant/InventoryScreen.js` — list + toggle availability.
+	- Navigation: `mobile/App.js` — new `RestaurantStack` (shown when `user.role === 'restaurant'`) and `Inventory` screen registered. `ProfileScreen` and `RestaurantDetailScreen` include role-guarded quick links to open inventory management.
+
+- Logging & Metrics:
+	- Backend logging via `winston` (existing `backend/src/utils/logger.js`). Controllers instrumented with `info/debug/error` logs.
+	- Prometheus metrics via `prom-client` (install in backend). Metrics endpoint at `/metrics`.
+
+Quick developer run checklist (local):
+
+1. Ensure PostgreSQL is running and `DATABASE_URL` or DB env vars set.
+2. Apply schema (or run seeder which ensures schema):
+
+```bash
+psql $DATABASE_URL -f backend/db/schema.sql
+node backend/scripts/seed-demo-data.js
+```
+
+3. Install new dependency for metrics and start backend:
+
+```bash
+cd backend
+npm install
+npm install prom-client
+npm run dev
+```
+
+4. Frontend / Mobile: dependencies already present — run as usual. The new inventory UI is available to users with role `restaurant` (mobile) and via Manager dashboard (web).
+
+Code comments: recent controller and routing files include inline logging/comments to guide future extensions (transaction safety, auth scopes, richer dispatch heuristics).
+
+If you want, I can prepare a short commit message and run the commit for you, or generate a PR with a changelog and a small Grafana dashboard JSON.

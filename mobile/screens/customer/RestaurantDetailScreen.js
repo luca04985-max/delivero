@@ -10,6 +10,7 @@ import {
   Modal,
   TextInput,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { restaurantDetailScreenStyles } from './styles/RestaurantDetailScreenStyles';
 import { makeRequest } from '../../services/api';
 import { useCart } from '../../context/CartContext';
@@ -17,6 +18,22 @@ import { useCart } from '../../context/CartContext';
 export default function RestaurantDetailScreen({ route, navigation: _navigation }) {
   const { restaurant } = route.params;
   const { addToCart } = useCart();
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const raw = await AsyncStorage.getItem('user');
+        if (raw) {
+          const u = JSON.parse(raw);
+          setUserRole(u?.role);
+        }
+      } catch (e) {
+        // ignore
+      }
+    };
+    loadUser();
+  }, []);
 
   const [restaurantDetail, setRestaurantDetail] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -232,6 +249,25 @@ export default function RestaurantDetailScreen({ route, navigation: _navigation 
               : '0.00'}
           </Text>
         </View>
+        {/* Show manage button to restaurant users/managers */}
+        {(userRole === 'restaurant' || userRole === 'manager') && (
+          <View style={{ justifyContent: 'center', paddingRight: 12 }}>
+            <TouchableOpacity
+              onPress={() => {
+                try {
+                  _navigation.navigate('Inventory', { restaurantId: restaurant.id });
+                } catch (e) {
+                  // fallback: go to Profile
+                  Alert.alert('Navigazione', 'Apri Profilo -> Gestisci Inventory');
+                  _navigation.navigate('Profile');
+                }
+              }}
+              style={{ backgroundColor: '#FF6B00', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 6 }}
+            >
+              <Text style={{ color: '#fff', fontWeight: '700' }}>Gestisci Inventory</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
 
       {/* Categories */}

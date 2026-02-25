@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ordersAPI } from '../../services/api';
 import logger from '../../utils/logger';
+import InventoryManager from './InventoryManager';
 
 export default function ManagerDashboard({ user }) {
   const [orders, setOrders] = useState([]);
@@ -162,6 +163,15 @@ export default function ManagerDashboard({ user }) {
       <div className="hero mb-4">
         <h1>⚙️ Panel Gestione</h1>
         <p>Gestisci riders, ordini, ticket, fatture e profili dal tuo account</p>
+        <div style={{ marginTop: 12 }}>
+          <button
+            className="btn btn-primary"
+            onClick={() => setActiveTab('inventory')}
+            style={{ padding: '8px 12px' }}
+          >
+            🍽️ Gestisci Inventory
+          </button>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -226,6 +236,7 @@ export default function ManagerDashboard({ user }) {
           { id: 'orders', label: '📋 Ordini', icon: '📋' },
           { id: 'tickets', label: '🎫 Ticket', icon: '🎫' },
           { id: 'invoices', label: '📄 Bollette', icon: '📄' },
+          { id: 'inventory', label: '🍽️ Inventory', icon: '🍽️' },
           { id: 'profiles', label: '👥 Profili', icon: '👥' },
         ].map(tab => (
           <button
@@ -248,6 +259,13 @@ export default function ManagerDashboard({ user }) {
           </button>
         ))}
       </div>
+      {/* INVENTORY TAB */}
+      {activeTab === 'inventory' && (
+        <React.Suspense fallback={<div>Caricamento inventory...</div>}>
+          {/* Lazy simple import to avoid affecting initial bundle */}
+          <InventoryManager restaurantId={user?.restaurant_id || 1} />
+        </React.Suspense>
+      )}
 
       {/* RIDERS TAB */}
       {activeTab === 'riders' && (

@@ -30,6 +30,7 @@ import RiderTicketsScreen from './screens/rider/RiderTicketsScreen';
 import AdminDashboardScreen from './screens/admin/AdminDashboardScreen';
 import ProfileScreen from './screens/shared/ProfileScreen';
 import PaymentMethodsScreen from './screens/shared/PaymentMethodsScreen';
+import InventoryScreen from './screens/restaurant/InventoryScreen';
 import { ActivityIndicator, View, Text, TouchableOpacity } from 'react-native';
 import AdminDashboardTickets from './screens/admin/AdminDashboardTickets';
 import ManagerRealTimeMapScreen from './screens/admin/ManagerRealTimeMapScreen';
@@ -477,6 +478,51 @@ function ManagerStack({ token, user, onLogout }) {
   );
 }
 
+// Restaurant Stack - only for restaurant-role users
+function RestaurantStack({ token, user, onLogout }) {
+  return (
+    <Stack.Navigator
+      screenOptions={({ navigation }) => ({
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: '#FF6B00',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: '700',
+        },
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile')}
+            style={{ marginRight: 12 }}
+          >
+            <Text style={{ fontSize: 20 }}>👤</Text>
+          </TouchableOpacity>
+        ),
+      })}
+    >
+      <Stack.Screen
+        name="Inventory"
+        component={InventoryScreen}
+        options={{ title: 'Gestione Inventory' }}
+        initialParams={{ token, user }}
+      />
+      <Stack.Screen
+        name="Profile"
+        children={({ navigation }) => (
+          <ProfileScreen navigation={navigation} user={user} onLogout={onLogout} />
+        )}
+        options={{
+          title: 'Profilo',
+          headerStyle: { backgroundColor: '#FF6B00' },
+          headerTintColor: '#fff',
+          headerTitleStyle: { fontWeight: '700' },
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
 export default function App() {
   const [state, dispatch] = React.useReducer(
     (prevState, action) => {
@@ -637,6 +683,20 @@ export default function App() {
           />
         ) : state.user?.role === 'manager' || state.user?.role === 'admin' ? (
           <ManagerStack
+            token={state.userToken}
+            user={state.user}
+            onLogout={async () => {
+              try {
+                await AsyncStorage.removeItem('token');
+                await AsyncStorage.removeItem('user');
+              } catch (e) {
+                console.warn('Errore durante logout:', e);
+              }
+              dispatch({ type: 'SIGN_OUT' });
+            }}
+          />
+        ) : state.user?.role === 'restaurant' ? (
+          <RestaurantStack
             token={state.userToken}
             user={state.user}
             onLogout={async () => {

@@ -6,6 +6,7 @@ export default function ProfileScreen({ navigation, user, onLogout }) {
   const role = user?.role || 'customer';
   const isCustomer = role === 'customer';
   const isRider = role === 'rider';
+  const isRestaurant = role === 'restaurant';
 
   return (
     <ScrollView style={profileScreenStyles.container} contentContainerStyle={profileScreenStyles.content}>
@@ -51,6 +52,19 @@ export default function ProfileScreen({ navigation, user, onLogout }) {
           >
             <Text style={profileScreenStyles.actionLabel}>I miei ticket</Text>
             <Text style={profileScreenStyles.actionIcon}>🎫</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {isRestaurant && (
+        <View style={profileScreenStyles.sectionCard}>
+          <Text style={profileScreenStyles.sectionTitle}>Area Ristoratore</Text>
+          <TouchableOpacity
+            style={profileScreenStyles.actionRow}
+            onPress={() => navigation.navigate('Inventory')}
+          >
+            <Text style={profileScreenStyles.actionLabel}>Gestisci Inventory</Text>
+            <Text style={profileScreenStyles.actionIcon}>🍽️</Text>
           </TouchableOpacity>
         </View>
       )}
