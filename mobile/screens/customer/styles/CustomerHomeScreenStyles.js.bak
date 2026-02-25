@@ -1,0 +1,141 @@
+import { StyleSheet } from 'react-native';
+import { mobileTheme } from '../../../theme';
+import { unifiedStyles } from '../../../theme/UnifiedStyles';
+
+export const customerHomeScreenStyles = StyleSheet.create({
+  // shared: base styles from unifiedStyles
+  ...unifiedStyles,
+  // mapToggleBtn: bottone toggle mappa (CustomerHomeScreen.js)
+  mapToggleBtn: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingVertical: mobileTheme.spacing[2],
+    paddingHorizontal: mobileTheme.spacing[4],
+    borderRadius: mobileTheme.borderRadius.xl,
+  },
+
+  // whiteSection: sezione bianca separatrice (CustomerHomeScreen.js)
+  whiteSection: {
+    backgroundColor: mobileTheme.colors.white,
+    paddingVertical: mobileTheme.spacing[4],
+    marginBottom: mobileTheme.spacing[3],
+  },
+  // section: wrapper sezione (CustomerHomeScreen.js)
+  section: {
+    marginBottom: mobileTheme.spacing[5],
+  },
+  // sectionTitle: titolo sezione (CustomerHomeScreen.js)
+  sectionTitle: {
+    ...unifiedStyles.sectionTitle,
+    marginHorizontal: mobileTheme.spacing[5],
+    marginBottom: mobileTheme.spacing[4],
+  },
+
+  // serviceCircle: wrapper icona servizio (CustomerHomeScreen.js)
+  serviceCircle: {
+    alignItems: 'center',
+    marginRight: mobileTheme.spacing[5],
+  },
+  // iconCircle: cerchio icona servizio (CustomerHomeScreen.js)
+  iconCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: mobileTheme.colors.background,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: mobileTheme.spacing[2],
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.border,
+  },
+  // serviceText: label servizio (CustomerHomeScreen.js)
+  serviceText: {
+    fontSize: mobileTheme.typography.fontSize.sm,
+    fontWeight: mobileTheme.typography.fontWeight.medium,
+    color: mobileTheme.colors.text.secondary,
+  },
+
+  // searchSection: wrapper barra ricerca (CustomerHomeScreen.js)
+  searchSection: {
+    paddingHorizontal: mobileTheme.spacing[5],
+    paddingVertical: mobileTheme.spacing[4],
+    backgroundColor: mobileTheme.colors.background,
+  },
+  // searchInput: input ricerca (CustomerHomeScreen.js)
+  searchInput: unifiedStyles.searchInput,
+
+  // categoryPill: pill categoria (CustomerHomeScreen.js)
+  categoryPill: {
+    backgroundColor: mobileTheme.colors.primary,
+    paddingHorizontal: mobileTheme.spacing[5],
+    paddingVertical: mobileTheme.spacing[3],
+    borderRadius: mobileTheme.borderRadius.full,
+    marginRight: mobileTheme.spacing[3],
+  },
+  // categoryText: testo pill categoria (CustomerHomeScreen.js)
+  categoryText: {
+    color: mobileTheme.colors.white,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontSize: mobileTheme.typography.fontSize.sm,
+  },
+
+  // restCard: card ristorante in home (CustomerHomeScreen.js)
+  restCard: {
+    backgroundColor: mobileTheme.colors.white,
+    marginHorizontal: mobileTheme.spacing[4],
+    marginBottom: mobileTheme.spacing[3],
+    borderRadius: mobileTheme.borderRadius.lg,
+    padding: mobileTheme.spacing[3],
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    ...mobileTheme.shadows.soft,
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.border,
+  },
+  // restInfo: wrapper testo card (CustomerHomeScreen.js)
+  restInfo: {
+    flex: 1,
+  },
+  // restName: nome ristorante (CustomerHomeScreen.js)
+  restName: {
+    fontSize: mobileTheme.typography.fontSize.base,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    color: mobileTheme.colors.text.primary,
+    marginBottom: mobileTheme.spacing[1],
+  },
+  // restSub: sottotitolo ristorante (CustomerHomeScreen.js)
+  restSub: {
+    fontSize: mobileTheme.typography.fontSize.sm,
+    color: mobileTheme.colors.text.secondary,
+    marginTop: mobileTheme.spacing[1],
+  },
+  // restBadge: badge info (CustomerHomeScreen.js)
+  restBadge: {
+    backgroundColor: mobileTheme.colors.background,
+    padding: mobileTheme.spacing[2],
+    borderRadius: mobileTheme.borderRadius.md,
+  },
+  // badgeText: testo badge (CustomerHomeScreen.js)
+  badgeText: {
+    color: mobileTheme.colors.primary,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    fontSize: mobileTheme.typography.fontSize.sm,
+  },
+
+  // mapContainer: wrapper mappa (CustomerHomeScreen.js)
+  mapContainer: {
+    flex: 1,
+  },
+  // map: mappa full size (CustomerHomeScreen.js)
+  map: {
+    flex: 1,
+  },
+  // mapLoader: loader mappa (CustomerHomeScreen.js)
+  mapLoader: {
+    position: 'absolute',
+    top: mobileTheme.spacing[5],
+    right: mobileTheme.spacing[5],
+  },
+});
+
+export default customerHomeScreenStyles;

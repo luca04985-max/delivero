@@ -1,5 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const sharedHeaderStyles = StyleSheet.create({
   // header: header globale per schermate customer

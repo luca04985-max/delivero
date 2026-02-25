@@ -1,11 +1,10 @@
 import express from 'express';
-import { getBills, addBill, deleteBill } from '../controllers/billsController.js';
-import { authenticateToken } from '../middleware/auth.js';
 
+// Stubbed bills router: endpoints removed to match mobile frontend usage
 const router = express.Router();
 
-router.get('/', authenticateToken, getBills);
-router.post('/', authenticateToken, addBill);
-router.delete('/:id', authenticateToken, deleteBill);
+router.all('*', (req, res) => {
+	res.status(410).json({ message: 'Bills endpoints removed' });
+});
 
 export default router;

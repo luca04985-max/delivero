@@ -1,6 +1,8 @@
 import { StyleSheet, Platform } from 'react-native';
 import { mobileTheme } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const restaurantDetailScreenStyles = StyleSheet.create({
   // shared: base styles from unifiedStyles
@@ -51,7 +53,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
   categoryTab: {
     paddingHorizontal: mobileTheme.spacing[2],
     paddingVertical: mobileTheme.spacing[1],
-    marginHorizontal: 2,
+    marginHorizontal: BASE_SPACE * 0.250,
     borderRadius: mobileTheme.borderRadius.md,
     backgroundColor: mobileTheme.colors.background,
     borderWidth: 1,
@@ -131,7 +133,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
   emptyContainer: {
     ...unifiedStyles.emptyContainer,
     paddingVertical: mobileTheme.spacing[8],
-    marginTop: 0,
+    marginTop: BASE_SPACE * 0,
   },
   // emptyText: testo stato vuoto
   emptyText: unifiedStyles.emptyText,
@@ -144,7 +146,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
   modalContent: {
     flex: 1,
     backgroundColor: mobileTheme.colors.white,
-    marginTop: 100,
+    marginTop: BASE_SPACE * 12.500,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     overflow: 'hidden',
@@ -161,7 +163,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
   },
   // closeButton: X di chiusura
   closeButton: {
-    fontSize: 24,
+    fontSize: FONT_SIZE_BASE * 1.500,
     color: mobileTheme.colors.text.tertiary,
     fontWeight: mobileTheme.typography.fontWeight.bold,
   },
@@ -400,7 +402,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.9)',
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: BASE_SPACE * 2.500,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -412,7 +414,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.9)',
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: BASE_SPACE * 2.500,
     justifyContent: 'center',
     alignItems: 'center',
     ...mobileTheme.shadows.soft,
@@ -440,7 +442,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.primary,
-    marginLeft: 4,
+    marginLeft: BASE_SPACE * 0.500,
   },
   // deliveryInfo: info consegna
   deliveryInfo: {
@@ -494,13 +496,13 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     fontSize: mobileTheme.typography.fontSize.base,
     fontWeight: mobileTheme.typography.fontWeight.semibold,
     color: mobileTheme.colors.text.primary,
-    marginBottom: 2,
+    marginBottom: BASE_SPACE * 0.250,
   },
   // itemDescription: descrizione prodotto
   itemDescription: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
-    lineHeight: 16,
+    lineHeight: FONT_SIZE_BASE * 1,
   },
   // itemPrice: prezzo prodotto
   itemPrice: {
@@ -513,7 +515,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     backgroundColor: mobileTheme.colors.primary,
     width: 30,
     height: 30,
-    borderRadius: 15,
+    borderRadius: BASE_SPACE * 1.875,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: mobileTheme.spacing[3],
@@ -521,7 +523,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
   // addButtonText: testo bottone aggiungi
   addButtonText: {
     color: mobileTheme.colors.white,
-    fontSize: 18,
+    fontSize: FONT_SIZE_BASE * 1.125,
     fontWeight: mobileTheme.typography.fontWeight.bold,
   },
 

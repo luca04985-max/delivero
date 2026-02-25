@@ -51,7 +51,7 @@ async function makeRequest(endpoint, options = {}) {
 }
 
 // WebSocket tracking initialization
-export const initializeTrackingSocket = async () => {
+const initializeTrackingSocket = async () => {
   try {
     const token = await AsyncStorage.getItem('token');
     if (!token) {
@@ -140,28 +140,10 @@ export const onTrackingStopped = callback => {
 };
 
 // Calculate straight-line distance between two points (Haversine formula)
-export const calculateDistance = (lat1, lon1, lat2, lon2) => {
-  const toRad = v => (v * Math.PI) / 180;
-  const R = 6371000; // meters
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c; // meters
-};
-
-// Calculate ETA based on distance and speed
-export const calculateETA = (distanceMeters, speedMPS = 10) => {
-  // Default speed ~36 km/h = 10 m/s (typical city delivery)
-  const seconds = distanceMeters / speedMPS;
-  const minutes = Math.ceil(seconds / 60);
-  return Math.max(1, minutes); // at least 1 minute
-};
+// internal: calculateDistance/ETA helpers removed (use local helpers where needed)
 
 // Disconnect socket
-export const disconnectTrackingSocket = () => {
+const disconnectTrackingSocket = () => {
   if (socket && socket.connected) {
     socket.disconnect();
     socket = null;
@@ -378,17 +360,26 @@ export const paymentsAPI = {
       body: JSON.stringify({ orderId }),
     }),
 
-  createStripePayment: orderId =>
+  createStripePayment: (orderId, payment_method_token) =>
     makeRequest('/payments/create', {
       method: 'POST',
-      body: JSON.stringify({ orderId }),
+      body: JSON.stringify({ orderId, payment_method_token }),
     }),
 
-  confirmStripePayment: (orderId, paymentIntentId) =>
-    makeRequest('/payments/confirm', {
+  // confirmStripePayment removed: not used in frontend
+  // Card tokenization (server-side)
+  tokenizeCard: async (cardNumber, name) => {
+    return makeRequest('/payments/cards/tokenize', {
       method: 'POST',
-      body: JSON.stringify({ orderId, paymentIntentId }),
-    }),
+      body: JSON.stringify({ card_number: cardNumber, name }),
+    });
+  },
+  getSavedCards: async () => {
+    return makeRequest('/payments/cards', { method: 'GET' });
+  },
+  deleteCard: async id => {
+    return makeRequest(`/payments/cards/${id}`, { method: 'DELETE' });
+  },
 };
 
 export { makeRequest };

@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { mobileTheme } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const customerTicketsScreenStyles = StyleSheet.create({
   ...unifiedStyles,
@@ -12,7 +14,7 @@ export const customerTicketsScreenStyles = StyleSheet.create({
     right: mobileTheme.spacing[5],
     width: 56,
     height: 56,
-    borderRadius: 28,
+    borderRadius: BASE_SPACE * 3.500,
     backgroundColor: mobileTheme.colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
@@ -25,7 +27,7 @@ export const customerTicketsScreenStyles = StyleSheet.create({
     fontSize: mobileTheme.typography.fontSize['2xl'],
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.white,
-    lineHeight: 28,
+    lineHeight: FONT_SIZE_BASE * 1.750,
   },
 
   // orderInfo: box info ordine (CustomerTicketsScreen.js)

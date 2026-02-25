@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const LoginScreenStyles = StyleSheet.create({
   ...unifiedStyles,

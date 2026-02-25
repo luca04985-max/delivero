@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const customerOrdersScreenStyles = StyleSheet.create({
   ...unifiedStyles,
@@ -285,7 +287,7 @@ export const customerOrdersScreenStyles = StyleSheet.create({
   notesText: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
-    lineHeight: 18,
+    lineHeight: FONT_SIZE_BASE * 1.125,
   },
 
   // cancelSelectButton: bottone annulla selezione (CustomerOrdersScreen.js)
@@ -323,9 +325,9 @@ export const customerOrdersScreenStyles = StyleSheet.create({
     backgroundColor: mobileTheme.colors.success,
     width: 30,
     height: 30,
-    borderRadius: 15,
+    borderRadius: BASE_SPACE * 1.875,
     textAlign: 'center',
-    lineHeight: 30,
+    lineHeight: FONT_SIZE_BASE * 1.875,
   },
 
   // createTicketButton: bottone crea ticket (CustomerOrdersScreen.js)

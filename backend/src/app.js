@@ -10,17 +10,16 @@ import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
 import riderRoutes from './routes/rider.js';
 import orderRoutes from './routes/orders.js';
-import billRoutes from './routes/bills.js';
 import paymentRoutes from './routes/payments.js';
 import adminRoutes from './routes/admin.js';
-import billPaymentsRoutes from './routes/billPayments.js';
+// billPaymentsRoutes removed (not used by mobile)
 import pharmaciesRoutes from './routes/pharmacies.js';
 import medicalTransportsRoutes from './routes/medicalTransports.js';
 import documentPickupsRoutes from './routes/documentPickups.js';
 import ticketsRoutes from './routes/tickets.js';
 import restaurantsRoutes from './routes/restaurants.js';
-import monitoringRoutes from './routes/monitoring.js';
-import notificationsRoutes from './routes/notifications.js';
+// monitoring, notifications, analytics, bills and billPayments routes
+// removed: not referenced by mobile frontend
 import { initializeSocket } from './services/socket.js';
 import { authenticateToken } from './middleware/auth.js';
 
@@ -77,7 +76,6 @@ initializeSocket(server);
 app.get('/health', performanceMiddleware.healthCheck());
 
 // Monitoring routes
-app.use('/api/monitoring', monitoringRoutes);
 
 // Routes
 app.use('/api/auth', authLimiter, authRoutes);
@@ -85,15 +83,12 @@ app.use('/api/user', userRoutes);
 app.use('/api/rider', riderRoutes);
 app.use('/api/restaurants', restaurantsRoutes);
 app.use('/api/orders', orderRoutes);
-app.use('/api/bills', billRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/bill-payments', billPaymentsRoutes);
+// removed bill-payments route (not used by mobile)
 app.use('/api/pharmacies', pharmaciesRoutes);
-app.use('/api/medical-transports', medicalTransportsRoutes);
 app.use('/api/document-pickups', documentPickupsRoutes);
 app.use('/api/tickets', ticketsRoutes);
-app.use('/api/notifications', notificationsRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

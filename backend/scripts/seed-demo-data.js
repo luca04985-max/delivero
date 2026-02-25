@@ -252,17 +252,9 @@ const insertReview = async ({ restaurantId, userId, foodRating, deliveryRating, 
 // Main seeding function
 (async () => {
     try {
-        // Check if DB already has users
-        const userCount = await db.query('SELECT COUNT(*) AS cnt FROM users');
-        const count = parseInt(userCount.rows[0].cnt, 10);
-        if (count > 0) {
-            console.log('Database already has users; skipping demo data seeding.');
-            process.exit(0);
-        }
-
         if (DRY_RUN) {
-            console.log('🌱 DRY-RUN: Empty DB detected; demo seeding would perform the following actions:');
-            console.log('  - Create users: demo.customer, demo.rider, demo.manager');
+            console.log('🌱 DRY-RUN: Demo seeding would perform the following actions (no DB connection required):');
+            console.log('  - Create users: demo.customer, demo.rider, demo.manager (hashed passwords via bcrypt)');
             console.log('  - Create restaurants: 2 (Demo Pizza Roma Est, Demo Sushi Roma Est)');
             console.log('  - Create restaurant categories: 4');
             console.log('  - Create menu items: ~5');
@@ -272,7 +264,15 @@ const insertReview = async ({ restaurantId, userId, foodRating, deliveryRating, 
             console.log('  - Create notifications: 2');
             console.log('  - Create rider location entries: 1');
             console.log('  - Create reviews: 1');
-            console.log('\nRun the script without --dry-run to actually apply these changes.');
+            console.log('\nRun the script without --dry-run to actually apply these changes (requires DB connection).');
+            process.exit(0);
+        }
+
+        // Check if DB already has users
+        const userCount = await db.query('SELECT COUNT(*) AS cnt FROM users');
+        const count = parseInt(userCount.rows[0].cnt, 10);
+        if (count > 0) {
+            console.log('Database already has users; skipping demo data seeding.');
             process.exit(0);
         }
 

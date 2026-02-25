@@ -12,6 +12,8 @@ const DRY_RUN = process.argv.includes('--dry-run') || process.env.DRY_RUN === '1
 const ensureOrderTrackingColumns = async () => {
   console.log(`🔧 Verifying all database tables and columns...${DRY_RUN ? ' (DRY-RUN - no changes will be applied)' : ''}`);
 
+  
+
   // Define all table columns from schema
   const tableColumns = {
     users: [
@@ -310,6 +312,21 @@ const ensureOrderTrackingColumns = async () => {
       seen.add(key);
       return true;
     });
+  }
+
+  // Ensure tables exist (create minimal table if missing). Columns will be added below.
+  for (const tableName of Object.keys(tableColumns)) {
+    const createSql = `CREATE TABLE IF NOT EXISTS ${tableName} (id SERIAL PRIMARY KEY);`;
+    try {
+      if (DRY_RUN) {
+        console.log(`  🔁 DRY-RUN SQL: ${createSql}`);
+      } else {
+        await db.query(createSql);
+        console.log(`  ✅ Table ${tableName} created/verified`);
+      }
+    } catch (e) {
+      console.log(`  ⚠️ Table ${tableName} create failed: ${e.message}`);
+    }
   }
 
   // Check each table and add missing columns

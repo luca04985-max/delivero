@@ -1,5 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { mobileTheme } from '../../../theme';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const sharedCategoryStyles = StyleSheet.create({
   // CATEGORY CARD - Stile base per le carte categoria
@@ -24,7 +26,7 @@ export const sharedCategoryStyles = StyleSheet.create({
 
   // CATEGORY EMOJI - Stile per l'emoji della categoria
   categoryEmoji: {
-    fontSize: 32,
+    fontSize: FONT_SIZE_BASE * 2,
     marginBottom: mobileTheme.spacing[2],
   },
 

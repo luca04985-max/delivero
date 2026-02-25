@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { mobileTheme } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const cartScreenStyles = StyleSheet.create({
   // shared: base styles from unifiedStyles
@@ -47,7 +49,7 @@ export const cartScreenStyles = StyleSheet.create({
     fontSize: mobileTheme.typography.fontSize.base,
     fontWeight: mobileTheme.typography.fontWeight.semibold,
     color: mobileTheme.colors.text.primary,
-    marginBottom: 2,
+    marginBottom: BASE_SPACE * 0.250,
   },
   // itemPrice: prezzo prodotto (CartScreen.js)
   itemPrice: {

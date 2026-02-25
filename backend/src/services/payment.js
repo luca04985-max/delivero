@@ -32,6 +32,43 @@ export const createPaymentIntent = async (amount, orderId, userId, email) => {
   }
 };
 
+export const createPaymentIntentWithMethod = async (
+  amount,
+  orderId,
+  userId,
+  email,
+  payment_method,
+  confirm = false,
+) => {
+  try {
+    if (!stripeInstance) {
+      const err = new Error('Stripe is not configured');
+      err.code = 'STRIPE_NOT_CONFIGURED';
+      throw err;
+    }
+
+    const payload = {
+      amount: Math.round(amount * 100),
+      currency: 'eur',
+      metadata: { orderId, userId },
+      receipt_email: email,
+    };
+
+    if (payment_method) {
+      payload.payment_method = payment_method;
+      payload.payment_method_types = ['card'];
+      if (confirm) payload.confirm = true;
+      // off_session attempt for saved cards
+      payload.off_session = true;
+    }
+
+    const paymentIntent = await stripeInstance.paymentIntents.create(payload);
+    return paymentIntent;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const confirmPayment = async paymentIntentId => {
   try {
     if (!stripeInstance) {

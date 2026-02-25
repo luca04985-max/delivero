@@ -2,25 +2,18 @@ import { StyleSheet } from 'react-native';
 import { mobileTheme } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
 import { sharedCategoryStyles } from './SharedCategoryStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const restaurantsScreenStyles = StyleSheet.create({
   // shared: base styles from unifiedStyles
   ...unifiedStyles,
 
-  // header: header standard (RestaurantsScreen.js)
-  header: unifiedStyles.header,
-  // headerContent: contenuto header (RestaurantsScreen.js)
-  headerContent: unifiedStyles.headerContent,
-  // title: titolo header (RestaurantsScreen.js)
-  title: unifiedStyles.title,
-  // subtitle: sottotitolo header (RestaurantsScreen.js)
-  subtitle: unifiedStyles.subtitle,
-
   // searchContainer: wrapper ricerca con offset (RestaurantsScreen.js)
   searchContainer: {
     ...unifiedStyles.searchContainer,
     paddingHorizontal: mobileTheme.spacing[5],
-    marginTop: -30,
+    marginTop: -mobileTheme.spacing[3],
     marginBottom: mobileTheme.spacing[4],
   },
   // searchInput: input ricerca con radius xl (RestaurantsScreen.js)
@@ -75,7 +68,7 @@ export const restaurantsScreenStyles = StyleSheet.create({
   // restaurantImage: hero immagine card (RestaurantsScreen.js)
   restaurantImage: {
     width: '100%',
-    height: 140,
+    height: 120,
     backgroundColor: mobileTheme.colors.border,
   },
   // restaurantContent: contenuto card (RestaurantsScreen.js)
@@ -105,7 +98,7 @@ export const restaurantsScreenStyles = StyleSheet.create({
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
     marginBottom: mobileTheme.spacing[3],
-    lineHeight: 18,
+    lineHeight: FONT_SIZE_BASE * 1.125,
   },
   // restaurantFooter: footer card con rating e badge (RestaurantsScreen.js)
   restaurantFooter: {
@@ -132,7 +125,7 @@ export const restaurantsScreenStyles = StyleSheet.create({
   deliveryBadge: {
     backgroundColor: mobileTheme.colors.primarySoft,
     paddingHorizontal: mobileTheme.spacing[2],
-    paddingVertical: 2,
+    paddingVertical: BASE_SPACE * 0.250,
     borderRadius: mobileTheme.borderRadius.full,
   },
   // deliveryText: testo badge consegna (RestaurantsScreen.js)

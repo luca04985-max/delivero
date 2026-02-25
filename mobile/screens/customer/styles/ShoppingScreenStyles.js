@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const shoppingScreenStyles = StyleSheet.create({
   ...unifiedStyles,
@@ -63,7 +65,7 @@ export const shoppingScreenStyles = StyleSheet.create({
   },
   // categoryEmoji: emoji categoria (ShoppingScreen.js)
   categoryEmoji: {
-    fontSize: 32,
+    fontSize: FONT_SIZE_BASE * 2,
     marginBottom: mobileTheme.spacing[2],
   },
   // categoryName: testo categoria (ShoppingScreen.js)
@@ -92,11 +94,11 @@ export const shoppingScreenStyles = StyleSheet.create({
   },
   // brandEmoji: emoji brand (ShoppingScreen.js)
   brandEmoji: {
-    fontSize: 40,
+    fontSize: FONT_SIZE_BASE * 2.500,
     marginRight: mobileTheme.spacing[4],
     backgroundColor: mobileTheme.colors.background, // Cerchio di sfondo per l'emoji
-    padding: 10,
-    borderRadius: 50,
+    padding: BASE_SPACE * 1.250,
+    borderRadius: BASE_SPACE * 6.250,
     overflow: 'hidden',
   },
   // brandInfo: wrapper info brand (ShoppingScreen.js)
@@ -108,28 +110,28 @@ export const shoppingScreenStyles = StyleSheet.create({
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: FONT_WEIGHTS.bold,
     color: mobileTheme.colors.text.primary,
-    marginBottom: 2,
+    marginBottom: BASE_SPACE * 0.250,
   },
   // brandDetails: dettagli brand (ShoppingScreen.js)
   brandDetails: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
-    lineHeight: 18,
+    lineHeight: FONT_SIZE_BASE * 1.125,
   },
 
   // deliveryBadge: badge consegna (ShoppingScreen.js)
   deliveryBadge: {
     backgroundColor: mobileTheme.colors.primarySoft,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
+    paddingHorizontal: BASE_SPACE * 1,
+    paddingVertical: BASE_SPACE * 0.500,
+    borderRadius: BASE_SPACE * 0.750,
     alignSelf: 'flex-start',
-    marginTop: 6,
+    marginTop: BASE_SPACE * 0.750,
   },
   // deliveryText: testo badge consegna (ShoppingScreen.js)
   deliveryText: {
     color: mobileTheme.colors.primary,
-    fontSize: 10,
+    fontSize: FONT_SIZE_BASE * 0.625,
     fontWeight: FONT_WEIGHTS.bold,
   },
 });

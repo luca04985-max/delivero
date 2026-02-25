@@ -12,7 +12,7 @@ import logger from '../utils/logger.js';
 
 export const createPayment = async (req, res) => {
   try {
-    const { orderId } = req.body;
+    const { orderId, payment_method_token } = req.body;
     const userId = req.user.userId;
 
     // Verify order exists
@@ -35,16 +35,54 @@ export const createPayment = async (req, res) => {
     // Always compute amount server-side
     const amount = Number(order.total_amount);
 
-    // Create Stripe payment intent
+    // If client provided a saved payment token, attempt an immediate charge
+    if (payment_method_token) {
+      try {
+        const paymentIntent = await createPaymentIntentWithMethod(
+          amount,
+          orderId,
+          userId,
+          user.rows[0].email,
+          payment_method_token,
+          true,
+        );
+
+        // Persist payment record
+        await savePayment(orderId, paymentIntent.id, amount, paymentIntent.status, 'card');
+
+        if (paymentIntent.status === 'succeeded') {
+          await db.query('UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2', [
+            'confirmed',
+            orderId,
+          ]);
+        }
+
+        return res.status(201).json({
+          clientSecret: paymentIntent.client_secret,
+          paymentIntentId: paymentIntent.id,
+          status: paymentIntent.status,
+        });
+      } catch (err) {
+        // If immediate charge failed (e.g. requires_action), fall back to returning client_secret
+        logger.error('Immediate charge with saved token failed:', err.message || err);
+        try {
+          const fallback = await createPaymentIntent(amount, orderId, userId, user.rows[0].email);
+          await savePayment(orderId, fallback.id, amount, 'pending', 'card');
+          return res.status(201).json({
+            clientSecret: fallback.client_secret,
+            paymentIntentId: fallback.id,
+          });
+        } catch (fallbackErr) {
+          logger.error('Fallback payment intent creation failed:', fallbackErr.message || fallbackErr);
+          return res.status(500).json({ message: 'Error creating payment', error: fallbackErr.message });
+        }
+      }
+    }
+
+    // Default: create a normal PaymentIntent and return client_secret to client
     const paymentIntent = await createPaymentIntent(amount, orderId, userId, user.rows[0].email);
-
-    // Save payment record
     await savePayment(orderId, paymentIntent.id, amount, 'pending', 'card');
-
-    res.status(201).json({
-      clientSecret: paymentIntent.client_secret,
-      paymentIntentId: paymentIntent.id,
-    });
+    res.status(201).json({ clientSecret: paymentIntent.client_secret, paymentIntentId: paymentIntent.id });
   } catch (error) {
     res.status(500).json({ message: 'Error creating payment', error: error.message });
   }

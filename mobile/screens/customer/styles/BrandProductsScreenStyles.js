@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const brandProductsScreenStyles = StyleSheet.create({
   // shared: base styles from unifiedStyles
@@ -84,7 +86,7 @@ export const brandProductsScreenStyles = StyleSheet.create({
   },
   // productEmoji: emoji prodotto (BrandProductsScreen.js)
   productEmoji: {
-    fontSize: 30,
+    fontSize: FONT_SIZE_BASE * 1.875,
     marginRight: mobileTheme.spacing[4],
   },
   // productInfo: wrapper info prodotto (BrandProductsScreen.js)
@@ -101,7 +103,7 @@ export const brandProductsScreenStyles = StyleSheet.create({
   productCategory: {
     fontSize: mobileTheme.typography.fontSize.xs,
     color: mobileTheme.colors.text.secondary,
-    marginBottom: 2,
+    marginBottom: BASE_SPACE * 0.250,
   },
   // productUnit: unità prodotto (BrandProductsScreen.js)
   productUnit: {
@@ -115,15 +117,15 @@ export const brandProductsScreenStyles = StyleSheet.create({
   // discountBadge: badge sconto (BrandProductsScreen.js)
   discountBadge: {
     backgroundColor: mobileTheme.colors.error,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 10,
-    marginBottom: 4,
+    paddingHorizontal: BASE_SPACE * 0.750,
+    paddingVertical: BASE_SPACE * 0.250,
+    borderRadius: BASE_SPACE * 1.250,
+    marginBottom: BASE_SPACE * 0.500,
   },
   // discountText: testo badge sconto (BrandProductsScreen.js)
   discountText: {
     color: mobileTheme.colors.white,
-    fontSize: 10,
+    fontSize: FONT_SIZE_BASE * 0.625,
     fontWeight: FONT_WEIGHTS.bold,
   },
   // productPrice: prezzo prodotto (BrandProductsScreen.js)
@@ -144,14 +146,14 @@ export const brandProductsScreenStyles = StyleSheet.create({
   },
   // stockIndicator: pill stock (BrandProductsScreen.js)
   stockIndicator: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: BASE_SPACE * 1,
+    paddingVertical: BASE_SPACE * 0.500,
     borderRadius: mobileTheme.borderRadius.full,
     backgroundColor: mobileTheme.colors.success,
   },
   // stockText: testo pill stock (BrandProductsScreen.js)
   stockText: {
-    fontSize: 10,
+    fontSize: FONT_SIZE_BASE * 0.625,
     color: mobileTheme.colors.white,
     fontWeight: FONT_WEIGHTS.semibold,
   },

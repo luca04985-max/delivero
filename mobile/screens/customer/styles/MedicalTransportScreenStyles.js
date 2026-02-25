@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { mobileTheme } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const medicalTransportScreenStyles = StyleSheet.create({
   // container: wrapper principale della schermata
@@ -48,7 +50,7 @@ export const medicalTransportScreenStyles = StyleSheet.create({
   },
   // emergencyIcon: icona/emoticon emergenza
   emergencyIcon: {
-    fontSize: 32,
+    fontSize: FONT_SIZE_BASE * 2,
     marginRight: mobileTheme.spacing[3],
   },
   // emergencyTitle: titolo card emergenza
@@ -63,7 +65,7 @@ export const medicalTransportScreenStyles = StyleSheet.create({
     fontSize: mobileTheme.typography.fontSize.base,
     color: mobileTheme.colors.text.secondary,
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: FONT_SIZE_BASE * 1.250,
   },
 
   // bookingCard: contenitore form prenotazione
@@ -115,7 +117,7 @@ export const medicalTransportScreenStyles = StyleSheet.create({
   },
   // optionIcon: icona/emoji opzione
   optionIcon: {
-    fontSize: 24,
+    fontSize: FONT_SIZE_BASE * 1.500,
     marginRight: mobileTheme.spacing[3],
   },
   // optionInfo: contenitore info opzione
@@ -127,13 +129,13 @@ export const medicalTransportScreenStyles = StyleSheet.create({
     fontSize: mobileTheme.typography.fontSize.base,
     fontWeight: mobileTheme.typography.fontWeight.semibold,
     color: mobileTheme.colors.text.primary,
-    marginBottom: 2,
+    marginBottom: BASE_SPACE * 0.250,
   },
   // optionDescription: descrizione opzione
   optionDescription: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
-    lineHeight: 16,
+    lineHeight: FONT_SIZE_BASE * 1,
   },
   // optionPrice: prezzo opzione
   optionPrice: {

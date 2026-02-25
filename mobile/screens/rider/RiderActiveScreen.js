@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   RefreshControl,
   ScrollView,
+  Linking,
+  Platform,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { ordersAPI } from '../../services/api';
@@ -79,6 +81,48 @@ export default function RiderActiveScreen() {
     }
   };
 
+  const resolveCoords = o => {
+    const lat = o?.delivery_latitude ?? o?.delivery_lat ?? o?.latitude ?? o?.rider_latitude ?? null;
+    const lon = o?.delivery_longitude ?? o?.delivery_lon ?? o?.longitude ?? o?.rider_longitude ?? null;
+    return { lat, lon };
+  };
+
+  const openWazeForOrder = async order => {
+    const { lat, lon } = resolveCoords(order);
+    if (!lat || !lon) {
+      showToast('Coordinate non disponibili per la navigazione', 'error');
+      return;
+    }
+
+    const wazeUrl = `waze://?ll=${lat},${lon}&navigate=yes`;
+    const mapsUrl = Platform.OS === 'ios'
+      ? `maps://?daddr=${lat},${lon}`
+      : `geo:${lat},${lon}?q=${lat},${lon}(Destinazione)`;
+    const browserUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
+
+    try {
+      const canWaze = await Linking.canOpenURL(wazeUrl);
+      if (canWaze) {
+        await Linking.openURL(wazeUrl);
+        await updateStatus(order.id, 'in_transit');
+        return;
+      }
+
+      const canMaps = await Linking.canOpenURL(mapsUrl);
+      if (canMaps) {
+        await Linking.openURL(mapsUrl);
+        await updateStatus(order.id, 'in_transit');
+        return;
+      }
+
+      await Linking.openURL(browserUrl);
+      await updateStatus(order.id, 'in_transit');
+    } catch (e) {
+      logger.error('Error opening navigation app', e);
+      showToast('Impossibile aprire l\'app di navigazione', 'error');
+    }
+  };
+
   const ActiveOrderCard = ({ item }) => {
     useRiderLocationSender(item?.id, item?.status);
 
@@ -99,14 +143,25 @@ export default function RiderActiveScreen() {
               <Text style={riderActiveScreenStyles.btnText}>Ritirato</Text>
             </TouchableOpacity>
           )}
+
           {(item.status === 'pickup' || item.status === 'accepted') && (
-            <TouchableOpacity
-              style={riderActiveScreenStyles.btnTransit}
-              onPress={() => updateStatus(item.id, 'in_transit')}
-            >
-              <Text style={riderActiveScreenStyles.btnText}>In Viaggio</Text>
-            </TouchableOpacity>
+            <View style={{ flexDirection: 'row', flex: 1 }}>
+              <TouchableOpacity
+                style={riderActiveScreenStyles.wazeButton}
+                onPress={() => openWazeForOrder(item)}
+              >
+                <Text style={riderActiveScreenStyles.btnText}>Waze</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={riderActiveScreenStyles.btnTransit}
+                onPress={() => updateStatus(item.id, 'in_transit')}
+              >
+                <Text style={riderActiveScreenStyles.btnText}>In Viaggio</Text>
+              </TouchableOpacity>
+            </View>
           )}
+
           {item.status === 'in_transit' && (
             <TouchableOpacity
               style={riderActiveScreenStyles.btnComplete}

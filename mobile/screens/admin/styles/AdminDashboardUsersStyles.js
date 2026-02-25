@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { mobileTheme } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const adminDashboardUsersStyles = StyleSheet.create({
   ...unifiedStyles,
@@ -48,7 +50,7 @@ export const adminDashboardUsersStyles = StyleSheet.create({
   userAvatar: {
     width: 50,
     height: 50,
-    borderRadius: 25,
+    borderRadius: BASE_SPACE * 3.125,
     backgroundColor: mobileTheme.colors.background,
     justifyContent: 'center',
     alignItems: 'center',
@@ -240,7 +242,7 @@ export const adminDashboardUsersStyles = StyleSheet.create({
   activityIndicator: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: BASE_SPACE * 0.500,
     marginRight: mobileTheme.spacing[2],
   },
   // activityActive: stato attivo

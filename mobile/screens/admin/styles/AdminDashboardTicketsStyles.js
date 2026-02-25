@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const adminDashboardTicketsStyles = StyleSheet.create({
   ...unifiedStyles,
@@ -135,7 +137,7 @@ export const adminDashboardTicketsStyles = StyleSheet.create({
   descriptionText: {
     fontSize: mobileTheme.typography.fontSize.base,
     color: mobileTheme.colors.text.primary,
-    lineHeight: 22,
+    lineHeight: FONT_SIZE_BASE * 1.375,
   },
 
   // actionsContainer: barra azioni
@@ -173,7 +175,7 @@ export const adminDashboardTicketsStyles = StyleSheet.create({
   statusDot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: BASE_SPACE * 0.500,
     marginRight: mobileTheme.spacing[2],
   },
   // statusDotOpen: pallino stato aperto

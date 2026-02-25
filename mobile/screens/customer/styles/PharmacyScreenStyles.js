@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { mobileTheme } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const pharmacyScreenStyles = StyleSheet.create({
   // shared: base styles from unifiedStyles
@@ -25,7 +27,7 @@ export const pharmacyScreenStyles = StyleSheet.create({
     backgroundColor: '#34C759',
     width: 30,
     height: 30,
-    borderRadius: 15,
+    borderRadius: BASE_SPACE * 1.875,
     justifyContent: 'center',
     alignItems: 'center',
     ...mobileTheme.shadows.sm,

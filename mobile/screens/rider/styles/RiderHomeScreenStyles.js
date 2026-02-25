@@ -1,6 +1,8 @@
 import { StyleSheet, Platform } from 'react-native';
 import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const riderHomeScreenStyles = StyleSheet.create({
   ...unifiedStyles,
@@ -52,7 +54,7 @@ export const riderHomeScreenStyles = StyleSheet.create({
   },
   // emoji: icona/emoji (RiderHomeScreen.js)
   emoji: {
-    fontSize: 28,
+    fontSize: FONT_SIZE_BASE * 1.750,
   },
   // textGroup: wrapper testo (RiderHomeScreen.js)
   textGroup: {
@@ -63,7 +65,7 @@ export const riderHomeScreenStyles = StyleSheet.create({
     fontSize: mobileTheme.typography.fontSize.base,
     fontWeight: FONT_WEIGHTS.black,
     color: mobileTheme.colors.text.primary,
-    lineHeight: 22,
+    lineHeight: FONT_SIZE_BASE * 1.375,
   },
 
   // payoutContainer: badge payout (RiderHomeScreen.js)
@@ -73,7 +75,7 @@ export const riderHomeScreenStyles = StyleSheet.create({
     paddingVertical: mobileTheme.spacing[1],
     borderRadius: mobileTheme.borderRadius.xs,
     alignSelf: 'flex-start',
-    marginTop: 4,
+    marginTop: BASE_SPACE * 0.500,
   },
   // payout: testo payout (RiderHomeScreen.js)
   payout: {
@@ -111,14 +113,14 @@ export const riderHomeScreenStyles = StyleSheet.create({
   statusDot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: BASE_SPACE * 0.500,
     backgroundColor: mobileTheme.colors.success,
-    marginRight: 6,
+    marginRight: BASE_SPACE * 0.750,
   },
   // statusText: testo stato (RiderHomeScreen.js)
   statusText: {
     color: mobileTheme.colors.text.tertiary,
-    fontSize: 12,
+    fontSize: FONT_SIZE_BASE * 0.750,
     fontWeight: FONT_WEIGHTS.semibold,
   },
 });

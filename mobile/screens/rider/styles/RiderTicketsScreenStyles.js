@@ -1,6 +1,8 @@
 import { StyleSheet, Platform } from 'react-native';
 import { mobileTheme } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const riderTicketsScreenStyles = StyleSheet.create({
   // shared: base styles from unifiedStyles
@@ -24,7 +26,7 @@ export const riderTicketsScreenStyles = StyleSheet.create({
   // listContent: padding lista (RiderTicketsScreen.js)
   listContent: {
     padding: mobileTheme.spacing[4],
-    paddingBottom: 100, // Spazio per non coprire l'ultimo ticket con il FAB
+    paddingBottom: BASE_SPACE * 12.500, // Spazio per non coprire l'ultimo ticket con il FAB
   },
   // emptyContainer: stato vuoto (RiderTicketsScreen.js)
   emptyContainer: unifiedStyles.emptyContainer,
@@ -59,7 +61,7 @@ export const riderTicketsScreenStyles = StyleSheet.create({
   },
   // statusSeparatorIcon: icona separatore (RiderTicketsScreen.js)
   statusSeparatorIcon: {
-    fontSize: 20,
+    fontSize: FONT_SIZE_BASE * 1.250,
     marginRight: mobileTheme.spacing[2],
   },
   // statusSeparatorTitle: titolo separatore (RiderTicketsScreen.js)
@@ -82,7 +84,7 @@ export const riderTicketsScreenStyles = StyleSheet.create({
   },
   // statusSeparatorToggle: toggle separatore (RiderTicketsScreen.js)
   statusSeparatorToggle: {
-    fontSize: 16,
+    fontSize: FONT_SIZE_BASE * 1,
   },
 
   // ticketCard: card ticket (RiderTicketsScreen.js)
@@ -116,7 +118,7 @@ export const riderTicketsScreenStyles = StyleSheet.create({
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
     marginBottom: mobileTheme.spacing[3],
-    lineHeight: 20,
+    lineHeight: FONT_SIZE_BASE * 1.250,
   },
   // statusBadge: badge stato (RiderTicketsScreen.js)
   statusBadge: {
@@ -197,7 +199,7 @@ export const riderTicketsScreenStyles = StyleSheet.create({
   responseText: {
     fontSize: mobileTheme.typography.fontSize.sm,
     color: mobileTheme.colors.text.secondary,
-    lineHeight: 18,
+    lineHeight: FONT_SIZE_BASE * 1.125,
   },
 
   // ticketFooter: footer ticket (RiderTicketsScreen.js)
@@ -239,9 +241,9 @@ export const riderTicketsScreenStyles = StyleSheet.create({
   // fabText: testo FAB (RiderTicketsScreen.js)
   fabText: {
     color: mobileTheme.colors.white,
-    fontSize: 24,
+    fontSize: FONT_SIZE_BASE * 1.500,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    lineHeight: 24,
+    lineHeight: FONT_SIZE_BASE * 1.500,
   },
 });
 

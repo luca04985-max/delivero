@@ -1,6 +1,8 @@
 import { StyleSheet, Platform } from 'react-native';
 import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const managerRealTimeMapScreenStyles = StyleSheet.create({
   // container: wrapper principale (sfondo mappa)
@@ -53,7 +55,7 @@ export const managerRealTimeMapScreenStyles = StyleSheet.create({
   riderAvatar: {
     width: 50,
     height: 50,
-    borderRadius: 25,
+    borderRadius: BASE_SPACE * 3.125,
     backgroundColor: mobileTheme.colors.primarySoft,
     justifyContent: 'center',
     alignItems: 'center',
@@ -69,15 +71,15 @@ export const managerRealTimeMapScreenStyles = StyleSheet.create({
   statusIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 2,
+    marginTop: BASE_SPACE * 0.250,
   },
   // statusDot: pallino stato
   statusDot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: BASE_SPACE * 0.500,
     backgroundColor: mobileTheme.colors.success,
-    marginRight: 6,
+    marginRight: BASE_SPACE * 0.750,
   },
 
   // center: stato loading su fondo chiaro

@@ -1,6 +1,8 @@
 import { StyleSheet, Platform } from 'react-native';
 import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const AdminDashboardScreenStyles = StyleSheet.create({
   ...unifiedStyles,
@@ -30,7 +32,7 @@ export const AdminDashboardScreenStyles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: mobileTheme.spacing[3],
     paddingHorizontal: mobileTheme.spacing[4],
-    marginHorizontal: 4,
+    marginHorizontal: BASE_SPACE * 0.500,
     borderRadius: mobileTheme.borderRadius.md,
   },
   // activeTab: pill tab attiva (AdminDashboardScreen.js)

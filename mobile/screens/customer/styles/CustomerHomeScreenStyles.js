@@ -1,19 +1,12 @@
 import { StyleSheet } from 'react-native';
 import { mobileTheme } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const customerHomeScreenStyles = StyleSheet.create({
   // shared: base styles from unifiedStyles
   ...unifiedStyles,
-
-  // header: header standard (CustomerHomeScreen.js)
-  header: unifiedStyles.header,
-  // headerContent: layout header con toggle (CustomerHomeScreen.js)
-  headerContent: unifiedStyles.headerContent,
-  // title: titolo header (CustomerHomeScreen.js)
-  title: unifiedStyles.title,
-  // subtitle: sottotitolo header (CustomerHomeScreen.js)
-  subtitle: unifiedStyles.subtitle,
   // mapToggleBtn: bottone toggle mappa (CustomerHomeScreen.js)
   mapToggleBtn: {
     backgroundColor: 'rgba(255,255,255,0.2)',
@@ -48,12 +41,12 @@ export const customerHomeScreenStyles = StyleSheet.create({
   iconCircle: {
     width: 60,
     height: 60,
-    borderRadius: 30,
+    borderRadius: BASE_SPACE * 3.750,
     backgroundColor: mobileTheme.colors.background,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: mobileTheme.spacing[2],
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: mobileTheme.colors.border,
   },
   // serviceText: label servizio (CustomerHomeScreen.js)
@@ -90,10 +83,10 @@ export const customerHomeScreenStyles = StyleSheet.create({
   // restCard: card ristorante in home (CustomerHomeScreen.js)
   restCard: {
     backgroundColor: mobileTheme.colors.white,
-    marginHorizontal: mobileTheme.spacing[5],
+    marginHorizontal: mobileTheme.spacing[4],
     marginBottom: mobileTheme.spacing[3],
     borderRadius: mobileTheme.borderRadius.lg,
-    padding: mobileTheme.spacing[4],
+    padding: mobileTheme.spacing[3],
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

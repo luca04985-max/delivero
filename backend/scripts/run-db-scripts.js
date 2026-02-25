@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-const { spawn } = require('child_process');
-const path = require('path');
+import { spawn } from 'child_process';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const args = process.argv.slice(2);
 const force = args.includes('--force');
@@ -8,6 +9,8 @@ const force = args.includes('--force');
 const dryRun = args.includes('--dry-run') || !force;
 const scripts = ['ensure-db-schema.js', 'seed-demo-data.js'];
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const scriptsDir = __dirname;
 
 function runScript(script, extraArgs = []) {

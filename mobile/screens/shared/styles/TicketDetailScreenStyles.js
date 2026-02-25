@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { mobileTheme } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const ticketDetailScreenStyles = StyleSheet.create({
   ...unifiedStyles,
@@ -104,7 +106,7 @@ export const ticketDetailScreenStyles = StyleSheet.create({
   responseContent: {
     fontSize: mobileTheme.typography.fontSize.base,
     color: mobileTheme.colors.text.primary,
-    lineHeight: 20,
+    lineHeight: FONT_SIZE_BASE * 1.250,
   },
   // noResponsesContainer: wrapper senza risposte
   noResponsesContainer: {

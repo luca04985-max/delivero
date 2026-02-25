@@ -103,11 +103,23 @@ CREATE TABLE IF NOT EXISTS payments (
   amount NUMERIC(10,2),
   status VARCHAR(50) DEFAULT 'pending',
   stripe_payment_id TEXT,
+  card_token TEXT,
   collected_at TIMESTAMP,
   collected_by INTEGER,
   confirmed_at TIMESTAMP,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Customer saved cards (tokenized)
+CREATE TABLE IF NOT EXISTS customer_cards (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER,
+  token TEXT UNIQUE NOT NULL,
+  masked VARCHAR(64),
+  last4 VARCHAR(4),
+  brand VARCHAR(32),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Tickets

@@ -16,6 +16,8 @@ import { useCart } from '../../context/CartContext';
 import { ordersAPI, paymentsAPI } from '../../services/api';
 import { geocodeAddress } from '../../services/geocoding';
 import locationService from '../../services/locationService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useToast } from '../../hooks/useToast';
 import { mobileTheme } from '../../theme';
 // Importiamo lo stylesheet come 'styles' per brevità nel codice
 import styles from './styles/CartScreenStyles';
@@ -30,6 +32,13 @@ export default function CartScreen({ navigation }) {
   const [currentLocation, setCurrentLocation] = useState(null);
   const [loadingLocation, setLoadingLocation] = useState(false);
   const [geocodingTimeout, setGeocodingTimeout] = useState(null);
+  const { showToast } = useToast();
+
+  // Saved addresses/cards (from PaymentMethodsScreen asyncstorage)
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [savedCards, setSavedCards] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const [selectedCardId, setSelectedCardId] = useState(null);
 
   const deliveryFee = 2.5;
   const finalTotal = cart.totalPrice + deliveryFee;
@@ -57,6 +66,24 @@ export default function CartScreen({ navigation }) {
         // Se non abbiamo cache, prova a ottenere la posizione attiva con retry
         tryGetLocationWithRetry();
       }
+
+      // Load saved addresses/cards when opening checkout
+      (async () => {
+        try {
+          const a = await AsyncStorage.getItem('saved_addresses_v1');
+          setSavedAddresses(a ? JSON.parse(a) : []);
+          // fetch saved cards from server
+          try {
+            const serverCards = await paymentsAPI.getSavedCards();
+            setSavedCards(serverCards || []);
+          } catch (e) {
+            console.warn('Failed to load saved cards from server', e);
+            setSavedCards([]);
+          }
+        } catch (e) {
+          console.warn('Failed to load saved payment methods', e);
+        }
+      })();
     }
   }, [checkoutVisible, tryGetLocationWithRetry]);
 
@@ -373,6 +400,11 @@ export default function CartScreen({ navigation }) {
         totalAmount: finalTotal,
         deliveryAddress: deliveryAddress.trim(),
         ...finalCoords,
+        payment_method: paymentMethod,
+        payment_method_token:
+          paymentMethod === 'card' && selectedCardId
+            ? savedCards.find(c => c.id === selectedCardId)?.token
+            : undefined,
       };
 
       console.log('📦 Creating order with coordinates:', finalCoords);
@@ -405,7 +437,8 @@ export default function CartScreen({ navigation }) {
         console.log('✅ Frontend: Cash payment created successfully');
       } else {
         console.log('💳 Frontend: Creating Stripe payment for order:', orderId);
-        await paymentsAPI.createStripePayment(orderId);
+        const token = paymentMethod === 'card' && selectedCardId ? savedCards.find(c => c.id === selectedCardId)?.token : undefined;
+        await paymentsAPI.createStripePayment(orderId, token);
         console.log('✅ Frontend: Stripe payment created successfully');
       }
 
@@ -458,36 +491,89 @@ export default function CartScreen({ navigation }) {
       </View>
 
       <ScrollView style={styles.cartContent} showsVerticalScrollIndicator={false}>
-        {cart.items.map(item => (
-          <View key={item.id} style={styles.cartItem}>
-            <View style={styles.itemImage}>
-              <Text style={{ fontSize: 30, textAlign: 'center', marginTop: 10 }}>🍲</Text>
-            </View>
-            <View style={styles.itemInfo}>
-              <Text style={styles.itemName}>{item.name}</Text>
-              <Text style={styles.itemPrice}>€{item.price}</Text>
-
-              <View style={styles.quantityContainer}>
-                <TouchableOpacity
-                  style={styles.quantityButton}
-                  onPress={() => updateQuantity(item.id, item.quantity - 1)}
-                >
-                  <Text style={styles.quantityText}>−</Text>
-                </TouchableOpacity>
-                <Text style={[styles.quantityText, { marginHorizontal: 15 }]}>{item.quantity}</Text>
-                <TouchableOpacity
-                  style={styles.quantityButton}
-                  onPress={() => updateQuantity(item.id, item.quantity + 1)}
-                >
-                  <Text style={styles.quantityText}>+</Text>
-                </TouchableOpacity>
+        {/* Restaurant items (single-restaurant cart behavior) */}
+        {cart.restaurantItems && cart.restaurantItems.length > 0 &&
+          cart.restaurantItems.map(item => (
+            <View key={item.id} style={styles.cartItem}>
+              <View style={styles.itemImage}>
+                <Text style={{ fontSize: 30, textAlign: 'center', marginTop: 10 }}>🍲</Text>
               </View>
+              <View style={styles.itemInfo}>
+                <Text style={styles.itemName}>{item.name}</Text>
+                <Text style={styles.itemPrice}>€{item.price}</Text>
+
+                <View style={styles.quantityContainer}>
+                  <TouchableOpacity
+                    style={styles.quantityButton}
+                    onPress={() => updateQuantity(item.id, item.quantity - 1)}
+                  >
+                    <Text style={styles.quantityText}>−</Text>
+                  </TouchableOpacity>
+                  <Text style={[styles.quantityText, { marginHorizontal: 15 }]}>{item.quantity}</Text>
+                  <TouchableOpacity
+                    style={styles.quantityButton}
+                    onPress={() => updateQuantity(item.id, item.quantity + 1)}
+                  >
+                    <Text style={styles.quantityText}>+</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <TouchableOpacity style={styles.removeButton} onPress={() => removeFromCart(item.id)}>
+                <Text style={styles.removeButtonText}>Elimina</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.removeButton} onPress={() => removeFromCart(item.id)}>
-              <Text style={styles.removeButtonText}>Elimina</Text>
-            </TouchableOpacity>
+          ))}
+
+        {/* Shopping items: group by category/aisle for supermarket UX */}
+        {cart.shoppingItems && cart.shoppingItems.length > 0 && (
+          <View style={{ marginTop: 10 }}>
+            <Text style={[styles.titleCard, { marginHorizontal: 0, marginBottom: 10 }]}>Spesa</Text>
+            {(() => {
+              const groups = cart.shoppingItems.reduce((acc, it) => {
+                const key = it.category || it.aisle || 'Prodotti';
+                if (!acc[key]) acc[key] = [];
+                acc[key].push(it);
+                return acc;
+              }, {});
+
+              return Object.keys(groups).map(cat => (
+                <View key={cat} style={{ marginBottom: 12 }}>
+                  <Text style={[styles.sectionTitle, { marginHorizontal: 0 }]}>{cat}</Text>
+                  {groups[cat].map(item => (
+                    <View key={item.id} style={styles.cartItem}>
+                      <View style={styles.itemImage}>
+                        <Text style={{ fontSize: 30, textAlign: 'center', marginTop: 10 }}>🛒</Text>
+                      </View>
+                      <View style={styles.itemInfo}>
+                        <Text style={styles.itemName}>{item.name}</Text>
+                        <Text style={styles.itemPrice}>€{item.price}</Text>
+
+                        <View style={styles.quantityContainer}>
+                          <TouchableOpacity
+                            style={styles.quantityButton}
+                            onPress={() => updateQuantity(item.id, item.quantity - 1)}
+                          >
+                            <Text style={styles.quantityText}>−</Text>
+                          </TouchableOpacity>
+                          <Text style={[styles.quantityText, { marginHorizontal: 15 }]}>{item.quantity}</Text>
+                          <TouchableOpacity
+                            style={styles.quantityButton}
+                            onPress={() => updateQuantity(item.id, item.quantity + 1)}
+                          >
+                            <Text style={styles.quantityText}>+</Text>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                      <TouchableOpacity style={styles.removeButton} onPress={() => removeFromCart(item.id)}>
+                        <Text style={styles.removeButtonText}>Elimina</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+                </View>
+              ));
+            })()}
           </View>
-        ))}
+        )}
 
         <View style={styles.summaryCard}>
           <Text style={styles.summaryTitle}>Riepilogo Costi</Text>
@@ -559,6 +645,29 @@ export default function CartScreen({ navigation }) {
             </View>
 
             <Text style={[styles.summaryLabel, { marginBottom: 10 }]}>Indirizzo di consegna</Text>
+
+            {/* Saved addresses (if any) */}
+            {savedAddresses && savedAddresses.length > 0 && (
+              <View style={{ marginBottom: 10 }}>
+                {savedAddresses.map(a => (
+                  <TouchableOpacity
+                    key={a.id}
+                    style={{ paddingVertical: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+                    onPress={() => {
+                      setDeliveryAddress(a.displayName || a.label);
+                      if (a.latitude && a.longitude) {
+                        setMapCoordinates({ latitude: a.latitude, longitude: a.longitude, displayName: a.displayName || a.label });
+                      }
+                      setSelectedAddressId(a.id);
+                    }}
+                  >
+                    <Text style={{ color: mobileTheme.colors.text.primary }}>{a.displayName || a.label}</Text>
+                    <Text style={{ color: mobileTheme.colors.text.secondary }}>{selectedAddressId === a.id ? '✓' : ''}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
               <TextInput
                 style={{
@@ -646,6 +755,23 @@ export default function CartScreen({ navigation }) {
                 </View>
               </TouchableOpacity>
             </View>
+
+            {/* Saved cards selection when paymentMethod is card */}
+            {paymentMethod === 'card' && savedCards && savedCards.length > 0 && (
+              <View style={{ marginBottom: 16 }}>
+                <Text style={[styles.summaryLabel, { marginBottom: 8 }]}>Carte salvate</Text>
+                {savedCards.map(c => (
+                  <TouchableOpacity
+                    key={c.id}
+                    style={{ paddingVertical: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+                    onPress={() => setSelectedCardId(c.id)}
+                  >
+                    <Text style={{ color: mobileTheme.colors.text.primary }}>{c.masked}</Text>
+                    <Text style={{ color: mobileTheme.colors.text.secondary }}>{selectedCardId === c.id ? '✓' : ''}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
 
             <Text
               style={{ fontSize: 11, color: mobileTheme.colors.text.tertiary, marginBottom: 20 }}

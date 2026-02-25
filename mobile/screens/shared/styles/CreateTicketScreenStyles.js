@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { mobileTheme } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const createTicketScreenStyles = StyleSheet.create({
   // container: wrapper principale schermata
@@ -258,7 +260,7 @@ export const createTicketScreenStyles = StyleSheet.create({
   closeButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: BASE_SPACE * 2.500,
     backgroundColor: mobileTheme.colors.background,
     justifyContent: 'center',
     alignItems: 'center',
@@ -269,7 +271,7 @@ export const createTicketScreenStyles = StyleSheet.create({
     fontSize: mobileTheme.typography.fontSize.lg,
     color: mobileTheme.colors.text.tertiary,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    lineHeight: 20,
+    lineHeight: FONT_SIZE_BASE * 1.250,
   },
   // emptyState: stato vuoto modale
   emptyState: unifiedStyles.emptyContainer,
@@ -305,7 +307,7 @@ export const createTicketScreenStyles = StyleSheet.create({
     fontWeight: mobileTheme.typography.fontWeight.semibold,
     color: mobileTheme.colors.text.primary,
     marginBottom: mobileTheme.spacing[2],
-    lineHeight: 20,
+    lineHeight: FONT_SIZE_BASE * 1.250,
   },
   // orderItemDate: data ordine
   orderItemDate: {

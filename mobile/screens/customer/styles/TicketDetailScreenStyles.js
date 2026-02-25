@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { mobileTheme } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const ticketDetailScreenStyles = StyleSheet.create({
   // container: wrapper principale schermo
@@ -45,7 +47,7 @@ export const ticketDetailScreenStyles = StyleSheet.create({
     fontWeight: mobileTheme.typography.fontWeight.bold,
     color: mobileTheme.colors.text.primary,
     marginBottom: mobileTheme.spacing[3],
-    lineHeight: 24,
+    lineHeight: FONT_SIZE_BASE * 1.500,
   },
   // ticketMeta: riga meta (tipo/data)
   ticketMeta: {
@@ -73,7 +75,7 @@ export const ticketDetailScreenStyles = StyleSheet.create({
   ticketDescription: {
     fontSize: mobileTheme.typography.fontSize.base,
     color: mobileTheme.colors.text.primary,
-    lineHeight: 22,
+    lineHeight: FONT_SIZE_BASE * 1.375,
   },
 
   // responseCard: card risposta
@@ -134,7 +136,7 @@ export const ticketDetailScreenStyles = StyleSheet.create({
   responseContent: {
     fontSize: mobileTheme.typography.fontSize.base,
     color: mobileTheme.colors.text.primary,
-    lineHeight: 20,
+    lineHeight: FONT_SIZE_BASE * 1.250,
   },
   // noResponsesContainer: wrapper senza risposte
   noResponsesContainer: {

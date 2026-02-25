@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { mobileTheme } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const riderActiveScreenStyles = StyleSheet.create({
   ...unifiedStyles,
@@ -30,6 +32,15 @@ export const riderActiveScreenStyles = StyleSheet.create({
     padding: mobileTheme.spacing[3],
     borderRadius: mobileTheme.borderRadius.md,
     flex: 1,
+    ...mobileTheme.shadows.sm,
+  },
+  // wazeButton: bottone apertura Waze (RiderActiveScreen.js)
+  wazeButton: {
+    backgroundColor: mobileTheme.colors.rider,
+    padding: mobileTheme.spacing[3],
+    borderRadius: mobileTheme.borderRadius.md,
+    flex: 1,
+    marginRight: mobileTheme.spacing[2],
     ...mobileTheme.shadows.sm,
   },
   // btnComplete: bottone completato (RiderActiveScreen.js)

@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
+import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';
+
 
 export const adminDashboardOrderStyles = StyleSheet.create({
   ...unifiedStyles,
@@ -27,7 +29,7 @@ export const adminDashboardOrderStyles = StyleSheet.create({
     paddingVertical: mobileTheme.spacing[3],
     alignItems: 'center',
     borderRadius: mobileTheme.borderRadius.lg,
-    marginHorizontal: 1,
+    marginHorizontal: BASE_SPACE * 0.125,
   },
   // tabButtonActive: tab attivo
   tabButtonActive: {
