@@ -4,6 +4,8 @@ Piattaforma completa di food delivery e servizi multi-categoria con app mobile, 
 
 **📚 Documentazione**: [English](README.md) | Italiano
 
+[![Anteprime Email](https://img.shields.io/endpoint?url=https://luca04985-max.github.io/delivero/email-previews/badge_it.json)](https://luca04985-max.github.io/delivero/email-previews/)
+
 ## 📋 Panoramica del Progetto
 
 Delivero è una piattaforma moderna di delivery che include:
@@ -250,6 +252,52 @@ PORT=3000
 MONGODB_URI=mongodb://localhost:27017/delivero
 JWT_SECRET=your-secret-key
 STRIPE_SECRET_KEY=your-stripe-key
+```
+
+### Anteprima Email (solo sviluppo)
+
+Il backend include alcuni endpoint HTTP per visualizzare i template email nel browser. Questi endpoint restituiscono solo l'HTML (e il testo di fallback) e non inviano email. L'anteprima è opt‑in e richiede parametri di query espliciti — non ci sono valori di default o mock.
+
+Variabili d'ambiente richieste per abilitare le anteprime:
+
+```env
+ENABLE_EMAIL_PREVIEW=true
+FRONTEND_URL=https://tuo-frontend.example.com   # usato per costruire link di reset/onboarding
+MOBILE_DEEP_LINK=delivero://app/                # usato per link deep in app mobile
+EMAIL_LOGO_URL=https://tuo.cdn.example/logo.png
+SUPPORT_EMAIL=support@tuo-dominio.com
+```
+
+Route di anteprima disponibili (esempi):
+
+- Onboarding ristorante (richiede `ownerName`, `restaurantName`, `token`):
+
+	GET /api/email/preview/onboarding?ownerName=Marco&restaurantName=Trattoria&token=abc123
+
+- Reset password (richiede `token`):
+
+	GET /api/email/preview/reset?token=abc123
+
+- Conferma ordine (richiede `orderId`, `amount`):
+
+	GET /api/email/preview/order?orderId=123&amount=19.90
+
+Note di sicurezza:
+- Queste route sono disabilitate a meno che `ENABLE_EMAIL_PREVIEW=true` sia impostato.
+- Gli endpoint richiedono parametri espliciti e rispondono con 400/403 se mancano parametri o se la preview è disabilitata.
+- Non abilitare `ENABLE_EMAIL_PREVIEW` in ambienti di produzione esposti pubblicamente.
+
+Esempi rapidi con curl:
+
+```bash
+# Anteprima onboarding (sostituire i valori):
+curl "http://localhost:3000/api/email/preview/onboarding?ownerName=Marco&restaurantName=Trattoria&token=abc123"
+
+# Anteprima reset password:
+curl "http://localhost:3000/api/email/preview/reset?token=abc123"
+
+# Anteprima conferma ordine:
+curl "http://localhost:3000/api/email/preview/order?orderId=123&amount=19.90"
 ```
 
 **Mobile (.env):**

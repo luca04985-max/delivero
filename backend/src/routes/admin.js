@@ -31,4 +31,7 @@ router.delete('/users/:userId', deleteUser);
 // Admin/manager only: trigger seeding manually
 router.post('/seed', authorizeRole(['admin', 'manager']), triggerSeed);
 
+// Create restaurant (admin/manager only)
+router.post('/restaurants', authorizeRole(['admin', 'manager']), createRestaurant);
+
 export default router;

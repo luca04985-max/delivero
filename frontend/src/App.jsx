@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './index.css';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
+import ResetPassword from './components/ResetPassword';
 import CustomerDashboard from './pages/customer/CustomerDashboard';
 import RiderDashboard from './pages/rider/RiderDashboard';
 import ManagerDashboard from './pages/manager/ManagerDashboard';
@@ -92,7 +93,10 @@ function App() {
               </div>
 
               <div className="card">
-                {showRegister ? (
+                {/* If the url is a reset-password link, show the reset form */}
+                {window.location.pathname && window.location.pathname.startsWith('/reset-password') ? (
+                  <ResetPassword />
+                ) : showRegister ? (
                   <RegisterForm onRegisterSuccess={handleLoginSuccess} />
                 ) : (
                   <LoginForm onLoginSuccess={handleLoginSuccess} />

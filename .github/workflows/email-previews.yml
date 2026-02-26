@@ -1,0 +1,102 @@
+name: Render Email Previews
+
+on:
+  workflow_dispatch:
+    inputs:
+      onboarding_ownerName:
+        description: 'Owner name for onboarding email'
+        required: true
+      onboarding_restaurantName:
+        description: 'Restaurant name for onboarding email'
+        required: true
+      onboarding_token:
+        description: 'Onboarding token for links'
+        required: true
+      reset_token:
+        description: 'Reset token for reset email'
+        required: true
+      order_orderId:
+        description: 'Order ID for order confirmation'
+        required: true
+      order_amount:
+        description: 'Order amount (e.g. 19.90)'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      pages_url: ${{ steps.publish_url.outputs.pages_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        working-directory: ./
+        run: |
+          npm ci --ignore-scripts || npm install
+
+      - name: Run render script
+        env:
+          ONBOARDING_OWNER: ${{ github.event.inputs.onboarding_ownerName }}
+          ONBOARDING_RESTAURANT: ${{ github.event.inputs.onboarding_restaurantName }}
+          ONBOARDING_TOKEN: ${{ github.event.inputs.onboarding_token }}
+          RESET_TOKEN: ${{ github.event.inputs.reset_token }}
+          ORDER_ID: ${{ github.event.inputs.order_orderId }}
+          ORDER_AMOUNT: ${{ github.event.inputs.order_amount }}
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL || 'https://example.com' }}
+          MOBILE_DEEP_LINK: ${{ secrets.MOBILE_DEEP_LINK || 'delivero://app/' }}
+        run: |
+          node ./scripts/render-email-previews.js
+
+      - name: Create badge JSON files
+        run: |
+          BADGE_DIR=artifacts/email-previews
+          mkdir -p "$BADGE_DIR"
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          cat > "$BADGE_DIR/badge_en.json" <<EOF
+{"schemaVersion":1,"label":"Email Previews","message":"run #${GITHUB_RUN_NUMBER}","color":"green","namedLogo":"github","cacheSeconds":300}
+EOF
+          cat > "$BADGE_DIR/badge_it.json" <<EOF
+{"schemaVersion":1,"label":"Anteprime Email","message":"run #${GITHUB_RUN_NUMBER}","color":"green","namedLogo":"github","cacheSeconds":300}
+EOF
+
+      - name: Archive previews per run
+        run: |
+          ARCHIVE_DIR=artifacts/email-previews/archive/${{ github.run_number }}
+          mkdir -p "$ARCHIVE_DIR"
+          # copy only the generated HTML files (not the archive folder itself)
+          cp artifacts/email-previews/onboarding.html "$ARCHIVE_DIR/" || true
+          cp artifacts/email-previews/reset.html "$ARCHIVE_DIR/" || true
+          cp artifacts/email-previews/order.html "$ARCHIVE_DIR/" || true
+          cp artifacts/email-previews/index.html "$ARCHIVE_DIR/" || true
+
+      - name: Upload email preview artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: email-previews
+          path: artifacts/email-previews/
+
+      - name: Deploy email previews to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./artifacts/email-previews
+          destination_dir: email-previews
+          # keep the history small by not committing empty changes
+          allow_empty_commit: false
+
+      - name: Publish Pages URL to workflow summary and outputs
+        id: publish_url
+        run: |
+          REPO="${GITHUB_REPOSITORY#*/}"
+          OWNER="${GITHUB_REPOSITORY%/*}"
+          PAGES_URL="https://${OWNER}.github.io/${REPO}/email-previews/"
+          echo "pages_url=${PAGES_URL}" >> $GITHUB_OUTPUT
+          echo "## Email Previews published" >> $GITHUB_STEP_SUMMARY
+          echo "Preview URL: ${PAGES_URL}" >> $GITHUB_STEP_SUMMARY

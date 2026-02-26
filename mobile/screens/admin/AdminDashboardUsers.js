@@ -201,8 +201,16 @@ export default function AdminDashboardUsers({ navigation: _navigation }) {
         <Text style={styles.title}>Tutti gli Utenti</Text>
         <Text style={styles.subtitle}>Gestione completa utenti</Text>
       </View>
+      <TouchableOpacity style={{ alignSelf: 'center', marginRight: 12 }} onPress={() => setShowCreateRest(true)}>
+        <Text style={{ color: mobileTheme.colors.primary, fontWeight: '700' }}>➕ Crea ristorante</Text>
+      </TouchableOpacity>
     </View>
   );
+
+  const [showCreateRest, setShowCreateRest] = useState(false);
+  const [newRest, setNewRest] = useState({ email: '', ownerName: '', restaurantName: '', phone: '', address: '' });
+  const [createLoading, setCreateLoading] = useState(false);
+  const [createError, setCreateError] = useState(null);
 
   if (loading && !refreshing) {
     return (
@@ -233,6 +241,37 @@ export default function AdminDashboardUsers({ navigation: _navigation }) {
           renderUsersWithSeparators()
         )}
       </ScrollView>
+
+      {/* Create restaurant modal */}
+      <Modal visible={showCreateRest} transparent animationType="fade" onRequestClose={() => setShowCreateRest(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Crea Ristorante</Text>
+            {createError && <Text style={{ color: 'red', marginBottom: 8 }}>{createError}</Text>}
+            <TextInput style={styles.textInput} placeholder="Email" value={newRest.email} onChangeText={t => setNewRest(p => ({ ...p, email: t }))} keyboardType="email-address" autoCapitalize="none" />
+            <TextInput style={styles.textInput} placeholder="Proprietario" value={newRest.ownerName} onChangeText={t => setNewRest(p => ({ ...p, ownerName: t }))} />
+            <TextInput style={styles.textInput} placeholder="Nome Ristorante" value={newRest.restaurantName} onChangeText={t => setNewRest(p => ({ ...p, restaurantName: t }))} />
+            <TextInput style={styles.textInput} placeholder="Telefono" value={newRest.phone} onChangeText={t => setNewRest(p => ({ ...p, phone: t }))} />
+            <TextInput style={styles.textInput} placeholder="Indirizzo" value={newRest.address} onChangeText={t => setNewRest(p => ({ ...p, address: t }))} />
+            <View style={styles.editActions}>
+              <TouchableOpacity style={styles.saveButton} onPress={async () => {
+                setCreateError(null);
+                const emailRx = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+                if (!newRest.email || !emailRx.test(newRest.email)) { setCreateError('Email non valida'); return; }
+                if (!newRest.ownerName || !newRest.restaurantName) { setCreateError('Nome proprietario e nome ristorante sono obbligatori'); return; }
+                try { setCreateLoading(true); await adminAPI.createRestaurant(newRest); setShowCreateRest(false); setNewRest({ email: '', ownerName: '', restaurantName: '', phone: '', address: '' }); fetchUsers(); }
+                catch (err) { setCreateError(err.message || 'Errore'); }
+                finally { setCreateLoading(false); }
+              }}>
+                <Text style={styles.btnSaveText}>Crea</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setShowCreateRest(false)}>
+                <Text style={styles.btnCancelText}>Annulla</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       {/* Modal per modifica utente */}
       <Modal

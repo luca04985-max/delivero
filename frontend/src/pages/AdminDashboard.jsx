@@ -127,6 +127,15 @@ export default function AdminDashboard() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const [showCreateRestaurant, setShowCreateRestaurant] = useState(false);
+  const [newRestaurant, setNewRestaurant] = useState({
+    email: '',
+    ownerName: '',
+    restaurantName: '',
+    phone: '',
+    address: '',
+  });
+  const [createError, setCreateError] = useState(null);
 
   // Stats
   const [stats, setStats] = useState(null);
@@ -318,7 +327,63 @@ export default function AdminDashboard() {
         >
           🗺️ Tracciamento
         </button>
+        <button
+          style={{ ...styles.button, marginLeft: 12 }}
+          onClick={() => setShowCreateRestaurant(true)}
+        >
+          ➕ Crea Ristorante
+        </button>
       </div>
+
+      {showCreateRestaurant && (
+        <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.4)' }}>
+          <div style={{ width: 520, background: 'white', borderRadius: 8, padding: 20 }}>
+            <h3>Crea Ristorante</h3>
+            <div style={{ display: 'grid', gap: 10 }}>
+              {createError && <div className="alert alert-error">{createError}</div>}
+              <input placeholder="Email" value={newRestaurant.email} onChange={e => setNewRestaurant(prev => ({ ...prev, email: e.target.value }))} />
+              <input placeholder="Proprietario (nome)" value={newRestaurant.ownerName} onChange={e => setNewRestaurant(prev => ({ ...prev, ownerName: e.target.value }))} />
+              <input placeholder="Nome Ristorante" value={newRestaurant.restaurantName} onChange={e => setNewRestaurant(prev => ({ ...prev, restaurantName: e.target.value }))} />
+              <input placeholder="Telefono" value={newRestaurant.phone} onChange={e => setNewRestaurant(prev => ({ ...prev, phone: e.target.value }))} />
+              <input placeholder="Indirizzo" value={newRestaurant.address} onChange={e => setNewRestaurant(prev => ({ ...prev, address: e.target.value }))} />
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 8 }}>
+                <button className="btn" onClick={() => setShowCreateRestaurant(false)}>Annulla</button>
+                <button
+                  className="btn btn-primary"
+                  onClick={async () => {
+                    // Client-side validation
+                    setCreateError(null);
+                    const emailRx = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+                    if (!newRestaurant.email || !emailRx.test(newRestaurant.email)) {
+                      setCreateError('Email non valida');
+                      return;
+                    }
+                    if (!newRestaurant.ownerName || !newRestaurant.restaurantName) {
+                      setCreateError('Nome proprietario e nome ristorante sono obbligatori');
+                      return;
+                    }
+
+                    try {
+                      setLoading(true);
+                      setError(null);
+                      const resp = await adminAPI.createRestaurant(newRestaurant);
+                      setSuccess(resp.data?.message || 'Ristorante creato');
+                      setShowCreateRestaurant(false);
+                      setNewRestaurant({ email: '', ownerName: '', restaurantName: '', phone: '', address: '' });
+                    } catch (err) {
+                      setCreateError(err.response?.data?.message || err.message);
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                >
+                  Crea e invia email
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Statistics Tab */}
       {activeTab === 'stats' && stats && (

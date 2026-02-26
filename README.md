@@ -4,6 +4,8 @@ A complete multi-category food and delivery platform with mobile app, backend, a
 
 **📚 Documentation**: [Italiano](README_ITA.md) | English
 
+[![Email Previews](https://img.shields.io/endpoint?url=https://luca04985-max.github.io/delivero/email-previews/badge_en.json)](https://luca04985-max.github.io/delivero/email-previews/)
+
 ## 📋 Project Overview
 
 Delivero is a modern delivery platform that includes:
@@ -252,6 +254,75 @@ JWT_SECRET=your-secret-key
 STRIPE_SECRET_KEY=your-stripe-key
 ```
 
+### Email Preview (development only)
+
+The backend includes a small set of HTTP endpoints to preview email templates in the browser. These endpoints only render the HTML (and text fallback) and do not send any emails. The preview feature is opt-in and requires explicit query parameters — there are no default or mock values.
+
+Required environment variable to enable previews:
+
+```env
+ENABLE_EMAIL_PREVIEW=true
+FRONTEND_URL=https://your-frontend.example.com   # used to build reset/onboarding links
+MOBILE_DEEP_LINK=delivero://app/                # used to build mobile deep links
+EMAIL_LOGO_URL=https://your.cdn.example/logo.png
+SUPPORT_EMAIL=support@your-domain.com
+```
+
+Available preview routes (example usage):
+
+- Restaurant onboarding (requires `ownerName`, `restaurantName`, `token`):
+
+	GET /api/email/preview/onboarding?ownerName=Marco&restaurantName=Trattoria&token=abc123
+
+- Password reset (requires `token`):
+
+	GET /api/email/preview/reset?token=abc123
+
+- Order confirmation (requires `orderId`, `amount`):
+
+	GET /api/email/preview/order?orderId=123&amount=19.90
+
+Security notes:
+- These routes are disabled unless `ENABLE_EMAIL_PREVIEW=true` is set in the environment.
+- The endpoints require explicit parameters and return 400/403 if parameters are missing or preview is disabled.
+- Do not enable `ENABLE_EMAIL_PREVIEW` in production environments that are reachable from the public internet.
+
+Quick curl example:
+
+```bash
+# Preview onboarding (replace values):
+curl "http://localhost:3000/api/email/preview/onboarding?ownerName=Marco&restaurantName=Trattoria&token=abc123"
+
+# Preview reset email:
+curl "http://localhost:3000/api/email/preview/reset?token=abc123"
+
+# Preview order confirmation:
+curl "http://localhost:3000/api/email/preview/order?orderId=123&amount=19.90"
+```
+
+GitHub Pages deployment
+------------------------
+
+You can optionally publish the rendered previews to GitHub Pages using the provided workflow. The workflow will deploy the generated HTML under the `gh-pages` branch in a folder named `email-previews/` (stable path).
+
+To enable this:
+
+- No additional secrets are required if you use the repository's `GITHUB_TOKEN`. The workflow uses `GITHUB_TOKEN` by default.
+- Make sure GitHub Pages is enabled in the repository settings and set to serve from the `gh-pages` branch.
+
+When you run the "Render Email Previews" workflow, a step will publish the previews to Pages at the stable path `email-previews/`. Each run overwrites the previous previews at that path (latest version is published). If you need to keep history, enable archiving or change the workflow to publish per-run folders.
+
+Archive per run
+---------------
+
+The workflow also keeps an archive copy for each run under `email-previews/archive/<run_number>/`. This lets you access historical previews even though the main `email-previews/` folder is overwritten on each run. Example:
+
+- Stable URL: `https://<OWNER>.github.io/<REPO>/email-previews/`
+- Archive URL for run 42: `https://<OWNER>.github.io/<REPO>/email-previews/archive/42/`
+
+Notes:
+- The archive folder is created automatically by the workflow and contains the same HTML files as the stable folder at the time of that run.
+- If you would like automatic retention policies or to export archives elsewhere (S3, Artifactory), I can add an optional step.
 **Mobile (.env):**
 ```env
 EXPO_PUBLIC_API_URL=http://your-backend-url:3000

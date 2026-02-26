@@ -1,4 +1,7 @@
 import db from '../config/db.js';
+import { createUser } from '../models/User.js';
+import crypto from 'crypto';
+import { sendRestaurantOnboarding } from '../services/email.js';
 
 export const getAdminStats = async (req, res) => {
   try {
@@ -360,5 +363,85 @@ export const getTicketStats = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching ticket stats', error: error.message });
+  }
+};
+
+export const createRestaurant = async (req, res) => {
+  try {
+    const adminId = req.user.userId;
+
+    // Check admin/manager
+    const adminResult = await db.query('SELECT role FROM users WHERE id = $1', [adminId]);
+    if (
+      adminResult.rows.length === 0 ||
+      (adminResult.rows[0].role !== 'admin' && adminResult.rows[0].role !== 'manager')
+    ) {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+
+    const { email, ownerName, restaurantName, phone, address } = req.body;
+    if (!email || !ownerName || !restaurantName) {
+      return res.status(400).json({ message: 'email, ownerName and restaurantName are required' });
+    }
+
+    // Create user with a random temporary password (will ask to reset)
+    const tempPassword = crypto.randomBytes(8).toString('hex');
+
+    const existing = await db.query('SELECT id FROM users WHERE email = $1', [email]);
+    if (existing.rows.length > 0) {
+      return res.status(409).json({ message: 'Email already registered' });
+    }
+
+    const user = await createUser(email, tempPassword, ownerName, 'restaurant');
+
+    // Create restaurant record
+    const restResult = await db.query(
+      'INSERT INTO restaurants (name, address, phone, email) VALUES ($1, $2, $3, $4) RETURNING id, name, address, phone, email',
+      [restaurantName, address || null, phone || null, email],
+    );
+
+    // Ensure password reset columns exist
+    try {
+      await db.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS password_reset_token TEXT');
+      await db.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS password_reset_expires TIMESTAMP');
+    } catch (alterErr) {
+      console.error('Error ensuring reset columns:', alterErr.message || alterErr);
+    }
+
+    // Generate reset token and expiry
+    const resetToken = crypto.randomBytes(20).toString('hex');
+    const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    await db.query(
+      'UPDATE users SET password_reset_token = $1, password_reset_expires = $2 WHERE id = $3',
+      [resetToken, expires, user.id],
+    );
+
+    // Build links (web + mobile deep link if available)
+    const frontendUrl = process.env.FRONTEND_URL || 'https://delivero.app';
+    const mobileScheme = process.env.MOBILE_DEEP_LINK || 'delivero://';
+    const webLink = `${frontendUrl}/reset-password?token=${resetToken}`;
+    const mobileLink = `${mobileScheme}reset-password?token=${resetToken}`;
+
+    // Send onboarding email with reset link(s)
+    try {
+      await sendRestaurantOnboarding(email, ownerName, restaurantName, webLink, mobileLink);
+    } catch (mailErr) {
+      console.error('Error sending onboarding email:', mailErr.message || mailErr);
+    }
+
+    // Audit log
+    try {
+      await db.query(
+        'INSERT INTO api_logs (method, path, status_code, user_id, created_at) VALUES ($1,$2,$3,$4,NOW())',
+        ['POST', '/admin/restaurants', 201, user.id],
+      );
+    } catch (logErr) {
+      console.error('Error writing audit log:', logErr.message || logErr);
+    }
+
+    res.status(201).json({ message: 'Restaurant created. Email sent to set password.', user, restaurant: restResult.rows[0] });
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating restaurant', error: error.message });
   }
 };

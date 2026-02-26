@@ -21,6 +21,7 @@ import restaurantsRoutes from './routes/restaurants.js';
 import inventoryRoutes from './routes/inventory.js';
 import dispatchRoutes from './routes/dispatch.js';
 import userAddressesRoutes from './routes/userAddresses.js';
+import emailPreviewRoutes from './routes/emailPreview.js';
 // monitoring, notifications, analytics, bills and billPayments routes
 // removed: not referenced by mobile frontend
 import { initializeSocket } from './services/socket.js';
@@ -108,6 +109,11 @@ app.use('/api/dispatch', dispatchRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/admin', adminRoutes);
+
+// Email preview routes (dev only or when ENABLE_EMAIL_PREVIEW=true)
+if (process.env.ENABLE_EMAIL_PREVIEW === 'true') {
+  app.use('/api/email/preview', emailPreviewRoutes);
+}
 // removed bill-payments route (not used by mobile)
 app.use('/api/pharmacies', pharmaciesRoutes);
 app.use('/api/document-pickups', documentPickupsRoutes);

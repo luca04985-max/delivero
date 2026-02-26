@@ -10,6 +10,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoginScreen from './screens/auth/LoginScreen';
 import RegisterScreen from './screens/auth/RegisterScreen';
+import ForgotPasswordScreen from './screens/auth/ForgotPasswordScreen';
+import ResetPasswordScreen from './screens/auth/ResetPasswordScreen';
 import CustomerHomeScreen from './screens/customer/CustomerHomeScreen';
 import RestaurantsScreen from './screens/customer/RestaurantsScreen';
 import RestaurantDetailScreen from './screens/customer/RestaurantDetailScreen';
@@ -60,6 +62,8 @@ function AuthStack() {
       }}
     >
       <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+      <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
     </Stack.Navigator>
   );

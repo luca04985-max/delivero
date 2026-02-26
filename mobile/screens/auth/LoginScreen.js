@@ -112,6 +112,9 @@ export default function LoginScreen({ navigation }) {
                 <Text style={LoginScreenStyles.buttonText}>🚀 Accedi</Text>
               )}
             </TouchableOpacity>
+            <TouchableOpacity style={{ marginTop: 8 }} onPress={() => navigation.navigate('ForgotPassword')}>
+              <Text style={LoginScreenStyles.linkText}>Password dimenticata?</Text>
+            </TouchableOpacity>
 
             {/* Toast Custom */}
             {toast.visible && (

@@ -176,6 +176,18 @@ export const authAPI = {
     await AsyncStorage.removeItem('token');
     await AsyncStorage.removeItem('user');
   },
+  forgotPassword: async email => {
+    return makeRequest('/auth/forgot', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  },
+  resetPassword: async (token, password) => {
+    return makeRequest('/auth/reset', {
+      method: 'POST',
+      body: JSON.stringify({ token, password }),
+    });
+  },
 };
 
 export const ordersAPI = {
@@ -367,6 +379,7 @@ export const adminAPI = {
   getServiceMetrics: () => makeRequest('/admin/metrics', { method: 'GET' }),
   getTicketStats: () => makeRequest('/admin/tickets/stats', { method: 'GET' }),
   getAdminTickets: () => makeRequest('/tickets/admin', { method: 'GET' }),
+  createRestaurant: data => makeRequest('/admin/restaurants', { method: 'POST', body: JSON.stringify(data) }),
 };
 
 export const paymentsAPI = {

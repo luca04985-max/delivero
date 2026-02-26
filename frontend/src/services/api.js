@@ -29,6 +29,8 @@ export const authAPI = {
     apiClient.post('/auth/register', { email, password, name, role }),
   login: (email, password) => apiClient.post('/auth/login', { email, password }),
   getCurrentUser: () => apiClient.get('/auth/me'),
+  forgotPassword: email => apiClient.post('/auth/forgot', { email }),
+  resetPassword: (token, password) => apiClient.post('/auth/reset', { token, password }),
 };
 
 // Orders
@@ -139,6 +141,7 @@ export const adminAPI = {
   },
   updateUserRole: (userId, newRole) => apiClient.put(`/admin/users/${userId}/role`, { newRole }),
   deleteUser: userId => apiClient.delete(`/admin/users/${userId}`),
+  createRestaurant: data => apiClient.post('/admin/restaurants', data),
 };
 
 // Tickets
