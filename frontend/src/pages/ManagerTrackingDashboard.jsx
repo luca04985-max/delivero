@@ -5,6 +5,7 @@ import logger from '../utils/logger';
 import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import adminStyles from '../styles/adminTheme';
+import { theme } from '../theme/theme';
 
 const styles = {
   ...adminStyles,
@@ -15,13 +16,13 @@ const styles = {
     alignItems: 'center',
     marginBottom: '20px',
     paddingBottom: '12px',
-    borderBottom: '1px solid rgba(15,23,42,0.06)',
+    borderBottom: `1px solid ${theme.colors.border}`,
   },
-  title: { fontSize: '22px', fontWeight: 700, color: '#0F172A' },
+  title: { fontSize: '22px', fontWeight: 700, color: theme.colors.text.primary },
   statsBar: { display: 'flex', gap: '18px', marginBottom: '20px' },
   listContainer: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '16px' },
-  orderCard: { ...adminStyles.card, borderLeft: '4px solid #ef4444' },
-  metricsRow: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', padding: '10px', backgroundColor: '#F8FAFF', borderRadius: '6px' },
+  orderCard: { ...adminStyles.card, borderLeft: `4px solid ${theme.colors.error}` },
+  metricsRow: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', padding: '10px', backgroundColor: theme.colors.surface, borderRadius: '6px' },
 };
 
 export default function ManagerTrackingDashboard() {
@@ -106,15 +107,15 @@ export default function ManagerTrackingDashboard() {
   const getStatusColor = status => {
     switch (status) {
       case 'in_transit':
-        return '#ef4444';
+        return theme.colors.error;
       case 'pickup':
-        return '#f59e0b';
+        return theme.colors.pending || theme.colors.warning;
       case 'accepted':
-        return '#3b82f6';
+        return theme.colors.secondary;
       case 'pending':
-        return '#9ca3af';
+        return theme.colors.divider || theme.colors.text.disabled;
       default:
-        return '#6b7280';
+        return theme.colors.text.secondary;
     }
   };
 
@@ -271,16 +272,8 @@ export default function ManagerTrackingDashboard() {
 
               {/* Timeline */}
               {item.received_at && (
-                <div
-                  style={{
-                    padding: '10px',
-                    backgroundColor: '#fef3c7',
-                    borderTop: '1px solid #fde68a',
-                    marginTop: '10px',
-                    borderRadius: '4px',
-                  }}
-                >
-                  <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#92400e' }}>
+                <div style={{ padding: '10px', backgroundColor: theme.colors.pending || theme.colors.warning, borderTop: `1px solid ${theme.colors.warning || theme.colors.border}`, marginTop: '10px', borderRadius: '4px' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 'bold', color: theme.colors.pending || theme.colors.warning }}>
                     Accettato:{' '}
                     {new Date(item.received_at).toLocaleTimeString('it-IT', {
                       hour: '2-digit',
@@ -307,7 +300,7 @@ export default function ManagerTrackingDashboard() {
               style={{ height: '100%', width: '100%' }}
             >
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              <Polyline positions={selectedTrack.poly} color="#ef4444" />
+              <Polyline positions={selectedTrack.poly} color={theme.colors.error} />
               {selectedTrack.poly.map((p, idx) => (
                 <Marker key={idx} position={p}></Marker>
               ))}

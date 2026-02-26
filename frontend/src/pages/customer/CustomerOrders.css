@@ -12,7 +12,7 @@
 }
 
 .header {
-  background: linear-gradient(135deg, var(--admin-accent, #ff6b00) 0%, #ff8c00 100%);
+  background: linear-gradient(135deg, var(--admin-accent, #ff6b00) 0%, var(--admin-promo-end, #ff8c00) 100%);
   color: white;
   padding: 20px 16px;
   text-align: center;
@@ -27,7 +27,7 @@
 .tabs {
   display: flex;
   background: white;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--admin-muted-100, #eee);
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -39,19 +39,19 @@
   border: none;
   font-size: 14px;
   font-weight: 500;
-  color: #999;
+  color: var(--admin-muted, #999);
   cursor: pointer;
   transition: all 0.3s ease;
   border-bottom: 2px solid transparent;
 }
 
 .tab:hover {
-  color: #333;
+  color: var(--admin-title-color, #333);
 }
 
 .tab.active {
-  color: #ff6b00;
-  border-bottom-color: #ff6b00;
+  color: var(--admin-accent, #ff6b00);
+  border-bottom-color: var(--admin-accent, #ff6b00);
 }
 
 .orders-container {
@@ -63,7 +63,7 @@
 .loading,
 .empty {
   text-align: center;
-  color: #999;
+  color: var(--admin-muted, #999);
   font-size: 14px;
   padding: 50px 16px;
 }
@@ -79,7 +79,7 @@
 .restaurant-info h3 {
   font-size: 15px;
   font-weight: 600;
-  color: #333;
+  color: var(--admin-title-color, #333);
   margin: 0 0 4px;
 }
 
@@ -98,14 +98,14 @@
   display: flex;
   justify-content: space-between;
   padding: 8px 0;
-  border-top: 1px solid #f0f0f0;
-  border-bottom: 1px solid #f0f0f0;
+  border-top: 1px solid var(--admin-muted-100, #f0f0f0);
+  border-bottom: 1px solid var(--admin-muted-100, #f0f0f0);
   font-size: 12px;
-  color: #666;
+  color: var(--admin-muted, #666);
 }
 
 .items-count {
-  color: #666;
+  color: var(--admin-muted, #666);
 }
 
 .total-price {
@@ -119,11 +119,11 @@
   align-items: center;
   padding: 8px 0;
   font-size: 11px;
-  color: #999;
+  color: var(--admin-muted, #999);
 }
 
 .eta {
-  color: #ff6b00;
+  color: var(--admin-accent, #ff6b00);
   font-weight: 600;
 }
 
@@ -145,43 +145,43 @@
 }
 
 .btn-track {
-  background-color: #e0ecff;
-  color: #0066ff;
-  border: 1px solid #0066ff;
+  background-color: var(--admin-primary-100, #e0ecff);
+  color: var(--admin-primary, #0066ff);
+  border: 1px solid var(--admin-primary, #0066ff);
 }
 
 .btn-track:hover {
-  background-color: #c5e0ff;
+  background-color: var(--admin-primary-200, #c5e0ff);
 }
 
 .btn-cancel {
-  background-color: #ffe5e5;
-  color: #ff6b6b;
-  border: 1px solid #ff6b6b;
+  background-color: var(--admin-danger-100, #ffe5e5);
+  color: var(--admin-danger, #ff6b6b);
+  border: 1px solid var(--admin-danger, #ff6b6b);
 }
 
 .btn-cancel:hover {
-  background-color: #ffc5c5;
+  background-color: var(--admin-danger-200, #ffc5c5);
 }
 
 .btn-rate {
-  background-color: #e8f5e9;
-  color: #4caf50;
-  border: 1px solid #4caf50;
+  background-color: var(--admin-success-100, #e8f5e9);
+  color: var(--admin-success, #4caf50);
+  border: 1px solid var(--admin-success, #4caf50);
 }
 
 .btn-rate:hover {
-  background-color: #c8e6c9;
+  background-color: var(--admin-success-200, #c8e6c9);
 }
 
 .btn-reorder {
-  background-color: #e0ecff;
-  color: #0066ff;
-  border: 1px solid #0066ff;
+  background-color: var(--admin-primary-100, #e0ecff);
+  color: var(--admin-primary, #0066ff);
+  border: 1px solid var(--admin-primary, #0066ff);
 }
 
 .btn-reorder:hover {
-  background-color: #c5e0ff;
+  background-color: var(--admin-primary-200, #c5e0ff);
 }
 
 /* Modal Styles */
@@ -219,7 +219,7 @@
 .modal-header h2 {
   font-size: 18px;
   margin: 0;
-  color: #333;
+  color: var(--admin-title-color, #333);
 }
 
 .modal-close {
@@ -227,25 +227,25 @@
   border: none;
   font-size: 24px;
   cursor: pointer;
-  color: #999;
+  color: var(--admin-muted, #999);
 }
 
 .tracking-info {
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--admin-muted-100, #eee);
 }
 
 .tracking-restaurant {
   font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: var(--admin-title-color, #333);
   margin: 0 0 8px;
 }
 
 .tracking-total {
   font-size: 12px;
-  color: #999;
+  color: var(--admin-muted, #999);
   margin: 0;
 }
 
@@ -264,7 +264,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background-color: #f0f0f0;
+  background-color: var(--admin-muted-100, #f0f0f0);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -287,7 +287,7 @@
   top: 32px;
   width: 2px;
   height: 20px;
-  background-color: #ddd;
+  background-color: var(--admin-muted-100, #ddd);
 }
 
 .timeline-line.active {
@@ -296,7 +296,7 @@
 
 .timeline-label {
   font-size: 12px;
-  color: #999;
+  color: var(--admin-muted, #999);
   margin-top: 2px;
 }
 
@@ -311,17 +311,17 @@
   border-top: 1px solid #eee;
 }
 
+.rider-section {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--admin-muted-100, #eee);
+}
 .rider-section h3 {
   font-size: 14px;
   font-weight: 600;
-  color: #333;
+  color: var(--admin-title-color, #333);
   margin: 0 0 10px;
 }
-
-.rider-card {
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  padding: 12px;
 }
 
 .rider-name {
@@ -403,7 +403,7 @@
 .note-input {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--admin-muted-100, #ddd);
   border-radius: 8px;
   font-size: 13px;
   font-family: inherit;
@@ -413,7 +413,7 @@
 
 .note-input:focus {
   outline: none;
-  border-color: #0066ff;
+  border-color: var(--admin-primary, #0066ff);
   box-shadow: 0 0 8px rgba(0, 102, 255, 0.1);
 }
 
@@ -435,8 +435,8 @@
 }
 
 .btn-modal-cancel {
-  background-color: #ddd;
-  color: #333;
+  background-color: var(--admin-muted-100, #ddd);
+  color: var(--admin-title-color, #333);
 }
 
 .btn-modal-cancel:hover {
@@ -444,7 +444,7 @@
 }
 
 .btn-modal-save {
-  background-color: #0066ff;
+  background-color: var(--admin-primary, #0066ff);
   color: white;
 }
 

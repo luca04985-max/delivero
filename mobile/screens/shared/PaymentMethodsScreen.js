@@ -7,14 +7,13 @@ import {
   TextInput,
   FlatList,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// addresses are stored server-side; no local AsyncStorage cache
 import { mobileTheme } from '../../theme';
-import { paymentsAPI } from '../../services/api';
+import { paymentsAPI, userAPI } from '../../services/api';
 import { paymentMethodsScreenStyles } from './styles/PaymentMethodsScreenStyles';
 import { geocodeAddress } from '../../services/geocoding';
 import { useToast } from '../../hooks/useToast';
 
-const ADDR_KEY = 'saved_addresses_v1';
 
 export default function PaymentMethodsScreen() {
   const [addresses, setAddresses] = useState([]);
@@ -29,38 +28,53 @@ export default function PaymentMethodsScreen() {
   useEffect(() => {
     (async () => {
       try {
-        const a = await AsyncStorage.getItem(ADDR_KEY);
-        setAddresses(a ? JSON.parse(a) : []);
+        const serverAddrs = await userAPI.getAddresses();
+        setAddresses(Array.isArray(serverAddrs) ? serverAddrs : []);
         // load server-side saved cards
         const serverCards = await paymentsAPI.getSavedCards();
         setCards(serverCards || []);
       } catch (e) {
-        console.error('Failed to load payment methods', e);
+        console.error('Failed to load payment methods from server', e);
+        setAddresses([]);
       }
     })();
   }, []);
 
-  const persist = async (key, value) => {
-    await AsyncStorage.setItem(key, JSON.stringify(value));
-  };
+  // no local cache persistence for addresses; server is the source of truth
 
   const addAddress = async () => {
     if (!addrInput.trim()) return showToast('Inserisci un indirizzo', 'error');
     try {
       const geocoded = await geocodeAddress(addrInput.trim());
       const newAddr = {
+        // temporary client id; server will return canonical id
         id: Date.now().toString(),
         label: addrInput.trim(),
         displayName: geocoded?.displayName || addrInput.trim(),
         latitude: geocoded?.latitude || null,
         longitude: geocoded?.longitude || null,
       };
-      const next = [newAddr, ...addresses];
-      setAddresses(next);
-      await persist(ADDR_KEY, next);
-      setAddrInput('');
-      setAddAddrVisible(false);
-      showToast('Indirizzo salvato', 'success');
+      // Save to server and reflect authoritative result
+      try {
+        const saved = await userAPI.saveAddress({
+          label: newAddr.label,
+          display_name: newAddr.displayName,
+          latitude: newAddr.latitude,
+          longitude: newAddr.longitude,
+        });
+        if (saved) {
+          // prepend saved (server should include id/display_name)
+          setAddresses([saved, ...(addresses || [])]);
+          setAddrInput('');
+          setAddAddrVisible(false);
+          showToast('Indirizzo salvato', 'success');
+        } else {
+          throw new Error('Server did not return saved address');
+        }
+      } catch (serverErr) {
+        console.error('Could not save address to server', serverErr);
+        showToast('Impossibile salvare l\'indirizzo sul server', 'error');
+      }
     } catch (e) {
       console.error('Failed to add address', e);
       showToast('Impossibile geocodificare l\'indirizzo', 'error');
@@ -68,10 +82,15 @@ export default function PaymentMethodsScreen() {
   };
 
   const removeAddress = async id => {
-    const next = addresses.filter(a => a.id !== id);
-    setAddresses(next);
-    await persist(ADDR_KEY, next);
-    showToast('Indirizzo rimosso', 'info');
+    try {
+      await userAPI.deleteAddress(id);
+      const next = addresses.filter(a => a.id !== id);
+      setAddresses(next);
+      showToast('Indirizzo rimosso', 'info');
+    } catch (e) {
+      console.error('Failed to delete address on server', e);
+      showToast('Impossibile rimuovere l\'indirizzo', 'error');
+    }
   };
 
   const addCard = async () => {

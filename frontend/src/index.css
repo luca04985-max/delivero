@@ -1,15 +1,18 @@
 /* === VARIABLES === */
+@import './styles/adminUtilities.css';
 :root {
-  --primary-color: #ff6b00;
-  --primary-dark: #e55a00;
-  --secondary-color: #0066ff;
-  --success-color: #4caf50;
-  --danger-color: #f44336;
-  --warning-color: #fb8500;
-  --light-bg: #f8f9fa;
-  --border-color: #e0e0e0;
-  --text-primary: #333333;
-  --text-secondary: #666666;
+  /* Alias to centralized admin variables to complete the sweep
+     (keeps existing variable names used across the codebase) */
+  --primary-color: var(--admin-accent);
+  --primary-dark: var(--admin-accent-dark);
+  --secondary-color: var(--admin-primary);
+  --success-color: var(--admin-success);
+  --danger-color: var(--admin-danger);
+  --warning-color: var(--admin-warning);
+  --light-bg: var(--admin-bg);
+  --border-color: var(--admin-muted-100);
+  --text-primary: var(--admin-title-color);
+  --text-secondary: var(--admin-muted);
   --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
   --radius: 12px;
@@ -87,7 +90,7 @@ p {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #ccc;
+  background: var(--border-color);
 }
 
 /* === BUTTONS === */

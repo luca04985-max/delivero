@@ -63,14 +63,14 @@ const ToastNotification = ({ visible, message, type = 'info', onHide, duration =
   const getToastColor = () => {
     switch (type) {
       case 'success':
-        return mobileTheme.colors.success || '#34C759';
+        return mobileTheme.colors.success;
       case 'error':
-        return mobileTheme.colors.error || '#FF3B30';
+        return mobileTheme.colors.error;
       case 'warning':
-        return mobileTheme.colors.warning || '#FF9500';
+        return mobileTheme.colors.warning;
       case 'info':
       default:
-        return mobileTheme.colors.primary || '#007AFF';
+        return mobileTheme.colors.primary;
     }
   };
 

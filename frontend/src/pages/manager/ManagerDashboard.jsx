@@ -3,6 +3,7 @@ import { ordersAPI } from '../../services/api';
 import logger from '../../utils/logger';
 import InventoryManager from './InventoryManager';
 import adminStyles from '../../styles/adminTheme';
+import { theme } from '../../theme/theme';
 
 export default function ManagerDashboard({ user }) {
   const [orders, setOrders] = useState([]);
@@ -142,19 +143,19 @@ export default function ManagerDashboard({ user }) {
   const getStatusColor = status => {
     switch (status) {
       case 'pending':
-        return '#FFA500';
+        return 'var(--admin-warning, #FF9800)';
       case 'in-progress':
-        return '#0066FF';
+        return 'var(--admin-primary, #0B5FFF)';
       case 'open':
-        return '#FF0000';
+        return 'var(--admin-danger, #ff6b6b)';
       case 'closed':
-        return '#228B22';
+        return 'var(--admin-success, #4caf50)';
       case 'paid':
-        return '#228B22';
+        return 'var(--admin-success, #4caf50)';
       case 'unpaid':
-        return '#FF0000';
+        return 'var(--admin-danger, #ff6b6b)';
       default:
-        return '#999';
+        return 'var(--admin-muted, #6B7280)';
     }
   };
 
@@ -170,41 +171,32 @@ export default function ManagerDashboard({ user }) {
           <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.8rem' }}>
             {stats.totalOrders}
           </p>
-          <p style={{ margin: 0, fontSize: '0.9rem', color: '#999' }}>Ordini Totali</p>
+          <p style={{ margin: 0, fontSize: '0.9rem', color: theme.colors.text.secondary }}>Ordini Totali</p>
           </button>
         </div>
 
-        <div
-          className="card text-center"
-          style={{ backgroundColor: 'rgba(251, 133, 0, 0.05)', borderLeft: '4px solid #FBA500' }}
-        >
+          <div className="card text-center" style={{ backgroundColor: 'var(--admin-bg, #F6F9FF)', borderLeft: '4px solid var(--admin-accent, #FF6B00)' }}>
           <p style={{ margin: 0, fontSize: '2rem' }}>⏳</p>
           <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.8rem' }}>
             {stats.pendingOrders}
           </p>
-          <p style={{ margin: 0, fontSize: '0.9rem', color: '#999' }}>In Attesa</p>
+          <p style={{ margin: 0, fontSize: '0.9rem', color: theme.colors.text.secondary }}>In Attesa</p>
         </div>
 
-        <div
-          className="card text-center"
-          style={{ backgroundColor: 'rgba(0, 102, 255, 0.05)', borderLeft: '4px solid #0066FF' }}
-        >
+        <div className="card text-center" style={{ backgroundColor: 'var(--admin-bg, #F6F9FF)', borderLeft: '4px solid var(--admin-primary, #0B5FFF)' }}>
           <p style={{ margin: 0, fontSize: '2rem' }}>🚚</p>
           <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.8rem' }}>
             {stats.activeDeliveries}
           </p>
-          <p style={{ margin: 0, fontSize: '0.9rem', color: '#999' }}>In Consegna</p>
+          <p style={{ margin: 0, fontSize: '0.9rem', color: theme.colors.text.secondary }}>In Consegna</p>
         </div>
 
-        <div
-          className="card text-center"
-          style={{ backgroundColor: 'rgba(76, 175, 80, 0.05)', borderLeft: '4px solid #4CAF50' }}
-        >
+        <div className="card text-center" style={{ backgroundColor: 'var(--admin-bg, #F6F9FF)', borderLeft: '4px solid var(--admin-success, #4caf50)' }}>
           <p style={{ margin: 0, fontSize: '2rem' }}>€</p>
           <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.5rem' }}>
             {stats.totalRevenue.toFixed(2)}
           </p>
-          <p style={{ margin: 0, fontSize: '0.9rem', color: '#999' }}>Ricavo Totale</p>
+          <p style={{ margin: 0, fontSize: '0.9rem', color: theme.colors.text.secondary }}>Ricavo Totale</p>
         </div>
       </div>
 
@@ -235,9 +227,9 @@ export default function ManagerDashboard({ user }) {
               fontSize: '0.95rem',
               fontWeight: '600',
               borderRadius: '8px',
-              border: `2px solid ${activeTab === tab.id ? '#FF6B00' : '#ddd'}`,
-              backgroundColor: activeTab === tab.id ? '#FF6B00' : '#fff',
-              color: activeTab === tab.id ? '#fff' : '#333',
+              border: `2px solid ${activeTab === tab.id ? 'var(--admin-accent, #FF6B00)' : 'var(--admin-muted-100, #f0f0f0)'}`,
+              backgroundColor: activeTab === tab.id ? 'var(--admin-accent, #FF6B00)' : 'var(--admin-card-bg, #ffffff)',
+              color: activeTab === tab.id ? 'var(--admin-card-bg, #ffffff)' : 'var(--admin-title-color, #0F172A)',
               cursor: 'pointer',
               transition: 'all 0.3s ease',
             }}
@@ -277,7 +269,7 @@ export default function ManagerDashboard({ user }) {
                 >
                   <div>
                     <h3 style={{ margin: 0, marginBottom: '0.5rem' }}>👤 {rider.name}</h3>
-                    <p style={{ margin: 0, fontSize: '0.9rem', color: '#999' }}>
+                    <p style={{ margin: 0, fontSize: '0.9rem', color: theme.colors.text.secondary }}>
                       {getRiderStatusBadge(rider.status)}
                     </p>
                   </div>
@@ -287,22 +279,15 @@ export default function ManagerDashboard({ user }) {
                       fontWeight: '600',
                       padding: '4px 12px',
                       borderRadius: '20px',
-                      backgroundColor: rider.status === 'free' ? '#E8F5E9' : '#FFEBEE',
-                      color: rider.status === 'free' ? '#228B22' : '#D32F2F',
+                      backgroundColor: rider.status === 'free' ? theme.colors.success : theme.colors.error,
+                      color: rider.status === 'free' ? theme.colors.success : theme.colors.error,
                     }}
                   >
                     {rider.status === 'free' ? 'Libero' : 'Occupato'}
                   </span>
                 </div>
 
-                <div
-                  style={{
-                    backgroundColor: '#f8f8f8',
-                    padding: '1rem',
-                    borderRadius: '8px',
-                    marginBottom: '1rem',
-                  }}
-                >
+                <div style={{ backgroundColor: theme.colors.background, padding: '1rem', borderRadius: '8px', marginBottom: '1rem' }}>
                   <p style={{ margin: '0.5rem 0', fontSize: '0.9rem' }}>
                     📦 Ordini Attuali: <strong>{rider.currentOrders}</strong>
                   </p>
@@ -350,9 +335,9 @@ export default function ManagerDashboard({ user }) {
                   padding: '6px 14px',
                   fontSize: '0.85rem',
                   borderRadius: '6px',
-                  border: '1px solid #ddd',
-                  backgroundColor: '#fff',
-                  color: '#333',
+                  border: `1px solid ${theme.colors.border}`,
+                  backgroundColor: theme.colors.white,
+                  color: theme.colors.text.primary,
                 }}
               >
                 {status === 'all'
@@ -386,7 +371,7 @@ export default function ManagerDashboard({ user }) {
                 >
                   <div>
                     <h3 style={{ margin: 0, marginBottom: '0.5rem' }}>Ordine #{order.id}</h3>
-                    <p style={{ margin: 0, fontSize: '0.9rem', color: '#666' }}>
+                    <p style={{ margin: 0, fontSize: '0.9rem', color: theme.colors.text.secondary }}>
                       👤 {order.customer_name || 'Cliente Sconosciuto'}
                     </p>
                   </div>
@@ -396,7 +381,7 @@ export default function ManagerDashboard({ user }) {
                         margin: 0,
                         fontSize: '1.2rem',
                         fontWeight: 'bold',
-                        color: '#FF6B00',
+                        color: theme.colors.primary,
                       }}
                     >
                       €{(order.total_price || 0).toFixed(2)}
@@ -413,7 +398,7 @@ export default function ManagerDashboard({ user }) {
                               ? 'in-progress'
                               : 'closed',
                         ),
-                        color: '#fff',
+                        color: theme.colors.white,
                         fontSize: '0.75rem',
                         fontWeight: '600',
                         marginTop: '4px',
@@ -427,10 +412,10 @@ export default function ManagerDashboard({ user }) {
                     </span>
                   </div>
                 </div>
-                <p style={{ margin: '0.5rem 0', fontSize: '0.85rem', color: '#999' }}>
+                <p style={{ margin: '0.5rem 0', fontSize: '0.85rem', color: theme.colors.text.secondary }}>
                   🚴 Rider: {order.rider_name || 'Non Assegnato'}
                 </p>
-                <p style={{ margin: '0.5rem 0', fontSize: '0.85rem', color: '#999' }}>
+                <p style={{ margin: '0.5rem 0', fontSize: '0.85rem', color: theme.colors.text.secondary }}>
                   📍 {order.address}
                 </p>
               </div>
@@ -465,7 +450,7 @@ export default function ManagerDashboard({ user }) {
                 >
                   <div>
                     <h3 style={{ margin: 0, marginBottom: '0.5rem' }}>🎫 {ticket.title}</h3>
-                    <p style={{ margin: 0, fontSize: '0.9rem', color: '#666' }}>
+                    <p style={{ margin: 0, fontSize: '0.9rem', color: theme.colors.text.secondary }}>
                       ID: #{ticket.id} • Cliente: #{ticket.customerId}
                     </p>
                   </div>
@@ -474,8 +459,8 @@ export default function ManagerDashboard({ user }) {
                       style={{
                         padding: '4px 8px',
                         borderRadius: '4px',
-                        backgroundColor: ticket.priority === 'high' ? '#FFEBEE' : '#FFF3E0',
-                        color: ticket.priority === 'high' ? '#D32F2F' : '#E65100',
+                        backgroundColor: ticket.priority === 'high' ? theme.colors.surface : theme.colors.background,
+                        color: ticket.priority === 'high' ? theme.colors.error : theme.colors.warning,
                         fontSize: '0.75rem',
                         fontWeight: '600',
                       }}
@@ -497,7 +482,7 @@ export default function ManagerDashboard({ user }) {
                               ? 'in-progress'
                               : 'closed',
                         ),
-                        color: '#fff',
+                        color: theme.colors.white,
                         fontSize: '0.75rem',
                         fontWeight: '600',
                       }}
@@ -510,7 +495,7 @@ export default function ManagerDashboard({ user }) {
                     </span>
                   </div>
                 </div>
-                <p style={{ margin: '0.5rem 0', fontSize: '0.85rem', color: '#999' }}>
+                <p style={{ margin: '0.5rem 0', fontSize: '0.85rem', color: theme.colors.text.secondary }}>
                   📅 {ticket.createdAt.toLocaleString('it-IT')}
                 </p>
 
@@ -551,7 +536,7 @@ export default function ManagerDashboard({ user }) {
                 >
                   <div>
                     <h3 style={{ margin: 0, marginBottom: '0.25rem' }}>📄 {invoice.id}</h3>
-                    <p style={{ margin: 0, fontSize: '0.85rem', color: '#666' }}>
+                    <p style={{ margin: 0, fontSize: '0.85rem', color: theme.colors.text.secondary }}>
                       {invoice.period}
                     </p>
                   </div>
@@ -559,8 +544,8 @@ export default function ManagerDashboard({ user }) {
                     style={{
                       padding: '4px 8px',
                       borderRadius: '4px',
-                      backgroundColor: invoice.status === 'paid' ? '#E8F5E9' : '#FFF3E0',
-                      color: invoice.status === 'paid' ? '#228B22' : '#E65100',
+                      backgroundColor: invoice.status === 'paid' ? theme.colors.success : theme.colors.background,
+                      color: invoice.status === 'paid' ? theme.colors.success : theme.colors.warning,
                       fontSize: '0.75rem',
                       fontWeight: '600',
                     }}
@@ -571,27 +556,27 @@ export default function ManagerDashboard({ user }) {
 
                 <div
                   style={{
-                    backgroundColor: '#f8f8f8',
+                    backgroundColor: theme.colors.background,
                     padding: '1rem',
                     borderRadius: '8px',
                     marginBottom: '1rem',
                     textAlign: 'center',
                   }}
                 >
-                  <p style={{ margin: 0, fontSize: '0.85rem', color: '#999' }}>Importo</p>
+                  <p style={{ margin: 0, fontSize: '0.85rem', color: theme.colors.text.secondary }}>Importo</p>
                   <p
                     style={{
                       margin: '0.5rem 0 0 0',
                       fontSize: '1.5rem',
                       fontWeight: 'bold',
-                      color: '#FF6B00',
+                      color: theme.colors.primary,
                     }}
                   >
                     €{invoice.amount.toFixed(2)}
                   </p>
                 </div>
 
-                <p style={{ margin: '0.5rem 0', fontSize: '0.8rem', color: '#999' }}>
+                <p style={{ margin: '0.5rem 0', fontSize: '0.8rem', color: theme.colors.text.secondary }}>
                   📅 {invoice.date.toLocaleDateString('it-IT')}
                 </p>
 
@@ -629,7 +614,7 @@ export default function ManagerDashboard({ user }) {
           >
             <div className="card">
               <h3 style={{ margin: 0, marginBottom: '1rem' }}>👤 Profili Rider</h3>
-              <p style={{ color: '#666', marginBottom: '1rem' }}>
+              <p style={{ color: theme.colors.text.secondary, marginBottom: '1rem' }}>
                 Gestisci i profili dei rider, documenti e verifiche
               </p>
               <button className="btn btn-primary" style={{ width: '100%' }}>
@@ -639,7 +624,7 @@ export default function ManagerDashboard({ user }) {
 
             <div className="card">
               <h3 style={{ margin: 0, marginBottom: '1rem' }}>👨‍💼 Profili Customer</h3>
-              <p style={{ color: '#666', marginBottom: '1rem' }}>
+              <p style={{ color: theme.colors.text.secondary, marginBottom: '1rem' }}>
                 Visualizza e gestisci i profili dei clienti
               </p>
               <button className="btn btn-primary" style={{ width: '100%' }}>
@@ -649,7 +634,7 @@ export default function ManagerDashboard({ user }) {
 
             <div className="card">
               <h3 style={{ margin: 0, marginBottom: '1rem' }}>⚙️ Impostazioni Account</h3>
-              <p style={{ color: '#666', marginBottom: '1rem' }}>
+              <p style={{ color: theme.colors.text.secondary, marginBottom: '1rem' }}>
                 Configura le tue impostazioni di manager
               </p>
               <button className="btn btn-primary" style={{ width: '100%' }}>
@@ -659,7 +644,7 @@ export default function ManagerDashboard({ user }) {
 
             <div className="card">
               <h3 style={{ margin: 0, marginBottom: '1rem' }}>🔐 Sicurezza</h3>
-              <p style={{ color: '#666', marginBottom: '1rem' }}>
+              <p style={{ color: theme.colors.text.secondary, marginBottom: '1rem' }}>
                 Modifica password e impostazioni privacy
               </p>
               <button className="btn btn-primary" style={{ width: '100%' }}>
@@ -669,7 +654,7 @@ export default function ManagerDashboard({ user }) {
 
             <div className="card">
               <h3 style={{ margin: 0, marginBottom: '1rem' }}>📊 Ruoli & Permessi</h3>
-              <p style={{ color: '#666', marginBottom: '1rem' }}>
+              <p style={{ color: theme.colors.text.secondary, marginBottom: '1rem' }}>
                 Gestisci ruoli e accessi per i team manager
               </p>
               <button className="btn btn-primary" style={{ width: '100%' }}>
@@ -679,7 +664,7 @@ export default function ManagerDashboard({ user }) {
 
             <div className="card">
               <h3 style={{ margin: 0, marginBottom: '1rem' }}>📧 Notifiche</h3>
-              <p style={{ color: '#666', marginBottom: '1rem' }}>
+              <p style={{ color: theme.colors.text.secondary, marginBottom: '1rem' }}>
                 Configura le tue preferenze di notifica
               </p>
               <button className="btn btn-primary" style={{ width: '100%' }}>

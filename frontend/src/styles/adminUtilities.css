@@ -1,20 +1,49 @@
 :root{
-  --admin-bg:#F6F9FF;
-  --admin-card-bg:#ffffff;
-  --admin-primary:#0B5FFF;
-  --admin-muted:#6B7280;
-  --admin-accent:#FF6B00;
+  --admin-bg: #F6F9FF;
+  --admin-card-bg: #ffffff;
+  --admin-primary: #0B5FFF;
+  --admin-muted: #6B7280;
+  --admin-accent: #FF6B00;
+  --admin-accent-dark: #E55A00;
+  --admin-title-color: #0F172A;
+  --admin-promo-end: #ffb347;
+  /* Category color tokens (used by customer home categories) */
+  --category-all: #FF6B00;
+  --category-pizza: #FFE5CC;
+  --category-burger: #FFF0E6;
+  --category-sushi: #E0F7FF;
+  --category-poke: #E8F5E9;
+  --category-kebab: #FFF3E0;
+  --category-dessert: #FCE4EC;
+  --category-healthy: #E0F2F1;
+  --category-italian: #F3E5F5;
+  --category-chinese: #FFF9C4;
+  /* Utility semantic shades for buttons/statuses */
+  --admin-primary-100: #e0ecff;
+  --admin-primary-200: #c5e0ff;
+  --admin-danger: #ff6b6b;
+  --admin-warning: #FF9800;
+  --admin-danger-100: #ffe5e5;
+  --admin-danger-200: #ffc5c5;
+  --admin-success: #4caf50;
+  --admin-success-100: #e8f5e9;
+  --admin-success-200: #c8e6c9;
+  --admin-muted-100: #f0f0f0;
+  /* Notice backgrounds */
+  --notice-error-bg: #FEF2F2;
+  --notice-success-bg: #ECFDF5;
+  --admin-closed: #757575;
 }
 
 .u-container{padding:28px;max-width:1300px;margin:0 auto;background-color:var(--admin-bg);min-height:100vh}
 .u-card{background:var(--admin-card-bg);padding:18px;border-radius:10px;box-shadow:0 6px 18px rgba(16,24,40,.04)}
-.u-title{color:#0F172A;margin:0;font-size:1.5rem}
+.u-title{color:var(--admin-title-color);margin:0;font-size:1.5rem}
 .u-subtitle{color:var(--admin-muted)}
 .u-btn{padding:10px 16px;border-radius:8px;border:none;cursor:pointer}
 .u-btn-primary{background:var(--admin-primary);color:#fff}
 .u-muted{color:var(--admin-muted)}
 .u-grid-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-bottom:28px}
-.u-promo-card{border-radius:10px;padding:16px;min-width:240px;color:#fff;background:linear-gradient(135deg,var(--admin-accent) 0%,#ffb347 100%)}
+.u-promo-card{border-radius:10px;padding:16px;min-width:240px;color:#fff;background:linear-gradient(135deg,var(--admin-accent) 0%,var(--admin-promo-end) 100%)}
 .u-category-card{border-radius:12px;padding:20px;text-align:center;cursor:pointer;border:1px solid rgba(0,0,0,.04);box-shadow:0 2px 4px rgba(16,24,40,.04);background:var(--admin-card-bg)}
 .u-restaurant-card{background:var(--admin-card-bg);border-radius:12px;padding:14px;border:1px solid rgba(0,0,0,.04);box-shadow:0 6px 18px rgba(16,24,40,.04)}
 .u-order-card{background:var(--admin-card-bg);border-radius:12px;padding:14px;border-left:4px solid var(--admin-primary);box-shadow:0 6px 18px rgba(16,24,40,.04)}

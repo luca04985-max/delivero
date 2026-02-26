@@ -10,15 +10,15 @@ export default function CustomerHomeEnhanced() {
   const [activeTab, setActiveTab] = useState('home');
 
   const foodCategories = [
-    { id: 1, name: 'Pizza', emoji: '🍕', color: '#FFE5CC' },
-    { id: 2, name: 'Burger', emoji: '🍔', color: '#FFF0E6' },
-    { id: 3, name: 'Sushi', emoji: '🍣', color: '#E0F7FF' },
-    { id: 4, name: 'Poke', emoji: '🥗', color: '#E8F5E9' },
-    { id: 5, name: 'Kebab', emoji: '🌮', color: '#FFF3E0' },
-    { id: 6, name: 'Dessert', emoji: '🍰', color: '#FCE4EC' },
-    { id: 7, name: 'Cinese', emoji: '🥡', color: '#FFF9C4' },
-    { id: 8, name: 'Healthy', emoji: '🥙', color: '#E0F2F1' },
-    { id: 9, name: 'Italiano', emoji: '🍝', color: '#F3E5F5' },
+    { id: 1, name: 'Pizza', emoji: '🍕', color: 'var(--category-pizza, #FFE5CC)' },
+    { id: 2, name: 'Burger', emoji: '🍔', color: 'var(--category-burger, #FFF0E6)' },
+    { id: 3, name: 'Sushi', emoji: '🍣', color: 'var(--category-sushi, #E0F7FF)' },
+    { id: 4, name: 'Poke', emoji: '🥗', color: 'var(--category-poke, #E8F5E9)' },
+    { id: 5, name: 'Kebab', emoji: '🌮', color: 'var(--category-kebab, #FFF3E0)' },
+    { id: 6, name: 'Dessert', emoji: '🍰', color: 'var(--category-dessert, #FCE4EC)' },
+    { id: 7, name: 'Cinese', emoji: '🥡', color: 'var(--category-chinese, #FFF9C4)' },
+    { id: 8, name: 'Healthy', emoji: '🥙', color: 'var(--category-healthy, #E0F2F1)' },
+    { id: 9, name: 'Italiano', emoji: '🍝', color: 'var(--category-italian, #F3E5F5)' },
   ];
 
   const allRestaurants = [

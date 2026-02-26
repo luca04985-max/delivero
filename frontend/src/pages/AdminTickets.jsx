@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import logger from '../utils/logger';
 import adminStyles from '../styles/adminTheme';
+import { theme } from '../theme/theme';
 
 const AdminTickets = () => {
   const [tickets, setTickets] = useState([]);
@@ -100,12 +101,12 @@ const AdminTickets = () => {
 
   const getStatusColor = status => {
     const colors = {
-      open: '#ff9800',
-      in_progress: '#2196f3',
-      resolved: '#4caf50',
-      closed: '#757575',
+      open: 'var(--admin-accent, #ff6b00)',
+      in_progress: 'var(--admin-primary, #0B5FFF)',
+      resolved: 'var(--admin-success, #4caf50)',
+      closed: 'var(--admin-closed, #757575)',
     };
-    return colors[status] || '#999';
+    return colors[status] || 'var(--admin-muted, ' + theme.colors.text.secondary + ')';
   };
 
   const filteredTickets = tickets.filter(t => {
@@ -130,20 +131,20 @@ const AdminTickets = () => {
                 <div style={styles.statNumber}>{stats.total}</div>
                 <div style={styles.statLabel}>Totale</div>
               </div>
-              <div style={styles.statCard}>
-                <div style={{ ...styles.statNumber, color: '#ff9800' }}>{stats.open}</div>
+                <div style={styles.statCard}>
+                <div style={{ ...styles.statNumber, color: 'var(--admin-accent, #ff6b00)' }}>{stats.open}</div>
                 <div style={styles.statLabel}>Aperto</div>
               </div>
               <div style={styles.statCard}>
-                <div style={{ ...styles.statNumber, color: '#2196f3' }}>{stats.in_progress}</div>
+                <div style={{ ...styles.statNumber, color: 'var(--admin-primary, #0B5FFF)' }}>{stats.in_progress}</div>
                 <div style={styles.statLabel}>In Corso</div>
               </div>
               <div style={styles.statCard}>
-                <div style={{ ...styles.statNumber, color: '#4caf50' }}>{stats.resolved}</div>
+                <div style={{ ...styles.statNumber, color: 'var(--admin-success, #4caf50)' }}>{stats.resolved}</div>
                 <div style={styles.statLabel}>Risolto</div>
               </div>
               <div style={styles.statCard}>
-                <div style={{ ...styles.statNumber, color: '#757575' }}>{stats.closed}</div>
+                <div style={{ ...styles.statNumber, color: 'var(--admin-closed, #757575)' }}>{stats.closed}</div>
                 <div style={styles.statLabel}>Chiuso</div>
               </div>
             </div>
@@ -314,16 +315,16 @@ const styles = {
   ...adminStyles,
   // small overrides
   statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '15px', marginBottom: '20px' },
-  statCard: { backgroundColor: '#F8FAFF', padding: '15px', borderRadius: '8px', textAlign: 'center' },
-  statNumber: { fontSize: '24px', fontWeight: '700', color: '#0F172A', margin: 0 },
+  statCard: { backgroundColor: theme.colors.surface, padding: '15px', borderRadius: '8px', textAlign: 'center' },
+  statNumber: { fontSize: '24px', fontWeight: '700', color: theme.colors.text.primary, margin: 0 },
   filterSection: { display: 'flex', gap: '12px', marginBottom: '18px' },
   filterSelect: { ...adminStyles.select },
   ticketsList: { display: 'grid', gap: '12px' },
   ticketCard: { ...adminStyles.card, border: '1px solid rgba(15,23,42,0.04)' },
-  titleCard: { margin: '0 0 5px 0', color: '#0F172A', fontSize: '16px' },
-  ticketUser: { margin: 0, color: '#6B7280', fontSize: '12px' },
-  ticketDescription: { margin: '5px 0', color: '#6B7280', fontSize: '14px' },
-  commentInput: { width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #E6EEF8', marginTop: '10px', marginBottom: '10px' },
+  titleCard: { margin: '0 0 5px 0', color: theme.colors.text.primary, fontSize: '16px' },
+  ticketUser: { margin: 0, color: theme.colors.text.secondary, fontSize: '12px' },
+  ticketDescription: { margin: '5px 0', color: theme.colors.text.secondary, fontSize: '14px' },
+  commentInput: { width: '100%', padding: '10px', borderRadius: '8px', border: `1px solid ${theme.colors.border}`, marginTop: '10px', marginBottom: '10px' },
   commentButton: { ...adminStyles.button, width: '100%' },
   updateButton: { ...adminStyles.button, width: '100%' },
 };

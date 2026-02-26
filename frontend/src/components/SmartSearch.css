@@ -22,11 +22,11 @@
 }
 
 .search-input::placeholder {
-  color: #999;
+  color: var(--admin-muted, #999);
 }
 
 .search-btn {
-  background: #ff6b00;
+  background: var(--admin-accent, #ff6b00);
   border: none;
   color: white;
   padding: 15px 20px;
@@ -36,7 +36,7 @@
 }
 
 .search-btn:hover {
-  background: #e55a00;
+  background: var(--admin-accent-dark, #e55a00);
   transform: scale(1.05);
 }
 
@@ -46,7 +46,7 @@
   left: 0;
   right: 0;
   background: white;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--admin-muted-100, #e9ecef);
   border-radius: 0 0 15px 15px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
   z-index: 1000;
@@ -58,14 +58,14 @@
   padding: 12px 20px;
   cursor: pointer;
   transition: all 0.2s ease;
-  border-bottom: 1px solid #f8f9fa;
+  border-bottom: 1px solid var(--admin-muted-100, #f8f9fa);
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
 .suggestion-item:hover {
-  background: #f8f9fa;
+  background: var(--admin-muted-100, #f8f9fa);
 }
 
 .suggestion-item:last-child {
@@ -80,20 +80,20 @@
 .suggestion-name {
   flex: 1;
   font-weight: 500;
-  color: #333;
+  color: var(--admin-title-color, #333);
 }
 
 .suggestion-category {
   font-size: 12px;
-  color: #666;
-  background: #e9ecef;
+  color: var(--admin-muted, #666);
+  background: var(--admin-muted-100, #e9ecef);
   padding: 2px 6px;
   border-radius: 8px;
 }
 
 .suggestion-restaurant {
   font-size: 11px;
-  color: #999;
+  color: var(--admin-muted, #999);
   font-style: italic;
 }
 
@@ -109,9 +109,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 20px;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid var(--admin-muted-100, #e9ecef);
   font-weight: 600;
-  color: #333;
+  color: var(--admin-title-color, #333);
 }
 
 .clear-btn {
@@ -142,7 +142,7 @@
 }
 
 .recent-item:hover {
-  background: #f8f9fa;
+  background: var(--admin-muted-100, #f8f9fa);
 }
 
 .recent-item:last-child {
@@ -157,7 +157,7 @@
 .recent-name {
   flex: 1;
   font-weight: 500;
-  color: #333;
+  color: var(--admin-title-color, #333);
 }
 
 /* Responsive Design */

@@ -74,12 +74,12 @@ const TicketsList = () => {
 
   const getStatusColor = status => {
     const colors = {
-      open: '#ff9800',
-      in_progress: '#2196f3',
-      resolved: '#4caf50',
-      closed: '#757575',
+      open: 'var(--admin-accent, #ff6b00)',
+      in_progress: 'var(--admin-primary, #0B5FFF)',
+      resolved: 'var(--admin-success, #4caf50)',
+      closed: 'var(--admin-closed, #757575)',
     };
-    return colors[status] || '#999';
+    return colors[status] || 'var(--admin-muted, #999)';
   };
 
   const getTypeIcon = type => {

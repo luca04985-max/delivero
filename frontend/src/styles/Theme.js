@@ -1,19 +1,20 @@
 // 🎨 DELIVERO THEME CONSTANTS
-// Estratto da CSS e trasformato in oggetto JS per componenti React
+// Sourcing canonical colors from `frontend/src/theme/theme.js` to avoid duplicates
+import { theme as canonicalTheme } from '../theme/theme';
 
 export const Theme = {
-  // 🎨 COLORI
+  // 🎨 COLORI (sourced)
   colors: {
-    primary: '#FF6B00',
-    primaryDark: '#E55A00',
-    secondary: '#0066FF',
-    success: '#4CAF50',
-    danger: '#f44336',
-    warning: '#FB8500',
-    lightBg: '#F8F9FA',
-    borderColor: '#E0E0E0',
-    textPrimary: '#333333',
-    textSecondary: '#666666',
+    primary: canonicalTheme.colors.primary,
+    primaryDark: '#E55A00', // specific darker accent (kept as fallback)
+    secondary: canonicalTheme.colors.secondary,
+    success: canonicalTheme.colors.success,
+    danger: canonicalTheme.colors.error,
+    warning: canonicalTheme.colors.warning,
+    lightBg: canonicalTheme.colors.background,
+    borderColor: canonicalTheme.colors.border,
+    textPrimary: canonicalTheme.colors.text.primary,
+    textSecondary: canonicalTheme.colors.text.secondary,
   },
 
   // 🔄 BORDER RADIUS

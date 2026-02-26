@@ -16,15 +16,15 @@ export default function CustomerHomeAdvanced() {
 
   // Enhanced categories with icons
   const categories = [
-    { id: 'all', name: 'Tutti', icon: '🏠', color: '#FF6B00' },
-    { id: 'pizza', name: 'Pizza', icon: '🍕', color: '#FFE5CC' },
-    { id: 'burger', name: 'Burger', icon: '🍔', color: '#FFF0E6' },
-    { id: 'sushi', name: 'Sushi', icon: '🍣', color: '#E0F7FF' },
-    { id: 'poke', name: 'Poke', icon: '🥗', color: '#E8F5E9' },
-    { id: 'kebab', name: 'Kebab', icon: '🌮', color: '#FFF3E0' },
-    { id: 'dessert', name: 'Dessert', icon: '🍰', color: '#FCE4EC' },
-    { id: 'healthy', name: 'Healthy', icon: '🥙', color: '#E0F2F1' },
-    { id: 'italian', name: 'Italiano', icon: '🍝', color: '#F3E5F5' },
+    { id: 'all', name: 'Tutti', icon: '🏠', color: 'var(--category-all, #FF6B00)' },
+    { id: 'pizza', name: 'Pizza', icon: '🍕', color: 'var(--category-pizza, #FFE5CC)' },
+    { id: 'burger', name: 'Burger', icon: '🍔', color: 'var(--category-burger, #FFF0E6)' },
+    { id: 'sushi', name: 'Sushi', icon: '🍣', color: 'var(--category-sushi, #E0F7FF)' },
+    { id: 'poke', name: 'Poke', icon: '🥗', color: 'var(--category-poke, #E8F5E9)' },
+    { id: 'kebab', name: 'Kebab', icon: '🌮', color: 'var(--category-kebab, #FFF3E0)' },
+    { id: 'dessert', name: 'Dessert', icon: '🍰', color: 'var(--category-dessert, #FCE4EC)' },
+    { id: 'healthy', name: 'Healthy', icon: '🥙', color: 'var(--category-healthy, #E0F2F1)' },
+    { id: 'italian', name: 'Italiano', icon: '🍝', color: 'var(--category-italian, #F3E5F5)' },
   ];
 
   // Load data on mount

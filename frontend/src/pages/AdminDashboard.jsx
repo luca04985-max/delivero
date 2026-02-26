@@ -4,13 +4,14 @@ import { adminAPI, ordersAPI, ticketsAPI } from '../services/api';
 import ManagerTrackingDashboard from './ManagerTrackingDashboard';
 import TrackingMap from '../components/TrackingMap';
 import adminStyles from '../styles/adminTheme';
+import { theme } from '../theme/theme';
 
 const styles = {
   container: {
     padding: '28px',
     maxWidth: '1300px',
     margin: '0 auto',
-    backgroundColor: '#F6F9FF',
+    backgroundColor: theme.colors.background,
     minHeight: '100vh',
   },
   header: { marginBottom: '28px' },
@@ -24,7 +25,7 @@ const styles = {
   tabButton: active => ({
     padding: '10px 16px',
     background: 'transparent',
-    color: active ? '#0B5FFF' : '#334155',
+    color: active ? theme.colors.secondary : theme.colors.text.primary,
     border: '1px solid transparent',
     cursor: 'pointer',
     borderRadius: '8px',
@@ -52,8 +53,8 @@ const styles = {
     textAlign: 'center',
     boxShadow: '0 6px 18px rgba(16,24,40,0.04)',
   },
-  statValue: { fontSize: '26px', fontWeight: 700, color: '#0B5FFF', marginBottom: '8px' },
-  statLabel: { fontSize: '13px', color: '#6B7280' },
+  statValue: { fontSize: '26px', fontWeight: 700, color: theme.colors.secondary, marginBottom: '8px' },
+  statLabel: { fontSize: '13px', color: theme.colors.text.secondary },
   table: {
     width: '100%',
     borderCollapse: 'collapse',
@@ -63,24 +64,24 @@ const styles = {
     overflow: 'hidden',
     boxShadow: '0 6px 18px rgba(16,24,40,0.04)',
   },
-  tableHeader: { backgroundColor: '#0B5FFF', color: 'white' },
+  tableHeader: { backgroundColor: theme.colors.secondary, color: theme.colors.white },
   tableHeaderCell: { padding: '14px', textAlign: 'left', borderBottom: '1px solid rgba(0,0,0,0.06)' },
-  tableCell: { padding: '12px 14px', borderBottom: '1px solid rgba(0,0,0,0.04)', color: '#111827' },
-  tableRowHover: { backgroundColor: '#FBFDFF' },
+  tableCell: { padding: '12px 14px', borderBottom: '1px solid rgba(0,0,0,0.04)', color: theme.colors.text.primary },
+  tableRowHover: { backgroundColor: theme.colors.surface },
   inputGroup: { display: 'flex', gap: '12px', marginBottom: '18px', flexWrap: 'wrap', alignItems: 'center' },
   select: {
     padding: '10px',
     borderRadius: '8px',
-    border: '1px solid #E6EEF8',
+    border: `1px solid ${theme.colors.border}`,
     flex: '0 0 220px',
     minWidth: '150px',
-    color: '#0F172A',
-    backgroundColor: 'white',
+    color: theme.colors.text.primary,
+    backgroundColor: theme.colors.white,
   },
   button: {
     padding: '10px 16px',
-    backgroundColor: '#0B5FFF',
-    color: 'white',
+    backgroundColor: theme.colors.secondary,
+    color: theme.colors.white,
     border: 'none',
     borderRadius: '8px',
     cursor: 'pointer',
@@ -89,32 +90,32 @@ const styles = {
   ghostButton: {
     padding: '10px 14px',
     background: 'transparent',
-    color: '#0F172A',
-    border: '1px solid #E6EEF8',
+    color: theme.colors.text.primary,
+    border: `1px solid ${theme.colors.border}`,
     borderRadius: '8px',
     cursor: 'pointer',
   },
   actionButton: danger => ({
     padding: '8px 12px',
-    backgroundColor: danger ? '#DC2626' : '#0B5FFF',
-    color: 'white',
+    backgroundColor: danger ? theme.colors.error : theme.colors.secondary,
+    color: theme.colors.white,
     border: 'none',
     borderRadius: '8px',
     cursor: 'pointer',
     fontSize: '13px',
   }),
-  loading: { textAlign: 'center', padding: '40px', color: '#6B7280' },
+  loading: { textAlign: 'center', padding: '40px', color: theme.colors.text.secondary },
   error: {
     padding: '16px',
-    backgroundColor: '#FEF2F2',
-    color: '#B91C1C',
+    backgroundColor: 'var(--notice-error-bg, #FEF2F2)',
+    color: theme.colors.error,
     borderRadius: '8px',
     marginBottom: '18px',
   },
   success: {
     padding: '16px',
-    backgroundColor: '#ECFDF5',
-    color: '#065F46',
+    backgroundColor: 'var(--notice-success-bg, #ECFDF5)',
+    color: theme.colors.success,
     borderRadius: '8px',
     marginBottom: '18px',
   },
@@ -447,11 +448,11 @@ export default function AdminDashboard() {
               >
                 <button
                   onClick={() => setSelectedOrderTracking(null)}
-                  style={{
+                    style={{
                     position: 'absolute',
                     top: '10px',
                     right: '10px',
-                    backgroundColor: '#999',
+                    backgroundColor: 'var(--admin-muted, #999)',
                     color: 'white',
                     border: 'none',
                     borderRadius: '50%',
@@ -531,7 +532,7 @@ export default function AdminDashboard() {
                           Save
                         </button>
                         <button
-                          style={{ ...adminStyles.button, backgroundColor: '#999', marginLeft: '5px' }}
+                          style={{ ...adminStyles.button, backgroundColor: 'var(--admin-muted, #999)', marginLeft: '5px' }}
                           onClick={() => setEditingUser(null)}
                         >
                           Cancel

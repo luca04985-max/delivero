@@ -1,17 +1,19 @@
+import { theme } from '../theme/theme';
+
 const adminStyles = {
   // Layout
   container: {
     padding: '28px',
     maxWidth: '1300px',
     margin: '0 auto',
-    backgroundColor: '#F6F9FF',
+    backgroundColor: theme.colors.background,
     minHeight: '100vh',
   },
   card: {
-    backgroundColor: 'white',
+    backgroundColor: theme.colors.white,
     padding: '18px',
     borderRadius: '10px',
-    boxShadow: '0 6px 18px rgba(16,24,40,0.04)',
+    boxShadow: `0 6px 18px ${theme.colors.shadow || 'rgba(16,24,40,0.04)'}`,
   },
   gridCards: {
     display: 'grid',
@@ -21,43 +23,43 @@ const adminStyles = {
   },
 
   // Typography
-  title: { color: '#0F172A', margin: 0 },
-  subtitle: { color: '#6B7280' },
+  title: { color: theme.colors.text.primary, margin: 0 },
+  subtitle: { color: theme.colors.text.secondary },
 
   // Table
   table: {
     width: '100%',
     borderCollapse: 'collapse',
     marginTop: '18px',
-    backgroundColor: 'white',
+    backgroundColor: theme.colors.white,
     borderRadius: '8px',
     overflow: 'hidden',
-    boxShadow: '0 6px 18px rgba(16,24,40,0.04)',
+    boxShadow: `0 6px 18px ${theme.colors.shadow || 'rgba(16,24,40,0.04)'}`,
   },
 
   // Controls
-  input: { padding: '10px', borderRadius: '8px', border: '1px solid #E6EEF8' },
-  select: { padding: '10px', borderRadius: '8px', border: '1px solid #E6EEF8' },
+  input: { padding: '10px', borderRadius: '8px', border: `1px solid ${theme.colors.border}` },
+  select: { padding: '10px', borderRadius: '8px', border: `1px solid ${theme.colors.border}` },
   button: {
     padding: '10px 16px',
-    backgroundColor: '#0B5FFF',
-    color: 'white',
+    backgroundColor: theme.colors.secondary,
+    color: theme.colors.white,
     border: 'none',
     borderRadius: '8px',
     cursor: 'pointer',
   },
   dangerButton: {
     padding: '8px 12px',
-    backgroundColor: '#DC2626',
-    color: 'white',
+    backgroundColor: theme.colors.error,
+    color: theme.colors.white,
     border: 'none',
     borderRadius: '8px',
     cursor: 'pointer',
   },
 
   // Small helpers
-  muted: { color: '#6B7280' },
-  successCard: { backgroundColor: '#ECFDF5', color: '#065F46' },
+  muted: { color: theme.colors.text.secondary },
+  successCard: { backgroundColor: theme.colors.success, color: theme.colors.text.primary },
 };
 
 export default adminStyles;

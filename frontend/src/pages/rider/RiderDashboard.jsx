@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ordersAPI } from '../../services/api';
 import logger from '../../utils/logger';
 import adminStyles from '../../styles/adminTheme';
+import { theme } from '../../theme/theme';
 
 export default function RiderDashboard({ user }) {
   const [orders, setOrders] = useState([]);
@@ -113,7 +114,7 @@ export default function RiderDashboard({ user }) {
 
       {/* Location Info */}
       {userLocation && (
-        <div className="card mb-4" style={{ ...adminStyles.card, backgroundColor: 'rgba(76, 175, 80, 0.06)', borderLeft: '4px solid var(--success-color)' }}>
+        <div className="card mb-4" style={{ ...adminStyles.card, backgroundColor: 'rgba(76, 175, 80, 0.06)', borderLeft: `4px solid ${theme.colors.success}` }}>
           <p style={{ margin: 0 }}>
             📍 Posizione: Lat {userLocation.lat.toFixed(4)}, Lng {userLocation.lng.toFixed(4)} |
             Precisione: ±{Math.round(userLocation.accuracy)}m
@@ -128,21 +129,21 @@ export default function RiderDashboard({ user }) {
           <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.5rem' }}>
             {orders.length}
           </p>
-          <p style={{ margin: 0, fontSize: '0.9rem', color: '#999' }}>Ordini Disponibili</p>
+          <p style={{ margin: 0, fontSize: '0.9rem', color: theme.colors.text.secondary }}>Ordini Disponibili</p>
         </div>
         <div className="card text-center" style={adminStyles.card}>
           <p style={{ margin: 0, fontSize: '2rem' }}>🚚</p>
           <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.5rem' }}>
             {myOrders.filter(o => o.status === 'accepted').length}
           </p>
-          <p style={{ margin: 0, fontSize: '0.9rem', color: '#999' }}>In Consegna</p>
+          <p style={{ margin: 0, fontSize: '0.9rem', color: theme.colors.text.secondary }}>In Consegna</p>
         </div>
         <div className="card text-center" style={adminStyles.card}>
           <p style={{ margin: 0, fontSize: '2rem' }}>✅</p>
           <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.5rem' }}>
             {myOrders.filter(o => o.status === 'completed').length}
           </p>
-          <p style={{ margin: 0, fontSize: '0.9rem', color: '#999' }}>Completati</p>
+          <p style={{ margin: 0, fontSize: '0.9rem', color: theme.colors.text.secondary }}>Completati</p>
         </div>
       </div>
 
@@ -195,18 +196,11 @@ export default function RiderDashboard({ user }) {
                         <span className="badge badge-info">⏳ In Attesa</span>
                       </div>
                     </div>
-                    <p className="text-muted" style={{ marginBottom: '0.5rem' }}>
+                    <p className="text-muted" style={{ marginBottom: '0.5rem', color: theme.colors.text.secondary }}>
                       📌 {order.address || 'Indirizzo non specificato'}
                     </p>
                     {order.notes && (
-                      <p
-                        style={{
-                          fontSize: '0.9rem',
-                          fontStyle: 'italic',
-                          color: '#666',
-                          marginBottom: '0.5rem',
-                        }}
-                      >
+                        <p style={{ fontSize: '0.9rem', fontStyle: 'italic', color: theme.colors.text.secondary, marginBottom: '0.5rem' }}>
                         Nota: {order.notes}
                       </p>
                     )}
@@ -235,11 +229,11 @@ export default function RiderDashboard({ user }) {
           ) : (
             <div className="list-wrapper">
               {myOrders.map(order => (
-                <div
+                  <div
                   key={order.id}
                   className="card"
                   style={{
-                    borderLeft: `4px solid ${order.status === 'accepted' ? '#FB8500' : '#4CAF50'}`,
+                    borderLeft: `4px solid ${order.status === 'accepted' ? theme.colors.warning : theme.colors.success}`,
                   }}
                 >
                   <div className="flex-between mb-2">

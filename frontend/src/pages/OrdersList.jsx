@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { ordersAPI } from '../services/api';
 import OrderTracking from '../components/OrderTracking';
 import adminStyles from '../styles/adminTheme';
+import { theme } from '../theme/theme';
 
 export default function OrdersList({ userId }) {
   const [orders, setOrders] = useState([]);
@@ -36,7 +37,7 @@ export default function OrdersList({ userId }) {
   };
 
   if (loading) return <p>Caricamento ordini...</p>;
-  if (error) return <p style={{ color: 'red' }}>Errore: {error}</p>;
+  if (error) return <p style={{ color: 'var(--admin-danger, #D32F2F)' }}>Errore: {error}</p>;
 
   const filteredOrders = orders.filter(o => {
     // search by id, customer name or email
@@ -96,23 +97,23 @@ export default function OrdersList({ userId }) {
                 ...adminStyles.card,
                 marginBottom: '12px',
                 cursor: 'pointer',
-                backgroundColor: selectedOrder?.id === order.id ? '#FBFDFF' : 'white',
+                backgroundColor: selectedOrder?.id === order.id ? theme.colors.surface : theme.colors.white,
               }}
               onClick={() => setSelectedOrder(selectedOrder?.id === order.id ? null : order)}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div>
                   <strong>Ordine #{order.id}</strong> - €{order.total_amount}
-                  <p style={{ margin: '6px 0', color: '#6B7280' }}>
+                  <p style={{ margin: '6px 0', color: theme.colors.text.secondary }}>
                     Stato:{' '}
                     <span
                       style={{
                         color:
                           order.status === 'completed'
-                            ? 'green'
+                            ? 'var(--admin-success, #4caf50)'
                             : order.status === 'pending'
-                              ? 'orange'
-                              : 'blue',
+                              ? 'var(--admin-warning, #FF9800)'
+                              : 'var(--admin-primary, #0B5FFF)',
                       }}
                     >
                       {order.status.toUpperCase().replace('_', ' ')}

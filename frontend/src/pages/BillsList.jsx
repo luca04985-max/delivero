@@ -70,7 +70,7 @@ export default function BillsList() {
             <div
               key={bill.id}
               className="card"
-              style={{ ...adminStyles.card, borderLeft: '4px solid var(--warning-color)' }}
+              style={{ ...adminStyles.card, borderLeft: '4px solid var(--admin-warning, #FF9800)' }}
             >
               <div className="flex-between mb-2">
                 <div>
@@ -80,7 +80,7 @@ export default function BillsList() {
                       {bill.description}
                     </p>
                   )}
-                  <p style={{ margin: 0, fontSize: '0.9rem', color: '#999' }}>
+                  <p style={{ margin: 0, fontSize: '0.9rem', ...adminStyles.muted }}>
                     📅 Scade: {new Date(bill.due_date).toLocaleDateString('it-IT')}
                   </p>
                 </div>
@@ -88,7 +88,13 @@ export default function BillsList() {
                   <p style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: '0.5rem 0' }}>
                     €{bill.amount ? Number(bill.amount).toFixed(2) : '0.00'}
                   </p>
-                  <span className={`badge ${bill.paid ? 'badge-success' : 'badge-warning'}`}>
+                  <span
+                    className={`badge ${bill.paid ? 'badge-success' : 'badge-warning'}`}
+                    style={{
+                      backgroundColor: bill.paid ? 'var(--admin-success, #4caf50)' : 'var(--admin-warning, #FF9800)',
+                      color: '#fff',
+                    }}
+                  >
                     {bill.paid ? '✅ Pagata' : '⏳ Pendente'}
                   </span>
                 </div>

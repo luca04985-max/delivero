@@ -5,14 +5,15 @@ import CustomerHomeEnhanced from './CustomerHomeEnhanced';
 import CustomerOrdersEnhanced from './CustomerOrdersEnhanced';
 import adminStyles from '../../styles/adminTheme';
 import '../../styles/adminUtilities.css';
+import { theme } from '../../theme/theme';
 
 const CATEGORIES = [
-  { id: 'food', name: '🍔 Cibo', icon: '🍕', color: '#FF6B6B' },
-  { id: 'pharmacy', name: '💊 Farmacia', icon: '⚕️', color: '#4ECDC4' },
-  { id: 'groceries', name: '🛒 Spesa', icon: '🥬', color: '#45B7AA' },
-  { id: 'clothes', name: '👕 Abbigliamento', icon: '👔', color: '#F7DC6F' },
-  { id: 'electronics', name: '💻 Elettronica', icon: '📱', color: '#3498DB' },
-  { id: 'books', name: '📚 Libri', icon: '📖', color: '#9B59B6' },
+  { id: 'food', name: '🍔 Cibo', icon: '🍕', color: theme.colors.primary },
+  { id: 'pharmacy', name: '💊 Farmacia', icon: '⚕️', color: theme.colors.success },
+  { id: 'groceries', name: '🛒 Spesa', icon: '🥬', color: theme.colors.info },
+  { id: 'clothes', name: '👕 Abbigliamento', icon: '👔', color: theme.colors.warning },
+  { id: 'electronics', name: '💻 Elettronica', icon: '📱', color: theme.colors.secondary },
+  { id: 'books', name: '📚 Libri', icon: '📖', color: theme.colors.manager },
 ];
 
 export default function CustomerDashboard({ user }) {
@@ -21,12 +22,12 @@ export default function CustomerDashboard({ user }) {
   return (
     <div style={adminStyles.container} className="u-container">
       {/* Top Navigation Tabs */}
-      <div style={{ display: 'flex', gap: '1rem', borderBottom: '2px solid var(--border-color)', marginBottom: '2rem', paddingBottom: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: '1rem', borderBottom: `2px solid ${theme.colors.border}`, marginBottom: '2rem', paddingBottom: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
         <button
           onClick={() => setActiveTab('home')}
-          style={{
-            background: activeTab === 'home' ? 'var(--primary-color)' : 'transparent',
-            color: activeTab === 'home' ? 'white' : 'var(--text-color)',
+            style={{
+            background: activeTab === 'home' ? theme.colors.primary : 'transparent',
+            color: activeTab === 'home' ? theme.colors.white : theme.colors.text.primary,
             border: 'none',
             padding: '0.75rem 1.5rem',
             borderRadius: '25px',
@@ -40,9 +41,9 @@ export default function CustomerDashboard({ user }) {
         </button>
         <button
           onClick={() => setActiveTab('orders')}
-          style={{
-            background: activeTab === 'orders' ? 'var(--primary-color)' : 'transparent',
-            color: activeTab === 'orders' ? 'white' : 'var(--text-color)',
+            style={{
+            background: activeTab === 'orders' ? theme.colors.primary : 'transparent',
+            color: activeTab === 'orders' ? theme.colors.white : theme.colors.text.primary,
             border: 'none',
             padding: '0.75rem 1.5rem',
             borderRadius: '25px',
@@ -56,9 +57,9 @@ export default function CustomerDashboard({ user }) {
         </button>
         <button
           onClick={() => setActiveTab('favorites')}
-          style={{
-            background: activeTab === 'favorites' ? 'var(--primary-color)' : 'transparent',
-            color: activeTab === 'favorites' ? 'white' : 'var(--text-color)',
+            style={{
+            background: activeTab === 'favorites' ? theme.colors.primary : 'transparent',
+            color: activeTab === 'favorites' ? theme.colors.white : theme.colors.text.primary,
             border: 'none',
             padding: '0.75rem 1.5rem',
             borderRadius: '25px',
@@ -77,7 +78,7 @@ export default function CustomerDashboard({ user }) {
       {activeTab === 'orders' && <CustomerOrdersEnhanced user={user} />}
       {activeTab === 'favorites' && (
         <div style={{ textAlign: 'center', padding: '2rem' }}>
-          <p style={{ fontSize: '1.5rem', color: 'var(--text-muted)' }}>
+          <p style={{ fontSize: '1.5rem', color: theme.colors.text.secondary }}>
             ❤️ I tuoi preferiti verranno mostrati qui
           </p>
         </div>

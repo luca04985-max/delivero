@@ -3,7 +3,7 @@
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: linear-gradient(135deg, var(--admin-bg, #f8f9fa) 0%, var(--admin-card-bg, #e9ecef) 100%);
 }
 
 /* Search Section */
@@ -24,7 +24,7 @@
 .search-input {
   flex: 1;
   padding: 15px;
-  border: 2px solid #e9ecef;
+  border: 2px solid var(--admin-muted-100, #e9ecef);
   border-radius: 10px;
   font-size: 16px;
   outline: none;
@@ -32,13 +32,13 @@
 }
 
 .search-input:focus {
-  border-color: #ff6b00;
+  border-color: var(--admin-accent, #ff6b00);
   box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
 }
 
 .filter-btn {
   padding: 12px 20px;
-  background: #ff6b00;
+  background: var(--admin-accent, #ff6b00);
   color: white;
   border: none;
   border-radius: 10px;
@@ -48,7 +48,7 @@
 }
 
 .filter-btn:hover {
-  background: #e55a00;
+  background: var(--admin-accent-dark, #e55a00);
   transform: translateY(-2px);
 }
 
@@ -59,7 +59,7 @@
 
 .categories-section h2 {
   margin-bottom: 20px;
-  color: #333;
+  color: var(--admin-title-color, #333);
   font-size: 24px;
   font-weight: 700;
 }
@@ -110,7 +110,7 @@
 
 .promotions-section h2 {
   margin-bottom: 20px;
-  color: #333;
+  color: var(--admin-title-color, #333);
   font-size: 24px;
   font-weight: 700;
 }
@@ -122,7 +122,7 @@
 }
 
 .promotion-card {
-  background: linear-gradient(135deg, #ff6b00, #ff8c00);
+  background: linear-gradient(135deg, var(--admin-accent, #ff6b00), var(--admin-promo-end, #ff8c00));
   color: white;
   padding: 20px;
   border-radius: 15px;
@@ -172,7 +172,7 @@
 
 .recent-orders-section h2 {
   margin-bottom: 20px;
-  color: #333;
+  color: var(--admin-title-color, #333);
   font-size: 24px;
   font-weight: 700;
 }
@@ -188,7 +188,7 @@
   padding: 15px;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  border-left: 4px solid #ff6b00;
+  border-left: 4px solid var(--admin-accent, #ff6b00);
   transition: all 0.3s ease;
 }
 
@@ -205,12 +205,12 @@
 
 .order-id {
   font-weight: 600;
-  color: #ff6b00;
+  color: var(--admin-accent, #ff6b00);
 }
 
 .order-status {
   padding: 4px 8px;
-  background: #28a745;
+  background: var(--admin-success, #28a745);
   color: white;
   border-radius: 12px;
   font-size: 12px;
@@ -222,7 +222,7 @@
 }
 
 .order-items {
-  color: #666;
+  color: var(--admin-muted, #666);
   font-size: 14px;
   margin-bottom: 5px;
 }
@@ -230,13 +230,13 @@
 .order-total {
   font-size: 18px;
   font-weight: 700;
-  color: #333;
+  color: var(--admin-title-color, #333);
 }
 
 /* Restaurants Section */
 .restaurants-section h2 {
   margin-bottom: 20px;
-  color: #333;
+  color: var(--admin-title-color, #333);
   font-size: 24px;
   font-weight: 700;
 }
@@ -269,7 +269,7 @@
 
 .restaurant-info h3 {
   margin: 0;
-  color: #333;
+  color: var(--admin-title-color, #333);
   font-size: 20px;
   font-weight: 700;
   margin-bottom: 8px;
@@ -282,19 +282,19 @@
 }
 
 .rating {
-  color: #ff6b00;
+  color: var(--admin-accent, #ff6b00);
   font-weight: 600;
   font-size: 14px;
 }
 
 .time {
-  color: #28a745;
+  color: var(--admin-success, #28a745);
   font-weight: 500;
   font-size: 13px;
 }
 
 .price {
-  color: #333;
+  color: var(--admin-title-color, #333);
   font-weight: 600;
   font-size: 14px;
 }
@@ -316,7 +316,7 @@
 }
 
 .description {
-  color: #666;
+  color: var(--admin-muted, #666);
   font-size: 14px;
   line-height: 1.4;
   margin-bottom: 15px;
@@ -330,7 +330,7 @@
 .order-btn {
   flex: 1;
   padding: 12px;
-  background: #ff6b00;
+  background: var(--admin-accent, #ff6b00);
   color: white;
   border: none;
   border-radius: 8px;
@@ -340,14 +340,14 @@
 }
 
 .order-btn:hover {
-  background: #e55a00;
+  background: var(--admin-accent-dark, #e55a00);
   transform: translateY(-2px);
 }
 
 .menu-btn {
   flex: 1;
   padding: 12px;
-  background: #6c757d;
+  background: var(--admin-muted, #6c757d);
   color: white;
   border: none;
   border-radius: 8px;
@@ -357,7 +357,7 @@
 }
 
 .menu-btn:hover {
-  background: #5a6268;
+  background: var(--admin-muted, #5a6268);
   transform: translateY(-2px);
 }
 
@@ -365,7 +365,7 @@
   text-align: center;
   padding: 40px;
   font-size: 18px;
-  color: #666;
+  color: var(--admin-muted, #666);
 }
 
 /* Responsive Design */
