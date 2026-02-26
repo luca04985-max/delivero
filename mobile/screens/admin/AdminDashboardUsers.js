@@ -9,6 +9,8 @@ import {
   ScrollView,
   Modal,
   TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { adminAPI } from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -245,7 +247,9 @@ export default function AdminDashboardUsers({ navigation: _navigation }) {
       {/* Create restaurant modal */}
       <Modal visible={showCreateRest} transparent animationType="fade" onRequestClose={() => setShowCreateRest(false)}>
         <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ width: '100%', alignItems: 'center' }}>
+            <ScrollView contentContainerStyle={{ width: '100%', alignItems: 'center', paddingVertical: mobileTheme.spacing[4] }} keyboardShouldPersistTaps="handled">
+              <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>➕ Crea Ristorante</Text>
             {createError ? <Text style={{ color: mobileTheme.colors.error, marginBottom: 8 }}>{createError}</Text> : null}
 
@@ -295,7 +299,9 @@ export default function AdminDashboardUsers({ navigation: _navigation }) {
                 <Text style={styles.btnCancelText}>Annulla</Text>
               </TouchableOpacity>
             </View>
-          </View>
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
         </View>
       </Modal>
 
