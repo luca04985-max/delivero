@@ -21,7 +21,7 @@ export default function ProfileScreen({ navigation, user, onLogout }) {
           <Text style={profileScreenStyles.sectionTitle}>Area Cliente</Text>
           <TouchableOpacity
             style={profileScreenStyles.actionRow}
-            onPress={() => navigation.navigate('CustomerTabs', { screen: 'Orders' })}
+            onPress={() => navigation.navigate('Orders')}
           >
             <Text style={profileScreenStyles.actionLabel}>I miei ordini</Text>
             <Text style={profileScreenStyles.actionIcon}>📦</Text>
