@@ -9,6 +9,7 @@ import {
   getFinanceReport,
   getServiceMetrics,
   getTicketStats,
+  createRestaurant,
 } from '../controllers/adminController.js';
 import { triggerSeed } from '../controllers/adminSeedController.js';
 import { authenticateToken, authorizeRole } from '../middleware/auth.js';
