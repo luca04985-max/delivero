@@ -119,6 +119,20 @@ const styles = {
     borderRadius: '8px',
     marginBottom: '18px',
   },
+  // Modal / form styles
+  modalOverlay: {
+    position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(2,6,23,0.6)', zIndex: 1400,
+  },
+  modalBox: { width: 'min(720px, 96%)', background: '#fff', borderRadius: 12, padding: 20, boxShadow: '0 10px 40px rgba(2,6,23,0.2)' },
+  modalTitle: { margin: 0, fontSize: 20, fontWeight: 700, color: theme.colors.text.primary },
+  formGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 12 },
+  formField: { display: 'flex', flexDirection: 'column', gap: 6 },
+  label: { fontSize: 13, color: theme.colors.text.secondary },
+  inputStyle: { padding: '10px 12px', borderRadius: 8, border: `1px solid ${theme.colors.border}`, fontSize: 14, outline: 'none' },
+  helperText: { fontSize: 12, color: theme.colors.text.secondary },
+  actionsRow: { display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 },
+  cancelButton: { padding: '10px 14px', background: 'transparent', borderRadius: 8, border: `1px solid ${theme.colors.border}`, cursor: 'pointer' },
+  createButton: { padding: '10px 16px', backgroundColor: theme.colors.secondary, color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer', boxShadow: '0 6px 18px rgba(11,95,255,0.12)' },
 };
 
 export default function AdminDashboard() {
@@ -336,20 +350,52 @@ export default function AdminDashboard() {
       </div>
 
       {showCreateRestaurant && (
-        <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.4)' }}>
-          <div style={{ width: 520, background: 'white', borderRadius: 8, padding: 20 }}>
-            <h3>Crea Ristorante</h3>
-            <div style={{ display: 'grid', gap: 10 }}>
-              {createError && <div className="alert alert-error">{createError}</div>}
-              <input placeholder="Email" value={newRestaurant.email} onChange={e => setNewRestaurant(prev => ({ ...prev, email: e.target.value }))} />
-              <input placeholder="Proprietario (nome)" value={newRestaurant.ownerName} onChange={e => setNewRestaurant(prev => ({ ...prev, ownerName: e.target.value }))} />
-              <input placeholder="Nome Ristorante" value={newRestaurant.restaurantName} onChange={e => setNewRestaurant(prev => ({ ...prev, restaurantName: e.target.value }))} />
-              <input placeholder="Telefono" value={newRestaurant.phone} onChange={e => setNewRestaurant(prev => ({ ...prev, phone: e.target.value }))} />
-              <input placeholder="Indirizzo" value={newRestaurant.address} onChange={e => setNewRestaurant(prev => ({ ...prev, address: e.target.value }))} />
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 8 }}>
-                <button className="btn" onClick={() => setShowCreateRestaurant(false)}>Annulla</button>
+        <div style={styles.modalOverlay} onClick={() => setShowCreateRestaurant(false)}>
+          <div style={styles.modalBox} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={styles.modalTitle}>➕ Crea Ristorante</h3>
+              <div style={{ fontSize: 13, color: theme.colors.text.secondary }}>Invia link per impostare la password</div>
+            </div>
+
+            <div style={{ marginTop: 12 }}>
+              {createError && (
+                <div style={{ padding: 10, background: 'rgba(254,242,242,0.8)', borderRadius: 8, color: theme.colors.error, marginBottom: 8 }}>
+                  {createError}
+                </div>
+              )}
+
+              <div style={styles.formGrid}>
+                <div style={styles.formField}>
+                  <label style={styles.label}>Email</label>
+                  <input style={styles.inputStyle} placeholder="es. info@ristorante.it" value={newRestaurant.email} onChange={e => setNewRestaurant(prev => ({ ...prev, email: e.target.value }))} />
+                  <div style={styles.helperText}>L'email verrà usata per inviare il link di onboarding.</div>
+                </div>
+
+                <div style={styles.formField}>
+                  <label style={styles.label}>Telefono</label>
+                  <input style={styles.inputStyle} placeholder="es. +39 333 1234567" value={newRestaurant.phone} onChange={e => setNewRestaurant(prev => ({ ...prev, phone: e.target.value }))} />
+                </div>
+
+                <div style={styles.formField}>
+                  <label style={styles.label}>Proprietario (nome)</label>
+                  <input style={styles.inputStyle} placeholder="Nome del proprietario" value={newRestaurant.ownerName} onChange={e => setNewRestaurant(prev => ({ ...prev, ownerName: e.target.value }))} />
+                </div>
+
+                <div style={styles.formField}>
+                  <label style={styles.label}>Nome Ristorante</label>
+                  <input style={styles.inputStyle} placeholder="Nome del ristorante" value={newRestaurant.restaurantName} onChange={e => setNewRestaurant(prev => ({ ...prev, restaurantName: e.target.value }))} />
+                </div>
+
+                <div style={{ gridColumn: '1 / -1', ...styles.formField }}>
+                  <label style={styles.label}>Indirizzo</label>
+                  <input style={styles.inputStyle} placeholder="Via, città, CAP" value={newRestaurant.address} onChange={e => setNewRestaurant(prev => ({ ...prev, address: e.target.value }))} />
+                </div>
+              </div>
+
+              <div style={styles.actionsRow}>
+                <button style={styles.cancelButton} onClick={() => setShowCreateRestaurant(false)}>Annulla</button>
                 <button
-                  className="btn btn-primary"
+                  style={styles.createButton}
                   onClick={async () => {
                     // Client-side validation
                     setCreateError(null);
