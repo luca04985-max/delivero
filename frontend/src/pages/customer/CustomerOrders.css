@@ -322,8 +322,6 @@
   color: var(--admin-title-color, #333);
   margin: 0 0 10px;
 }
-}
-
 .rider-name {
   font-size: 13px;
   font-weight: 600;
