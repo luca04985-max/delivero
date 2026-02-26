@@ -246,13 +246,39 @@ export default function AdminDashboardUsers({ navigation: _navigation }) {
       <Modal visible={showCreateRest} transparent animationType="fade" onRequestClose={() => setShowCreateRest(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>Crea Ristorante</Text>
-            {createError && <Text style={{ color: 'red', marginBottom: 8 }}>{createError}</Text>}
-            <TextInput style={styles.textInput} placeholder="Email" value={newRest.email} onChangeText={t => setNewRest(p => ({ ...p, email: t }))} keyboardType="email-address" autoCapitalize="none" />
-            <TextInput style={styles.textInput} placeholder="Proprietario" value={newRest.ownerName} onChangeText={t => setNewRest(p => ({ ...p, ownerName: t }))} />
-            <TextInput style={styles.textInput} placeholder="Nome Ristorante" value={newRest.restaurantName} onChangeText={t => setNewRest(p => ({ ...p, restaurantName: t }))} />
-            <TextInput style={styles.textInput} placeholder="Telefono" value={newRest.phone} onChangeText={t => setNewRest(p => ({ ...p, phone: t }))} />
-            <TextInput style={styles.textInput} placeholder="Indirizzo" value={newRest.address} onChangeText={t => setNewRest(p => ({ ...p, address: t }))} />
+            <Text style={styles.modalTitle}>➕ Crea Ristorante</Text>
+            {createError ? <Text style={{ color: mobileTheme.colors.error, marginBottom: 8 }}>{createError}</Text> : null}
+
+            <View style={styles.modalFormRow}>
+              <View style={styles.formField}>
+                <Text style={styles.inputLabel}>Email</Text>
+                <TextInput style={styles.textInput} placeholder="es. info@ristorante.it" value={newRest.email} onChangeText={t => setNewRest(p => ({ ...p, email: t }))} keyboardType="email-address" autoCapitalize="none" />
+                <Text style={styles.helperText}>Il link di onboarding verrà inviato a questa email.</Text>
+              </View>
+
+              <View style={styles.formField}>
+                <Text style={styles.inputLabel}>Telefono</Text>
+                <TextInput style={styles.textInput} placeholder="es. +39 333 1234567" value={newRest.phone} onChangeText={t => setNewRest(p => ({ ...p, phone: t }))} keyboardType="phone-pad" />
+              </View>
+            </View>
+
+            <View style={styles.modalFormRow}>
+              <View style={styles.formField}>
+                <Text style={styles.inputLabel}>Proprietario (nome)</Text>
+                <TextInput style={styles.textInput} placeholder="Nome del proprietario" value={newRest.ownerName} onChangeText={t => setNewRest(p => ({ ...p, ownerName: t }))} />
+              </View>
+
+              <View style={styles.formField}>
+                <Text style={styles.inputLabel}>Nome Ristorante</Text>
+                <TextInput style={styles.textInput} placeholder="Nome del ristorante" value={newRest.restaurantName} onChangeText={t => setNewRest(p => ({ ...p, restaurantName: t }))} />
+              </View>
+            </View>
+
+            <View style={{ marginBottom: mobileTheme.spacing[2] }}>
+              <Text style={styles.inputLabel}>Indirizzo</Text>
+              <TextInput style={styles.textInput} placeholder="Via, città, CAP" value={newRest.address} onChangeText={t => setNewRest(p => ({ ...p, address: t }))} />
+            </View>
+
             <View style={styles.editActions}>
               <TouchableOpacity style={styles.saveButton} onPress={async () => {
                 setCreateError(null);
