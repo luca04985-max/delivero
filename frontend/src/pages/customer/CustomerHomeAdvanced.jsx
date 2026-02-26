@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { ordersAPI, restaurantsAPI } from '../../services/api';
 import './CustomerHome.css';
 import logger from '../../utils/logger';
+import adminStyles from '../../styles/adminTheme';
+import '../../styles/adminUtilities.css';
 
 export default function CustomerHomeAdvanced() {
   const [searchText, setSearchText] = useState('');
@@ -142,7 +144,7 @@ export default function CustomerHomeAdvanced() {
   );
 
   return (
-    <div className="customer-home-advanced">
+    <div className="customer-home-advanced u-page" style={adminStyles.container}>
       {/* Search Bar */}
       <div className="search-section">
         <div className="search-container">
@@ -159,7 +161,7 @@ export default function CustomerHomeAdvanced() {
 
       {/* Categories */}
       <div className="categories-section">
-        <h2>🍽️ Categorie</h2>
+        <h2 style={adminStyles.title} className="u-title">🍽️ Categorie</h2>
         <div className="categories-grid">
           {categories.map(category => (
             <button

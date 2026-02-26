@@ -1,11 +1,18 @@
 .customer-orders {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--admin-bg, #f5f5f5);
   padding-bottom: 40px;
 }
 
+:root {
+  --admin-bg: #F6F9FF;
+  --admin-card-bg: #ffffff;
+  --admin-primary: #0B5FFF;
+  --admin-muted: #6B7280;
+}
+
 .header {
-  background: linear-gradient(135deg, #ff6b00 0%, #ff8c00 100%);
+  background: linear-gradient(135deg, var(--admin-accent, #ff6b00) 0%, #ff8c00 100%);
   color: white;
   padding: 20px 16px;
   text-align: center;
@@ -60,25 +67,7 @@
   font-size: 14px;
   padding: 50px 16px;
 }
-
-.orders-list {
-  display: grid;
-  gap: 12px;
-  margin-top: 16px;
-}
-
-.order-card {
-  background: white;
-  border-radius: 12px;
-  padding: 14px;
-  border-left: 4px solid #0066ff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-}
-
-.order-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-}
+/* order-card visual moved to .u-order-card utility */
 
 .order-header {
   display: flex;
@@ -94,22 +83,8 @@
   margin: 0 0 4px;
 }
 
-.order-id {
-  font-size: 12px;
-  color: #999;
-  margin: 0;
-}
-
-.status-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  border-radius: 6px;
-  color: white;
-  font-size: 12px;
-  font-weight: 600;
-}
+.orders-list { display: grid; gap: 12px; margin-top: 16px; }
+.order-card { /* visual replaced by .u-order-card */ }
 
 .status-icon {
   font-size: 14px;
@@ -135,7 +110,7 @@
 
 .total-price {
   font-weight: bold;
-  color: #0066ff;
+  color: var(--admin-primary, #0066ff);
 }
 
 .timestamp-row {
@@ -364,7 +339,7 @@
 
 .btn-contact {
   width: 100%;
-  background-color: #0066ff;
+  background-color: var(--admin-primary, #0066ff);
   color: white;
   border: none;
   padding: 8px;
@@ -372,6 +347,9 @@
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
+}
+.btn-contact:hover {
+  background-color: #0052cc;
 }
 
 .btn-contact:hover {

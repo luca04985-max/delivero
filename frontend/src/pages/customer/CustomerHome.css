@@ -1,6 +1,14 @@
 .customer-home {
   min-height: 100vh;
-  background-color: #f8f8f8;
+  background-color: var(--admin-bg, #f8f8f8);
+}
+
+:root {
+  --admin-bg: #F6F9FF;
+  --admin-card-bg: #ffffff;
+  --admin-primary: #0B5FFF;
+  --admin-muted: #6B7280;
+  --admin-accent: #FF6B00;
 }
 
 .navbar {
@@ -57,15 +65,15 @@
   padding: 0 16px;
 }
 
-.hero {
-  padding: 32px 0 24px;
-  text-align: center;
-}
-
 .hero h2 {
   font-size: 32px;
   margin: 0 0 8px;
-  color: #333;
+  color: var(--admin-title-color, #111827);
+}
+.hero p {
+  font-size: 14px;
+  color: var(--admin-muted, #999);
+  margin: 0;
 }
 
 .hero p {
@@ -135,22 +143,7 @@
   border-radius: 3px;
 }
 
-.promo-card {
-  background: linear-gradient(135deg, #ff6b00 0%, #ffb347 100%);
-  color: white;
-  padding: 16px;
-  border-radius: 10px;
-  min-width: 240px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.promo-card:hover {
-  transform: translateY(-4px);
-}
+/* promo-card moved to utilities (.u-promo-card) */
 
 .promo-title {
   margin: 0;
@@ -167,7 +160,7 @@
 }
 
 .filter-bar {
-  display: flex;
+/* promo-card styling replaced by .u-promo-card in adminUtilities.css */
   gap: 8px;
   margin: 20px 0;
   overflow-x: auto;
@@ -222,20 +215,7 @@
   gap: 12px;
 }
 
-.category-card {
-  border-radius: 12px;
-  padding: 20px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-}
-
-.category-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-}
+/* category-card moved to utilities (.u-category-card) */
 
 .category-emoji {
   font-size: 32px;
@@ -251,7 +231,7 @@
 }
 
 .restaurants-section {
-  margin: 32px 0 48px;
+/* visual handled by .u-category-card */
 }
 
 .restaurants-section h3 {
@@ -267,40 +247,7 @@
   gap: 16px;
 }
 
-.restaurant-card {
-  background: white;
-  border-radius: 12px;
-  padding: 14px;
-  border: 1px solid #eee;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.restaurant-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-}
-
-.restaurant-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 10px;
-}
-
-.restaurant-name {
-  font-size: 15px;
-  font-weight: bold;
-  color: #333;
-  margin: 0 0 4px;
-}
-
-.restaurant-category {
-  font-size: 12px;
-  color: #666;
-  margin: 0;
-}
+/* restaurant card and typography moved to utilities (.u-restaurant-card, .u-title) */
 
 .favorite-btn {
   background: transparent;
@@ -317,6 +264,8 @@
 
 .restaurant-stats {
   display: flex;
+/* layout handled by utilities; keep markup */
+/* keep minimal default, further styling via utilities */
   gap: 8px;
   margin-top: 10px;
   padding-top: 10px;

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ordersAPI } from '../../services/api';
 import './CustomerOrders.css';
 import logger from '../../utils/logger';
+import adminStyles from '../../styles/adminTheme';
+import '../../styles/adminUtilities.css';
 
 export default function CustomerOrdersEnhanced() {
   const [orders, setOrders] = useState([]);
@@ -87,10 +89,10 @@ export default function CustomerOrdersEnhanced() {
   const filteredOrders = getFilteredOrders();
 
   return (
-    <div className="customer-orders">
+    <div className="customer-orders u-page" style={adminStyles.container}>
       {/* Header */}
       <div className="header">
-        <h1>I Miei Ordini 🍔</h1>
+        <h1 style={adminStyles.title} className="u-title">I Miei Ordini 🍔</h1>
       </div>
 
       {/* Tabs */}

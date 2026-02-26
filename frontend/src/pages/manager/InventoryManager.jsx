@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { inventoryAPI } from '../../services/api';
 import logger from '../../utils/logger';
+import adminStyles from '../../styles/adminTheme';
 
 export default function InventoryManager({ restaurantId = 1 }) {
   const [items, setItems] = useState([]);
@@ -33,16 +34,20 @@ export default function InventoryManager({ restaurantId = 1 }) {
 
   return (
     <div>
-      <h2>🍽️ Inventory - Restaurant #{restaurantId}</h2>
+      <h2 style={adminStyles.subtitle}>🍽️ Inventory - Restaurant #{restaurantId}</h2>
       {loading ? (
         <p>Caricamento...</p>
       ) : (
-        <div style={{ display: 'grid', gap: '0.5rem' }}>
+        <div style={adminStyles.gridCards}>
           {items.map(it => (
-            <div key={it.id} className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div
+              key={it.id}
+              className="card"
+              style={{ ...adminStyles.card, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+            >
               <div>
                 <strong>{it.name}</strong>
-                <div style={{ fontSize: '0.85rem', color: '#666' }}>€{parseFloat(it.price).toFixed(2)} • prep {it.preparation_time_minutes}m</div>
+                <div style={adminStyles.muted}>€{parseFloat(it.price).toFixed(2)} • prep {it.preparation_time_minutes}m</div>
               </div>
               <div>
                 <button className={`btn ${it.is_available ? 'btn-primary' : 'btn-outline'}`} onClick={() => toggle(it)}>

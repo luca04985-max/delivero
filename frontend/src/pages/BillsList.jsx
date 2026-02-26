@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { billsAPI } from '../services/api';
 import logger from '../utils/logger';
+import adminStyles from '../styles/adminTheme';
 
 export default function BillsList() {
   const [bills, setBills] = useState([]);
@@ -60,8 +61,8 @@ export default function BillsList() {
       </div>
 
       {bills.length === 0 ? (
-        <div className="card text-center">
-          <p className="text-muted">Nessuna bolletta registrata</p>
+        <div style={adminStyles.card} className="text-center">
+          <p style={adminStyles.muted}>Nessuna bolletta registrata</p>
         </div>
       ) : (
         <div className="list-wrapper">
@@ -69,13 +70,13 @@ export default function BillsList() {
             <div
               key={bill.id}
               className="card"
-              style={{ borderLeft: '4px solid var(--warning-color)' }}
+              style={{ ...adminStyles.card, borderLeft: '4px solid var(--warning-color)' }}
             >
               <div className="flex-between mb-2">
                 <div>
-                  <h3 style={{ margin: 0, marginBottom: '0.5rem' }}>📋 {bill.type}</h3>
+                  <h3 style={{ margin: 0, marginBottom: '0.5rem', color: adminStyles.title.color }}>📋 {bill.type}</h3>
                   {bill.description && (
-                    <p className="text-muted" style={{ margin: 0, marginBottom: '0.5rem' }}>
+                    <p style={{ margin: 0, marginBottom: '0.5rem', ...adminStyles.muted }}>
                       {bill.description}
                     </p>
                   )}

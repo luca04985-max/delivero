@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ordersAPI } from '../../services/api';
 import logger from '../../utils/logger';
+import adminStyles from '../../styles/adminTheme';
 
 export default function RiderDashboard({ user }) {
   const [orders, setOrders] = useState([]);
@@ -112,13 +113,7 @@ export default function RiderDashboard({ user }) {
 
       {/* Location Info */}
       {userLocation && (
-        <div
-          className="card mb-4"
-          style={{
-            backgroundColor: 'rgba(76, 175, 80, 0.1)',
-            borderLeft: '4px solid var(--success-color)',
-          }}
-        >
+        <div className="card mb-4" style={{ ...adminStyles.card, backgroundColor: 'rgba(76, 175, 80, 0.06)', borderLeft: '4px solid var(--success-color)' }}>
           <p style={{ margin: 0 }}>
             📍 Posizione: Lat {userLocation.lat.toFixed(4)}, Lng {userLocation.lng.toFixed(4)} |
             Precisione: ±{Math.round(userLocation.accuracy)}m
@@ -127,22 +122,22 @@ export default function RiderDashboard({ user }) {
       )}
 
       {/* Stats */}
-      <div className="grid grid-3 gap-2 mb-4">
-        <div className="card text-center">
+        <div className="grid grid-3 gap-2 mb-4">
+        <div className="card text-center" style={adminStyles.card}>
           <p style={{ margin: 0, fontSize: '2rem' }}>📦</p>
           <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.5rem' }}>
             {orders.length}
           </p>
           <p style={{ margin: 0, fontSize: '0.9rem', color: '#999' }}>Ordini Disponibili</p>
         </div>
-        <div className="card text-center">
+        <div className="card text-center" style={adminStyles.card}>
           <p style={{ margin: 0, fontSize: '2rem' }}>🚚</p>
           <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.5rem' }}>
             {myOrders.filter(o => o.status === 'accepted').length}
           </p>
           <p style={{ margin: 0, fontSize: '0.9rem', color: '#999' }}>In Consegna</p>
         </div>
-        <div className="card text-center">
+        <div className="card text-center" style={adminStyles.card}>
           <p style={{ margin: 0, fontSize: '2rem' }}>✅</p>
           <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.5rem' }}>
             {myOrders.filter(o => o.status === 'completed').length}

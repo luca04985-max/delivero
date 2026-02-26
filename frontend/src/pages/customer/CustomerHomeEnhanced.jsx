@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './CustomerHome.css';
+import adminStyles from '../../styles/adminTheme';
+import '../../styles/adminUtilities.css';
 
 export default function CustomerHomeEnhanced() {
   const [searchText, setSearchText] = useState('');
@@ -124,7 +126,7 @@ export default function CustomerHomeEnhanced() {
   const filteredRestaurants = findRestaurants();
 
   return (
-    <div className="customer-home">
+    <div className="customer-home u-page" style={adminStyles.container}>
       {/* Navbar */}
       <nav className="navbar">
         <div className="container">
@@ -152,13 +154,13 @@ export default function CustomerHomeEnhanced() {
         </div>
       </nav>
 
-      <div className="container">
+      <div className="container u-container">
         {activeTab === 'home' && (
           <>
             {/* Header */}
-            <div className="hero">
-              <h2>🍽️ Cosa vuoi ordinare?</h2>
-              <p>Encuentra los mejores de comida cerca de ti</p>
+            <div className="hero" style={{ marginBottom: '16px' }}>
+              <h2 style={adminStyles.title} className="u-title">🍽️ Cosa vuoi ordinare?</h2>
+              <p style={adminStyles.subtitle} className="u-subtitle">Encuentra los mejores de comida cerca di te</p>
             </div>
 
             {/* Search Bar */}
@@ -178,7 +180,7 @@ export default function CustomerHomeEnhanced() {
               <h3>🎉 Offerte Speciali</h3>
               <div className="promos-carousel">
                 {promos.map(promo => (
-                  <div key={promo.id} className="promo-card">
+                  <div key={promo.id} className="promo-card u-promo-card">
                     <p className="promo-title">{promo.title}</p>
                     <span className="promo-code">{promo.code}</span>
                   </div>
@@ -221,7 +223,7 @@ export default function CustomerHomeEnhanced() {
                 {foodCategories.map(cat => (
                   <div
                     key={cat.id}
-                    className="category-card"
+                    className="category-card u-category-card"
                     style={{ backgroundColor: cat.color }}
                   >
                     <span className="category-emoji">{cat.emoji}</span>
@@ -241,7 +243,7 @@ export default function CustomerHomeEnhanced() {
                   {filteredRestaurants.map(restaurant => {
                     const isFavorited = favorites.some(f => f.id === restaurant.id);
                     return (
-                      <div key={restaurant.id} className="restaurant-card">
+                      <div key={restaurant.id} className="restaurant-card u-restaurant-card">
                         <div className="restaurant-header">
                           <div>
                             <h4 className="restaurant-name">{restaurant.name}</h4>

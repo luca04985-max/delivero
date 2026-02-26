@@ -1,0 +1,20 @@
+:root{
+  --admin-bg:#F6F9FF;
+  --admin-card-bg:#ffffff;
+  --admin-primary:#0B5FFF;
+  --admin-muted:#6B7280;
+  --admin-accent:#FF6B00;
+}
+
+.u-container{padding:28px;max-width:1300px;margin:0 auto;background-color:var(--admin-bg);min-height:100vh}
+.u-card{background:var(--admin-card-bg);padding:18px;border-radius:10px;box-shadow:0 6px 18px rgba(16,24,40,.04)}
+.u-title{color:#0F172A;margin:0;font-size:1.5rem}
+.u-subtitle{color:var(--admin-muted)}
+.u-btn{padding:10px 16px;border-radius:8px;border:none;cursor:pointer}
+.u-btn-primary{background:var(--admin-primary);color:#fff}
+.u-muted{color:var(--admin-muted)}
+.u-grid-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-bottom:28px}
+.u-promo-card{border-radius:10px;padding:16px;min-width:240px;color:#fff;background:linear-gradient(135deg,var(--admin-accent) 0%,#ffb347 100%)}
+.u-category-card{border-radius:12px;padding:20px;text-align:center;cursor:pointer;border:1px solid rgba(0,0,0,.04);box-shadow:0 2px 4px rgba(16,24,40,.04);background:var(--admin-card-bg)}
+.u-restaurant-card{background:var(--admin-card-bg);border-radius:12px;padding:14px;border:1px solid rgba(0,0,0,.04);box-shadow:0 6px 18px rgba(16,24,40,.04)}
+.u-order-card{background:var(--admin-card-bg);border-radius:12px;padding:14px;border-left:4px solid var(--admin-primary);box-shadow:0 6px 18px rgba(16,24,40,.04)}

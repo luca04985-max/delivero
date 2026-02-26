@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ordersAPI } from '../../services/api';
 import logger from '../../utils/logger';
 import InventoryManager from './InventoryManager';
+import adminStyles from '../../styles/adminTheme';
 
 export default function ManagerDashboard({ user }) {
   const [orders, setOrders] = useState([]);
@@ -166,19 +167,19 @@ export default function ManagerDashboard({ user }) {
         <div style={{ marginTop: 12 }}>
           <button
             className="btn btn-primary"
-            onClick={() => setActiveTab('inventory')}
-            style={{ padding: '8px 12px' }}
-          >
-            🍽️ Gestisci Inventory
-          </button>
-        </div>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-4 gap-2 mb-4">
-        <div
-          className="card text-center"
-          style={{ backgroundColor: 'rgba(255, 107, 0, 0.05)', borderLeft: '4px solid #FF6B00' }}
+            <div style={adminStyles.container}>
+              <h1 style={adminStyles.title}>Manager Dashboard</h1>
+              <div style={adminStyles.grid}>
+                <div style={adminStyles.card}>
+                  <h2>Orders</h2>
+                  <p>Total: {orders.length}</p>
+                </div>
+                <div style={adminStyles.card}>
+                  <h2>Inventory</h2>
+                  <InventoryManager />
+                </div>
+              </div>
+            </div>
         >
           <p style={{ margin: 0, fontSize: '2rem' }}>📦</p>
           <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.8rem' }}>

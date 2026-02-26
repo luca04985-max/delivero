@@ -4,155 +4,24 @@ import socketService from '../services/socket';
 import logger from '../utils/logger';
 import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import adminStyles from '../styles/adminTheme';
 
 const styles = {
-  container: {
-    padding: '20px',
-    maxWidth: '1400px',
-    margin: '0 auto',
-  },
+  ...adminStyles,
+  // small overrides specific to tracking dashboard
   header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: '20px',
-    paddingBottom: '20px',
-    borderBottom: '2px solid #ddd',
-  },
-  title: {
-    fontSize: '24px',
-    fontWeight: 'bold',
-    color: '#1a1a2e',
-  },
-  refreshIcon: {
-    fontSize: '24px',
-    cursor: 'pointer',
-  },
-  statsBar: {
-    display: 'flex',
-    gap: '20px',
-    marginBottom: '20px',
-    backgroundColor: '#fff',
-    padding: '15px',
-    borderRadius: '8px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-  },
-  statItem: {
-    flex: 1,
-    textAlign: 'center',
-  },
-  statIcon: {
-    fontSize: '24px',
-    marginBottom: '8px',
-  },
-  statValue: {
-    fontSize: '20px',
-    fontWeight: 'bold',
-    color: '#1a1a2e',
-    lineHeight: '1.2',
-  },
-  statLabel: {
-    fontSize: '12px',
-    color: '#999',
-    marginTop: '4px',
-  },
-  listContainer: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-    gap: '15px',
-  },
-  orderCard: {
-    backgroundColor: '#fff',
-    borderRadius: '8px',
-    padding: '15px',
-    borderLeft: '4px solid #ef4444',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-  },
-  cardHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: '12px',
     paddingBottom: '12px',
-    borderBottom: '1px solid #f0f0f0',
+    borderBottom: '1px solid rgba(15,23,42,0.06)',
   },
-  statusBadge: {
-    width: '40px',
-    height: '40px',
-    borderRadius: '50%',
-    backgroundColor: '#f0f0f0',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '20px',
-    marginRight: '12px',
-  },
-  orderId: {
-    fontSize: '14px',
-    fontWeight: 'bold',
-    color: '#1a1a2e',
-  },
-  riderInfo: {
-    fontSize: '12px',
-    color: '#666',
-    marginTop: '4px',
-  },
-  metricsRow: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '10px',
-    padding: '10px',
-    backgroundColor: '#f8f9fa',
-    borderRadius: '4px',
-    marginBottom: '12px',
-    fontSize: '12px',
-  },
-  metricLabel: {
-    color: '#999',
-    fontWeight: 'bold',
-    marginBottom: '2px',
-  },
-  metricValue: {
-    fontSize: '13px',
-    fontWeight: 'bold',
-    color: '#1a1a2e',
-  },
-  infoSection: {
-    padding: '10px',
-    fontSize: '12px',
-  },
-  infoPair: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    marginBottom: '6px',
-  },
-  infoLabel: {
-    fontWeight: 'bold',
-    color: '#666',
-    width: '90px',
-    flexShrink: 0,
-  },
-  infoValue: {
-    color: '#1a1a2e',
-    flex: 1,
-  },
-  emptyState: {
-    textAlign: 'center',
-    padding: '60px 20px',
-  },
-  emptyIcon: {
-    fontSize: '64px',
-    marginBottom: '20px',
-  },
-  emptyTitle: {
-    fontSize: '20px',
-    fontWeight: 'bold',
-    color: '#1a1a2e',
-    marginBottom: '10px',
-  },
-  emptyText: {
-    fontSize: '14px',
-    color: '#999',
-  },
+  title: { fontSize: '22px', fontWeight: 700, color: '#0F172A' },
+  statsBar: { display: 'flex', gap: '18px', marginBottom: '20px' },
+  listContainer: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '16px' },
+  orderCard: { ...adminStyles.card, borderLeft: '4px solid #ef4444' },
+  metricsRow: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', padding: '10px', backgroundColor: '#F8FAFF', borderRadius: '6px' },
 };
 
 export default function ManagerTrackingDashboard() {

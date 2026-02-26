@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ordersAPI } from '../services/api';
 import OrderTracking from '../components/OrderTracking';
+import adminStyles from '../styles/adminTheme';
 
 export default function OrdersList({ userId }) {
   const [orders, setOrders] = useState([]);
@@ -62,47 +63,47 @@ export default function OrdersList({ userId }) {
   });
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>I tuoi Ordini</h2>
+    <div style={{ ...adminStyles.container }}>
+      <h2 style={{ ...adminStyles.title }}>I tuoi Ordini</h2>
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 12, alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: 12, marginBottom: 16, alignItems: 'center' }}>
         <input
           placeholder="Cerca per id, nome, email"
           value={search}
           onChange={e => setSearch(e.target.value)}
+          style={{ ...adminStyles.input }}
         />
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ ...adminStyles.select }}>
           <option value="all">Tutti gli stati</option>
           <option value="pending">Pending</option>
           <option value="in_transit">In Transit</option>
           <option value="completed">Completed</option>
           <option value="cancelled">Cancelled</option>
         </select>
-        <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} />
-        <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} />
-        <button onClick={clearFilters}>Reset</button>
+        <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} style={{ ...adminStyles.input }} />
+        <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} style={{ ...adminStyles.input }} />
+        <button onClick={clearFilters} style={{ ...adminStyles.button }}>Reset</button>
       </div>
+
       {filteredOrders.length === 0 ? (
-        <p>Nessun ordine</p>
+        <p style={adminStyles.muted}>Nessun ordine</p>
       ) : (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
           {filteredOrders.map(order => (
             <li
               key={order.id}
               style={{
-                border: '1px solid #ddd',
-                padding: '15px',
-                marginBottom: '10px',
-                borderRadius: '8px',
+                ...adminStyles.card,
+                marginBottom: '12px',
                 cursor: 'pointer',
-                backgroundColor: selectedOrder?.id === order.id ? '#f5f5f5' : 'white',
+                backgroundColor: selectedOrder?.id === order.id ? '#FBFDFF' : 'white',
               }}
               onClick={() => setSelectedOrder(selectedOrder?.id === order.id ? null : order)}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div>
                   <strong>Ordine #{order.id}</strong> - €{order.total_amount}
-                  <p style={{ margin: '5px 0', color: '#666' }}>
+                  <p style={{ margin: '6px 0', color: '#6B7280' }}>
                     Stato:{' '}
                     <span
                       style={{
@@ -117,7 +118,7 @@ export default function OrdersList({ userId }) {
                       {order.status.toUpperCase().replace('_', ' ')}
                     </span>
                   </p>
-                  <small>{new Date(order.created_at).toLocaleDateString('it-IT')}</small>
+                  <small style={adminStyles.muted}>{new Date(order.created_at).toLocaleDateString('it-IT')}</small>
                 </div>
               </div>
 

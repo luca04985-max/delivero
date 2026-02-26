@@ -255,11 +255,19 @@ export default function RestaurantDetailScreen({ route, navigation: _navigation 
             <TouchableOpacity
               onPress={() => {
                 try {
+                  const parent = _navigation.getParent && _navigation.getParent();
+                  if (parent && typeof parent.navigate === 'function') {
+                    parent.navigate('Inventory', { restaurantId: restaurant.id });
+                    return;
+                  }
                   _navigation.navigate('Inventory', { restaurantId: restaurant.id });
                 } catch (e) {
-                  // fallback: go to Profile
                   Alert.alert('Navigazione', 'Apri Profilo -> Gestisci Inventory');
-                  _navigation.navigate('Profile');
+                  try {
+                    _navigation.navigate('Profile');
+                  } catch (e2) {
+                    // ignore
+                  }
                 }
               }}
               style={{ backgroundColor: '#FF6B00', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 6 }}

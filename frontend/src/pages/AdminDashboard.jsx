@@ -3,80 +3,120 @@ import logger from '../utils/logger';
 import { adminAPI, ordersAPI, ticketsAPI } from '../services/api';
 import ManagerTrackingDashboard from './ManagerTrackingDashboard';
 import TrackingMap from '../components/TrackingMap';
+import adminStyles from '../styles/adminTheme';
 
 const styles = {
-  container: { padding: '20px', maxWidth: '1400px', margin: '0 auto' },
-  header: { marginBottom: '30px' },
-  tabsContainer: { display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' },
+  container: {
+    padding: '28px',
+    maxWidth: '1300px',
+    margin: '0 auto',
+    backgroundColor: '#F6F9FF',
+    minHeight: '100vh',
+  },
+  header: { marginBottom: '28px' },
+  tabsContainer: {
+    display: 'flex',
+    gap: '12px',
+    marginBottom: '22px',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+  },
   tabButton: active => ({
-    padding: '10px 15px',
-    backgroundColor: active ? '#FF6B00' : '#e0e0e0',
-    color: active ? 'white' : 'black',
-    border: 'none',
+    padding: '10px 16px',
+    background: 'transparent',
+    color: active ? '#0B5FFF' : '#334155',
+    border: '1px solid transparent',
     cursor: 'pointer',
-    borderRadius: '5px',
-    fontWeight: active ? 'bold' : 'normal',
+    borderRadius: '8px',
+    fontWeight: active ? 700 : 500,
+    boxShadow: active ? '0 6px 18px rgba(11,95,255,0.08)' : 'none',
+    transition: 'all 150ms ease',
   }),
-  card: { padding: '20px', backgroundColor: '#f5f5f5', borderRadius: '8px', marginBottom: '15px' },
+  card: {
+    padding: '22px',
+    backgroundColor: 'white',
+    borderRadius: '10px',
+    marginBottom: '18px',
+    boxShadow: '0 4px 16px rgba(16,24,40,0.04)',
+  },
   gridCards: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-    gap: '20px',
-    marginBottom: '30px',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+    gap: '18px',
+    marginBottom: '28px',
   },
   statCard: {
-    padding: '20px',
+    padding: '18px',
+    backgroundColor: 'white',
+    borderRadius: '10px',
+    textAlign: 'center',
+    boxShadow: '0 6px 18px rgba(16,24,40,0.04)',
+  },
+  statValue: { fontSize: '26px', fontWeight: 700, color: '#0B5FFF', marginBottom: '8px' },
+  statLabel: { fontSize: '13px', color: '#6B7280' },
+  table: {
+    width: '100%',
+    borderCollapse: 'collapse',
+    marginTop: '18px',
     backgroundColor: 'white',
     borderRadius: '8px',
-    textAlign: 'center',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    overflow: 'hidden',
+    boxShadow: '0 6px 18px rgba(16,24,40,0.04)',
   },
-  statValue: { fontSize: '28px', fontWeight: 'bold', color: '#FF6B00', marginBottom: '10px' },
-  statLabel: { fontSize: '14px', color: '#666' },
-  table: { width: '100%', borderCollapse: 'collapse', marginTop: '20px' },
-  tableHeader: { backgroundColor: '#333', color: 'white' },
-  tableHeaderCell: { padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd' },
-  tableCell: { padding: '12px', borderBottom: '1px solid #ddd' },
-  tableRow: { '&:hover': { backgroundColor: '#f9f9f9' } },
-  inputGroup: { display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' },
+  tableHeader: { backgroundColor: '#0B5FFF', color: 'white' },
+  tableHeaderCell: { padding: '14px', textAlign: 'left', borderBottom: '1px solid rgba(0,0,0,0.06)' },
+  tableCell: { padding: '12px 14px', borderBottom: '1px solid rgba(0,0,0,0.04)', color: '#111827' },
+  tableRowHover: { backgroundColor: '#FBFDFF' },
+  inputGroup: { display: 'flex', gap: '12px', marginBottom: '18px', flexWrap: 'wrap', alignItems: 'center' },
   select: {
-    padding: '8px',
-    borderRadius: '4px',
-    border: '1px solid #ddd',
-    flex: 1,
+    padding: '10px',
+    borderRadius: '8px',
+    border: '1px solid #E6EEF8',
+    flex: '0 0 220px',
     minWidth: '150px',
+    color: '#0F172A',
+    backgroundColor: 'white',
   },
   button: {
-    padding: '8px 15px',
-    backgroundColor: '#FF6B00',
+    padding: '10px 16px',
+    backgroundColor: '#0B5FFF',
     color: 'white',
     border: 'none',
-    borderRadius: '4px',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    boxShadow: '0 6px 18px rgba(11,95,255,0.12)',
+  },
+  ghostButton: {
+    padding: '10px 14px',
+    background: 'transparent',
+    color: '#0F172A',
+    border: '1px solid #E6EEF8',
+    borderRadius: '8px',
     cursor: 'pointer',
   },
   actionButton: danger => ({
-    padding: '6px 12px',
-    backgroundColor: danger ? '#d32f2f' : '#FFA500',
+    padding: '8px 12px',
+    backgroundColor: danger ? '#DC2626' : '#0B5FFF',
     color: 'white',
     border: 'none',
-    borderRadius: '4px',
+    borderRadius: '8px',
     cursor: 'pointer',
-    fontSize: '12px',
+    fontSize: '13px',
   }),
-  loading: { textAlign: 'center', padding: '40px', color: '#666' },
+  loading: { textAlign: 'center', padding: '40px', color: '#6B7280' },
   error: {
-    padding: '20px',
-    backgroundColor: '#ffebee',
-    color: '#c62828',
-    borderRadius: '4px',
-    marginBottom: '20px',
+    padding: '16px',
+    backgroundColor: '#FEF2F2',
+    color: '#B91C1C',
+    borderRadius: '8px',
+    marginBottom: '18px',
   },
   success: {
-    padding: '20px',
-    backgroundColor: '#e8f5e9',
-    color: '#2e7d32',
-    borderRadius: '4px',
-    marginBottom: '20px',
+    padding: '16px',
+    backgroundColor: '#ECFDF5',
+    color: '#065F46',
+    borderRadius: '8px',
+    marginBottom: '18px',
   },
 };
 
@@ -225,10 +265,10 @@ export default function AdminDashboard() {
     return <div style={styles.loading}>Loading dashboard...</div>;
 
   return (
-    <div style={styles.container}>
+    <div style={adminStyles.container}>
       <div style={styles.header}>
-        <h1>⚙️ Admin Dashboard</h1>
-        <p style={{ color: '#666', marginTop: '10px' }}>Manage all system operations and data</p>
+        <h1 style={adminStyles.title}>⚙️ Admin Dashboard</h1>
+        <p style={adminStyles.subtitle}>Manage all system operations and data</p>
       </div>
 
       {error && <div style={styles.error}>{error}</div>}
@@ -282,16 +322,16 @@ export default function AdminDashboard() {
       {/* Statistics Tab */}
       {activeTab === 'stats' && stats && (
         <div>
-          <div style={styles.gridCards}>
-            <div style={styles.statCard}>
+          <div style={adminStyles.gridCards}>
+            <div style={adminStyles.card}>
               <div style={styles.statValue}>{stats.totalUsers}</div>
               <div style={styles.statLabel}>Total Users</div>
             </div>
-            <div style={styles.statCard}>
+            <div style={adminStyles.card}>
               <div style={styles.statValue}>{stats.totalOrders}</div>
               <div style={styles.statLabel}>Total Orders</div>
             </div>
-            <div style={styles.statCard}>
+            <div style={adminStyles.card}>
               <div style={styles.statValue}>€{stats.totalRevenue?.toFixed(2)}</div>
               <div style={styles.statLabel}>Total Revenue</div>
             </div>
@@ -330,7 +370,7 @@ export default function AdminDashboard() {
         <div>
           <div style={styles.inputGroup}>
             <select
-              style={styles.select}
+              style={adminStyles.select}
               value={orderFilter}
               onChange={e => setOrderFilter(e.target.value)}
             >
@@ -435,7 +475,7 @@ export default function AdminDashboard() {
         <div>
           <div style={styles.inputGroup}>
             <select
-              style={styles.select}
+              style={adminStyles.select}
               value={userFilter}
               onChange={e => setUserFilter(e.target.value)}
             >
@@ -487,11 +527,11 @@ export default function AdminDashboard() {
                   <td style={styles.tableCell}>
                     {editingUser === user.id ? (
                       <>
-                        <button style={styles.button} onClick={() => handleUpdateUserRole(user.id)}>
+                        <button style={adminStyles.button} onClick={() => handleUpdateUserRole(user.id)}>
                           Save
                         </button>
                         <button
-                          style={{ ...styles.button, backgroundColor: '#999', marginLeft: '5px' }}
+                          style={{ ...adminStyles.button, backgroundColor: '#999', marginLeft: '5px' }}
                           onClick={() => setEditingUser(null)}
                         >
                           Cancel

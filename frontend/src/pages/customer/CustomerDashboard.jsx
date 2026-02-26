@@ -3,6 +3,8 @@ import { ordersAPI } from '../../services/api';
 import CreateOrderModal from '../../components/CreateOrderModal';
 import CustomerHomeEnhanced from './CustomerHomeEnhanced';
 import CustomerOrdersEnhanced from './CustomerOrdersEnhanced';
+import adminStyles from '../../styles/adminTheme';
+import '../../styles/adminUtilities.css';
 
 const CATEGORIES = [
   { id: 'food', name: '🍔 Cibo', icon: '🍕', color: '#FF6B6B' },
@@ -17,19 +19,9 @@ export default function CustomerDashboard({ user }) {
   const [activeTab, setActiveTab] = useState('home');
 
   return (
-    <div>
+    <div style={adminStyles.container} className="u-container">
       {/* Top Navigation Tabs */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '1rem',
-          borderBottom: '2px solid var(--border-color)',
-          marginBottom: '2rem',
-          paddingBottom: '1rem',
-          justifyContent: 'center',
-          flexWrap: 'wrap',
-        }}
-      >
+      <div style={{ display: 'flex', gap: '1rem', borderBottom: '2px solid var(--border-color)', marginBottom: '2rem', paddingBottom: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
         <button
           onClick={() => setActiveTab('home')}
           style={{

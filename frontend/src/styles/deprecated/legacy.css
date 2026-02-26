@@ -1,0 +1,8 @@
+/* Deprecated / legacy styles moved here for review.
+   Current scan (CustomerOrders.css and CustomerHome.css) found no selectors
+   that are unused in JS/JSX sources, so this file is intentionally empty for now.
+
+   Workflow:
+   - If you want automated isolation, I can move candidate rules here.
+   - After visual QA, delete this file and the rules inside.
+*/

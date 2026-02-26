@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import logger from '../utils/logger';
+import adminStyles from '../styles/adminTheme';
 
 const AdminTickets = () => {
   const [tickets, setTickets] = useState([]);
@@ -310,244 +311,21 @@ const AdminTickets = () => {
 };
 
 const styles = {
-  container: {
-    padding: '20px',
-  },
-  title: {
-    marginTop: 0,
-    marginBottom: '20px',
-    color: '#333',
-  },
-  loading: {
-    textAlign: 'center',
-    padding: '50px',
-    color: '#666',
-  },
-  statsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-    gap: '15px',
-    marginBottom: '20px',
-  },
-  statCard: {
-    backgroundColor: '#f9f9f9',
-    padding: '15px',
-    borderRadius: '8px',
-    textAlign: 'center',
-  },
-  statNumber: {
-    fontSize: '24px',
-    fontWeight: 'bold',
-    color: '#333',
-    margin: 0,
-  },
-  statLabel: {
-    fontSize: '12px',
-    color: '#666',
-    marginTop: '5px',
-  },
-  filterSection: {
-    display: 'flex',
-    gap: '10px',
-    marginBottom: '20px',
-  },
-  filterSelect: {
-    padding: '8px',
-    borderRadius: '4px',
-    border: '1px solid #ddd',
-  },
-  ticketsList: {
-    display: 'grid',
-    gap: '10px',
-  },
-  emptyState: {
-    textAlign: 'center',
-    color: '#999',
-    padding: '30px',
-  },
-  ticketCard: {
-    backgroundColor: '#fff',
-    padding: '15px',
-    borderRadius: '8px',
-    boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
-    cursor: 'pointer',
-    transition: 'all 0.2s',
-    border: '1px solid #eee',
-  },
-  headerCard: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '15px',
-    marginBottom: '10px',
-  },
-  ticketTypeIcon: {
-    fontSize: '24px',
-  },
-  ticketContent: {
-    flex: 1,
-    minWidth: 0,
-  },
-  titleCard: {
-    margin: '0 0 5px 0',
-    color: '#333',
-    fontSize: '16px',
-  },
-  ticketUser: {
-    margin: '0',
-    color: '#666',
-    fontSize: '12px',
-  },
-  statusBadge: {
-    color: 'white',
-    padding: '5px 12px',
-    borderRadius: '12px',
-    fontSize: '12px',
-    fontWeight: 'bold',
-    whiteSpace: 'nowrap',
-  },
-  ticketDescription: {
-    margin: '5px 0',
-    color: '#666',
-    fontSize: '14px',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    display: '-webkit-box',
-    WebkitLineClamp: 2,
-    WebkitBoxOrient: 'vertical',
-  },
-  ticketMeta: {
-    display: 'flex',
-    gap: '20px',
-    color: '#999',
-    fontSize: '12px',
-  },
-  detailPanel: {
-    backgroundColor: '#fff',
-    borderRadius: '8px',
-    padding: '20px',
-  },
-  backButton: {
-    padding: '8px 16px',
-    marginBottom: '20px',
-    backgroundColor: '#6c757d',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  },
-  detailGrid: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 300px',
-    gap: '20px',
-  },
-  detailLeft: {
-    minWidth: 0,
-  },
-  detailRight: {
-    borderLeft: '1px solid #eee',
-    paddingLeft: '20px',
-  },
-  detailTitle: {
-    margin: '0 0 15px 0',
-    color: '#333',
-  },
-  metaInfo: {
-    backgroundColor: '#f9f9f9',
-    padding: '12px',
-    borderRadius: '4px',
-    marginBottom: '15px',
-    fontSize: '14px',
-  },
-  description: {
-    marginBottom: '20px',
-  },
-  comments: {
-    marginTop: '20px',
-  },
-  commentItem: {
-    backgroundColor: '#f9f9f9',
-    padding: '10px',
-    borderRadius: '4px',
-    marginBottom: '10px',
-    borderLeft: '3px solid #2196f3',
-  },
-  commentHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    marginBottom: '5px',
-  },
-  adminBadge: {
-    backgroundColor: '#007bff',
-    color: 'white',
-    padding: '2px 6px',
-    borderRadius: '3px',
-    fontSize: '11px',
-  },
-  commentText: {
-    margin: '5px 0',
-    fontSize: '13px',
-  },
-  commentMeta: {
-    color: '#999',
-  },
-  commentInput: {
-    width: '100%',
-    padding: '8px',
-    borderRadius: '4px',
-    border: '1px solid #ddd',
-    marginTop: '10px',
-    marginBottom: '10px',
-  },
-  commentButton: {
-    width: '100%',
-    padding: '8px',
-    backgroundColor: '#28a745',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontSize: '14px',
-  },
-  updatePanel: {
-    backgroundColor: '#f5f5f5',
-    padding: '15px',
-    borderRadius: '4px',
-  },
-  formGroup: {
-    marginBottom: '15px',
-  },
-  label: {
-    display: 'block',
-    marginBottom: '5px',
-    color: '#555',
-    fontWeight: 'bold',
-    fontSize: '13px',
-  },
-  select: {
-    width: '100%',
-    padding: '6px',
-    borderRadius: '4px',
-    border: '1px solid #ddd',
-    fontSize: '13px',
-  },
-  textarea: {
-    width: '100%',
-    padding: '6px',
-    borderRadius: '4px',
-    border: '1px solid #ddd',
-    fontSize: '13px',
-  },
-  updateButton: {
-    width: '100%',
-    padding: '8px',
-    backgroundColor: '#007bff',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontWeight: 'bold',
-  },
+  ...adminStyles,
+  // small overrides
+  statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '15px', marginBottom: '20px' },
+  statCard: { backgroundColor: '#F8FAFF', padding: '15px', borderRadius: '8px', textAlign: 'center' },
+  statNumber: { fontSize: '24px', fontWeight: '700', color: '#0F172A', margin: 0 },
+  filterSection: { display: 'flex', gap: '12px', marginBottom: '18px' },
+  filterSelect: { ...adminStyles.select },
+  ticketsList: { display: 'grid', gap: '12px' },
+  ticketCard: { ...adminStyles.card, border: '1px solid rgba(15,23,42,0.04)' },
+  titleCard: { margin: '0 0 5px 0', color: '#0F172A', fontSize: '16px' },
+  ticketUser: { margin: 0, color: '#6B7280', fontSize: '12px' },
+  ticketDescription: { margin: '5px 0', color: '#6B7280', fontSize: '14px' },
+  commentInput: { width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #E6EEF8', marginTop: '10px', marginBottom: '10px' },
+  commentButton: { ...adminStyles.button, width: '100%' },
+  updateButton: { ...adminStyles.button, width: '100%' },
 };
 
 export default AdminTickets;
