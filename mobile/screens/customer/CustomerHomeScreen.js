@@ -153,7 +153,7 @@ export default function CustomerHomeScreen({ navigation }) {
             .bindPopup(\`
                 <div style="font-family: sans-serif; padding: 5px;">
                     <b style="font-size: 14px;">${rest.name}</b><br/>
-                    <span style="color: #666;">${rest.category}</span><br/>
+                    <span style="color: ${mobileTheme.colors.text.secondary};">${rest.category}</span><br/>
                     <button 
                         onclick="window.ReactNativeWebView.postMessage('restaurant:${rest.id}')"
                         style="margin-top: 8px; background: ${mobileTheme.colors.primary}; color: white; border: none; padding: 5px 10px; border-radius: 5px; width: 100%;"
@@ -206,7 +206,7 @@ export default function CustomerHomeScreen({ navigation }) {
           style={customerHomeScreenStyles.mapToggleBtn}
           onPress={() => setViewMode(viewMode === 'list' ? 'map' : 'list')}
         >
-          <Text style={{ color: '#fff', fontWeight: 'bold' }}>
+          <Text style={customerHomeScreenStyles.mapToggleText}>
             {viewMode === 'list' ? '🗺️ Mappa' : '📜 Lista'}
           </Text>
         </TouchableOpacity>
@@ -223,7 +223,7 @@ export default function CustomerHomeScreen({ navigation }) {
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              style={{ paddingLeft: 15 }}
+              contentContainerStyle={customerHomeScreenStyles.serviceListContent}
             >
               {specialServices.map(service => (
                 <TouchableOpacity
@@ -232,7 +232,7 @@ export default function CustomerHomeScreen({ navigation }) {
                   onPress={() => navigation.navigate(service.screen)}
                 >
                   <View style={customerHomeScreenStyles.iconCircle}>
-                    <Text style={{ fontSize: 24 }}>{service.emoji}</Text>
+                    <Text style={customerHomeScreenStyles.serviceEmoji}>{service.emoji}</Text>
                   </View>
                   <Text style={customerHomeScreenStyles.serviceText}>{service.name}</Text>
                 </TouchableOpacity>
@@ -253,7 +253,7 @@ export default function CustomerHomeScreen({ navigation }) {
           {/* 3. Categorie Food (Orizzontali) */}
           <View style={customerHomeScreenStyles.section}>
             <Text style={customerHomeScreenStyles.sectionTitle}>Categorie Food</Text>
-            <FlatList
+              <FlatList
               data={categories}
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -266,7 +266,7 @@ export default function CustomerHomeScreen({ navigation }) {
                   <Text style={customerHomeScreenStyles.categoryText}>{item.name}</Text>
                 </TouchableOpacity>
               )}
-              contentContainerStyle={{ paddingHorizontal: 15 }}
+              contentContainerStyle={customerHomeScreenStyles.categoryListContent}
             />
           </View>
 

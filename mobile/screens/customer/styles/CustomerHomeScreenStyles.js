@@ -138,6 +138,23 @@ export const customerHomeScreenStyles = StyleSheet.create({
     top: mobileTheme.spacing[5],
     right: mobileTheme.spacing[5],
   },
+  // mapToggleText: testo nel pulsante toggle
+  mapToggleText: {
+    color: mobileTheme.colors.white,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+  },
+  // serviceEmoji: dimensione emoji per servizi rapidi
+  serviceEmoji: {
+    fontSize: mobileTheme.typography.fontSize['2xl'],
+  },
+  // serviceListContent: padding per la ScrollView orizzontale dei servizi
+  serviceListContent: {
+    paddingLeft: mobileTheme.spacing[4],
+  },
+  // categoryListContent: padding per la lista categorie
+  categoryListContent: {
+    paddingHorizontal: mobileTheme.spacing[4],
+  },
 });
 
 export default customerHomeScreenStyles;

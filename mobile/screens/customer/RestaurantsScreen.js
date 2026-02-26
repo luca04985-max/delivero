@@ -137,7 +137,7 @@ export default function RestaurantsScreen({ navigation, route }) {
       onPress={() => navigation.navigate('RestaurantDetail', { restaurant: item })}
     >
       <View style={restaurantsScreenStyles.restaurantImage}>
-        <Text style={{ fontSize: 32, color: '#666' }}>🍽️</Text>
+        <Text style={restaurantsScreenStyles.emojiLarge}>🍽️</Text>
       </View>
       <View style={restaurantsScreenStyles.restaurantContent}>
         <View style={restaurantsScreenStyles.restaurantHeader}>
@@ -169,7 +169,7 @@ export default function RestaurantsScreen({ navigation, route }) {
     <View style={restaurantsScreenStyles.container}>
       <View style={restaurantsScreenStyles.header}>
         <View style={restaurantsScreenStyles.headerContent}>
-          <Text style={restaurantsScreenStyles.title}>🍽️ Ristoranti</Text>
+          <Text style={restaurantsScreenStyles.title}>Ristoranti</Text>
           <Text style={restaurantsScreenStyles.subtitle}>Scopri nuove destinazioni</Text>
         </View>
       </View>
@@ -185,12 +185,7 @@ export default function RestaurantsScreen({ navigation, route }) {
 
       <View style={restaurantsScreenStyles.categoriesContainer}>
         {/* Categoria attiva fissa a sinistra */}
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}
-        >
+        <View style={restaurantsScreenStyles.topRow}>
           <TouchableOpacity
             style={[restaurantsScreenStyles.categoryCard, sharedCategoryStyles.categoryCardActive]}
             onPress={() => handleCategoryChange(selectedCategory)}
@@ -204,40 +199,13 @@ export default function RestaurantsScreen({ navigation, route }) {
               {selectedCategory}
             </Text>
             {/* Badge speciale per categoria attiva */}
-            <View
-              style={{
-                position: 'absolute',
-                top: -5,
-                right: -5,
-                backgroundColor: mobileTheme.colors.primary,
-                borderRadius: 10,
-                width: 20,
-                height: 20,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              <Text
-                style={{
-                  color: mobileTheme.colors.white,
-                  fontSize: 10,
-                  fontWeight: 'bold',
-                }}
-              >
-                ✓
-              </Text>
+            <View style={restaurantsScreenStyles.categoryActiveBadge}>
+              <Text style={restaurantsScreenStyles.categoryActiveBadgeText}>✓</Text>
             </View>
           </TouchableOpacity>
 
           {/* Separatore visivo */}
-          <View
-            style={{
-              width: 1,
-              height: 30,
-              backgroundColor: mobileTheme.colors.border,
-              marginHorizontal: mobileTheme.spacing[2],
-            }}
-          />
+          <View style={restaurantsScreenStyles.separatorVertical} />
 
           {/* Altre categorie scorrevoli */}
           <ScrollView

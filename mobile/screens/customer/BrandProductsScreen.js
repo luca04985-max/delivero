@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import { mobileTheme } from '../../theme';
 import { useCart } from '../../context/CartContext';
 import { brandProductsScreenStyles } from './styles/BrandProductsScreenStyles';
 
@@ -139,7 +140,7 @@ export default function BrandProductsScreen({ route, navigation: _navigation }) 
         <View
           style={[
             brandProductsScreenStyles.stockIndicator,
-            { backgroundColor: item.inStock ? '#4CAF50' : '#F44336' },
+            item.inStock ? brandProductsScreenStyles.stockAvailable : brandProductsScreenStyles.stockUnavailable,
           ]}
         >
           <Text style={brandProductsScreenStyles.stockText}>
@@ -149,7 +150,7 @@ export default function BrandProductsScreen({ route, navigation: _navigation }) 
         <TouchableOpacity
           style={[
             brandProductsScreenStyles.addButton,
-            { backgroundColor: item.inStock ? '#FF6B00' : '#ccc' },
+            !item.inStock && brandProductsScreenStyles.disabledAddButton,
           ]}
           onPress={() => handleAddToCart(item)}
           disabled={!item.inStock}
@@ -165,7 +166,7 @@ export default function BrandProductsScreen({ route, navigation: _navigation }) 
   if (loading) {
     return (
       <View style={brandProductsScreenStyles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0066FF" />
+        <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
         <Text style={brandProductsScreenStyles.loadingText}>Caricamento prodotti...</Text>
       </View>
     );

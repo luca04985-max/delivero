@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator, Alert, Modal } from 'react-native';
 import { adminAPI } from '../../services/api';
 import { adminDashboardTicketsStyles as styles } from './styles/AdminDashboardTicketsStyles';
+import { mobileTheme } from '../../theme';
 
 export default function AdminDashboardTickets({ navigation: _navigation }) {
   const [tickets, setTickets] = useState([]);
@@ -54,15 +55,15 @@ export default function AdminDashboardTickets({ navigation: _navigation }) {
   const getStatusColor = useCallback(status => {
     switch (status) {
       case 'open':
-        return '#4CAF50';
+        return mobileTheme.colors.success;
       case 'in_progress':
-        return '#FF9800';
+        return mobileTheme.colors.warning;
       case 'closed':
-        return '#9E9E9E';
+        return mobileTheme.colors.text.tertiary;
       case 'resolved':
-        return '#2196F3';
+        return mobileTheme.colors.primary;
       default:
-        return '#666';
+        return mobileTheme.colors.text.secondary;
     }
   }, []);
 
@@ -189,7 +190,7 @@ export default function AdminDashboardTickets({ navigation: _navigation }) {
       <View style={styles.container}>
         {renderHeader()}
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#FF6B00" />
+          <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
           <Text style={styles.loadingText}>Caricamento ticket...</Text>
         </View>
       </View>
@@ -233,7 +234,7 @@ export default function AdminDashboardTickets({ navigation: _navigation }) {
                 <Text style={styles.textInput}>Nessun ticket selezionato</Text>
               </View>
             ) : (
-              <ScrollView style={{ maxHeight: 400 }}>
+              <ScrollView style={styles.modalScroll}>
                 <View style={styles.infoSection}>
                   <Text style={styles.sectionTitle}>Informazioni Generali</Text>
 
@@ -247,26 +248,23 @@ export default function AdminDashboardTickets({ navigation: _navigation }) {
                     <Text style={styles.fieldValue}>{selectedTicket?.description || '—'}</Text>
                   </View>
 
-                  <View style={styles.fieldRow}>
-                    <Text style={styles.fieldLabel}>Tipo:</Text>
-                    <View
-                      style={[
-                        styles.priorityBadge,
-                        {
-                          backgroundColor:
-                            selectedTicket?.type === 'bug'
-                              ? '#dc3545'
-                              : selectedTicket?.type === 'complaint'
-                                ? '#ffc107'
-                                : '#17a2b8',
-                        },
-                      ]}
-                    >
-                      <Text style={styles.priorityText}>
-                        {selectedTicket?.type?.toUpperCase() || '—'}
-                      </Text>
+                    <View style={styles.fieldRow}>
+                      <Text style={styles.fieldLabel}>Tipo:</Text>
+                      <View
+                        style={[
+                          styles.priorityBadge,
+                          selectedTicket?.type === 'bug'
+                            ? styles.priorityHigh
+                            : selectedTicket?.type === 'complaint'
+                            ? styles.priorityMedium
+                            : styles.priorityLow,
+                        ]}
+                      >
+                        <Text style={styles.priorityText}>
+                          {selectedTicket?.type?.toUpperCase() || '—'}
+                        </Text>
+                      </View>
                     </View>
-                  </View>
                 </View>
 
                 <View style={styles.infoSection}>
@@ -277,14 +275,11 @@ export default function AdminDashboardTickets({ navigation: _navigation }) {
                     <View
                       style={[
                         styles.priorityBadge,
-                        {
-                          backgroundColor:
-                            selectedTicket?.status === 'open'
-                              ? '#28a745'
-                              : selectedTicket?.status === 'resolved'
-                                ? '#17a2b8'
-                                : '#ffc107',
-                        },
+                        selectedTicket?.status === 'open'
+                          ? styles.statusOpen
+                          : selectedTicket?.status === 'resolved'
+                          ? styles.statusResolved
+                          : styles.statusInProgress,
                       ]}
                     >
                       <Text style={styles.priorityText}>
@@ -298,14 +293,11 @@ export default function AdminDashboardTickets({ navigation: _navigation }) {
                     <View
                       style={[
                         styles.priorityBadge,
-                        {
-                          backgroundColor:
-                            selectedTicket?.priority === 'high'
-                              ? '#dc3545'
-                              : selectedTicket?.priority === 'medium'
-                                ? '#ffc107'
-                                : '#6c757d',
-                        },
+                        selectedTicket?.priority === 'high'
+                          ? styles.priorityHigh
+                          : selectedTicket?.priority === 'medium'
+                          ? styles.priorityMedium
+                          : styles.priorityLow,
                       ]}
                     >
                       <Text style={styles.priorityText}>

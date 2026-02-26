@@ -123,6 +123,16 @@ export const riderHomeScreenStyles = StyleSheet.create({
     fontSize: FONT_SIZE_BASE * 0.750,
     fontWeight: FONT_WEIGHTS.semibold,
   },
+  // contentPadding: padding per contentContainerStyle
+  contentPadding: {
+    padding: mobileTheme.spacing[4],
+  },
+  // emptyText: testo lista vuota
+  emptyText: {
+    textAlign: 'center',
+    marginTop: mobileTheme.spacing[12],
+    color: mobileTheme.colors.text.secondary,
+  },
 });
 
 export default riderHomeScreenStyles;

@@ -227,6 +227,10 @@ export const adminDashboardTicketsStyles = StyleSheet.create({
   loadingContainer: unifiedStyles.loadingContainer,
   // loadingText: testo loading
   loadingText: unifiedStyles.loadingText,
+  // modalScroll: max height for modal content
+  modalScroll: {
+    maxHeight: 400,
+  },
 });
 
 export default adminDashboardTicketsStyles;

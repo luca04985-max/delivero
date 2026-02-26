@@ -10,6 +10,7 @@ import {
 // useFocusEffect removed (unused)
 import { makeRequest } from '../../services/api';
 import { customerTicketsScreenStyles } from './styles/CustomerTicketsScreenStyles';
+import { mobileTheme } from '../../theme';
 
 export default function CustomerTicketsScreen({ navigation }) {
   const [tickets, setTickets] = useState([]);
@@ -59,13 +60,13 @@ export default function CustomerTicketsScreen({ navigation }) {
   const getStatusColor = useCallback(status => {
     switch (status) {
       case 'open':
-        return '#4CAF50';
+        return mobileTheme.colors.success;
       case 'in_progress':
-        return '#FF9800';
+        return mobileTheme.colors.warning;
       case 'closed':
-        return '#9E9E9E';
+        return mobileTheme.colors.text.tertiary || mobileTheme.colors.text.secondary;
       default:
-        return '#666';
+        return mobileTheme.colors.text.secondary;
     }
   }, []);
 
@@ -210,7 +211,7 @@ export default function CustomerTicketsScreen({ navigation }) {
   if (loading) {
     return (
       <View style={customerTicketsScreenStyles.container}>
-        <ActivityIndicator size="large" color="#FF6B00" />
+        <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
         <Text style={customerTicketsScreenStyles.loadingText}>Caricamento ticket...</Text>
       </View>
     );

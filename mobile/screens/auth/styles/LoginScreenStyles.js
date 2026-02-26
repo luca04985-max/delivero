@@ -15,6 +15,11 @@ export const LoginScreenStyles = StyleSheet.create({
     justifyContent: 'center',
   },
 
+  // keyboard: wrapper for KeyboardAvoidingView
+  keyboard: {
+    flex: 1,
+  },
+
   // header: header logo/titoli (LoginScreen.js)
   header: {
     alignItems: 'center',
@@ -144,7 +149,7 @@ export const LoginScreenStyles = StyleSheet.create({
 
   // infoTitle: titolo info (LoginScreen.js)
   infoTitle: {
-    color: mobileTheme.colors.accent,
+    color: mobileTheme.colors.text.primary,
     fontSize: mobileTheme.typography.fontSize.sm,
     fontWeight: FONT_WEIGHTS.bold,
     marginBottom: mobileTheme.spacing[2],
@@ -152,7 +157,7 @@ export const LoginScreenStyles = StyleSheet.create({
 
   // infoText: testo info (LoginScreen.js)
   infoText: {
-    color: mobileTheme.colors.accent,
+    color: mobileTheme.colors.text.secondary,
     fontSize: mobileTheme.typography.fontSize.sm,
     marginBottom: mobileTheme.spacing[1],
   },

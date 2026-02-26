@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { View, Platform } from 'react-native';
+import { View, Platform, StyleSheet } from 'react-native';
+import { mobileTheme } from '../../theme';
 
 export default function WebMapView({ orders = [], riderLocation }) {
   const isWeb = Platform.OS === 'web';
@@ -39,5 +40,15 @@ export default function WebMapView({ orders = [], riderLocation }) {
 
   if (!isWeb) return null;
 
-  return <View id={mapId} style={{ height: 300, width: '100%', borderRadius: 10 }} />;
+  return <View id={mapId} style={styles.container} />;
+}
+
+const styles = StyleSheet.create({
+  container: {
+    height: 300,
+    width: '100%',
+    borderRadius: mobileTheme.borderRadius.md,
+    overflow: 'hidden',
+  },
+});
 }

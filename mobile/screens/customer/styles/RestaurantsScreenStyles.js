@@ -139,6 +139,40 @@ export const restaurantsScreenStyles = StyleSheet.create({
   emptyContainer: unifiedStyles.emptyContainer,
   // emptyText: testo stato vuoto (RestaurantsScreen.js)
   emptyText: unifiedStyles.emptyText,
+  // emojiLarge: grande emoji per immagine placeholder
+  emojiLarge: {
+    fontSize: mobileTheme.typography.fontSize['3xl'] || 32,
+    color: mobileTheme.colors.text.secondary,
+  },
+  // topRow: helper for category header row
+  topRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  // categoryActiveBadge: small check badge for active category
+  categoryActiveBadge: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    backgroundColor: mobileTheme.colors.primary,
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  categoryActiveBadgeText: {
+    color: mobileTheme.colors.white,
+    fontSize: mobileTheme.typography.fontSize.xs,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+  },
+  // separatorVertical: separator between category pills
+  separatorVertical: {
+    width: 1,
+    height: 30,
+    backgroundColor: mobileTheme.colors.border,
+    marginHorizontal: mobileTheme.spacing[2],
+  },
 });
 
 export default restaurantsScreenStyles;

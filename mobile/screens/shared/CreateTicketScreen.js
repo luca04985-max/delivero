@@ -16,6 +16,7 @@ import { decode } from 'base-64';
 import { useToast } from '../../hooks/useToast';
 import { useUserRole } from '../../hooks/useUserRole';
 import logger from '../../utils/logger';
+import { mobileTheme } from '../../theme';
 
 /**
  * Schermata creazione ticket - condivisa tra customer e rider
@@ -206,10 +207,10 @@ export default function CreateTicketScreen({ navigation, route }) {
             {
               backgroundColor:
                 toast.type === 'error'
-                  ? '#FF3B30'
+                  ? mobileTheme.colors.error
                   : toast.type === 'success'
-                    ? '#34C759'
-                    : '#007AFF',
+                    ? mobileTheme.colors.success
+                    : mobileTheme.colors.accent || mobileTheme.colors.secondary,
             },
           ]}
         >
@@ -361,7 +362,7 @@ export default function CreateTicketScreen({ navigation, route }) {
           }
         >
           {submitting ? (
-            <ActivityIndicator size="small" color="#fff" />
+            <ActivityIndicator size="small" color={mobileTheme.colors.white} />
           ) : (
             <Text style={createTicketScreenStyles.submitButtonText}>
               {isRider ? '🏍️ Invia Ticket Rider' : '👤 Invia Ticket Customer'}

@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { makeRequest } from '../../services/api';
 import { medicalTransportScreenStyles } from './styles/MedicalTransportScreenStyles';
+import { mobileTheme } from '../../theme';
 
 export default function MedicalTransportScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
@@ -38,10 +39,8 @@ export default function MedicalTransportScreen({ navigation }) {
   };
 
   return (
-    <ScrollView style={medicalTransportScreenStyles.content}>
-      <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 20 }}>
-        Prenota Trasporto Medico
-      </Text>
+    <ScrollView style={medicalTransportScreenStyles.container}>
+      <Text style={medicalTransportScreenStyles.title}>Prenota Trasporto Medico</Text>
       <TextInput
         placeholder="Nome Clinica / Dottore"
         style={medicalTransportScreenStyles.input}
@@ -52,14 +51,7 @@ export default function MedicalTransportScreen({ navigation }) {
         style={medicalTransportScreenStyles.input}
         onChangeText={v => setFormData({ ...formData, pickupAddress: v })}
       />
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginVertical: 15,
-        }}
-      >
+      <View style={medicalTransportScreenStyles.switchRow}>
         <Text>Viaggio di ritorno incluso</Text>
         <Switch
           value={formData.returnTrip}
@@ -68,7 +60,7 @@ export default function MedicalTransportScreen({ navigation }) {
       </View>
       <TouchableOpacity style={medicalTransportScreenStyles.btn} onPress={handleSubmit}>
         {loading ? (
-          <ActivityIndicator color="#fff" />
+          <ActivityIndicator color={mobileTheme.colors.white} />
         ) : (
           <Text style={medicalTransportScreenStyles.btnText}>Conferma Prenotazione</Text>
         )}

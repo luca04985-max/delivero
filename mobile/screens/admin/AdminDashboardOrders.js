@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, RefreshControl, ActivityIndicator, Alert, ScrollView } from 'react-native';
 import { adminAPI } from '../../services/api';
 import { adminDashboardOrderStyles as styles } from './styles/AdminDashboardOrdersStyles';
+import { mobileTheme } from '../../theme';
 
 export default function AdminDashboardOrders({ navigation }) {
   const [orders, setOrders] = useState([]);
@@ -172,7 +173,7 @@ export default function AdminDashboardOrders({ navigation }) {
       <View style={styles.container}>
         {renderHeader()}
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#FF6B00" />
+          <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
           <Text style={styles.loadingText}>Caricamento ordini...</Text>
         </View>
       </View>

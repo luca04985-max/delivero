@@ -99,6 +99,10 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     alignItems: 'flex-start',
     marginBottom: mobileTheme.spacing[1],
   },
+  // productHeaderLeft: left column inside product header
+  productHeaderLeft: {
+    flex: 1,
+  },
   // productName: nome prodotto
   productName: {
     fontSize: mobileTheme.typography.fontSize.sm,
@@ -590,6 +594,32 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
     color: mobileTheme.colors.white,
     textTransform: 'uppercase',
     letterSpacing: 1,
+  },
+  // headerInfo: container testo header (sostituisce inline flex/margin)
+  headerInfo: {
+    flex: 1,
+    marginLeft: mobileTheme.spacing[3],
+  },
+  // manageButtonContainer: container per pulsante gestione restaurant
+  manageButtonContainer: {
+    justifyContent: 'center',
+    paddingRight: mobileTheme.spacing[3],
+  },
+  // manageButton: stile pulsante gestisci inventory
+  manageButton: {
+    backgroundColor: mobileTheme.colors.primary,
+    paddingVertical: mobileTheme.spacing[2],
+    paddingHorizontal: mobileTheme.spacing[3],
+    borderRadius: mobileTheme.borderRadius.md,
+  },
+  // manageButtonText: testo dentro il pulsante gestisci
+  manageButtonText: {
+    color: mobileTheme.colors.white,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+  },
+  // spacer30: small spacer used in modal header
+  spacer30: {
+    width: 30,
   },
 
 });

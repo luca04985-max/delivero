@@ -145,7 +145,7 @@ export default function RiderActiveScreen() {
           )}
 
           {(item.status === 'pickup' || item.status === 'accepted') && (
-            <View style={{ flexDirection: 'row', flex: 1 }}>
+            <View style={riderActiveScreenStyles.actionButtonsRow}>
               <TouchableOpacity
                 style={riderActiveScreenStyles.wazeButton}
                 onPress={() => openWazeForOrder(item)}

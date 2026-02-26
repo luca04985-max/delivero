@@ -165,27 +165,13 @@ export default function ManagerDashboard({ user }) {
         <h1>⚙️ Panel Gestione</h1>
         <p>Gestisci riders, ordini, ticket, fatture e profili dal tuo account</p>
         <div style={{ marginTop: 12 }}>
-          <button
-            className="btn btn-primary"
-            <div style={adminStyles.container}>
-              <h1 style={adminStyles.title}>Manager Dashboard</h1>
-              <div style={adminStyles.grid}>
-                <div style={adminStyles.card}>
-                  <h2>Orders</h2>
-                  <p>Total: {orders.length}</p>
-                </div>
-                <div style={adminStyles.card}>
-                  <h2>Inventory</h2>
-                  <InventoryManager />
-                </div>
-              </div>
-            </div>
-        >
+          <button className="btn btn-primary">
           <p style={{ margin: 0, fontSize: '2rem' }}>📦</p>
           <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.8rem' }}>
             {stats.totalOrders}
           </p>
           <p style={{ margin: 0, fontSize: '0.9rem', color: '#999' }}>Ordini Totali</p>
+          </button>
         </div>
 
         <div

@@ -120,7 +120,7 @@ export default function PaymentMethodsScreen() {
         <Text style={paymentMethodsScreenStyles.title}>💳 Metodi di pagamento</Text>
         <Text style={paymentMethodsScreenStyles.subtitle}>Gestisci indirizzi e carte salvate.</Text>
 
-        <View style={{ marginTop: 16 }}>
+        <View style={paymentMethodsScreenStyles.section}>
           <Text style={paymentMethodsScreenStyles.sectionTitle}>Carte</Text>
           {cards.length === 0 ? (
             <Text style={paymentMethodsScreenStyles.subtitle}>Nessuna carta salvata.</Text>
@@ -131,9 +131,9 @@ export default function PaymentMethodsScreen() {
               renderItem={({ item }) => (
                 <View style={paymentMethodsScreenStyles.actionRow}>
                   <Text style={paymentMethodsScreenStyles.actionLabel}>{item.masked}</Text>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={paymentMethodsScreenStyles.rowCenter}>
                     <TouchableOpacity onPress={() => removeCard(item.id)}>
-                      <Text style={[paymentMethodsScreenStyles.actionLabel, { color: 'red' }]}>Elimina</Text>
+                      <Text style={[paymentMethodsScreenStyles.actionLabel, paymentMethodsScreenStyles.removeLabel]}>Elimina</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -142,14 +142,14 @@ export default function PaymentMethodsScreen() {
           )}
 
           <TouchableOpacity
-            style={[paymentMethodsScreenStyles.checkoutButton, { marginTop: 12 }]}
+            style={paymentMethodsScreenStyles.checkoutButton}
             onPress={() => setAddCardVisible(true)}
           >
             <Text style={paymentMethodsScreenStyles.checkoutButtonText}>Aggiungi Carta</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={{ marginTop: 24 }}>
+        <View style={[paymentMethodsScreenStyles.section, { marginTop: mobileTheme.spacing[5] }]}>
           <Text style={paymentMethodsScreenStyles.sectionTitle}>Indirizzi Salvati</Text>
           {addresses.length === 0 ? (
             <Text style={paymentMethodsScreenStyles.subtitle}>Nessun indirizzo salvato.</Text>
@@ -159,16 +159,16 @@ export default function PaymentMethodsScreen() {
               keyExtractor={i => i.id}
               renderItem={({ item }) => (
                 <View style={paymentMethodsScreenStyles.actionRow}>
-                  <View style={{ flex: 1 }}>
+                  <View style={paymentMethodsScreenStyles.addressInfo}>
                     <Text style={paymentMethodsScreenStyles.actionLabel}>{item.displayName}</Text>
                     {item.latitude && (
-                      <Text style={{ color: mobileTheme.colors.text.secondary, fontSize: 12 }}>
+                      <Text style={paymentMethodsScreenStyles.coordText}>
                         {item.latitude.toFixed(5)}, {item.longitude.toFixed(5)}
                       </Text>
                     )}
                   </View>
                   <TouchableOpacity onPress={() => removeAddress(item.id)}>
-                    <Text style={[paymentMethodsScreenStyles.actionLabel, { color: 'red' }]}>Elimina</Text>
+                    <Text style={[paymentMethodsScreenStyles.actionLabel, paymentMethodsScreenStyles.removeLabel]}>Elimina</Text>
                   </TouchableOpacity>
                 </View>
               )}
@@ -176,7 +176,7 @@ export default function PaymentMethodsScreen() {
           )}
 
           <TouchableOpacity
-            style={[paymentMethodsScreenStyles.checkoutButton, { marginTop: 12 }]}
+            style={paymentMethodsScreenStyles.checkoutButton}
             onPress={() => setAddAddrVisible(true)}
           >
             <Text style={paymentMethodsScreenStyles.checkoutButtonText}>Aggiungi Indirizzo</Text>
@@ -186,15 +186,15 @@ export default function PaymentMethodsScreen() {
 
       {/* Modal Add Address */}
       <Modal visible={addAddrVisible} animationType="slide" transparent>
-        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-          <View style={{ backgroundColor: 'white', padding: 20, borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
-            <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>Nuovo Indirizzo</Text>
-            <TextInput placeholder="Es. Via Garibaldi 12" value={addrInput} onChangeText={setAddrInput} style={{ borderWidth: 1, borderColor: '#eee', padding: 10, borderRadius: 8, marginBottom: 12 }} />
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <TouchableOpacity onPress={() => setAddAddrVisible(false)} style={{ padding: 12 }}>
+        <View style={paymentMethodsScreenStyles.modalOverlayBottom}>
+          <View style={paymentMethodsScreenStyles.modalCard}>
+            <Text style={paymentMethodsScreenStyles.modalTitle}>Nuovo Indirizzo</Text>
+            <TextInput placeholder="Es. Via Garibaldi 12" value={addrInput} onChangeText={setAddrInput} style={paymentMethodsScreenStyles.input} />
+            <View style={paymentMethodsScreenStyles.modalActions}>
+              <TouchableOpacity onPress={() => setAddAddrVisible(false)} style={paymentMethodsScreenStyles.modalButton}>
                 <Text>Annulla</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={addAddress} style={{ padding: 12 }}>
+              <TouchableOpacity onPress={addAddress} style={paymentMethodsScreenStyles.modalButton}>
                 <Text>Aggiungi</Text>
               </TouchableOpacity>
             </View>
@@ -204,16 +204,16 @@ export default function PaymentMethodsScreen() {
 
       {/* Modal Add Card */}
       <Modal visible={addCardVisible} animationType="slide" transparent>
-        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-          <View style={{ backgroundColor: 'white', padding: 20, borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
-            <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>Aggiungi Carta (demo)</Text>
-            <TextInput placeholder="Numero carta" value={cardNumber} onChangeText={setCardNumber} keyboardType="numeric" style={{ borderWidth: 1, borderColor: '#eee', padding: 10, borderRadius: 8, marginBottom: 12 }} />
-            <TextInput placeholder="Nome intestatario" value={cardName} onChangeText={setCardName} style={{ borderWidth: 1, borderColor: '#eee', padding: 10, borderRadius: 8, marginBottom: 12 }} />
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <TouchableOpacity onPress={() => setAddCardVisible(false)} style={{ padding: 12 }}>
+        <View style={paymentMethodsScreenStyles.modalOverlayBottom}>
+          <View style={paymentMethodsScreenStyles.modalCard}>
+            <Text style={paymentMethodsScreenStyles.modalTitle}>Aggiungi Carta (demo)</Text>
+            <TextInput placeholder="Numero carta" value={cardNumber} onChangeText={setCardNumber} keyboardType="numeric" style={paymentMethodsScreenStyles.input} />
+            <TextInput placeholder="Nome intestatario" value={cardName} onChangeText={setCardName} style={paymentMethodsScreenStyles.input} />
+            <View style={paymentMethodsScreenStyles.modalActions}>
+              <TouchableOpacity onPress={() => setAddCardVisible(false)} style={paymentMethodsScreenStyles.modalButton}>
                 <Text>Annulla</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={addCard} style={{ padding: 12 }}>
+              <TouchableOpacity onPress={addCard} style={paymentMethodsScreenStyles.modalButton}>
                 <Text>Aggiungi</Text>
               </TouchableOpacity>
             </View>

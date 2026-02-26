@@ -13,6 +13,7 @@ import {
 import { authAPI } from '../../services/api';
 // AsyncStorage imported previously but not used in this screen
 import LoginScreenStyles from './styles/LoginScreenStyles.js';
+import { mobileTheme } from '../../theme';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -60,7 +61,7 @@ export default function LoginScreen({ navigation }) {
   return (
     <>
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        style={LoginScreenStyles.keyboard}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView contentContainerStyle={LoginScreenStyles.container}>
@@ -78,7 +79,7 @@ export default function LoginScreen({ navigation }) {
               <TextInput
                 style={LoginScreenStyles.input}
                 placeholder="tuoemail@example.com"
-                placeholderTextColor="#999"
+                placeholderTextColor={mobileTheme.colors.text.tertiary}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -92,7 +93,7 @@ export default function LoginScreen({ navigation }) {
               <TextInput
                 style={LoginScreenStyles.input}
                 placeholder="•••••••"
-                placeholderTextColor="#999"
+                placeholderTextColor={mobileTheme.colors.text.tertiary}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
@@ -106,7 +107,7 @@ export default function LoginScreen({ navigation }) {
               disabled={loading}
             >
               {loading ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={mobileTheme.colors.white} />
               ) : (
                 <Text style={LoginScreenStyles.buttonText}>🚀 Accedi</Text>
               )}

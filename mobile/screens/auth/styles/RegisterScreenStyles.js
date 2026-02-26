@@ -15,6 +15,11 @@ export const RegisterScreenStyles = StyleSheet.create({
     justifyContent: 'center',
   },
 
+  // keyboard: wrapper for KeyboardAvoidingView
+  keyboard: {
+    flex: 1,
+  },
+
   // header: header logo/titoli (RegisterScreen.js)
   header: {
     alignItems: 'center',
@@ -202,7 +207,7 @@ export const RegisterScreenStyles = StyleSheet.create({
 
   // infoText: testo info (RegisterScreen.js)
   infoText: {
-    color: mobileTheme.colors.accent,
+    color: mobileTheme.colors.text.secondary,
     fontSize: mobileTheme.typography.fontSize.sm,
     marginBottom: mobileTheme.spacing[1],
   },

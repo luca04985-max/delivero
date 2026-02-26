@@ -171,6 +171,14 @@ export const medicalTransportScreenStyles = StyleSheet.create({
     letterSpacing: 1,
   },
 
+  // switchRow: layout for the return trip toggle row
+  switchRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: mobileTheme.spacing[3],
+  },
+
   // loadingContainer: wrapper stato loading
   loadingContainer: unifiedStyles.loadingContainer,
   // loadingText: testo stato loading

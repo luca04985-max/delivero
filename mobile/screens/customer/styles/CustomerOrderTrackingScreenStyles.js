@@ -186,3 +186,13 @@ export const customerOrderTrackingScreenStyles = StyleSheet.create({
 });
 
 export default customerOrderTrackingScreenStyles;
+
+// Web-specific styles (plain JS objects) used by the leaflet web renderer
+export const customerOrderTrackingWebStyles = {
+  leafletDiv: {
+    width: '100%',
+    height: 400,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+};

@@ -4,7 +4,7 @@ import { WebView } from 'react-native-webview';
 import { ordersAPI } from '../../services/api';
 import * as Location from 'expo-location';
 import { mobileTheme } from '../../theme';
-import { customerOrderTrackingScreenStyles } from './styles/CustomerOrderTrackingScreenStyles';
+import { customerOrderTrackingScreenStyles, customerOrderTrackingWebStyles } from './styles/CustomerOrderTrackingScreenStyles';
 
 const styles = customerOrderTrackingScreenStyles;
 
@@ -52,8 +52,8 @@ const _LeafletTrackingMap = ({ riderLocation, customerLocation, order, history =
         html: `<div style="
           width: 40px;
           height: 40px;
-          background: #fee2e2;
-          border: 3px solid #dc2626;
+          background: ${mobileTheme.colors.errorBg};
+          border: 3px solid ${mobileTheme.colors.error};
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -78,8 +78,8 @@ const _LeafletTrackingMap = ({ riderLocation, customerLocation, order, history =
         html: `<div style="
           width: 40px;
           height: 40px;
-          background: #dbeafe;
-          border: 3px solid #0284c7;
+          background: ${mobileTheme.colors.customer}33;
+          border: 3px solid ${mobileTheme.colors.customer};
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -99,15 +99,15 @@ const _LeafletTrackingMap = ({ riderLocation, customerLocation, order, history =
       // Draw polyline: use history if available else draw simple line
       if (history && Array.isArray(history) && history.length > 0) {
         const pts = history.map(p => [parseFloat(p.latitude), parseFloat(p.longitude)]);
-        L.polyline(pts, { color: '#ef4444', weight: 3 }).addTo(map);
+        L.polyline(pts, { color: '${mobileTheme.colors.error}', weight: 3 }).addTo(map);
       } else {
         L.polyline(
           [
             [riderLat, riderLng],
             [customerLat, customerLng],
           ],
-          {
-            color: '#3b82f6',
+            {
+            color: '${mobileTheme.colors.customer}',
             weight: 2,
             opacity: 0.7,
             dashArray: '5, 5',
@@ -148,15 +148,7 @@ const _LeafletTrackingMap = ({ riderLocation, customerLocation, order, history =
 
   return (
     <View style={styles.mapContainer}>
-      <div
-        id={mapContainerId}
-        style={{
-          width: '100%',
-          height: '400px',
-          borderRadius: '12px',
-          overflow: 'hidden',
-        }}
-      />
+      <div id={mapContainerId} style={customerOrderTrackingWebStyles.leafletDiv} />
     </View>
   );
 };
@@ -342,7 +334,7 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
               ${
                 polyline
                   ? `
-              L.polyline([${polyline}], { color: '#ef4444', weight: 3 }).addTo(map);
+              L.polyline([${polyline}], { color: '${mobileTheme.colors.error}', weight: 3 }).addTo(map);
               
               // Fit bounds to show both
               var bounds = L.latLngBounds([[${riderLat}, ${riderLon}], [${customerLat}, ${customerLon}]]);

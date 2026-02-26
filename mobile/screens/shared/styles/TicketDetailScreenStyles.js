@@ -126,6 +126,34 @@ export const ticketDetailScreenStyles = StyleSheet.create({
     borderLeftWidth: 3,
     borderLeftColor: mobileTheme.colors.primary,
   },
+  // orderBox: box ordine associato
+  orderBox: {
+    backgroundColor: mobileTheme.colors.surface || mobileTheme.colors.background,
+    borderRadius: mobileTheme.borderRadius.md,
+    padding: mobileTheme.spacing[4],
+    marginBottom: mobileTheme.spacing[5],
+    borderLeftWidth: 4,
+    borderLeftColor: mobileTheme.colors.primary,
+  },
+  orderBoxTitle: {
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    color: mobileTheme.colors.text.primary,
+    marginBottom: mobileTheme.spacing[2],
+  },
+  orderBoxDate: {
+    color: mobileTheme.colors.text.tertiary,
+    fontSize: mobileTheme.typography.fontSize.xs,
+  },
+  orderBoxPrice: {
+    color: mobileTheme.colors.primary,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    marginTop: mobileTheme.spacing[2],
+  },
+  orderBoxAddress: {
+    color: mobileTheme.colors.text.tertiary,
+    fontSize: mobileTheme.typography.fontSize.xs,
+    marginTop: mobileTheme.spacing[1],
+  },
 
   // responseForm: wrapper form risposta
   responseForm: {
@@ -181,6 +209,30 @@ export const ticketDetailScreenStyles = StyleSheet.create({
   submitButtonDisabled: unifiedStyles.disabledButton,
   // submitButtonText: testo CTA invio
   submitButtonText: unifiedStyles.buttonText,
+  // status variants
+  statusOpen: {
+    backgroundColor: mobileTheme.colors.success,
+  },
+  statusInProgress: {
+    backgroundColor: mobileTheme.colors.warning,
+  },
+  statusResolved: {
+    backgroundColor: mobileTheme.colors.secondary,
+  },
+  statusDefault: {
+    backgroundColor: mobileTheme.colors.text.tertiary,
+  },
+
+  // toast variants
+  toastError: {
+    backgroundColor: mobileTheme.colors.error,
+  },
+  toastSuccess: {
+    backgroundColor: mobileTheme.colors.success,
+  },
+  toastInfo: {
+    backgroundColor: mobileTheme.colors.primary,
+  },
 });
 
 export default ticketDetailScreenStyles;

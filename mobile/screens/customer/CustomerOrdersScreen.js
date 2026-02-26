@@ -9,6 +9,7 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
+import { mobileTheme } from '../../theme';
 import { ordersAPI } from '../../services/api';
 import { customerOrdersScreenStyles } from './styles/CustomerOrdersScreenStyles';
 
@@ -311,7 +312,7 @@ export default function CustomerOrdersScreen({ navigation, route: _route }) {
   if (loading)
     return (
       <View style={customerOrdersScreenStyles.loadingContainer}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
         <Text style={customerOrdersScreenStyles.loadingText}>Caricamento ordini...</Text>
       </View>
     );
@@ -328,7 +329,14 @@ export default function CustomerOrdersScreen({ navigation, route: _route }) {
       {userRole === 'separator' && (
         <ScrollView
           style={customerOrdersScreenStyles.statusTabsContainer}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchOrders} />}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={fetchOrders}
+              colors={[mobileTheme.colors.primary]}
+              tintColor={mobileTheme.colors.primary}
+            />
+          }
         >
           {renderOrdersWithSeparators()}
         </ScrollView>
@@ -340,7 +348,14 @@ export default function CustomerOrdersScreen({ navigation, route: _route }) {
           data={getFilteredOrders()}
           keyExtractor={item => item.id.toString()}
           renderItem={renderOrder}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchOrders} />}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={fetchOrders}
+              colors={[mobileTheme.colors.primary]}
+              tintColor={mobileTheme.colors.primary}
+            />
+          }
           contentContainerStyle={customerOrdersScreenStyles.ordersList}
           ListEmptyComponent={
             <View style={customerOrdersScreenStyles.emptyContainer}>

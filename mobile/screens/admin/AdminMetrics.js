@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, RefreshControl, Text, ScrollView, ActivityIndicator } from 'react-native';
 import { adminAPI } from '../../services/api';
 import { adminMetricsStyles as styles } from './styles/AdminMetricsStyles';
+import { mobileTheme } from '../../theme';
 
 export default function AdminMetrics({ navigation: _navigation }) {
   const [metrics, setMetrics] = useState(null);
@@ -44,7 +45,7 @@ export default function AdminMetrics({ navigation: _navigation }) {
       <View style={styles.container}>
         {renderHeader()}
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#FF6B00" />
+          <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
           <Text style={styles.loadingText}>Caricamento metriche...</Text>
         </View>
       </View>

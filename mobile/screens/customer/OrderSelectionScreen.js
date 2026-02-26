@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { ordersAPI } from '../../services/api';
 import { customerOrdersScreenStyles } from './styles/CustomerOrdersScreenStyles';
+import { mobileTheme } from '../../theme';
 
 export default function OrderSelectionScreen({ navigation, route: _route }) {
   const [orders, setOrders] = useState([]);
@@ -51,21 +52,21 @@ export default function OrderSelectionScreen({ navigation, route: _route }) {
   const getStatusColor = status => {
     switch (status) {
       case 'pending':
-        return '#FF9800';
+        return mobileTheme.colors.warning;
       case 'accepted':
-        return '#2196F3';
+        return mobileTheme.colors.accent || mobileTheme.colors.secondary;
       case 'preparing':
-        return '#9C27B0';
+        return mobileTheme.colors.manager || mobileTheme.colors.secondary;
       case 'pickup':
-        return '#FF5722';
+        return mobileTheme.colors.primary;
       case 'in_transit':
-        return '#4CAF50';
+        return mobileTheme.colors.success;
       case 'delivered':
-        return '#607D8B';
+        return mobileTheme.colors.text.secondary;
       case 'cancelled':
-        return '#F44336';
+        return mobileTheme.colors.error || mobileTheme.colors.text.secondary;
       default:
-        return '#999';
+        return mobileTheme.colors.text.secondary;
     }
   };
 

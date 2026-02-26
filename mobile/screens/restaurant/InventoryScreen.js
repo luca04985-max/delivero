@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
+import { mobileTheme } from '../../theme';
 import { inventoryAPI } from '../../services/api';
 import logger from '../../utils/logger';
 
@@ -35,21 +36,21 @@ export default function InventoryScreen({ route, navigation }) {
 
   const renderItem = ({ item }) => (
     <View style={styles.row}>
-      <View style={{ flex: 1 }}>
+      <View style={styles.info}>
         <Text style={styles.title}>{item.name}</Text>
         <Text style={styles.sub}>€{parseFloat(item.price).toFixed(2)} • prep {item.preparation_time_minutes}m</Text>
       </View>
       <TouchableOpacity style={[styles.btn, item.is_available ? styles.btnOn : styles.btnOff]} onPress={() => toggle(item)}>
-        <Text style={styles.btnText}>{item.is_available ? 'Disponibile' : 'Non disponibile'}</Text>
+        <Text style={item.is_available ? styles.btnTextOn : styles.btnTextOff}>{item.is_available ? 'Disponibile' : 'Non disponibile'}</Text>
       </TouchableOpacity>
     </View>
   );
 
   return (
-    <View style={{ flex: 1, padding: 16 }}>
-      <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 12 }}>Inventory - Restaurant #{restaurantId}</Text>
+    <View style={styles.container}>
+      <Text style={styles.headerTitle}>Inventory - Restaurant #{restaurantId}</Text>
       {loading ? (
-        <ActivityIndicator />
+        <ActivityIndicator color={mobileTheme.colors.primary} />
       ) : (
         <FlatList data={items} keyExtractor={i => String(i.id)} renderItem={renderItem} />
       )}
@@ -58,11 +59,15 @@ export default function InventoryScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', alignItems: 'center', padding: 12, borderBottomWidth: 1, borderColor: '#eee' },
-  title: { fontSize: 16, fontWeight: '600' },
-  sub: { fontSize: 12, color: '#666' },
-  btn: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: 6 },
-  btnOn: { backgroundColor: '#4CAF50' },
-  btnOff: { backgroundColor: '#E0E0E0' },
-  btnText: { color: '#fff', fontWeight: '600' },
+  container: { flex: 1, padding: mobileTheme.spacing[4] },
+  headerTitle: { fontSize: mobileTheme.typography.fontSize.lg, fontWeight: mobileTheme.typography.fontWeight.bold, marginBottom: mobileTheme.spacing[3] },
+  row: { flexDirection: 'row', alignItems: 'center', padding: mobileTheme.spacing[3], borderBottomWidth: 1, borderColor: mobileTheme.colors.border },
+  title: { fontSize: mobileTheme.typography.fontSize.base, fontWeight: mobileTheme.typography.fontWeight.semibold },
+  sub: { fontSize: mobileTheme.typography.fontSize.xs, color: mobileTheme.colors.text.secondary },
+  btn: { paddingVertical: mobileTheme.spacing[2], paddingHorizontal: mobileTheme.spacing[3], borderRadius: mobileTheme.borderRadius.sm },
+  btnOn: { backgroundColor: mobileTheme.colors.success },
+  btnOff: { backgroundColor: mobileTheme.colors.background },
+  btnTextOn: { color: mobileTheme.colors.white, fontWeight: mobileTheme.typography.fontWeight.semibold },
+  btnTextOff: { color: mobileTheme.colors.text.primary, fontWeight: mobileTheme.typography.fontWeight.semibold },
+  info: { flex: 1 },
 });

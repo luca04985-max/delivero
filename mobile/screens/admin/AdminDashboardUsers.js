@@ -13,6 +13,7 @@ import {
 import { adminAPI } from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { adminDashboardUsersStyles as styles } from './styles/AdminDashboardUsersStyles';
+import { mobileTheme } from '../../theme';
 
 export default function AdminDashboardUsers({ navigation: _navigation }) {
   const [users, setUsers] = useState([]);
@@ -72,10 +73,10 @@ export default function AdminDashboardUsers({ navigation: _navigation }) {
             <Text style={styles.statusSeparatorIcon}>{roleInfo.icon}</Text>
             <Text style={styles.statusSeparatorTitle}>{roleInfo.label}</Text>
           </View>
-          <View style={styles.statusSeparatorRight}>
-            <Text style={styles.statusSeparatorCount}>{count}</Text>
-            <Text style={styles.statusSeparatorToggle}>{isExpanded ? '🔼' : '🔽'}</Text>
-          </View>
+            <View style={styles.statusSeparatorRight}>
+              <Text style={styles.statusSeparatorCount}>{count}</Text>
+              <Text style={styles.statusSeparatorToggle}>{isExpanded ? '🔼' : '🔽'}</Text>
+            </View>
         </View>
       </TouchableOpacity>
     );
@@ -134,7 +135,7 @@ export default function AdminDashboardUsers({ navigation: _navigation }) {
       <View style={styles.card}>
         <Text style={styles.userName}>{item.name}</Text>
         <Text style={styles.userEmail}>
-          {item.email} - <Text style={{ color: '#FF6B00' }}>{item.role}</Text>
+          {item.email} - <Text style={styles.userRoleInline}>{item.role}</Text>
         </Text>
 
         <View style={styles.userActions}>
@@ -208,7 +209,7 @@ export default function AdminDashboardUsers({ navigation: _navigation }) {
       <View style={styles.container}>
         {renderHeader()}
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#FF6B00" />
+          <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
           <Text style={styles.loadingText}>Caricamento utenti...</Text>
         </View>
       </View>

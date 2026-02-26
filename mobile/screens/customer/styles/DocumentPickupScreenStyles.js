@@ -1,4 +1,114 @@
 import { StyleSheet } from 'react-native';
+import { mobileTheme, FONT_WEIGHTS } from '../../../theme';
+import { unifiedStyles } from '../../../theme/UnifiedStyles';
+
+export const documentPickupStyles = StyleSheet.create({
+  ...unifiedStyles,
+  container: {
+    flex: 1,
+    backgroundColor: mobileTheme.colors.white,
+    paddingBottom: mobileTheme.spacing[6],
+  },
+  title: {
+    fontSize: mobileTheme.typography.fontSize.lg,
+    fontWeight: FONT_WEIGHTS.bold,
+    padding: mobileTheme.spacing[4],
+  },
+  trackingCard: {
+    marginHorizontal: mobileTheme.spacing[4],
+    marginBottom: mobileTheme.spacing[4],
+    padding: mobileTheme.spacing[4],
+    backgroundColor: mobileTheme.colors.success + '20',
+    borderRadius: mobileTheme.borderRadius.md,
+    borderLeftWidth: 4,
+    borderLeftColor: mobileTheme.colors.success,
+  },
+  trackingSuccessText: {
+    fontWeight: FONT_WEIGHTS.semibold,
+    marginBottom: mobileTheme.spacing[2],
+  },
+  trackingLabel: {
+    color: mobileTheme.colors.text.secondary,
+    marginBottom: mobileTheme.spacing[2],
+  },
+  trackingNumber: {
+    fontSize: mobileTheme.typography.fontSize.base,
+    fontWeight: FONT_WEIGHTS.bold,
+    color: mobileTheme.colors.success,
+  },
+  trackingHelp: {
+    color: mobileTheme.colors.text.secondary,
+    marginTop: mobileTheme.spacing[2],
+    fontSize: mobileTheme.typography.fontSize.xs,
+  },
+  formContainer: {
+    paddingHorizontal: mobileTheme.spacing[4],
+  },
+  label: {
+    fontSize: mobileTheme.typography.fontSize.sm,
+    fontWeight: FONT_WEIGHTS.semibold,
+    marginBottom: mobileTheme.spacing[2],
+  },
+  documentOptionsWrapper: {
+    marginBottom: mobileTheme.spacing[4],
+  },
+  documentOption: {
+    padding: mobileTheme.spacing[3],
+    marginBottom: mobileTheme.spacing[2],
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.border,
+    borderRadius: mobileTheme.borderRadius.md,
+    backgroundColor: mobileTheme.colors.white,
+  },
+  documentOptionSelected: {
+    borderColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.primarySoft,
+  },
+  documentOptionText: {
+    color: mobileTheme.colors.text.primary,
+    fontWeight: FONT_WEIGHTS.normal,
+  },
+  documentOptionTextSelected: {
+    color: mobileTheme.colors.primary,
+    fontWeight: FONT_WEIGHTS.semibold,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.border,
+    borderRadius: mobileTheme.borderRadius.md,
+    padding: mobileTheme.spacing[3],
+    marginBottom: mobileTheme.spacing[4],
+  },
+  inputMultiline: {
+    height: 80,
+  },
+  switchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: mobileTheme.spacing[5],
+  },
+  switchLabel: {
+    fontSize: mobileTheme.typography.fontSize.sm,
+    fontWeight: FONT_WEIGHTS.semibold,
+    marginRight: mobileTheme.spacing[2],
+    flex: 1,
+  },
+  submitButton: {
+    padding: mobileTheme.spacing[4],
+    backgroundColor: mobileTheme.colors.primary,
+    borderRadius: mobileTheme.borderRadius.md,
+    alignItems: 'center',
+    marginBottom: mobileTheme.spacing[5],
+  },
+  submitButtonText: {
+    color: mobileTheme.colors.white,
+    fontWeight: FONT_WEIGHTS.bold,
+    fontSize: mobileTheme.typography.fontSize.md,
+  },
+});
+
+export default documentPickupStyles;
+import { StyleSheet } from 'react-native';
 import { mobileTheme } from '../../../theme';
 import { unifiedStyles } from '../../../theme/UnifiedStyles';
 import { BASE_SPACE, FONT_FAMILY, FONT_SIZE_BASE } from '../../../theme/StyleConstants.js';

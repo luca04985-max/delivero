@@ -251,7 +251,7 @@ export default function CartScreen({ navigation }) {
                     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
                     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
                     <style>
-                        body { margin:0; padding:0; background:#f0f0f0; }
+                        body { margin:0; padding:0; background:${mobileTheme.colors.background}; }
                         #map { position:absolute; top:0; bottom:0; width:100%; height:100%; }
                         .no-location { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; background:white; padding:20px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
                     </style>
@@ -532,15 +532,15 @@ export default function CartScreen({ navigation }) {
     return (
       <View style={styles.container}>
         <View style={styles.emptyContainer}>
-          <Text style={{ fontSize: 64 }}>🛒</Text>
-          <Text style={[styles.title, { color: mobileTheme.colors.text.primary, marginTop: 20 }]}>
+          <Text style={styles.emptyEmoji}>🛒</Text>
+          <Text style={styles.emptyTitle}>
             Carrello Vuoto
           </Text>
           <Text style={styles.emptySubtext}>
             Sembra che tu non abbia ancora aggiunto nulla di delizioso.
           </Text>
           <TouchableOpacity
-            style={[styles.checkoutButton, { width: '100%', marginTop: 30 }]}
+            style={[styles.checkoutButton, { width: '100%', marginTop: mobileTheme.spacing[6] }]}
             onPress={() => navigation.navigate('Home')}
           >
             <Text style={styles.checkoutButtonText}>Esplora Ristoranti</Text>
@@ -566,7 +566,7 @@ export default function CartScreen({ navigation }) {
           cart.restaurantItems.map(item => (
             <View key={item.id} style={styles.cartItem}>
               <View style={styles.itemImage}>
-                <Text style={{ fontSize: 30, textAlign: 'center', marginTop: 10 }}>🍲</Text>
+                <Text style={styles.paymentEmoji}>🍲</Text>
               </View>
               <View style={styles.itemInfo}>
                 <Text style={styles.itemName}>{item.name}</Text>
@@ -579,7 +579,7 @@ export default function CartScreen({ navigation }) {
                   >
                     <Text style={styles.quantityText}>−</Text>
                   </TouchableOpacity>
-                  <Text style={[styles.quantityText, { marginHorizontal: 15 }]}>{item.quantity}</Text>
+                  <Text style={[styles.quantityText, styles.quantitySpacing]}>{item.quantity}</Text>
                   <TouchableOpacity
                     style={styles.quantityButton}
                     onPress={() => updateQuantity(item.id, item.quantity + 1)}
@@ -596,8 +596,8 @@ export default function CartScreen({ navigation }) {
 
         {/* Shopping items: group by category/aisle for supermarket UX */}
         {cart.shoppingItems && cart.shoppingItems.length > 0 && (
-          <View style={{ marginTop: 10 }}>
-            <Text style={[styles.titleCard, { marginHorizontal: 0, marginBottom: 10 }]}>Spesa</Text>
+          <View style={styles.shoppingSection}>
+            <Text style={[styles.titleCard, styles.sectionHeaderNoMargin]}>Spesa</Text>
             {(() => {
               const groups = cart.shoppingItems.reduce((acc, it) => {
                 const key = it.category || it.aisle || 'Prodotti';
@@ -607,12 +607,12 @@ export default function CartScreen({ navigation }) {
               }, {});
 
               return Object.keys(groups).map(cat => (
-                <View key={cat} style={{ marginBottom: 12 }}>
-                  <Text style={[styles.sectionTitle, { marginHorizontal: 0 }]}>{cat}</Text>
+                <View key={cat} style={styles.shoppingCategory}>
+                  <Text style={[styles.sectionTitle, styles.sectionHeaderNoMargin]}>{cat}</Text>
                   {groups[cat].map(item => (
                     <View key={item.id} style={styles.cartItem}>
                       <View style={styles.itemImage}>
-                        <Text style={{ fontSize: 30, textAlign: 'center', marginTop: 10 }}>🛒</Text>
+                        <Text style={styles.paymentEmoji}>🛒</Text>
                       </View>
                       <View style={styles.itemInfo}>
                         <Text style={styles.itemName}>{item.name}</Text>
@@ -625,7 +625,7 @@ export default function CartScreen({ navigation }) {
                           >
                             <Text style={styles.quantityText}>−</Text>
                           </TouchableOpacity>
-                          <Text style={[styles.quantityText, { marginHorizontal: 15 }]}>{item.quantity}</Text>
+                          <Text style={[styles.quantityText, styles.quantitySpacing]}>{item.quantity}</Text>
                           <TouchableOpacity
                             style={styles.quantityButton}
                             onPress={() => updateQuantity(item.id, item.quantity + 1)}
@@ -660,52 +660,34 @@ export default function CartScreen({ navigation }) {
             <Text style={styles.totalValue}>€{finalTotal.toFixed(2)}</Text>
           </View>
         </View>
-        <View style={{ height: 40 }} />
+        <View style={styles.bottomSpacer} />
       </ScrollView>
 
       <View style={styles.actionsContainer}>
         <TouchableOpacity style={styles.checkoutButton} onPress={() => setCheckoutVisible(true)}>
           <Text style={styles.checkoutButtonText}>Procedi al Checkout</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.clearButton, { marginTop: 10 }]} onPress={clearCart}>
+        <TouchableOpacity style={[styles.clearButton, { marginTop: mobileTheme.spacing[3] }]} onPress={clearCart}>
           <Text style={styles.clearButtonText}>Svuota Carrello</Text>
         </TouchableOpacity>
       </View>
 
       {/* Modal Checkout */}
       <Modal visible={checkoutVisible} animationType="slide" transparent>
-        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}>
-          <View
-            style={{
-              backgroundColor: 'white',
-              padding: 25,
-              borderTopLeftRadius: 30,
-              borderTopRightRadius: 30,
-              maxHeight: '90%',
-            }}
-          >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
             <Text style={[styles.summaryTitle, { fontSize: 22 }]}>Completa l'ordine</Text>
 
             {/* Mappa interattiva */}
-            <View
-              style={{
-                height: 200,
-                borderRadius: 10,
-                overflow: 'hidden',
-                marginBottom: 20,
-                backgroundColor: '#f0f0f0',
-              }}
-            >
+            <View style={styles.mapContainer}>
               {loadingLocation ? (
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <View style={styles.mapLoader || { flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                   <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
-                  <Text style={{ marginTop: 10, color: mobileTheme.colors.text.secondary }}>
-                    Caricamento mappa...
-                  </Text>
+                  <Text style={styles.mapLoadingText}>Caricamento mappa...</Text>
                 </View>
               ) : (
                 <WebView
-                  style={{ flex: 1 }}
+                  style={styles.webViewFlex}
                   source={{ html: generateMapHtml() }}
                   javaScriptEnabled={true}
                   domStorageEnabled={true}
@@ -718,11 +700,11 @@ export default function CartScreen({ navigation }) {
 
             {/* Saved addresses (if any) */}
             {savedAddresses && savedAddresses.length > 0 && (
-              <View style={{ marginBottom: 10 }}>
+              <View style={styles.savedList}>
                 {savedAddresses.map(a => (
                   <TouchableOpacity
                     key={a.id}
-                    style={{ paddingVertical: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+                    style={styles.savedAddressRow}
                     onPress={() => {
                       setDeliveryAddress(a.displayName || a.label);
                       if (a.latitude && a.longitude) {
@@ -731,95 +713,63 @@ export default function CartScreen({ navigation }) {
                       setSelectedAddressId(a.id);
                     }}
                   >
-                    <Text style={{ color: mobileTheme.colors.text.primary }}>{a.displayName || a.label}</Text>
-                    <Text style={{ color: mobileTheme.colors.text.secondary }}>{selectedAddressId === a.id ? '✓' : ''}</Text>
+                    <Text style={styles.savedText}>{a.displayName || a.label}</Text>
+                    <Text style={styles.savedTextSecondary}>{selectedAddressId === a.id ? '✓' : ''}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
             )}
 
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+            <View style={[{ flexDirection: 'row', marginBottom: mobileTheme.spacing[3] }, styles.centerAligned]}>
               <TextInput
-                style={{
-                  backgroundColor: mobileTheme.colors.background,
-                  padding: 15,
-                  borderRadius: 10,
-                  flex: 1,
-                  marginRight: 10,
-                }}
+                style={styles.addressInput}
                 placeholder="Es. Via Garibaldi 12, Roma"
                 value={deliveryAddress}
                 onChangeText={handleAddressChange}
               />
               <TouchableOpacity
-                style={{
-                  backgroundColor: mobileTheme.colors.primary,
-                  padding: 12,
-                  borderRadius: 8,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  minWidth: 50,
-                }}
+                style={styles.locationButton}
                 onPress={useCurrentLocationAsAddress}
                 disabled={loadingLocation}
               >
                 {loadingLocation ? (
                   <ActivityIndicator size="small" color="white" />
                 ) : (
-                  <Text style={{ color: 'white', fontSize: 16 }}>📍</Text>
+                  <Text style={styles.locationButtonIcon}>📍</Text>
                 )}
               </TouchableOpacity>
             </View>
 
             {/* Selezione Metodo di Pagamento */}
             <Text style={[styles.summaryLabel, { marginBottom: 15 }]}>Metodo di Pagamento</Text>
-            <View style={{ flexDirection: 'row', marginBottom: 20 }}>
+            <View style={styles.paymentRow}>
               <TouchableOpacity
-                style={{
-                  backgroundColor:
-                    paymentMethod === 'cash' ? mobileTheme.colors.primary : '#f0f0f0',
-                  padding: 15,
-                  borderRadius: 10,
-                  flex: 1,
-                  marginRight: 10,
-                  borderWidth: 2,
-                  borderColor: paymentMethod === 'cash' ? mobileTheme.colors.primary : '#e0e0e0',
-                }}
+                style={[
+                  styles.paymentOption,
+                  { marginRight: mobileTheme.spacing[3] },
+                  paymentMethod === 'cash' && styles.paymentOptionSelected,
+                ]}
                 onPress={() => setPaymentMethod('cash')}
               >
-                <View style={{ alignItems: 'center' }}>
-                  <Text style={{ fontSize: 24, marginBottom: 5 }}>💵</Text>
-                  <Text
-                    style={{
-                      color: paymentMethod === 'cash' ? 'white' : mobileTheme.colors.text.primary,
-                      fontWeight: paymentMethod === 'cash' ? 'bold' : 'normal',
-                    }}
-                  >
+                <View style={styles.centerAligned}>
+                  <Text style={styles.paymentEmoji}>💵</Text>
+                  <Text style={paymentMethod === 'cash' ? styles.paymentOptionTextSelected : styles.paymentOptionText}>
                     Contanti
                   </Text>
                 </View>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={{
-                  backgroundColor:
-                    paymentMethod === 'card' ? mobileTheme.colors.primary : '#f0f0f0',
-                  padding: 15,
-                  borderRadius: 10,
-                  flex: 1,
-                  borderWidth: 2,
-                  borderColor: paymentMethod === 'card' ? mobileTheme.colors.primary : '#e0e0e0',
-                }}
+                style={[
+                  styles.paymentOption,
+                  styles.paymentOptionLast,
+                  paymentMethod === 'card' && styles.paymentOptionSelected,
+                ]}
                 onPress={() => setPaymentMethod('card')}
               >
-                <View style={{ alignItems: 'center' }}>
-                  <Text style={{ fontSize: 24, marginBottom: 5 }}>💳</Text>
-                  <Text
-                    style={{
-                      color: paymentMethod === 'card' ? 'white' : mobileTheme.colors.text.primary,
-                      fontWeight: paymentMethod === 'card' ? 'bold' : 'normal',
-                    }}
-                  >
+                <View style={styles.centerAligned}>
+                  <Text style={styles.paymentEmoji}>💳</Text>
+                  <Text style={paymentMethod === 'card' ? styles.paymentOptionTextSelected : styles.paymentOptionText}>
                     Carta di Credito
                   </Text>
                 </View>
@@ -828,29 +778,25 @@ export default function CartScreen({ navigation }) {
 
             {/* Saved cards selection when paymentMethod is card */}
             {paymentMethod === 'card' && savedCards && savedCards.length > 0 && (
-              <View style={{ marginBottom: 16 }}>
-                <Text style={[styles.summaryLabel, { marginBottom: 8 }]}>Carte salvate</Text>
+              <View style={styles.savedCardsContainer}>
+                <Text style={[styles.summaryLabel, { marginBottom: mobileTheme.spacing[2] }]}>Carte salvate</Text>
                 {savedCards.map(c => (
                   <TouchableOpacity
                     key={c.id}
-                    style={{ paddingVertical: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+                    style={styles.savedAddressRow}
                     onPress={() => setSelectedCardId(c.id)}
                   >
-                    <Text style={{ color: mobileTheme.colors.text.primary }}>{c.masked}</Text>
-                    <Text style={{ color: mobileTheme.colors.text.secondary }}>{selectedCardId === c.id ? '✓' : ''}</Text>
+                    <Text style={styles.savedText}>{c.masked}</Text>
+                    <Text style={styles.savedTextSecondary}>{selectedCardId === c.id ? '✓' : ''}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
             )}
 
-            <Text
-              style={{ fontSize: 11, color: mobileTheme.colors.text.tertiary, marginBottom: 20 }}
-            >
-              Oppure usa il pulsante 📍 per impostare la tua posizione attuale
-            </Text>
+            <Text style={styles.smallNote}>Oppure usa il pulsante 📍 per impostare la tua posizione attuale</Text>
 
             <TouchableOpacity
-              style={[styles.checkoutButton, { opacity: placingOrder ? 0.7 : 1 }]}
+              style={[styles.checkoutButton, placingOrder && unifiedStyles.disabledButton]}
               onPress={confirmCheckout}
               disabled={placingOrder}
             >
@@ -863,10 +809,8 @@ export default function CartScreen({ navigation }) {
               )}
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => setCheckoutVisible(false)} style={{ marginTop: 20 }}>
-              <Text style={{ textAlign: 'center', color: mobileTheme.colors.text.tertiary }}>
-                Annulla
-              </Text>
+            <TouchableOpacity onPress={() => setCheckoutVisible(false)} style={styles.clearButtonMarginTop || { marginTop: mobileTheme.spacing[4] }}>
+              <Text style={styles.cancelText}>Annulla</Text>
             </TouchableOpacity>
           </View>
         </View>

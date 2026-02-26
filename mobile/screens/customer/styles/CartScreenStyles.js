@@ -196,6 +196,160 @@ export const cartScreenStyles = StyleSheet.create({
   emptyText: unifiedStyles.emptyText,
   // emptySubtext: sottotesto stato vuoto (CartScreen.js)
   emptySubtext: unifiedStyles.emptySubtext,
+  // emptyEmoji: grande emoji per stato vuoto
+  emptyEmoji: {
+    fontSize: 64,
+  },
+  // emptyTitle: titolo nello stato vuoto (override small margin)
+  emptyTitle: {
+    ...unifiedStyles.title,
+    color: mobileTheme.colors.text.primary,
+    marginTop: mobileTheme.spacing[5],
+  },
+  // quantitySpacing: spazio fra pulsanti quantità
+  quantitySpacing: {
+    marginHorizontal: mobileTheme.spacing[4],
+  },
+  // bottomSpacer: spacer finale
+  bottomSpacer: {
+    height: 40,
+  },
+  // modalOverlay: usa unified overlay
+  modalOverlay: unifiedStyles.modalOverlay,
+  // modalCard: card interna del modal checkout
+  modalCard: {
+    backgroundColor: mobileTheme.colors.white,
+    padding: mobileTheme.spacing[5],
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    maxHeight: '90%',
+  },
+  // mapContainer: wrapper mappa nel modal
+  mapContainer: {
+    height: 200,
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginBottom: mobileTheme.spacing[5],
+    backgroundColor: mobileTheme.colors.background,
+  },
+  // mapLoadingText: testo sotto loader mappa
+  mapLoadingText: {
+    marginTop: mobileTheme.spacing[2],
+    color: mobileTheme.colors.text.secondary,
+  },
+  // savedList: wrapper saved addresses/cards
+  savedList: {
+    marginBottom: mobileTheme.spacing[3],
+  },
+  // shoppingSection: wrapper for shopping grouped items
+  shoppingSection: {
+    marginTop: mobileTheme.spacing[3],
+  },
+  // shoppingCategory: single category wrapper
+  shoppingCategory: {
+    marginBottom: mobileTheme.spacing[3],
+  },
+  // savedText: primary text for saved rows
+  savedText: {
+    color: mobileTheme.colors.text.primary,
+  },
+  // savedTextSecondary: secondary text for saved rows
+  savedTextSecondary: {
+    color: mobileTheme.colors.text.secondary,
+  },
+  // centerAligned: helper to center children horizontally
+  centerAligned: {
+    alignItems: 'center',
+  },
+  // webViewFlex: helper style for WebView full size
+  webViewFlex: {
+    flex: 1,
+  },
+  // sectionHeaderNoMargin: header with no horizontal margin
+  sectionHeaderNoMargin: {
+    marginHorizontal: 0,
+    marginBottom: 10,
+  },
+  // clearButtonMarginTop: helper for cancel/clear spacing
+  clearButtonMarginTop: {
+    marginTop: mobileTheme.spacing[4],
+  },
+  // paymentRow: layout for payment options row
+  paymentRow: {
+    flexDirection: 'row',
+    marginBottom: mobileTheme.spacing[5],
+  },
+  // savedCardsContainer: wrapper for saved cards list
+  savedCardsContainer: {
+    marginBottom: mobileTheme.spacing[4],
+  },
+  // savedAddressRow: row for saved addresses/cards
+  savedAddressRow: {
+    paddingVertical: mobileTheme.spacing[2],
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  // addressInput: input indirizzo nel modal
+  addressInput: {
+    backgroundColor: mobileTheme.colors.background,
+    padding: mobileTheme.spacing[4],
+    borderRadius: mobileTheme.borderRadius.md,
+    flex: 1,
+    marginRight: mobileTheme.spacing[3],
+  },
+  // locationButton: pulsante usa posizione
+  locationButton: {
+    backgroundColor: mobileTheme.colors.primary,
+    padding: mobileTheme.spacing[3],
+    borderRadius: mobileTheme.borderRadius.md,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minWidth: 50,
+  },
+  locationButtonIcon: {
+    color: mobileTheme.colors.white,
+    fontSize: 16,
+  },
+  // paymentOption: card option per metodo di pagamento
+  paymentOption: {
+    padding: mobileTheme.spacing[4],
+    borderRadius: mobileTheme.borderRadius.md,
+    flex: 1,
+    marginRight: mobileTheme.spacing[3],
+    borderWidth: 2,
+    borderColor: mobileTheme.colors.border,
+    alignItems: 'center',
+  },
+  paymentOptionLast: {
+    marginRight: 0,
+  },
+  paymentOptionSelected: {
+    backgroundColor: mobileTheme.colors.primary,
+    borderColor: mobileTheme.colors.primary,
+  },
+  paymentEmoji: {
+    fontSize: mobileTheme.typography.fontSize['2xl'],
+    marginBottom: mobileTheme.spacing[2],
+  },
+  paymentOptionText: {
+    color: mobileTheme.colors.text.primary,
+  },
+  paymentOptionTextSelected: {
+    color: mobileTheme.colors.white,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+  },
+  // smallNote: piccolo testo informativo
+  smallNote: {
+    fontSize: 11,
+    color: mobileTheme.colors.text.tertiary,
+    marginBottom: mobileTheme.spacing[5],
+  },
+  // cancelText: testo annulla modal
+  cancelText: {
+    textAlign: 'center',
+    color: mobileTheme.colors.text.tertiary,
+  },
 });
 
 export default cartScreenStyles;

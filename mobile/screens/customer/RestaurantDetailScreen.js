@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { restaurantDetailScreenStyles } from './styles/RestaurantDetailScreenStyles';
+import { mobileTheme } from '../../theme';
 import { makeRequest } from '../../services/api';
 import { useCart } from '../../context/CartContext';
 
@@ -132,7 +133,7 @@ export default function RestaurantDetailScreen({ route, navigation: _navigation 
       onPress={() => openProductModal(item)}
     >
       <View style={restaurantDetailScreenStyles.productHeader}>
-        <View style={{ flex: 1 }}>
+        <View style={restaurantDetailScreenStyles.productHeaderLeft}>
           <Text style={restaurantDetailScreenStyles.productName}>{item.name}</Text>
           <Text style={restaurantDetailScreenStyles.productDescription}>{item.description}</Text>
         </View>
@@ -223,7 +224,7 @@ export default function RestaurantDetailScreen({ route, navigation: _navigation 
   if (loading) {
     return (
       <View style={restaurantDetailScreenStyles.loadingContainer}>
-        <ActivityIndicator size="large" color="#FF6B00" />
+        <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
         <Text style={restaurantDetailScreenStyles.loadingText}>Caricamento menu...</Text>
       </View>
     );
@@ -236,7 +237,7 @@ export default function RestaurantDetailScreen({ route, navigation: _navigation 
     <View style={restaurantDetailScreenStyles.container}>
       {/* Header */}
       <View style={restaurantDetailScreenStyles.header}>
-        <View style={{ flex: 1, marginLeft: 12 }}>
+        <View style={restaurantDetailScreenStyles.headerInfo}>
           <Text style={restaurantDetailScreenStyles.restaurantName}>{restaurantDetail?.name}</Text>
           <Text style={restaurantDetailScreenStyles.restaurantInfo}>
             ⭐{' '}
@@ -251,7 +252,7 @@ export default function RestaurantDetailScreen({ route, navigation: _navigation 
         </View>
         {/* Show manage button to restaurant users/managers */}
         {(userRole === 'restaurant' || userRole === 'manager') && (
-          <View style={{ justifyContent: 'center', paddingRight: 12 }}>
+          <View style={restaurantDetailScreenStyles.manageButtonContainer}>
             <TouchableOpacity
               onPress={() => {
                 try {
@@ -270,9 +271,9 @@ export default function RestaurantDetailScreen({ route, navigation: _navigation 
                   }
                 }
               }}
-              style={{ backgroundColor: '#FF6B00', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 6 }}
+              style={restaurantDetailScreenStyles.manageButton}
             >
-              <Text style={{ color: '#fff', fontWeight: '700' }}>Gestisci Inventory</Text>
+              <Text style={restaurantDetailScreenStyles.manageButtonText}>Gestisci Inventory</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -321,7 +322,7 @@ export default function RestaurantDetailScreen({ route, navigation: _navigation 
                 <Text style={restaurantDetailScreenStyles.closeButton}>✕</Text>
               </TouchableOpacity>
               <Text style={restaurantDetailScreenStyles.modalTitle}>{selectedProduct?.name}</Text>
-              <View style={{ width: 30 }} />
+              <View style={restaurantDetailScreenStyles.spacer30} />
             </View>
 
             <ScrollView style={restaurantDetailScreenStyles.modalBody}>
@@ -365,14 +366,14 @@ export default function RestaurantDetailScreen({ route, navigation: _navigation 
               {/* Notes */}
               <View style={restaurantDetailScreenStyles.notesSection}>
                 <Text style={restaurantDetailScreenStyles.notesLabel}>📝 Note (opzionale)</Text>
-                <TextInput
+                  <TextInput
                   style={restaurantDetailScreenStyles.notesInput}
                   placeholder="Aggiungi note al tuo ordine..."
                   multiline
                   numberOfLines={3}
                   value={notes}
                   onChangeText={setNotes}
-                  placeholderTextColor="#999"
+                    placeholderTextColor={mobileTheme.colors.text.secondary}
                 />
               </View>
 

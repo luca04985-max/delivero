@@ -134,6 +134,38 @@ export const shoppingScreenStyles = StyleSheet.create({
     fontSize: FONT_SIZE_BASE * 0.625,
     fontWeight: FONT_WEIGHTS.bold,
   },
+
+  // loadingText: testo caricamento (ShoppingScreen.js)
+  loadingText: {
+    marginTop: mobileTheme.spacing[4],
+    color: mobileTheme.colors.text.secondary,
+    textAlign: 'center',
+  },
+
+  // categoryActiveBadge: badge per categoria selezionata (ShoppingScreen.js)
+  categoryActiveBadge: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    backgroundColor: mobileTheme.colors.primary,
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  // categoryActiveBadgeText: testo dentro badge (ShoppingScreen.js)
+  categoryActiveBadgeText: {
+    color: mobileTheme.colors.white,
+    fontSize: 10,
+    fontWeight: FONT_WEIGHTS.bold,
+  },
+
+  // brandEmojiText: testo dell'emoji nel cerchio (ShoppingScreen.js)
+  brandEmojiText: {
+    fontSize: FONT_SIZE_BASE * 1.6,
+    textAlign: 'center',
+  },
 });
 
 export default shoppingScreenStyles;

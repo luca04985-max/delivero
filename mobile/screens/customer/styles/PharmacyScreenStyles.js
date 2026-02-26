@@ -24,7 +24,7 @@ export const pharmacyScreenStyles = StyleSheet.create({
   },
   // addBtn: bottone aggiunta prodotto (PharmacyScreen.js)
   addBtn: {
-    backgroundColor: '#34C759',
+    backgroundColor: mobileTheme.colors.success,
     width: 30,
     height: 30,
     borderRadius: BASE_SPACE * 1.875,
@@ -40,6 +40,12 @@ export const pharmacyScreenStyles = StyleSheet.create({
     borderColor: mobileTheme.colors.border,
     ...mobileTheme.shadows.sm,
   },
+
+  // detailsContainer: wrapper for selected pharmacy details
+  detailsContainer: {
+    flex: 1,
+    padding: mobileTheme.spacing[3],
+  },
   // totalText: totale carrello farmacia (PharmacyScreen.js)
   totalText: {
     fontSize: mobileTheme.typography.fontSize.lg,
@@ -49,11 +55,23 @@ export const pharmacyScreenStyles = StyleSheet.create({
   },
   // orderBtn: bottone conferma ordine farmacia (PharmacyScreen.js)
   orderBtn: {
-    backgroundColor: '#007AFF',
+    backgroundColor: mobileTheme.colors.secondary,
     padding: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.lg,
     alignItems: 'center',
     ...mobileTheme.shadows.medium,
+  },
+  // loading indicator wrapper
+  loading: {
+    marginTop: mobileTheme.spacing[5],
+  },
+  // backBtnText: link-style text for back action
+  backBtnText: {
+    color: mobileTheme.colors.secondary,
+  },
+  // addBtnText: text inside add button
+  addBtnText: {
+    color: mobileTheme.colors.white,
   },
   // orderBtnText: label bottone conferma (PharmacyScreen.js)
   orderBtnText: {

@@ -11,6 +11,7 @@ import {
 // AsyncStorage not used here
 import { makeRequest } from '../../services/api';
 import { ticketDetailScreenStyles } from './styles/TicketDetailScreenStyles';
+import { mobileTheme } from '../../theme';
 import { useUserRole } from '../../hooks/useUserRole';
 import { useToast } from '../../hooks/useToast';
 import { useTicketDetail } from '../../hooks/useTicketDetail';
@@ -77,15 +78,16 @@ export default function TicketDetailScreen({ navigation, route }) {
   };
 
   const getStatusColor = status => {
+    // kept for backward compatibility; prefer using style variants
     switch (status) {
       case 'open':
-        return '#4CAF50';
+        return ticketDetailScreenStyles.statusOpen.backgroundColor;
       case 'in_progress':
-        return '#FF9800';
+        return ticketDetailScreenStyles.statusInProgress.backgroundColor;
       case 'resolved':
-        return '#2196F3';
+        return ticketDetailScreenStyles.statusResolved.backgroundColor;
       default:
-        return '#757575';
+        return ticketDetailScreenStyles.statusDefault.backgroundColor;
     }
   };
 
@@ -120,7 +122,7 @@ export default function TicketDetailScreen({ navigation, route }) {
   if (loading) {
     return (
       <View style={ticketDetailScreenStyles.container}>
-        <ActivityIndicator size="large" color="#FF6B00" />
+        <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
         <Text style={ticketDetailScreenStyles.loadingText}>Caricamento dettagli...</Text>
       </View>
     );
@@ -151,14 +153,11 @@ export default function TicketDetailScreen({ navigation, route }) {
         <View
           style={[
             ticketDetailScreenStyles.toast,
-            {
-              backgroundColor:
-                toast.type === 'error'
-                  ? '#FF3B30'
-                  : toast.type === 'success'
-                    ? '#34C759'
-                    : '#007AFF',
-            },
+            toast.type === 'error'
+              ? ticketDetailScreenStyles.toastError
+              : toast.type === 'success'
+                ? ticketDetailScreenStyles.toastSuccess
+                : ticketDetailScreenStyles.toastInfo,
           ]}
         >
           <Text style={ticketDetailScreenStyles.toastText}>{toast.message}</Text>
@@ -175,7 +174,13 @@ export default function TicketDetailScreen({ navigation, route }) {
             <View
               style={[
                 ticketDetailScreenStyles.statusBadge,
-                { backgroundColor: getStatusColor(ticket.status) },
+                ticket.status === 'open'
+                  ? ticketDetailScreenStyles.statusOpen
+                  : ticket.status === 'in_progress'
+                    ? ticketDetailScreenStyles.statusInProgress
+                    : ticket.status === 'resolved'
+                      ? ticketDetailScreenStyles.statusResolved
+                      : ticketDetailScreenStyles.statusDefault,
               ]}
             >
               <Text style={ticketDetailScreenStyles.statusText}>
@@ -208,26 +213,17 @@ export default function TicketDetailScreen({ navigation, route }) {
           {ticket.order_id && (
             <View style={ticketDetailScreenStyles.section}>
               <Text style={ticketDetailScreenStyles.sectionTitle}>📦 Ordine Associato</Text>
-              <View
-                style={{
-                  backgroundColor: '#f8f9fa',
-                  borderRadius: 10,
-                  padding: 15,
-                  marginBottom: 20,
-                  borderLeftWidth: 4,
-                  borderLeftColor: '#FF6B00',
-                }}
-              >
-                <Text style={{ fontWeight: 'bold', color: '#333', marginBottom: 5 }}>
+              <View style={ticketDetailScreenStyles.orderBox}>
+                <Text style={ticketDetailScreenStyles.orderBoxTitle}>
                   Ordine #{ticket.order_id?.toString().slice(-5)}
                 </Text>
-                <Text style={{ color: '#666', fontSize: 12 }}>
+                <Text style={ticketDetailScreenStyles.orderBoxDate}>
                   {new Date(ticket.order_created_at).toLocaleDateString('it-IT')}
                 </Text>
-                <Text style={{ color: '#FF6B00', fontWeight: 'bold', marginTop: 5 }}>
+                <Text style={ticketDetailScreenStyles.orderBoxPrice}>
                   €{ticket.total_amount || ticket.total_price || ticket.total}
                 </Text>
-                <Text style={{ color: '#666', fontSize: 12, marginTop: 5 }}>
+                <Text style={ticketDetailScreenStyles.orderBoxAddress}>
                   📍 {ticket.delivery_address}
                 </Text>
               </View>
@@ -305,13 +301,13 @@ export default function TicketDetailScreen({ navigation, route }) {
               <TouchableOpacity
                 style={[
                   ticketDetailScreenStyles.submitButton,
-                  { opacity: submitting || !newResponse.trim() ? 0.6 : 1 },
+                  (submitting || !newResponse.trim()) && ticketDetailScreenStyles.submitButtonDisabled,
                 ]}
                 onPress={addResponse}
                 disabled={submitting || !newResponse.trim()}
               >
                 {submitting ? (
-                  <ActivityIndicator size="small" color="#fff" />
+                  <ActivityIndicator size="small" color={mobileTheme.colors.white} />
                 ) : (
                   <Text style={ticketDetailScreenStyles.submitButtonText}>Invia Risposta</Text>
                 )}

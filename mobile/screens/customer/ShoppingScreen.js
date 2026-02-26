@@ -28,21 +28,21 @@ export default function ShoppingScreen({ navigation }) {
     try {
       // Dati realistici per supermercati e categorie
       const mockCategories = [
-        { id: 1, name: 'Frutta e Verdura', emoji: '🥬', color: '#4CAF50' },
-        { id: 2, name: 'Carne e Pesce', emoji: '🥩', color: '#FF5722' },
-        { id: 3, name: 'Latticini', emoji: '🧀', color: '#FFC107' },
-        { id: 4, name: 'Panetteria', emoji: '🍞', color: '#795548' },
-        { id: 5, name: 'Bevande', emoji: '🥤', color: '#2196F3' },
-        { id: 6, name: 'Casa e Cura', emoji: '🧴', color: '#9C27B0' },
+        { id: 1, name: 'Frutta e Verdura', emoji: '🥬', color: mobileTheme.colors.success },
+        { id: 2, name: 'Carne e Pesce', emoji: '🥩', color: mobileTheme.colors.primary },
+        { id: 3, name: 'Latticini', emoji: '🧀', color: mobileTheme.colors.warning },
+        { id: 4, name: 'Panetteria', emoji: '🍞', color: mobileTheme.colors.text.secondary },
+        { id: 5, name: 'Bevande', emoji: '🥤', color: mobileTheme.colors.customer || mobileTheme.colors.accent },
+        { id: 6, name: 'Casa e Cura', emoji: '🧴', color: mobileTheme.colors.manager || mobileTheme.colors.secondary },
       ];
 
       const mockBrands = [
-        { id: 1, name: 'Carrefour', emoji: '🏬', color: '#FF0000', products: 1240, rating: 4.2 },
-        { id: 2, name: 'Conad', emoji: '🏪', color: '#0066FF', products: 856, rating: 4.1 },
-        { id: 3, name: 'Lidl', emoji: '🏬', color: '#FFD700', products: 920, rating: 4.0 },
-        { id: 4, name: 'Esselunga', emoji: '🏪', color: '#00AA00', products: 1180, rating: 4.3 },
-        { id: 5, name: 'Coop', emoji: '🛒', color: '#FF6600', products: 980, rating: 4.1 },
-        { id: 6, name: 'Pam', emoji: '🏪', color: '#003366', products: 720, rating: 3.9 },
+        { id: 1, name: 'Carrefour', emoji: '🏬', color: mobileTheme.colors.primary, products: 1240, rating: 4.2 },
+        { id: 2, name: 'Conad', emoji: '🏪', color: mobileTheme.colors.accent || mobileTheme.colors.secondary, products: 856, rating: 4.1 },
+        { id: 3, name: 'Lidl', emoji: '🏬', color: mobileTheme.colors.warning, products: 920, rating: 4.0 },
+        { id: 4, name: 'Esselunga', emoji: '🏪', color: mobileTheme.colors.success, products: 1180, rating: 4.3 },
+        { id: 5, name: 'Coop', emoji: '🛒', color: mobileTheme.colors.primary, products: 980, rating: 4.1 },
+        { id: 6, name: 'Pam', emoji: '🏪', color: mobileTheme.colors.secondary, products: 720, rating: 3.9 },
       ];
 
       setCategories(mockCategories);
@@ -77,28 +77,8 @@ export default function ShoppingScreen({ navigation }) {
 
         {/* Badge speciale per categoria attiva */}
         {isActive && (
-          <View
-            style={{
-              position: 'absolute',
-              top: -5,
-              right: -5,
-              backgroundColor: mobileTheme.colors.primary,
-              borderRadius: 10,
-              width: 20,
-              height: 20,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <Text
-              style={{
-                color: mobileTheme.colors.white,
-                fontSize: 10,
-                fontWeight: 'bold',
-              }}
-            >
-              ✓
-            </Text>
+          <View style={shoppingScreenStyles.categoryActiveBadge}>
+            <Text style={shoppingScreenStyles.categoryActiveBadgeText}>✓</Text>
           </View>
         )}
       </TouchableOpacity>
@@ -111,7 +91,7 @@ export default function ShoppingScreen({ navigation }) {
       onPress={() => navigation.navigate('BrandProducts', { brand: item })}
     >
       <View style={shoppingScreenStyles.brandEmoji}>
-        <Text style={shoppingScreenStyles.brandEmoji}>{item.emoji}</Text>
+        <Text style={shoppingScreenStyles.brandEmojiText}>{item.emoji}</Text>
       </View>
       <View style={shoppingScreenStyles.brandInfo}>
         <Text style={shoppingScreenStyles.brandName}>{item.name}</Text>
@@ -128,7 +108,7 @@ export default function ShoppingScreen({ navigation }) {
   if (loading) {
     return (
       <View style={shoppingScreenStyles.container}>
-        <ActivityIndicator size="large" color={shoppingScreenStyles.loadingText.color} />
+        <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
         <Text style={shoppingScreenStyles.loadingText}>Caricamento negozi...</Text>
       </View>
     );

@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, View } from 'react-native';
 import { AdminDashboardScreenStyles as styles } from '../styles/AdminDashboardScreenStyles';
+import { mobileTheme } from '../../../theme';
 
 // Componente per gli utenti
 export const UserItem = ({ item, onEdit, onDelete, currentUser }) => {
@@ -9,7 +10,7 @@ export const UserItem = ({ item, onEdit, onDelete, currentUser }) => {
     <View style={styles.card}>
       <Text style={styles.userName}>{item.name}</Text>
       <Text style={styles.userEmail}>
-        {item.email} - <Text style={{ color: '#FF6B00' }}>{item.role}</Text>
+        {item.email} - <Text style={styles.roleInline}>{item.role}</Text>
       </Text>
 
       <View style={styles.row}>

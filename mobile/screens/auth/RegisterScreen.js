@@ -14,6 +14,7 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { authAPI } from '../../services/api';
 import RegisterScreenStyles from './styles/RegisterScreenStyles.js';
+import { mobileTheme } from '../../theme';
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState('');
@@ -63,10 +64,10 @@ export default function RegisterScreen({ navigation }) {
   return (
     <>
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <ScrollView contentContainerStyle={RegisterScreenStyles.container}>
+            style={RegisterScreenStyles.keyboard}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          >
+            <ScrollView contentContainerStyle={RegisterScreenStyles.container}>
           {/* Header */}
           <View style={RegisterScreenStyles.header}>
             <Text style={RegisterScreenStyles.logo}>✍️</Text>
@@ -81,7 +82,7 @@ export default function RegisterScreen({ navigation }) {
               <TextInput
                 style={RegisterScreenStyles.input}
                 placeholder="Luca Rossi"
-                placeholderTextColor="#999"
+                placeholderTextColor={mobileTheme.colors.text.tertiary}
                 value={name}
                 onChangeText={setName}
                 editable={!loading}
@@ -93,7 +94,7 @@ export default function RegisterScreen({ navigation }) {
               <TextInput
                 style={RegisterScreenStyles.input}
                 placeholder="tuoemail@example.com"
-                placeholderTextColor="#999"
+                placeholderTextColor={mobileTheme.colors.text.tertiary}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -123,7 +124,7 @@ export default function RegisterScreen({ navigation }) {
               <TextInput
                 style={RegisterScreenStyles.input}
                 placeholder="••••••"
-                placeholderTextColor="#999"
+                placeholderTextColor={mobileTheme.colors.text.tertiary}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
@@ -136,7 +137,7 @@ export default function RegisterScreen({ navigation }) {
               <TextInput
                 style={RegisterScreenStyles.input}
                 placeholder="••••••"
-                placeholderTextColor="#999"
+                placeholderTextColor={mobileTheme.colors.text.tertiary}
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 secureTextEntry
@@ -150,7 +151,7 @@ export default function RegisterScreen({ navigation }) {
               disabled={loading}
             >
               {loading ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={mobileTheme.colors.white} />
               ) : (
                 <Text style={RegisterScreenStyles.buttonText}>🚀 Registrati</Text>
               )}

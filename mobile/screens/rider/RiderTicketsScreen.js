@@ -10,6 +10,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { ordersAPI } from '../../services/api';
 import { riderTicketsScreenStyles } from './styles/RiderTicketsScreenStyles';
+import { mobileTheme } from '../../theme';
 
 export default function RiderTicketsScreen({ navigation }) {
   const [tickets, setTickets] = useState([]);
@@ -64,13 +65,13 @@ export default function RiderTicketsScreen({ navigation }) {
   const getStatusColor = status => {
     switch (status) {
       case 'open':
-        return '#4CAF50';
+        return mobileTheme.colors.success;
       case 'in_progress':
-        return '#FF9800';
+        return mobileTheme.colors.warning;
       case 'resolved':
-        return '#2196F3';
+        return mobileTheme.colors.accent || mobileTheme.colors.secondary;
       default:
-        return '#666';
+        return mobileTheme.colors.text.secondary;
     }
   };
 
@@ -223,7 +224,7 @@ export default function RiderTicketsScreen({ navigation }) {
   if (loading) {
     return (
       <View style={riderTicketsScreenStyles.container}>
-        <ActivityIndicator size="large" color="#FF6B00" />
+        <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
         <Text style={riderTicketsScreenStyles.loadingText}>Caricamento ticket...</Text>
       </View>
     );

@@ -260,6 +260,10 @@ export const AdminDashboardScreenStyles = StyleSheet.create({
   roleButtonTextSelected: {
     color: mobileTheme.colors.white,
   },
+  // roleInline: inline role text color used in list items
+  roleInline: {
+    color: mobileTheme.colors.primary,
+  },
 });
 
 export default AdminDashboardScreenStyles;

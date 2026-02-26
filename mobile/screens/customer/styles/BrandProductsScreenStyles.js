@@ -170,6 +170,17 @@ export const brandProductsScreenStyles = StyleSheet.create({
     fontSize: mobileTheme.typography.fontSize.xs,
     fontWeight: FONT_WEIGHTS.semibold,
   },
+  // stockAvailable / stockUnavailable: color variants for stock indicator
+  stockAvailable: {
+    backgroundColor: mobileTheme.colors.success,
+  },
+  stockUnavailable: {
+    backgroundColor: mobileTheme.colors.error,
+  },
+  // disabledAddButton: modifier for disabled add button
+  disabledAddButton: {
+    backgroundColor: mobileTheme.colors.text.tertiary,
+  },
 });
 
 export default brandProductsScreenStyles;

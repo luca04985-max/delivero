@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { makeRequest } from '../../services/api';
 import { pharmacyScreenStyles } from './styles/PharmacyScreenStyles';
+import { mobileTheme } from '../../theme';
 
 export default function PharmacyScreen() {
   const [pharmacies, setPharmacies] = useState([]);
@@ -54,7 +55,7 @@ export default function PharmacyScreen() {
 
   return (
     <View style={pharmacyScreenStyles.container}>
-      {loading && <ActivityIndicator size="large" color="#007AFF" style={{ marginTop: 20 }} />}
+      {loading && <ActivityIndicator size="large" color={mobileTheme.colors.secondary} style={pharmacyScreenStyles.loading} />}
 
       {!selectedPharmacy ? (
         <FlatList
@@ -71,12 +72,12 @@ export default function PharmacyScreen() {
           )}
         />
       ) : (
-        <View style={{ flex: 1 }}>
+        <View style={pharmacyScreenStyles.detailsContainer}>
           <TouchableOpacity
             onPress={() => setSelectedPharmacy(null)}
             style={pharmacyScreenStyles.backBtn}
           >
-            <Text style={{ color: '#007AFF' }}> Torna alle farmacie</Text>
+            <Text style={pharmacyScreenStyles.backBtnText}> Torna alle farmacie</Text>
           </TouchableOpacity>
           <Text style={pharmacyScreenStyles.sectionTitle}>Prodotti di {selectedPharmacy.name}</Text>
           <FlatList
@@ -91,7 +92,7 @@ export default function PharmacyScreen() {
                   onPress={() => addToCart(item)}
                   style={pharmacyScreenStyles.addBtn}
                 >
-                  <Text style={{ color: '#fff' }}>+</Text>
+                  <Text style={pharmacyScreenStyles.addBtnText}>+</Text>
                 </TouchableOpacity>
               </View>
             )}

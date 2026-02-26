@@ -90,6 +90,10 @@ export const adminDashboardUsersStyles = StyleSheet.create({
     borderRadius: mobileTheme.borderRadius.sm,
     alignSelf: 'flex-start',
   },
+  // userRoleInline: inline role text color
+  userRoleInline: {
+    color: mobileTheme.colors.primary,
+  },
   // userStatus: stato utente
   userStatus: {
     fontSize: mobileTheme.typography.fontSize.xs,

@@ -5,6 +5,7 @@ import { io } from 'socket.io-client';
 import { makeRequest } from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { managerRealTimeMapScreenStyles } from './styles/ManagerRealTimeMapScreenStyles';
+import { mobileTheme } from '../../theme';
 
 const SOCKET_URL = 'https://delivero-gyjx.onrender.com';
 
@@ -275,7 +276,7 @@ export default function ManagerRealTimeMapScreen({ route }) {
                     [${r.lat}, ${r.lng}],
                     [${deliveryLat}, ${deliveryLon}]
                 ], {
-                    color: '#FF6B35',
+                  color: '${mobileTheme.colors.primary}',
                     weight: 4,
                     opacity: 0.8,
                     smoothFactor: 1

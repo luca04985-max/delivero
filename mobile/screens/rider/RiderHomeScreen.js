@@ -12,6 +12,7 @@ import { ordersAPI } from '../../services/api';
 import { riderHomeScreenStyles } from './styles/RiderHomeScreenStyles';
 import { useToast } from '../../hooks/useToast';
 import logger from '../../utils/logger';
+import { mobileTheme } from '../../theme';
 
 export default function RiderHomeScreen({ navigation }) {
   const [availableOrders, setAvailableOrders] = useState([]);
@@ -80,7 +81,7 @@ export default function RiderHomeScreen({ navigation }) {
   if (loading) {
     return (
       <View style={riderHomeScreenStyles.loadingContainer}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
       </View>
     );
   }
@@ -99,12 +100,8 @@ export default function RiderHomeScreen({ navigation }) {
         keyExtractor={item => item.id.toString()}
         renderItem={renderOrder}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchAvailable} />}
-        contentContainerStyle={{ padding: 15 }}
-        ListEmptyComponent={
-          <Text style={{ textAlign: 'center', marginTop: 50 }}>
-            Nessun ordine disponibile al momento.
-          </Text>
-        }
+        contentContainerStyle={riderHomeScreenStyles.contentPadding}
+        ListEmptyComponent={<Text style={riderHomeScreenStyles.emptyText}>Nessun ordine disponibile al momento.</Text>}
       />
     </View>
   );

@@ -9,6 +9,8 @@ import {
   Alert,
 } from 'react-native';
 import { makeRequest } from '../../services/api';
+import { documentPickupStyles } from './styles/DocumentPickupScreenStyles';
+import { mobileTheme } from '../../theme';
 
 const DocumentPickupScreen = () => {
   const [formData, setFormData] = useState({
@@ -78,53 +80,37 @@ const DocumentPickupScreen = () => {
   };
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', padding: 15 }}>📄 Ritiro Documenti</Text>
+    <ScrollView style={documentPickupStyles.container}>
+      <Text style={documentPickupStyles.title}>📄 Ritiro Documenti</Text>
 
       {trackingNumber && (
-        <View
-          style={{
-            marginHorizontal: 15,
-            marginBottom: 15,
-            padding: 15,
-            backgroundColor: '#d1fae5',
-            borderRadius: 8,
-            borderLeftWidth: 4,
-            borderLeftColor: '#10b981',
-          }}
-        >
-          <Text style={{ fontWeight: '600', marginBottom: 8 }}>✓ Ritiro Confermato</Text>
-          <Text style={{ color: '#666', marginBottom: 8 }}>Numero Tracking:</Text>
-          <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#10b981' }}>
-            {trackingNumber}
-          </Text>
-          <Text style={{ color: '#666', marginTop: 8, fontSize: 12 }}>
+        <View style={documentPickupStyles.trackingCard}>
+          <Text style={documentPickupStyles.trackingSuccessText}>✓ Ritiro Confermato</Text>
+          <Text style={documentPickupStyles.trackingLabel}>Numero Tracking:</Text>
+          <Text style={documentPickupStyles.trackingNumber}>{trackingNumber}</Text>
+          <Text style={documentPickupStyles.trackingHelp}>
             Usa questo numero per tracciare il tuo ritiro
           </Text>
         </View>
       )}
 
-      <View style={{ paddingHorizontal: 15 }}>
-        <Text style={{ fontSize: 14, fontWeight: '600', marginBottom: 8 }}>Tipo Documento</Text>
-        <View style={{ marginBottom: 15 }}>
+      <View style={documentPickupStyles.formContainer}>
+        <Text style={documentPickupStyles.label}>Tipo Documento</Text>
+        <View style={documentPickupStyles.documentOptionsWrapper}>
           {documentTypes.map(type => (
             <TouchableOpacity
               key={type.value}
-              style={{
-                padding: 12,
-                marginBottom: 8,
-                borderWidth: 1,
-                borderColor: formData.documentType === type.value ? '#007AFF' : '#ddd',
-                borderRadius: 8,
-                backgroundColor: formData.documentType === type.value ? '#e7f3ff' : '#fff',
-              }}
+              style={[
+                documentPickupStyles.documentOption,
+                formData.documentType === type.value && documentPickupStyles.documentOptionSelected,
+              ]}
               onPress={() => handleInputChange('documentType', type.value)}
             >
               <Text
-                style={{
-                  color: formData.documentType === type.value ? '#007AFF' : '#000',
-                  fontWeight: formData.documentType === type.value ? '600' : '400',
-                }}
+                style={[
+                  documentPickupStyles.documentOptionText,
+                  formData.documentType === type.value && documentPickupStyles.documentOptionTextSelected,
+                ]}
               >
                 {type.label}
               </Text>
@@ -132,71 +118,42 @@ const DocumentPickupScreen = () => {
           ))}
         </View>
 
-        <Text style={{ fontSize: 14, fontWeight: '600', marginBottom: 8 }}>Luogo Ritiro *</Text>
+        <Text style={documentPickupStyles.label}>Luogo Ritiro *</Text>
         <TextInput
-          style={{
-            borderWidth: 1,
-            borderColor: '#ddd',
-            borderRadius: 8,
-            padding: 10,
-            marginBottom: 15,
-          }}
+          style={documentPickupStyles.input}
           placeholder="Indirizzo dove ritirare i documenti"
           value={formData.pickupLocation}
           onChangeText={value => handleInputChange('pickupLocation', value)}
         />
 
-        <Text style={{ fontSize: 14, fontWeight: '600', marginBottom: 8 }}>
-          Indirizzo Consegna *
-        </Text>
+        <Text style={documentPickupStyles.label}>Indirizzo Consegna *</Text>
         <TextInput
-          style={{
-            borderWidth: 1,
-            borderColor: '#ddd',
-            borderRadius: 8,
-            padding: 10,
-            marginBottom: 15,
-          }}
+          style={documentPickupStyles.input}
           placeholder="Dove consegnare i documenti"
           value={formData.deliveryAddress}
           onChangeText={value => handleInputChange('deliveryAddress', value)}
         />
 
-        <Text style={{ fontSize: 14, fontWeight: '600', marginBottom: 8 }}>Descrizione</Text>
+        <Text style={documentPickupStyles.label}>Descrizione</Text>
         <TextInput
-          style={{
-            borderWidth: 1,
-            borderColor: '#ddd',
-            borderRadius: 8,
-            padding: 10,
-            marginBottom: 15,
-            height: 80,
-          }}
+          style={[documentPickupStyles.input, documentPickupStyles.inputMultiline]}
           placeholder="Es: 3 certificati di residenza"
           value={formData.description}
           onChangeText={value => handleInputChange('description', value)}
           multiline
         />
 
-        <Text style={{ fontSize: 14, fontWeight: '600', marginBottom: 8 }}>Costo Stimato (€)</Text>
+        <Text style={documentPickupStyles.label}>Costo Stimato (€)</Text>
         <TextInput
-          style={{
-            borderWidth: 1,
-            borderColor: '#ddd',
-            borderRadius: 8,
-            padding: 10,
-            marginBottom: 15,
-          }}
+          style={documentPickupStyles.input}
           placeholder="5.00"
           value={formData.estimatedCost}
           onChangeText={value => handleInputChange('estimatedCost', value)}
           keyboardType="decimal-pad"
         />
 
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
-          <Text style={{ fontSize: 14, fontWeight: '600', marginRight: 10, flex: 1 }}>
-            Firma richiesta alla consegna
-          </Text>
+        <View style={documentPickupStyles.switchRow}>
+          <Text style={documentPickupStyles.switchLabel}>Firma richiesta alla consegna</Text>
           <Switch
             value={formData.signatureRequired}
             onValueChange={value => handleInputChange('signatureRequired', value)}
@@ -204,17 +161,11 @@ const DocumentPickupScreen = () => {
         </View>
 
         <TouchableOpacity
-          style={{
-            padding: 15,
-            backgroundColor: '#007AFF',
-            borderRadius: 8,
-            alignItems: 'center',
-            marginBottom: 20,
-          }}
+          style={documentPickupStyles.submitButton}
           onPress={handleSubmit}
           disabled={loading}
         >
-          <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}>
+          <Text style={documentPickupStyles.submitButtonText}>
             {loading ? 'Prenotazione in corso...' : 'Prenota Ritiro'}
           </Text>
         </TouchableOpacity>

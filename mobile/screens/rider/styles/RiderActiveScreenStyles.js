@@ -75,6 +75,11 @@ export const riderActiveScreenStyles = StyleSheet.create({
   refreshContainer: {
     flex: 1,
   },
+  // actionButtonsRow: container for multiple action buttons
+  actionButtonsRow: {
+    flexDirection: 'row',
+    flex: 1,
+  },
 });
 
 export default riderActiveScreenStyles;
