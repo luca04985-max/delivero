@@ -390,7 +390,6 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
           : null;
 
     return `
-    return `
       <!DOCTYPE html>
       <html>
       <head>
