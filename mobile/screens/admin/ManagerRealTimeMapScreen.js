@@ -272,15 +272,32 @@ export default function ManagerRealTimeMapScreen({ route }) {
         const deliveryLon = r.delivery_longitude || r.lng + 0.01;
 
         return `
-                L.polyline([
-                    [${r.lat}, ${r.lng}],
-                    [${deliveryLat}, ${deliveryLon}]
-                ], {
-                  color: '${mobileTheme.colors.primary}',
-                    weight: 4,
-                    opacity: 0.8,
-                    smoothFactor: 1
-                }).addTo(map);
+                (function(){
+                  var riderLat=${r.lat}, riderLon=${r.lng};
+                  var deliveryLat=${deliveryLat}, deliveryLon=${deliveryLon};
+                  var line = L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], {
+                    color: '${mobileTheme.colors.primary}', weight:4, opacity:0.8, smoothFactor:1
+                  }).addTo(map);
+
+                  // Destination marker (small dot)
+                  L.circleMarker([deliveryLat, deliveryLon], { radius:6, color: '#ff5722', fillColor:'#ff5722', fillOpacity:1 }).addTo(map).bindPopup('Destinazione');
+
+                  // Midpoint info popup with ETA, rider id and distance
+                  var midLat = (riderLat + deliveryLat)/2;
+                  var midLon = (riderLon + deliveryLon)/2;
+                  function haversine(lat1, lon1, lat2, lon2){
+                    var toRad = function(v){return v*Math.PI/180;};
+                    var R = 6371; // km
+                    var dLat = toRad(lat2-lat1);
+                    var dLon = toRad(lon2-lon1);
+                    var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)*Math.sin(dLon/2);
+                    var c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                    return R*c;
+                  }
+                  var distKm = haversine(riderLat, riderLon, deliveryLat, deliveryLon).toFixed(2);
+                  var infoHtml = '<div class="route-info-box">Rider: ${r.orderId}<br>ETA: ${r.eta_minutes || "--"} min<br>Distanza: '+distKm+' km</div>';
+                  L.popup({closeButton:false, autoClose:false, className:'route-info-popup'}).setLatLng([midLat, midLon]).setContent(infoHtml).addTo(map);
+                })();
             `;
       })
       .join('\n');
@@ -294,6 +311,8 @@ export default function ManagerRealTimeMapScreen({ route }) {
           <style>
             body { margin:0; padding:0; }
             #map { position:absolute; top:0; bottom:0; width:100%; height:100%; }
+            .route-info-popup .leaflet-popup-content-wrapper { background: rgba(255,255,255,0.95); border-radius:6px; padding:6px 8px; }
+            .route-info-box { font-size:12px; line-height:1.2; }
             .debug-info {
               position: absolute;
               top: 10px;
@@ -337,21 +356,23 @@ export default function ManagerRealTimeMapScreen({ route }) {
               }, Promise.reject());
               }
 
-              Promise.resolve()
-              .then(function(){ return tryList(leafletCssCandidates, loadCss).catch(function(){console.warn('Leaflet CSS failed');}); })
-              .then(function(){ return tryList(leafletJsCandidates, loadScript); })
-              .then(function(){ return tryList(routingJsCandidates, loadScript).catch(function(){console.warn('Routing machine failed');}); })
-              .then(function(){
-                if(!window.L) { console.error('Leaflet not available'); return; }
-                console.log('🗺️ Admin map initializing...');
-                var map = L.map('map').setView([${centerLat}, ${centerLon}], ${zoomLevel});
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OpenStreetMap contributors' }).addTo(map);
-                ${riderMarkers}
-                ${routes}
-                console.log('🗺️ Admin map loaded with ' + ${riderPositions.length} + ' riders');
-                setTimeout(function(){ map.invalidateSize(); }, 1000);
-              })
-              .catch(function(err){ console.error('Map init failed', err); });
+                      Promise.resolve()
+                        .then(function(){ return tryList(leafletCssCandidates, loadCss).then(function(){ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('cdn:css:loaded'); }).catch(function(){ console.warn('Leaflet CSS failed'); window.ReactNativeWebView && window.ReactNativeWebView.postMessage('cdn:css:failed'); }); })
+                        .then(function(){ return tryList(leafletJsCandidates, loadScript).then(function(){ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('cdn:js:loaded'); }); })
+                        .then(function(){ return tryList(routingJsCandidates, loadScript).then(function(){ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('cdn:routing:loaded'); }).catch(function(){console.warn('Routing machine failed'); window.ReactNativeWebView && window.ReactNativeWebView.postMessage('cdn:routing:failed');}); })
+                        .then(function(){
+                          if(!window.L) { console.error('Leaflet not available'); window.ReactNativeWebView && window.ReactNativeWebView.postMessage('leaflet:not_available'); return; }
+                          window.ReactNativeWebView && window.ReactNativeWebView.postMessage('map:init');
+                          console.log('🗺️ Admin map initializing...');
+                          var map = L.map('map').setView([${centerLat}, ${centerLon}], ${zoomLevel});
+                          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OpenStreetMap contributors' }).addTo(map);
+                          ${riderMarkers}
+                          ${routes}
+                          console.log('🗺️ Admin map loaded with ' + ${riderPositions.length} + ' riders');
+                          window.ReactNativeWebView && window.ReactNativeWebView.postMessage('map:loaded:${riderPositions.length}');
+                          setTimeout(function(){ map.invalidateSize(); }, 1000);
+                        })
+                        .catch(function(err){ console.error('Map init failed', err); window.ReactNativeWebView && window.ReactNativeWebView.postMessage('map:init_failed:'+ (err && err.toString())); });
             })();
           </script>
         </body>
@@ -371,6 +392,8 @@ export default function ManagerRealTimeMapScreen({ route }) {
         javaScriptEnabled={true}
         domStorageEnabled={true}
         startInLoadingState={true}
+        onMessage={e => console.log('[ManagerRealTimeMap] WebView message:', e.nativeEvent.data)}
+        onError={e => console.error('[ManagerRealTimeMap] WebView error:', e.nativeEvent)}
         renderLoading={() => (
           <ActivityIndicator style={managerRealTimeMapScreenStyles.loader} size="large" />
         )}

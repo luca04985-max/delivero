@@ -58,13 +58,16 @@ const _LeafletTrackingMap = ({ riderLocation, customerLocation, order, history =
       });
 
     const tryLoad = async () => {
+      console.log('[CustomerOrderTracking] tryLoad start', mapContainerId);
       // Load CSS try list
       for (const css of leafletCssCandidates) {
         try {
           // eslint-disable-next-line no-await-in-loop
           await addCss(css);
+          console.log('[CustomerOrderTracking] loaded css', css);
           break;
         } catch (e) {
+          console.warn('[CustomerOrderTracking] css failed', css, e?.message || e);
           // try next
         }
       }
@@ -75,14 +78,20 @@ const _LeafletTrackingMap = ({ riderLocation, customerLocation, order, history =
         try {
           // eslint-disable-next-line no-await-in-loop
           await addScript(js);
+          console.log('[CustomerOrderTracking] loaded js', js);
           loaded = true;
           break;
         } catch (e) {
+          console.warn('[CustomerOrderTracking] js failed', js, e?.message || e);
           // next
         }
       }
 
-      if (!loaded || !window.L || !document.getElementById(mapContainerId)) return;
+      if (!loaded || !window.L || !document.getElementById(mapContainerId)) {
+        console.error('[CustomerOrderTracking] Leaflet not loaded or container missing', { loaded, hasL: !!window.L, mapContainerIdExists: !!document.getElementById(mapContainerId) });
+        if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'cdn_failed', loaded, hasL: !!window.L }));
+        return;
+      }
 
       const L = window.L;
 
@@ -107,9 +116,12 @@ const _LeafletTrackingMap = ({ riderLocation, customerLocation, order, history =
 
         state = { map, riderMarker: null, customerMarker: null, polylines: [] };
         window._deliveroMaps[mapContainerId] = state;
+        console.log('[CustomerOrderTracking] map created', mapContainerId, centerLat, centerLng);
+        if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'map_created', mapContainerId }));
       } else {
         try {
           state.map.setView([centerLat, centerLng], state.map.getZoom());
+          console.log('[CustomerOrderTracking] map re-centered', centerLat, centerLng);
         } catch (e) {}
       }
 
@@ -139,6 +151,8 @@ const _LeafletTrackingMap = ({ riderLocation, customerLocation, order, history =
       state.riderMarker = L.marker([riderLat, riderLng], { icon: riderIcon })
         .bindPopup(`<b>🏍️ Rider in consegna</b><br>ETA: ${order?.eta_minutes || 15} min`)
         .addTo(state.map);
+      console.log('[CustomerOrderTracking] rider marker added', riderLat, riderLng);
+      if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'marker:rider', lat: riderLat, lon: riderLng }));
 
       // Customer marker
       const customerIcon = L.divIcon({
@@ -152,12 +166,16 @@ const _LeafletTrackingMap = ({ riderLocation, customerLocation, order, history =
       state.customerMarker = L.marker([customerLat, customerLng], { icon: customerIcon })
         .bindPopup('<b>🏠 La tua posizione</b>')
         .addTo(state.map);
+      console.log('[CustomerOrderTracking] customer marker added', customerLat, customerLng);
+      if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'marker:customer', lat: customerLat, lon: customerLng }));
 
       // Draw polyline
       if (history && Array.isArray(history) && history.length > 0) {
         const pts = history.map(p => [parseFloat(p.latitude), parseFloat(p.longitude)]);
         const poly = L.polyline(pts, { color: mobileTheme.colors.error, weight: 3 }).addTo(state.map);
         state.polylines.push(poly);
+        console.log('[CustomerOrderTracking] history polyline added, pts:', pts.length);
+        if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'polyline:history', points: pts.length }));
       } else {
         const poly = L.polyline([[riderLat, riderLng], [customerLat, customerLng]], {
           color: mobileTheme.colors.customer,
@@ -166,7 +184,32 @@ const _LeafletTrackingMap = ({ riderLocation, customerLocation, order, history =
           dashArray: '5, 5',
         }).addTo(state.map);
         state.polylines.push(poly);
+        console.log('[CustomerOrderTracking] simple polyline added', { riderLat, riderLng, customerLat, customerLng });
+        if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'polyline:simple' }));
       }
+
+      // Destination marker as small dot
+      try {
+        L.circleMarker([customerLat, customerLng], { radius: 6, color: '#ff5722', fillColor: '#ff5722', fillOpacity: 1 }).addTo(state.map);
+      } catch (e) {}
+
+      // Add mid-route info popup: ETA, rider id, distance
+      try {
+        function haversine(lat1, lon1, lat2, lon2){
+          var toRad = function(v){return v*Math.PI/180;};
+          var R = 6371; // km
+          var dLat = toRad(lat2-lat1);
+          var dLon = toRad(lon2-lon1);
+          var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)*Math.sin(dLon/2);
+          var c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+          return R*c;
+        }
+        var distKm = haversine(riderLat, riderLng, customerLat, customerLng).toFixed(2);
+        var midLat = (riderLat + customerLat)/2;
+        var midLng = (riderLng + customerLng)/2;
+        var infoHtml = '<div style="font-size:12px;line-height:1.2">Rider: ' + (order?.rider_id || '--') + '<br/>ETA: ' + (order?.eta_minutes || '--') + ' min<br/>Distanza: ' + distKm + ' km</div>';
+        L.popup({closeButton:false, autoClose:false, className:'customer-route-info'}).setLatLng([midLat, midLng]).setContent(infoHtml).addTo(state.map);
+      } catch (e) {}
 
       const bounds = L.latLngBounds([[riderLat, riderLng], [customerLat, customerLng]]);
       try { state.map.fitBounds(bounds, { padding: [100, 100] }); } catch (e) {}
@@ -362,39 +405,77 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
           <div id="map"></div>
           <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
           <script>
-              var map = L.map('map').setView([${centerLat}, ${centerLon}], ${zoomLevel});
-              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                  attribution: '© OpenStreetMap contributors'
-              }).addTo(map);
+              (function(){
+                function post(msg){ if(window.ReactNativeWebView) window.ReactNativeWebView.postMessage(JSON.stringify(msg)); else console.log('customer:web:', msg); }
+                try{
+                  post({type:'map:init', center:[${centerLat}, ${centerLon}], zoom:${zoomLevel}});
+                }catch(e){}
+                var map = L.map('map').setView([${centerLat}, ${centerLon}], ${zoomLevel});
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors' }).addTo(map);
+
+                // Rider marker - only if we have real location
+                ${
+                  riderLat
+                    ? `
+                L.marker([${riderLat}, ${riderLon}]).addTo(map).bindPopup('<b>🏍️ Rider</b><br/>Stato: ${order?.status || 'In viaggio'}<br/>ETA: ${order?.eta_minutes || '--'} min');
+                post({type:'marker:rider', lat:${riderLat}, lon:${riderLon}});
+                `
+                    : ''
+                }
+
+                // Customer marker
+                L.marker([${customerLat}, ${customerLon}]).addTo(map).bindPopup('<b>🏠 Area di consegna</b><br/>${order?.delivery_address || 'Indirizzo non disponibile'}');
+                post({type:'marker:customer', lat:${customerLat}, lon:${customerLon}});
+
+                // Route polyline - only if we have both points
+                ${
+                  polyline
+                    ? `
+                L.polyline([${polyline}], { color: '${mobileTheme.colors.error}', weight: 3 }).addTo(map);
+                post({type:'polyline:history', points:${trackHistory.length}});
+
+                // Fit bounds to show both
+                var bounds = L.latLngBounds([[${riderLat}, ${riderLon}], [${customerLat}, ${customerLon}]]);
+                map.fitBounds(bounds, { padding: [50, 50] });
+                `
+                    : ''
+                }
+
+                // add destination dot and info control
+                try{
+                  L.circleMarker([${customerLat}, ${customerLon}], { radius:6, color:'#ff5722', fillColor:'#ff5722', fillOpacity:1 }).addTo(map).bindPopup('<b>Destinazione</b>');
+                  post({type:'marker:destination', lat:${customerLat}, lon:${customerLon}});
+                }catch(e){ console.warn(e);} 
+
+                try{
+                  var infoHtml = '<div style="background:rgba(255,255,255,0.95);padding:8px;border-radius:6px;font-size:13px;">Rider: ${order?.rider_id || '--'}<br/>ETA: ${order?.eta_minutes || '--'} min<br/>Distanza: ' + (${riderLat ? `(${riderLat} && ${riderLon} ? (function(){var toRad=function(v){return v*Math.PI/180;};var R=6371;var dLat=toRad(${customerLat}-${riderLat});var dLon=toRad(${customerLon}-${riderLon});var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(toRad(${riderLat}))*Math.cos(toRad(${customerLat}))*Math.sin(dLon/2)*Math.sin(dLon/2);var c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));return (R*c).toFixed(2);})() : '--')` : `'--'` } + ' km</div>';
+                  var infoControl = L.control({position:'bottomleft'});
+                  infoControl.onAdd = function(){ var div = L.DomUtil.create('div'); div.innerHTML = infoHtml; return div; };
+                  infoControl.addTo(map);
+                  post({type:'control:info_added'});
+                }catch(e){console.warn(e);}
+              })();
               
-              // Rider marker - only if we have real location
-              ${
-                riderLat
-                  ? `
-              L.marker([${riderLat}, ${riderLon}])
-                  .addTo(map)
-                  .bindPopup('<b>🏍️ Rider</b><br/>Stato: ${order?.status || 'In viaggio'}<br/>ETA: ${order?.eta_minutes || '--'} min');
-              `
-                  : ''
-              }
-              
-              // Customer marker
-              L.marker([${customerLat}, ${customerLon}])
-                  .addTo(map)
-                  .bindPopup('<b>🏠 Area di consegna</b><br/>${order?.delivery_address || 'Indirizzo non disponibile'}');
-              
-              // Route polyline - only if we have both points
-              ${
-                polyline
-                  ? `
-              L.polyline([${polyline}], { color: '${mobileTheme.colors.error}', weight: 3 }).addTo(map);
-              
-              // Fit bounds to show both
-              var bounds = L.latLngBounds([[${riderLat}, ${riderLon}], [${customerLat}, ${customerLon}]]);
-              map.fitBounds(bounds, { padding: [50, 50] });
-              `
-                  : ''
-              }
+              // Destination dot
+              L.circleMarker([${customerLat}, ${customerLon}], { radius:6, color:'#ff5722', fillColor:'#ff5722', fillOpacity:1 }).addTo(map).bindPopup('<b>Destinazione</b>');
+
+              // Info control bottom-left
+              (function(){
+                function haversine(lat1, lon1, lat2, lon2){
+                  var toRad = function(v){return v*Math.PI/180;};
+                  var R = 6371;
+                  var dLat = toRad(lat2-lat1);
+                  var dLon = toRad(lon2-lon1);
+                  var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)*Math.sin(dLon/2);
+                  var c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                  return R*c;
+                }
+                var dist = ${riderLat ? `(${riderLat} && ${riderLon} ? haversine(${riderLat}, ${riderLon}, ${customerLat}, ${customerLon}).toFixed(2) : '--')` : `'--'`};
+                var infoHtml = '<div style="background:rgba(255,255,255,0.95);padding:8px;border-radius:6px;font-size:13px;">Rider: ${order?.rider_id || '--'}<br/>ETA: ${order?.eta_minutes || '--'} min<br/>Distanza: ' + dist + ' km</div>';
+                var infoControl = L.control({position:'bottomleft'});
+                infoControl.onAdd = function(){ var div = L.DomUtil.create('div'); div.innerHTML = infoHtml; return div; };
+                infoControl.addTo(map);
+              })();
           </script>
       </body>
       </html>
