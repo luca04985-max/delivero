@@ -238,6 +238,15 @@ export default function ManagerRealTimeMapScreen({ route }) {
   const generateMapHtml = () => {
     // Calcola il centro basato sulla posizione dei rider
     const riderPositions = Object.values(riders);
+    const ridersDataJson = JSON.stringify(
+      riderPositions.map(r => ({
+        orderId: r.orderId,
+        lat: r.lat,
+        lng: r.lng,
+        eta_minutes: r.eta_minutes,
+        status: r.status,
+      })),
+    );
     let centerLat = 41.880025; // Default Roma
     let centerLon = 12.67594;
     let zoomLevel = 13;
@@ -382,6 +391,9 @@ export default function ManagerRealTimeMapScreen({ route }) {
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
     <script>
+      // Riders data injected from React
+      var adminRiders = ${ridersDataJson || '[]'};
+
         var map = L.map('map').setView([${centerLat}, ${centerLon}], ${zoomLevel});
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
@@ -393,6 +405,17 @@ export default function ManagerRealTimeMapScreen({ route }) {
         
         // Add routes
         ${routes}
+
+        // Add admin info control (bottom-left)
+        try{
+          var infoCount = (adminRiders && adminRiders.length) || 0;
+          var ids = (adminRiders && adminRiders.slice(0,5).map(function(r){ return r.orderId; }).join(', ')) || '--';
+          var infoHtml = '<div class="info-panel"><b>Manager</b><br/>Rider tracciati: ' + infoCount + '<br/>Ordini: ' + infoCount + '<br/>Order IDs: ' + ids + '<br/>Focus ordine: ${orderId || '--'}</div>';
+          var infoControl = L.control({position:'bottomleft'});
+          infoControl.onAdd = function(){ var div = L.DomUtil.create('div'); div.innerHTML = infoHtml; return div; };
+          infoControl.addTo(map);
+          if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage('admin:info_added');
+        }catch(e){ console.warn('admin info control failed', e); }
         
         // Notify React Native that map is ready
         if (window.ReactNativeWebView) {
