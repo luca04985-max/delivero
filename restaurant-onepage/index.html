@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ristorante Bella Tavola</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav">
+      <div class="brand">Bella Tavola</div>
+      <a class="cta" href="#prenota">Prenota</a>
+    </nav>
+    <div class="hero-content">
+      <h1>Gusto autentico, atmosfera elegante</h1>
+      <p>Piatti stagionali preparati con ingredienti locali.</p>
+      <a href="#menu" class="btn">Scopri il menu</a>
+    </div>
+  </header>
+
+  <main>
+    <section id="menu" class="section menu">
+      <h2>Il nostro Menu</h2>
+      <div class="cards">
+        <article class="card">
+          <h3>Antipasti</h3>
+          <p>Selezione di antipasti freschi della casa.</p>
+        </article>
+        <article class="card">
+          <h3>Primi</h3>
+          <p>Pasta fatta in casa con sughi tradizionali.</p>
+        </article>
+        <article class="card">
+          <h3>Secondi</h3>
+          <p>Carni e pesce cotti alla perfezione.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section about">
+      <h2>Chi Siamo</h2>
+      <p>Ristorante familiare dal 1998: passione per la cucina italiana e attenzione al servizio.</p>
+    </section>
+
+    <section id="prenota" class="section reservation">
+      <h2>Prenota un tavolo</h2>
+      <form class="form">
+        <input type="text" placeholder="Nome" required>
+        <input type="tel" placeholder="Telefono" required>
+        <input type="datetime-local" required>
+        <button class="btn" type="submit">Invia richiesta</button>
+      </form>
+    </section>
+
+    <section class="section contact">
+      <h2>Contatti</h2>
+      <p>Via Roma 10, Città — Tel: +39 012 345 6789</p>
+      <div class="socials">
+        <a href="#">Instagram</a> • <a href="#">Facebook</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <small>© 2026 Bella Tavola — Tutti i diritti riservati</small>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
