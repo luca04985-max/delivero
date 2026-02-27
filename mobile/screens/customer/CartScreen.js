@@ -3,7 +3,7 @@ import {
   View,
   Text,
   TouchableOpacity,
-  
+
   TextInput,
   ActivityIndicator,
   Alert,
@@ -306,26 +306,24 @@ export default function CartScreen({ navigation }) {
                     }).addTo(map);
                     
                     // Marker per posizione corrente
-                    ${
-                      currentLocation
-                        ? `
+                    ${currentLocation
+        ? `
                     L.marker([${currentLocation.latitude}, ${currentLocation.longitude}])
                         .addTo(map)
                         .bindPopup('<b>📍 La tua posizione</b><br/>Posizione GPS attuale');
                     `
-                        : ''
-                    }
+        : ''
+      }
                     
                     // Marker per indirizzo geocodificato
-                    ${
-                      mapCoordinates
-                        ? `
+                    ${mapCoordinates
+        ? `
                     L.marker([${mapCoordinates.latitude}, ${mapCoordinates.longitude}])
                         .addTo(map)
                         .bindPopup('<b>🏠 Indirizzo di consegna</b><br/>${deliveryAddress || ''}');
                     `
-                        : ''
-                    }
+        : ''
+      }
                 </script>
             </body>
             </html>
@@ -514,6 +512,7 @@ export default function CartScreen({ navigation }) {
 
       clearCart();
       setCheckoutVisible(false);
+      console.log('🛒 Cart: Navigating to OrderTracking with orderId:', orderId);
       navigation.navigate('OrderTracking', { orderId });
     } catch (e) {
       console.error('❌ Frontend: Error during checkout:', e);

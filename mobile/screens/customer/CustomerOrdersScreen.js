@@ -126,11 +126,11 @@ export default function CustomerOrdersScreen({ navigation, route: _route }) {
         <Text style={customerOrdersScreenStyles.orderDate}>
           {item.created_at
             ? new Date(item.created_at).toLocaleDateString('it-IT', {
-                day: '2-digit',
-                month: 'short',
-                hour: '2-digit',
-                minute: '2-digit',
-              })
+              day: '2-digit',
+              month: 'short',
+              hour: '2-digit',
+              minute: '2-digit',
+            })
             : 'Data non disponibile'}
         </Text>
         <Text style={customerOrdersScreenStyles.orderTotal}>
@@ -193,7 +193,7 @@ export default function CustomerOrdersScreen({ navigation, route: _route }) {
         <View style={customerOrdersScreenStyles.buttonRow}>
           <TouchableOpacity
             style={customerOrdersScreenStyles.trackButton}
-            onPress={() => navigation.navigate('OrderTrackingLive', { orderId: item.id })}
+            onPress={() => navigation.navigate('OrderTracking', { orderId: item.id })}
           >
             <Text style={customerOrdersScreenStyles.trackButtonText}>Traccia Live 📍</Text>
           </TouchableOpacity>

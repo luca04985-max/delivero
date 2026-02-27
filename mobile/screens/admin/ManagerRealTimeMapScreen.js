@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, TouchableOpacity, Text } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { io } from 'socket.io-client';
 import { makeRequest } from '../../services/api';
@@ -14,7 +14,90 @@ export default function ManagerRealTimeMapScreen({ route }) {
   const [riders, setRiders] = useState({});
   const [, setLoading] = useState(true);
   const [mapKey, setMapKey] = useState(0); // Force WebView remount
-  // region state removed (not used)
+  const [infoExpanded, setInfoExpanded] = useState(true); // Stato per espansione pannello info
+  const [riderAddresses, setRiderAddresses] = useState({});
+
+  // Funzione per calcolare la distanza
+  const calculateDistance = (rider) => {
+    if (!rider) return '--';
+
+    const riderLat = rider.lat;
+    const riderLon = rider.lng;
+    const deliveryLat = rider.delivery_latitude || riderLat + 0.01;
+    const deliveryLon = rider.delivery_longitude || riderLon + 0.01;
+
+    if (riderLat && riderLon && deliveryLat && deliveryLon) {
+      const toRad = (v) => v * Math.PI / 180;
+      const R = 6371;
+      const dLat = toRad(deliveryLat - riderLat);
+      const dLon = toRad(deliveryLon - riderLon);
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(riderLat)) * Math.cos(toRad(deliveryLat)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return (R * c).toFixed(1);
+    }
+
+    return '--';
+  };
+
+  // Funzione per ottenere l'indirizzo del rider con reverse geocoding
+  const getRiderAddress = async (rider) => {
+    if (!rider) return 'Rilevamento...';
+
+    // Se abbiamo già l'indirizzo dal database, usalo
+    if (rider.rider_address && rider.rider_address !== 'In consegna') {
+      return rider.rider_address;
+    }
+
+    // Altrimenti usa l'indirizzo del ristorante come fallback
+    if (rider.restaurant_address) {
+      return rider.restaurant_address;
+    }
+
+    // Se non abbiamo nulla, fai reverse geocoding
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${rider.lat}&lon=${rider.lng}&zoom=18&addressdetails=1`,
+        {
+          headers: {
+            'User-Agent': 'DeliveroApp/1.0 (contact@delivero.com)'
+          }
+        }
+      );
+
+      if (!response.ok) {
+        if (response.status === 403) {
+          console.warn('Nominatim rate limit reached, using fallback');
+          return 'Posizione non disponibile';
+        }
+        console.warn('Reverse geocoding HTTP error:', response.status);
+        return 'Posizione non disponibile';
+      }
+
+      const text = await response.text();
+
+      // Controlla se la risposta è vuota o contiene HTML
+      if (!text || text.trim().startsWith('<')) {
+        console.warn('Invalid response from geocoding service');
+        return 'Posizione non disponibile';
+      }
+
+      const data = JSON.parse(text);
+
+      if (data && data.display_name) {
+        // Estrai solo la parte prima della prima virgola
+        const fullAddress = data.display_name;
+        const shortAddress = fullAddress.split(',')[0].trim();
+        return shortAddress || 'Posizione non disponibile';
+      }
+    } catch (error) {
+      console.warn('Reverse geocoding failed:', error.message || error);
+      return 'Posizione non disponibile';
+    }
+
+    return 'Posizione non disponibile';
+  };
 
   const loadActiveOrdersFallback = useCallback(async () => {
     try {
@@ -218,7 +301,7 @@ export default function ManagerRealTimeMapScreen({ route }) {
 
     // Fallback: populate markers even if socket updates are not arriving yet
     loadActiveOrdersFallback();
-    const interval = setInterval(loadActiveOrdersFallback, 15000);
+    const interval = setInterval(loadActiveOrdersFallback, 60000);
 
     return () => {
       try {
@@ -234,6 +317,22 @@ export default function ManagerRealTimeMapScreen({ route }) {
       }
     };
   }, [loadActiveOrdersFallback]);
+
+  // Aggiorna gli indirizzi dei rider quando cambiano
+  useEffect(() => {
+    const updateRiderAddresses = async () => {
+      const addresses = {};
+
+      for (const [orderId, rider] of Object.entries(riders)) {
+        const address = await getRiderAddress(rider);
+        addresses[orderId] = address;
+      }
+
+      setRiderAddresses(addresses);
+    };
+
+    updateRiderAddresses();
+  }, [riders]);
 
   // Temporaneamente disabilitato per test
   // if (Platform.OS === 'web') {
@@ -274,22 +373,25 @@ export default function ManagerRealTimeMapScreen({ route }) {
       zoomLevel = 14; // Zoom più ravvicinato se ci sono rider
     }
 
+    // Passa lo stato di espansione al codice JavaScript
+    const infoExpandedState = infoExpanded;
+
     console.log('[ManagerRealTimeMap] generating HTML with', riderPositions.length, 'riders');
     console.log('[ManagerRealTimeMap] map center:', centerLat, centerLon, 'zoom:', zoomLevel);
 
-    // Marker per ogni rider (styled, senza popup)
+    // Marker per ogni rider (styled, senza popup) - Stesso stile del customer
     const riderMarkers = riderPositions
       .map(
         r => `
             (function(){
               try{
-                var iconHtml = '<div style="width:36px;height:36px;background:linear-gradient(135deg, ${mobileTheme.colors.primary} 0%, ${mobileTheme.colors.primary}dd 100%);color:#fff;display:flex;align-items:center;justify-content:center;border-radius:50%;font-weight:700;box-shadow:0 6px 16px rgba(0,0,0,0.2);border:2px solid rgba(255,255,255,0.25);font-size:18px;position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);border-radius:50%;"></div>🏍️</div>';
-                var icon = L.divIcon({ className: 'rider-marker-icon', html: iconHtml, iconSize: [36, 36], iconAnchor: [18, 18] });
+                var iconHtml = '<div style="width:40px;height:40px;background:${mobileTheme.colors.errorBg};border:3px solid ${mobileTheme.colors.error};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;">🏍️</div>';
+                var icon = L.divIcon({ className: 'rider-marker', html: iconHtml, iconSize: [40, 40], iconAnchor: [20, 20] });
                 var marker = L.marker([${r.lat}, ${r.lng}], { icon: icon, zIndexOffset: 800 }).addTo(map);
                 
                 // Add subtle pulse animation
                 try {
-                  var pulseDiv = marker.getElement().querySelector('.rider-marker-icon');
+                  var pulseDiv = marker.getElement().querySelector('.rider-marker');
                   if (pulseDiv) {
                     pulseDiv.style.animation = 'riderPulse 2s infinite';
                   }
@@ -323,8 +425,8 @@ export default function ManagerRealTimeMapScreen({ route }) {
                         addWaypoints: false,
                         routeWhileDragging: false,
                         show: false,
-                        fitSelectedRoute: false,
-                        lineOptions: { styles: [{ color: '${mobileTheme.colors.primary}', weight: 4, opacity: 0.9 }] }
+                        fitSelectedRoute: true,
+                        lineOptions: { styles: [{ color: '${mobileTheme.colors.error}', weight: 4, opacity: 0.9 }] }
                       }).addTo(map);
                       // When route is found, optionally post message
                       control.on('routesfound', function(e){ try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:found:${r.orderId}'); }catch(ex){} });
@@ -337,7 +439,7 @@ export default function ManagerRealTimeMapScreen({ route }) {
                           fetch(osrmUrl).then(function(resp){ return resp.json(); }).then(function(json){
                             if (json && json.routes && json.routes.length>0 && json.routes[0].geometry && json.routes[0].geometry.coordinates) {
                               var coords = json.routes[0].geometry.coordinates.map(function(c){ return [c[1], c[0]]; });
-                              L.polyline(coords, { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.85 }).addTo(map);
+                              L.polyline(coords, { color: '${mobileTheme.colors.error}', weight:4, opacity:0.85 }).addTo(map);
                               try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:osrm_drawn:${r.orderId}'); }catch(e){}
                             } else {
                               L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.6 }).addTo(map);
@@ -356,7 +458,7 @@ export default function ManagerRealTimeMapScreen({ route }) {
                         fetch(osrmUrl2).then(function(resp){ return resp.json(); }).then(function(json){
                           if (json && json.routes && json.routes.length>0 && json.routes[0].geometry && json.routes[0].geometry.coordinates) {
                             var coords = json.routes[0].geometry.coordinates.map(function(c){ return [c[1], c[0]]; });
-                            L.polyline(coords, { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.85 }).addTo(map);
+                            L.polyline(coords, { color: '${mobileTheme.colors.error}', weight:4, opacity:0.85 }).addTo(map);
                             try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:osrm_drawn:${r.orderId}'); }catch(e){}
                           } else {
                             L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.8 }).addTo(map);
@@ -372,12 +474,12 @@ export default function ManagerRealTimeMapScreen({ route }) {
                     try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:exception_fallback:' + r.orderId + ':' + (e && e.message)); }catch(e){}
                   }
 
-                  // Destination marker (styled) — arancione come customer
+                  // Destination marker (styled) — Stesso stile del customer
                   try{
-                    var destHtml = '<div style="width:20px;height:20px;background:#ff5722;color:#fff;display:flex;align-items:center;justify-content:center;border-radius:50%;font-weight:700;box-shadow:0 4px 8px rgba(0,0,0,0.2);border:2px solid rgba(255,255,255,0.25);font-size:10px;">📍</div>';
-                    var destIcon = L.divIcon({ className: 'dest-marker-icon', html: destHtml, iconSize: [20, 20], iconAnchor: [10, 10] });
+                    var destHtml = '<div style="width:40px;height:40px;background:${mobileTheme.colors.customer}33;border:3px solid ${mobileTheme.colors.customer};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;">🏠</div>';
+                    var destIcon = L.divIcon({ className: 'customer-marker', html: destHtml, iconSize: [40, 40], iconAnchor: [20, 20] });
                     L.marker([deliveryLat, deliveryLon], { icon: destIcon, zIndexOffset: 700 }).addTo(map);
-                  }catch(e){ try{ L.circleMarker([deliveryLat, deliveryLon], { radius:8, color: '#ff5722', fillColor:'#ff5722', fillOpacity:1 }).addTo(map); }catch(_){} }
+                  }catch(e){ try{ L.circleMarker([deliveryLat, deliveryLon], { radius:8, color: '${mobileTheme.colors.customer}', fillColor:'${mobileTheme.colors.customer}', fillOpacity:1 }).addTo(map); }catch(_){} }
                 })();
         `;
       })
@@ -423,72 +525,6 @@ export default function ManagerRealTimeMapScreen({ route }) {
         // Add routes
         ${routes}
 
-        // Add admin info panel directly to body (bottom-left)
-        try{
-          var infoCount = (adminRiders && adminRiders.length) || 0;
-          var ids = (adminRiders && adminRiders.slice(0,3).map(function(r){ return '#' + r.orderId; }).join(', ')) || '--';
-          var orderEta = (adminRiders && adminRiders.length > 0) ? 
-            (adminRiders[0].eta_minutes || '--') : '--';
-          
-          // Calcola distanza e ottieni indirizzo rider
-          var distance = '--';
-          var riderLocationText = '--';
-          if (adminRiders && adminRiders.length > 0) {
-            var rider = adminRiders[0];
-            var riderLat = rider.lat;
-            var riderLon = rider.lng;
-            var deliveryLat = rider.delivery_latitude || riderLat + 0.01;
-            var deliveryLon = rider.delivery_longitude || riderLon + 0.01;
-            
-            // Calcola distanza
-            if (riderLat && riderLon && deliveryLat && deliveryLon) {
-              var toRad = function(v){return v*Math.PI/180;};
-              var R = 6371;
-              var dLat = toRad(deliveryLat - riderLat);
-              var dLon = toRad(deliveryLon - riderLon);
-              var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(toRad(riderLat))*Math.cos(toRad(deliveryLat))*Math.sin(dLon/2)*Math.sin(dLon/2);
-              var c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-              distance = (R*c).toFixed(1);
-            }
-            
-            // Ottieni indirizzo rider
-            if (rider.rider_address) {
-              riderLocationText = rider.rider_address;
-            } else if (rider.restaurant_address) {
-              riderLocationText = rider.restaurant_address;
-            } else {
-              // Usa reverse geocoding Nominatim per ottenere l'indirizzo dalle coordinate
-              try {
-                fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + riderLat + '&lon=' + riderLon + '&zoom=18&addressdetails=1')
-                  .then(function(resp){ return resp.json(); })
-                  .then(function(data){
-                    if (data && data.display_name) {
-                      // Estrai solo la parte prima della prima virgola
-                      var fullAddress = data.display_name;
-                      var shortAddress = fullAddress.split(',')[0].trim();
-                      // Aggiorna il pannello con l'indirizzo abbreviato
-                      var riderDiv = document.querySelector('[data-rider-location]');
-                      if (riderDiv) {
-                        riderDiv.textContent = shortAddress;
-                      }
-                    }
-                  })
-                  .catch(function(){});
-                riderLocationText = 'Rilevamento posizione...';
-              } catch(e) {
-                riderLocationText = 'In consegna';
-              }
-            }
-          }
-          
-          var infoPanel = document.createElement('div');
-          infoPanel.className = 'info-panel';
-          infoPanel.style.cssText = 'position: absolute; bottom: 8px; left: 8px; width: 90%; max-width: 350px; background: rgba(255, 255, 255, 0.95); color: #333; padding: 10px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; z-index: 1000; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); border: 1px solid rgba(0, 0, 0, 0.1); backdrop-filter: blur(10px);';
-          infoPanel.innerHTML = '<div style="display: flex; align-items: center; margin-bottom: 12px;"><span style="font-size: 18px; margin-right: 12px;">🎯</span><strong style="font-size: 16px; letter-spacing: 0.5px;">TRACCIAMENTO ORDINE</strong></div><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><div style="display: flex; align-items: center;"><span style="font-size: 16px; margin-right: 8px;">📦</span><span>Ordine:</span></div><div style="font-weight: 700;">' + ids + '</div></div><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><div style="display: flex; align-items: center;"><span style="font-size: 16px; margin-right: 8px;">📍</span><span>Destinazione:</span></div><div style="font-weight: 700;">' + (adminRiders && adminRiders[0] ? (adminRiders[0].delivery_address || adminRiders[0].restaurant_address || 'Indirizzo destinazione non disponibile') : '--') + '</div></div><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><div style="display: flex; align-items: center;"><span style="font-size: 16px; margin-right: 8px;">🏍️</span><span>Rider:</span></div><div style="font-weight: 700;" data-rider-location>' + riderLocationText + '</div></div><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><div style="display: flex; align-items: center;"><span style="font-size: 16px; margin-right: 8px;">📏</span><span>Distanza:</span></div><div style="font-weight: 700;">' + distance + ' km</div></div><div style="display: flex; justify-content: space-between; align-items: center;"><div style="display: flex; align-items: center;"><span style="font-size: 16px; margin-right: 8px;">⏱️</span><span>ETA:</span></div><div style="font-weight: 700;">' + orderEta + ' min</div></div>';
-          document.body.appendChild(infoPanel);
-          if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage('admin:info_added');
-        }catch(e){ console.warn('admin info panel failed', e); }
-        
         // Notify React Native that map is ready
         if (window.ReactNativeWebView) {
             window.ReactNativeWebView.postMessage('map:ready');
@@ -509,12 +545,78 @@ export default function ManagerRealTimeMapScreen({ route }) {
         javaScriptEnabled={true}
         domStorageEnabled={true}
         startInLoadingState={true}
-        onMessage={e => console.log('[ManagerRealTimeMap] WebView message:', e.nativeEvent.data)}
+        onMessage={e => {
+          const message = e.nativeEvent.data;
+          console.log('[ManagerRealTimeMap] WebView message:', message);
+        }}
         onError={e => console.error('[ManagerRealTimeMap] WebView error:', e.nativeEvent)}
         renderLoading={() => (
           <ActivityIndicator style={managerRealTimeMapScreenStyles.loader} size="large" />
         )}
       />
+
+      {/* Overlay pannello info espandibile */}
+      {Object.keys(riders).length > 0 && (
+        <View style={managerRealTimeMapScreenStyles.infoContainer}>
+          {/* Header con icona espansione */}
+          <TouchableOpacity
+            style={managerRealTimeMapScreenStyles.infoHeader}
+            onPress={() => setInfoExpanded(!infoExpanded)}
+          >
+            <View style={managerRealTimeMapScreenStyles.headerContent}>
+              <Text style={managerRealTimeMapScreenStyles.infoTitle}>🎯 TRACCIAMENTO ORDINE</Text>
+              {!infoExpanded && Object.values(riders)[0]?.eta_minutes && (
+                <Text style={managerRealTimeMapScreenStyles.headerEta}>⏱️ {Object.values(riders)[0]?.eta_minutes} min</Text>
+              )}
+            </View>
+            <Text style={managerRealTimeMapScreenStyles.expandIcon}>
+              {infoExpanded ? '▼' : '▲'}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Dettagli espandibili */}
+          {infoExpanded && (
+            <>
+              <View style={managerRealTimeMapScreenStyles.infoRow}>
+                <Text style={managerRealTimeMapScreenStyles.infoLabel}>📦 Ordine:</Text>
+                <Text style={managerRealTimeMapScreenStyles.infoValue}>
+                  {Object.values(riders).slice(0, 3).map(r => `#${r.orderId}`).join(', ') || '--'}
+                </Text>
+              </View>
+
+              <View style={managerRealTimeMapScreenStyles.infoRow}>
+                <Text style={managerRealTimeMapScreenStyles.infoLabel}>📍 Destinazione:</Text>
+                <Text style={managerRealTimeMapScreenStyles.infoValue}>
+                  {Object.values(riders)[0]?.delivery_address || Object.values(riders)[0]?.restaurant_address || 'Indirizzo non disponibile'}
+                </Text>
+              </View>
+
+              <View style={managerRealTimeMapScreenStyles.infoRow}>
+                <Text style={managerRealTimeMapScreenStyles.infoLabel}>🏍️ Rider:</Text>
+                <Text style={managerRealTimeMapScreenStyles.infoValue}>
+                  {Object.values(riders)[0] && riderAddresses[Object.values(riders)[0].orderId]
+                    ? riderAddresses[Object.values(riders)[0].orderId]
+                    : 'Rilevamento...'}
+                </Text>
+              </View>
+
+              <View style={managerRealTimeMapScreenStyles.infoRow}>
+                <Text style={managerRealTimeMapScreenStyles.infoLabel}>📏 Distanza:</Text>
+                <Text style={managerRealTimeMapScreenStyles.infoValue}>
+                  {calculateDistance(Object.values(riders)[0])} km
+                </Text>
+              </View>
+
+              <View style={managerRealTimeMapScreenStyles.infoRow}>
+                <Text style={managerRealTimeMapScreenStyles.infoLabel}>⏱️ ETA:</Text>
+                <Text style={managerRealTimeMapScreenStyles.infoValue}>
+                  {Object.values(riders)[0]?.eta_minutes || '--'} min
+                </Text>
+              </View>
+            </>
+          )}
+        </View>
+      )}
     </View>
   );
 }

@@ -28,20 +28,50 @@ export const customerOrderTrackingScreenStyles = StyleSheet.create({
     color: mobileTheme.colors.white,
   },
 
-  // mapContainer: wrapper mappa (CustomerOrderTrackingScreen.js)
-  mapContainer: {
+  // Layout a schermo intero
+  container: {
     flex: 1,
-    marginHorizontal: mobileTheme.spacing[5],
-    marginVertical: mobileTheme.spacing[3],
-    borderRadius: mobileTheme.borderRadius.lg,
-    overflow: 'hidden',
-    backgroundColor: mobileTheme.colors.background,
-    ...mobileTheme.shadows.soft,
+    position: 'relative',
   },
-  // map: mappa full size (CustomerOrderTrackingScreen.js)
+
+  // Mappa a schermo intero
+  fullMapContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1,
+  },
+
+  fullMap: {
+    flex: 1,
+  },
+
+  // Overlay flottante
+  floatingDetailsContainer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    elevation: 8,
+    zIndex: 10,
+  },
+
+  floatingHeader: {
+    marginBottom: mobileTheme.spacing[3],
+  },
+
+  // Container mappa esistente (per compatibilità)
+  mapContainer: {
+    height: 300,
+    marginBottom: mobileTheme.spacing[4],
+  },
+
   map: {
     flex: 1,
   },
+
   // mapLoader: overlay loader mappa (CustomerOrderTrackingScreen.js)
   mapLoader: {
     position: 'absolute',
@@ -55,15 +85,53 @@ export const customerOrderTrackingScreenStyles = StyleSheet.create({
 
   // detailsContainer: box dettagli ordine (CustomerOrderTrackingScreen.js)
   detailsContainer: {
-    paddingHorizontal: mobileTheme.spacing[5],
-    paddingVertical: mobileTheme.spacing[4],
-    backgroundColor: mobileTheme.colors.white,
-    marginHorizontal: mobileTheme.spacing[5],
-    marginVertical: mobileTheme.spacing[3],
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    paddingHorizontal: mobileTheme.spacing[4],
+    paddingVertical: mobileTheme.spacing[3],
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderRadius: mobileTheme.borderRadius.lg,
-    borderWidth: 1,
-    borderColor: mobileTheme.colors.border,
-    ...mobileTheme.shadows.soft,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+    zIndex: 10,
+  },
+
+  // detailsHeader: header cliccabile per espansione (CustomerOrderTrackingScreen.js)
+  detailsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: mobileTheme.spacing[2],
+  },
+
+  // headerContent: contenuto header con titolo e ETA (CustomerOrderTrackingScreen.js)
+  headerContent: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    flex: 1,
+  },
+
+  // headerEta: ETA mostrato nell'header quando collassato (CustomerOrderTrackingScreen.js)
+  headerEta: {
+    fontSize: mobileTheme.typography.fontSize.sm,
+    color: mobileTheme.colors.primary,
+    fontWeight: mobileTheme.typography.fontWeight.semibold,
+    marginTop: 2,
+  },
+
+  // expandIcon: icona freccia per espandere/collassare (CustomerOrderTrackingScreen.js)
+  expandIcon: {
+    fontSize: mobileTheme.typography.fontSize.lg,
+    color: mobileTheme.colors.primary,
+    fontWeight: 'bold',
   },
   // sectionTitle: titolo sezione (CustomerOrderTrackingScreen.js)
   sectionTitle: unifiedStyles.sectionTitle,

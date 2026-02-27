@@ -16,6 +16,88 @@ export const managerRealTimeMapScreenStyles = StyleSheet.create({
     height: '100%',
   },
 
+  // Pannello info espandibile (come nel customer)
+  infoContainer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    paddingHorizontal: mobileTheme.spacing[4],
+    paddingVertical: mobileTheme.spacing[3],
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: mobileTheme.borderRadius.lg,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+    zIndex: 10,
+  },
+
+  // Header cliccabile per espansione
+  infoHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: mobileTheme.spacing[2],
+  },
+
+  // Titolo del pannello info
+  infoTitle: {
+    fontSize: mobileTheme.typography.fontSize.base,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
+    color: mobileTheme.colors.text.primary,
+  },
+
+  // headerContent: contenuto header con titolo e ETA (ManagerRealTimeMapScreen.js)
+  headerContent: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    flex: 1,
+  },
+
+  // headerEta: ETA mostrato nell'header quando collassato (ManagerRealTimeMapScreen.js)
+  headerEta: {
+    fontSize: mobileTheme.typography.fontSize.sm,
+    color: mobileTheme.colors.primary,
+    fontWeight: mobileTheme.typography.fontWeight.semibold,
+    marginTop: 2,
+  },
+
+  // Icona espansione
+  expandIcon: {
+    fontSize: mobileTheme.typography.fontSize.lg,
+    color: mobileTheme.colors.primary,
+    fontWeight: 'bold',
+  },
+
+  // Riga dettaglio
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: mobileTheme.spacing[2],
+    borderBottomWidth: 1,
+    borderBottomColor: mobileTheme.colors.border,
+  },
+
+  // Label dettaglio
+  infoLabel: {
+    fontSize: mobileTheme.typography.fontSize.sm,
+    color: mobileTheme.colors.text.secondary,
+    fontWeight: mobileTheme.typography.fontWeight.medium,
+  },
+
+  // Valore dettaglio
+  infoValue: {
+    fontSize: mobileTheme.typography.fontSize.sm,
+    color: mobileTheme.colors.text.primary,
+    fontWeight: mobileTheme.typography.fontWeight.semibold,
+  },
+
   // OVERLAY CONTROLS (Pulsanti che galleggiano sulla mappa)
   // overlayContainer: area pulsanti flottanti
   overlayContainer: {
