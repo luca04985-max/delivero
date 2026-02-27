@@ -379,11 +379,12 @@ export default function ManagerRealTimeMapScreen({ route }) {
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     <style>
-        html, body, #map { height: 100%; width: 100%; margin: 0; padding: 0; }
+        body{ margin: 0; padding: 0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; height:100%; }
         .rider-marker-icon { background: transparent !important; border: none !important; }
         .dest-marker-icon { background: transparent !important; border: none !important; }
-        .info-panel { background: rgba(9, 13, 248, 0.95); padding: 8px 12px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); font-size: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 8px; }
-        @keyframes riderPulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
+        .info-panel { background: rgba(255,255,255,0.95); padding:8px; border-radius:6px; font-size:13px; }
+        .leaflet-routing-container { display:none !important; }
     </style>
 </head>
 <body>
@@ -409,10 +410,17 @@ export default function ManagerRealTimeMapScreen({ route }) {
         // Add admin info control (bottom-left)
         try{
           var infoCount = (adminRiders && adminRiders.length) || 0;
-          var ids = (adminRiders && adminRiders.slice(0,5).map(function(r){ return r.orderId; }).join(', ')) || '--';
-          var infoHtml = '<div class="info-panel"><b>Manager</b><br/>Rider tracciati: ' + infoCount + '<br/>Ordini: ' + infoCount + '<br/>Order IDs: ' + ids + '<br/>Focus ordine: ${orderId || '--'}</div>';
+          var ids = (adminRiders && adminRiders.slice(0,3).map(function(r){ return '#' + r.orderId; }).join(', ')) || '--';
+          var orderEta = (adminRiders && adminRiders.length > 0) ? 
+            (adminRiders[0].eta_minutes || '--') : '--';
+          
+          var infoHtml = '<div class="info-panel"> 📦 <strong>Ordini:</strong> ' + ids + '<br/>⏱️ <strong>ETA ordine:</strong> ' + orderEta + ' min<br/></div>';
           var infoControl = L.control({position:'bottomleft'});
-          infoControl.onAdd = function(){ var div = L.DomUtil.create('div'); div.innerHTML = infoHtml; return div; };
+          infoControl.onAdd = function(){ 
+            var div = L.DomUtil.create('div'); 
+            div.innerHTML = infoHtml; 
+            return div; 
+          };
           infoControl.addTo(map);
           if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage('admin:info_added');
         }catch(e){ console.warn('admin info control failed', e); }
