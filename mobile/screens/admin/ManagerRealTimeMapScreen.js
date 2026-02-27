@@ -260,9 +260,17 @@ export default function ManagerRealTimeMapScreen({ route }) {
         r => `
             (function(){
               try{
-                var iconHtml = '<div style="width:40px;height:40px;background:${mobileTheme.colors.primary};color:#fff;display:flex;align-items:center;justify-content:center;border-radius:50%;font-weight:700;box-shadow:0 6px 14px rgba(0,0,0,0.18);">' + (String(${r.orderId}).slice(-2)) + '</div>';
-                var icon = L.divIcon({ className: 'rider-marker-icon', html: iconHtml, iconSize:[40,40], iconAnchor:[20,20] });
-                L.marker([${r.lat}, ${r.lng}], { icon: icon, zIndexOffset: 600 }).addTo(map);
+                var iconHtml = '<div style="width:36px;height:36px;background:linear-gradient(135deg, ${mobileTheme.colors.primary} 0%, ${mobileTheme.colors.primary}dd 100%);color:#fff;display:flex;align-items:center;justify-content:center;border-radius:50%;font-weight:700;box-shadow:0 6px 16px rgba(0,0,0,0.2);border:2px solid rgba(255,255,255,0.25);font-size:18px;position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);border-radius:50%;"></div>🏍️</div>';
+                var icon = L.divIcon({ className: 'rider-marker-icon', html: iconHtml, iconSize: [36, 36], iconAnchor: [18, 18] });
+                var marker = L.marker([${r.lat}, ${r.lng}], { icon: icon, zIndexOffset: 800 }).addTo(map);
+                
+                // Add subtle pulse animation
+                try {
+                  var pulseDiv = marker.getElement().querySelector('.rider-marker-icon');
+                  if (pulseDiv) {
+                    pulseDiv.style.animation = 'riderPulse 2s infinite';
+                  }
+                } catch(e) {}
               }catch(e){ console.warn('rider marker render failed', e); }
             })();
         `,
@@ -270,7 +278,7 @@ export default function ManagerRealTimeMapScreen({ route }) {
       .join('\n');
 
     // Aggiungi percorsi per ogni rider verso la sua destinazione
-    var routes = riderPositions
+    const routes = riderPositions
       .map(r => {
         // Se non ci sono coordinate delivery, usa coordinate di fallback basate sulla posizione rider
         const deliveryLat = r.delivery_latitude || r.lat + 0.01;
@@ -331,194 +339,70 @@ export default function ManagerRealTimeMapScreen({ route }) {
                             L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.8 }).addTo(map);
                             try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:fallback_drawn:${r.orderId}'); }catch(e){}
                           }
-                        }).catch(function(e2){ console.warn('osrm fetch failed', e2); L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.8 }).addTo(map); try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:osrm_error:${r.orderId}:'+String(e2)); }catch(e){} });
+                        }).catch(function(e2){ console.warn('osrm fetch failed', e2); L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.6 }).addTo(map); try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:osrm_error:${r.orderId}:'+String(e2)); }catch(e){} });
                       } catch (ex) {
-                        L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.8 }).addTo(map);
+                        L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.6 }).addTo(map);
                         try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:fallback_drawn:${r.orderId}'); }catch(e){}
                       }
                     }
-                  } catch (e) {
-                    console.warn('route draw failed', e);
-                    L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.8 }).addTo(map);
-                    try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:exception_fallback:${r.orderId}:'+ (e && e.message)); }catch(e){}
+                  } catch(e) {
+                    try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:exception_fallback:' + r.orderId + ':' + (e && e.message)); }catch(e){}
                   }
 
-                  // Destination marker (styled) — no popup
+                  // Destination marker (styled) — arancione come customer
                   try{
-                    var destHtml = '<div style="width:18px;height:18px;background:#ff5722;border-radius:50%;box-shadow:0 4px 10px rgba(0,0,0,0.18);"></div>';
-                    var destIcon = L.divIcon({ className: 'dest-marker-icon', html: destHtml, iconSize:[18,18], iconAnchor:[9,9] });
-                    L.marker([deliveryLat, deliveryLon], { icon: destIcon, zIndexOffset: 500 }).addTo(map);
-                  }catch(e){ try{ L.circleMarker([deliveryLat, deliveryLon], { radius:6, color: '#ff5722', fillColor:'#ff5722', fillOpacity:1 }).addTo(map); }catch(_){} }
-
-                  // Midpoint info (compute distance) and add entry to bottom panel
-                  var midLat = (riderLat + deliveryLat)/2;
-                  var midLon = (riderLon + deliveryLon)/2;
-                  function haversine(lat1, lon1, lat2, lon2){
-                    var toRad = function(v){return v*Math.PI/180;};
-                    var R = 6371; // km
-                    var dLat = toRad(lat2-lat1);
-                    var dLon = toRad(lon2-lon1);
-                    var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)*Math.sin(dLon/2);
-                    var c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                    return R*c;
-                  }
-                  var distKm = haversine(riderLat, riderLon, deliveryLat, deliveryLon).toFixed(2);
-                  try {
-                    var panel = document.getElementById('route-info-panel');
-                    if (panel) {
-                      var entry = document.createElement('div');
-                      entry.className = 'route-entry';
-                      entry.innerHTML = '<div class="avatar" style="background:'+ '${mobileTheme.colors.primary}' +'; width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;">🏍️</div><div class="meta"><b>Ordine: ${r.orderId}</b><br/>ETA: ${r.eta_minutes || "--"} min<br/>' + distKm + ' km</div>';
-                      panel.appendChild(entry);
-                      try { window.ReactNativeWebView && window.ReactNativeWebView.postMessage('panel:entry_added:${r.orderId}'); } catch(e){}
-                    }
-                  } catch (e) { console.warn('panel add failed', e); }
+                    var destHtml = '<div style="width:20px;height:20px;background:#ff5722;color:#fff;display:flex;align-items:center;justify-content:center;border-radius:50%;font-weight:700;box-shadow:0 4px 8px rgba(0,0,0,0.2);border:2px solid rgba(255,255,255,0.25);font-size:10px;">📍</div>';
+                    var destIcon = L.divIcon({ className: 'dest-marker-icon', html: destHtml, iconSize: [20, 20], iconAnchor: [10, 10] });
+                    L.marker([deliveryLat, deliveryLon], { icon: destIcon, zIndexOffset: 700 }).addTo(map);
+                  }catch(e){ try{ L.circleMarker([deliveryLat, deliveryLon], { radius:8, color: '#ff5722', fillColor:'#ff5722', fillOpacity:1 }).addTo(map); }catch(_){} }
                 })();
-            `;
+        `;
       })
       .join('\n');
 
-    const html = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="utf-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-          <style>
-            body { margin:0; padding:0; }
-            #map { position:absolute; top:0; bottom:0; width:100%; height:100%; }
-            .route-info-popup .leaflet-popup-content-wrapper { background: rgba(255,255,255,0.95); border-radius:6px; padding:6px 8px; }
-            .route-info-box { font-size:12px; line-height:1.2; }
-            .debug-info {
-              position: absolute;
-              top: 10px;
-              left: 10px;
-              background: rgba(255, 255, 255, 0.9);
-              padding: 8px 12px;
-              border-radius: 8px;
-              z-index: 1000;
-              font-size: 14px;
-              font-weight: bold;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            }
-            /* Nascondi i testi delle indicazioni stradali */
-            .leaflet-routing-container {
-              display: none !important;
-            }
-            /* Bottom route info panel */
-            #route-info-panel {
-              position: absolute;
-              left: 12px;
-              right: 12px;
-              bottom: 12px;
-              height: 110px;
-              background: rgba(255,255,255,0.96);
-              border-radius: 10px;
-              box-shadow: 0 8px 24px rgba(0,0,0,0.14);
-              display: flex;
-              gap: 8px;
-              padding: 8px;
-              overflow-x: auto;
-              z-index: 1200;
-              align-items: center;
-            }
-            .route-entry {
-              min-width: 180px;
-              background: #fff;
-              border-radius: 8px;
-              padding: 8px 10px;
-              box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-              display: flex;
-              gap: 8px;
-              align-items: center;
-              cursor: pointer;
-            }
-            .route-entry .avatar { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
-            .route-entry .meta { font-size:13px; line-height:1.2; }
-            .rider-marker-icon { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; color:#fff; box-shadow:0 4px 10px rgba(0,0,0,0.2); }
-            .dest-marker-icon { width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; color:#fff; box-shadow:0 2px 6px rgba(0,0,0,0.15); }
-          </style>
-        </head>
-        <body>
-          <div class="debug-info">🏍 Riders Attivi: ${riderPositions.length}</div>
-          <div id="map"></div>
-          <script>
-            (function(){
-              var leafletCssCandidates = ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css'];
-              var leafletJsCandidates = ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js'];
-              var routingJsCandidates = ['https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js', 'https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.min.js'];
-
-              function loadCss(url){return new Promise(function(resolve,reject){
-              if(document.querySelector('link[href="'+url+'"]')) return resolve();
-              var l=document.createElement('link'); l.rel='stylesheet'; l.href=url; l.onload=resolve; l.onerror=function(){reject(url)}; document.head.appendChild(l);
-              });}
-
-              function loadScript(url){return new Promise(function(resolve,reject){
-              if(window.L) return resolve();
-              var s=document.createElement('script'); s.src=url; s.onload=resolve; s.onerror=function(){reject(url)}; document.head.appendChild(s);
-              });}
-
-              function tryList(list, loader){
-              return list.reduce(function(p,url){
-                return p.catch(function(){return loader(url);});
-              }, Promise.reject());
-              }
-
-                      Promise.resolve()
-                        .then(function(){ return tryList(leafletCssCandidates, loadCss).then(function(){ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('cdn:css:loaded'); }).catch(function(){ console.warn('Leaflet CSS failed'); window.ReactNativeWebView && window.ReactNativeWebView.postMessage('cdn:css:failed'); }); })
-                        .then(function(){ return tryList(leafletJsCandidates, loadScript).then(function(){ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('cdn:js:loaded'); }); })
-                        .then(function(){ return tryList(routingJsCandidates, loadScript).then(function(){ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('cdn:routing:loaded'); }).catch(function(){console.warn('Routing machine failed'); window.ReactNativeWebView && window.ReactNativeWebView.postMessage('cdn:routing:failed');}); })
-                        .then(function(){
-                            if(!window.L) { console.error('Leaflet not available'); window.ReactNativeWebView && window.ReactNativeWebView.postMessage('leaflet:not_available'); return; }
-                                window.ReactNativeWebView && window.ReactNativeWebView.postMessage('map:init');
-                                console.log('🗺️ Admin map initializing...');
-                                var map = L.map('map').setView([${centerLat}, ${centerLon}], ${zoomLevel});
-                                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OpenStreetMap contributors' }).addTo(map);
-                                // create bottom panel container
-                                if (!document.getElementById('route-info-panel')) {
-                                  var panel = document.createElement('div');
-                                  panel.id = 'route-info-panel';
-                                  document.body.appendChild(panel);
-                                }
-                                ${riderMarkers}
-                                ${routes}
-                                // After routes and markers added, compute overall bounds and fit map to show full paths
-                                setTimeout(function(){
-                                  try{
-                                    var points = [];
-                                    map.eachLayer(function(layer){
-                                      try{
-                                        if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {
-                                          var ll = layer.getLatLng(); if (ll) points.push(ll);
-                                        } else if (layer instanceof L.Polyline) {
-                                          var latlngs = layer.getLatLngs();
-                                          if (!latlngs) return;
-                                          // handle nested arrays
-                                          var flatten = function(arr){ arr.forEach(function(i){ if (Array.isArray(i)) flatten(i); else if (i && i.lat) points.push(i); }); };
-                                          flatten(latlngs);
-                                        }
-                                      }catch(e){}
-                                    });
-                                    if (points.length>0) {
-                                      var bounds = L.latLngBounds(points);
-                                      map.fitBounds(bounds, { padding: [80,80] });
-                                      window.ReactNativeWebView && window.ReactNativeWebView.postMessage('map:fitted:'+points.length);
-                                    }
-                                  }catch(e){ console.warn('fit bounds failed', e); }
-                                  console.log('🗺️ Admin map loaded with ' + ${riderPositions.length} + ' riders');
-                                  window.ReactNativeWebView && window.ReactNativeWebView.postMessage('map:loaded:${riderPositions.length}');
-                                  setTimeout(function(){ map.invalidateSize(); }, 1000);
-                                }, 600);
-                        })
-                        .catch(function(err){ console.error('Map init failed', err); window.ReactNativeWebView && window.ReactNativeWebView.postMessage('map:init_failed:'+ (err && err.toString())); });
-            })();
-          </script>
-        </body>
-        </html>
-      `;
-    console.log('[ManagerRealTimeMap] HTML length:', html.length);
-    console.log('[ManagerRealTimeMap] HTML preview:', html.substring(0, 200) + '...');
-    return html;
+    // Complete HTML template
+    return `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <style>
+        html, body, #map { height: 100%; width: 100%; margin: 0; padding: 0; }
+        .rider-marker-icon { background: transparent !important; border: none !important; }
+        .dest-marker-icon { background: transparent !important; border: none !important; }
+        .info-panel { background: rgba(9, 13, 248, 0.95); padding: 8px 12px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); font-size: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 8px; }
+        @keyframes riderPulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <script>
+        var map = L.map('map').setView([${centerLat}, ${centerLon}], ${zoomLevel});
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+        
+        // Add rider markers
+        ${riderMarkers}
+        
+        // Add routes
+        ${routes}
+        
+        // Notify React Native that map is ready
+        if (window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage('map:ready');
+        }
+            
+    </script>
+</body>
+</html>
+    `;
   };
 
   return (
