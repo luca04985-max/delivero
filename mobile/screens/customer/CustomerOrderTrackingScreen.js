@@ -382,12 +382,13 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
     const centerLon = riderLon ? (riderLon + customerLon) / 2 : customerLon;
     const zoomLevel = riderLat ? 14 : 16; // Zoom più alto se solo cliente
 
-    const polyline =
-      trackHistory.length > 0
-        ? trackHistory.map(p => `[${p.latitude}, ${p.longitude}]`).join(',')
-        : riderLat
-          ? `[[${riderLat}, ${riderLon}], [${customerLat}, ${customerLon}]]`
-          : null;
+    // Prepare JS representation of history points to inject into the WebView
+    const historyPtsJs = trackHistory && trackHistory.length > 0
+      ? '[' + trackHistory.map(p => `[${parseFloat(p.latitude)}, ${parseFloat(p.longitude)}]`).join(',') + ']'
+      : 'null';
+
+    // Debug log on RN side before injecting HTML
+    console.log('📍 generateCustomerTrackingMapHtml', { riderLat, riderLon, customerLat, customerLon, historyLength: trackHistory?.length || 0 });
 
     return `
       <!DOCTYPE html>
@@ -415,6 +416,7 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
               function tryList(list, loader){ return list.reduce(function(p,url){ return p.catch(function(){return loader(url);}); }, Promise.reject()); }
 
               function post(msg){ if(window.ReactNativeWebView) window.ReactNativeWebView.postMessage(JSON.stringify(msg)); else console.log('customer:web:', msg); }
+              console.log('customer:web:script:start', { center:[${centerLat}, ${centerLon}], zoom:${zoomLevel}, historyExists: ${trackHistory && trackHistory.length > 0 ? 'true' : 'false'} });
 
               Promise.resolve()
                 .then(function(){ return tryList(cssCandidates, loadCss).then(function(){ post({type:'cdn:css:loaded'}); }).catch(function(){ post({type:'cdn:css:failed'}); }); })
@@ -450,35 +452,46 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
                   var riderLon = ${riderLon || 'null'};
                   var customerLat = ${customerLat};
                   var customerLon = ${customerLon};
+                  var historyPts = ${historyPtsJs};
 
                   if (riderLat && riderLon) {
                     addRiderMarker(riderLat, riderLon);
                   }
                   addCustomerMarker(customerLat, customerLon);
 
-                  // Routing: try routing machine if available, otherwise simple polyline
-                  try{
-                    if (window.L && window.L.Routing && riderLat && riderLon) {
-                      var control = L.Routing.control({
-                        waypoints: [L.latLng(riderLat, riderLon), L.latLng(customerLat, customerLon)],
-                        router: L.Routing.osrmv1({ serviceUrl: 'https://router.project-osrm.org/route/v1' }),
-                        createMarker: function() { return null; },
-                        addWaypoints: false,
-                        show: false,
-                        routeWhileDragging: false,
-                        fitSelectedRoute: true,
-                        lineOptions: { styles: [{ color: '${mobileTheme.colors.error}', weight: 4, opacity: 0.9 }] }
-                      }).addTo(map);
-                      control.on('routesfound', function(e){ post({type:'route:found', orderId:${order?.id || null}}); });
-                      control.on('routingerror', function(err){ post({type:'route:error', error: String(err)}); });
+                  // If we have a track history, draw it (polyline + small dots) and fit bounds to it
+                  try {
+                    if (historyPts && Array.isArray(historyPts) && historyPts.length > 0) {
+                      L.polyline(historyPts, { color: '${mobileTheme.colors.error}', weight: 3 }).addTo(map);
+                      // draw small dots for history points
+                      historyPts.forEach(function(pt){
+                        try{ L.circleMarker(pt, { radius: 4, color: '${mobileTheme.colors.error}', fillColor: '${mobileTheme.colors.error}', fillOpacity: 0.9 }).addTo(map); }catch(e){}
+                      });
+                      try { var bounds = L.latLngBounds(historyPts); map.fitBounds(bounds, { padding: [50, 50] }); } catch (e) {}
+                      post({ type: 'route:history', points: historyPts.length });
                     } else {
-                      // fallback polyline
-                      if (riderLat && riderLon) {
-                        var pts = [[riderLat, riderLon], [customerLat, customerLon]];
-                        L.polyline(pts, { color: '${mobileTheme.colors.error}', weight: 3 }).addTo(map);
-                        post({type:'route:fallback', points: pts.length});
-                        var bounds = L.latLngBounds(pts);
-                        try { map.fitBounds(bounds, { padding: [50, 50] }); } catch (e) {}
+                      // Routing: try routing machine if available, otherwise simple polyline between rider and customer
+                      if (window.L && window.L.Routing && riderLat && riderLon) {
+                        var control = L.Routing.control({
+                          waypoints: [L.latLng(riderLat, riderLon), L.latLng(customerLat, customerLon)],
+                          router: L.Routing.osrmv1({ serviceUrl: 'https://router.project-osrm.org/route/v1' }),
+                          createMarker: function() { return null; },
+                          addWaypoints: false,
+                          show: false,
+                          routeWhileDragging: false,
+                          fitSelectedRoute: true,
+                          lineOptions: { styles: [{ color: '${mobileTheme.colors.error}', weight: 4, opacity: 0.9 }] }
+                        }).addTo(map);
+                        control.on('routesfound', function(e){ post({type:'route:found', orderId:${order?.id || null}}); });
+                        control.on('routingerror', function(err){ post({type:'route:error', error: String(err)}); });
+                      } else {
+                        // fallback polyline
+                        if (riderLat && riderLon) {
+                          var pts = [[riderLat, riderLon], [customerLat, customerLon]];
+                          L.polyline(pts, { color: '${mobileTheme.colors.error}', weight: 3 }).addTo(map);
+                          post({type:'route:fallback', points: pts.length});
+                          try { var bounds = L.latLngBounds(pts); map.fitBounds(bounds, { padding: [50, 50] }); } catch (e) {}
+                        }
                       }
                     }
                   } catch (e) { console.warn('route draw failed', e); post({type:'route:failed', error:String(e)}); }
@@ -566,6 +579,15 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
             javaScriptEnabled={true}
             domStorageEnabled={true}
             startInLoadingState={true}
+            originWhitelist={["*"]}
+            onMessage={event => {
+              try {
+                const d = JSON.parse(event.nativeEvent.data);
+                console.log('[CustomerOrderTracking] WebView message:', d);
+              } catch (e) {
+                console.log('[CustomerOrderTracking] WebView raw message:', event.nativeEvent.data);
+              }
+            }}
             renderLoading={() => (
               <ActivityIndicator style={customerOrderTrackingScreenStyles.mapLoader} size="large" />
             )}
