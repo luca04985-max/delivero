@@ -362,7 +362,7 @@ export default function ManagerRealTimeMapScreen({ route }) {
     );
     let centerLat = 41.880025; // Default Roma
     let centerLon = 12.67594;
-    let zoomLevel = 13;
+    let zoomLevel = 5;
 
     if (riderPositions.length > 0) {
       // Calcola il centro medio di tutti i rider
@@ -370,7 +370,6 @@ export default function ManagerRealTimeMapScreen({ route }) {
       const avgLon = riderPositions.reduce((sum, r) => sum + r.lng, 0) / riderPositions.length;
       centerLat = avgLat;
       centerLon = avgLon;
-      zoomLevel = 14; // Zoom più ravvicinato se ci sono rider
     }
 
     // Passa lo stato di espansione al codice JavaScript
