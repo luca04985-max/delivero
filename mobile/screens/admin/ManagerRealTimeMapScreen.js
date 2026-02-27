@@ -50,6 +50,9 @@ export default function ManagerRealTimeMapScreen({ route }) {
               status: targetOrder.status,
               delivery_latitude: targetOrder.delivery_latitude,
               delivery_longitude: targetOrder.delivery_longitude,
+              delivery_address: targetOrder.delivery_address,
+              rider_address: targetOrder.rider_address,
+              restaurant_address: targetOrder.restaurant_address,
               customer_id: targetOrder.customer_id,
               restaurant_id: targetOrder.restaurant_id,
             };
@@ -98,6 +101,9 @@ export default function ManagerRealTimeMapScreen({ route }) {
           status: o.status,
           delivery_latitude: o.delivery_latitude,
           delivery_longitude: o.delivery_longitude,
+          delivery_address: o.delivery_address,
+          rider_address: o.rider_address,
+          restaurant_address: o.restaurant_address,
           customer_id: o.customer_id,
           restaurant_id: o.restaurant_id,
         };
@@ -193,6 +199,9 @@ export default function ManagerRealTimeMapScreen({ route }) {
               status: data?.status,
               delivery_latitude: data?.delivery_latitude,
               delivery_longitude: data?.delivery_longitude,
+              delivery_address: data?.delivery_address,
+              rider_address: data?.rider_address,
+              restaurant_address: data?.restaurant_address,
               customer_id: data?.customer_id,
               restaurant_id: data?.restaurant_id,
             },
@@ -245,6 +254,11 @@ export default function ManagerRealTimeMapScreen({ route }) {
         lng: r.lng,
         eta_minutes: r.eta_minutes,
         status: r.status,
+        delivery_address: r.delivery_address,
+        rider_address: r.rider_address,
+        delivery_latitude: r.delivery_latitude,
+        delivery_longitude: r.delivery_longitude,
+        restaurant_address: r.restaurant_address,
       })),
     );
     let centerLat = 41.880025; // Default Roma
@@ -383,7 +397,9 @@ export default function ManagerRealTimeMapScreen({ route }) {
         #map { position:absolute; top:0; bottom:0; width:100%; height:100%; }
         .rider-marker-icon { background: transparent !important; border: none !important; }
         .dest-marker-icon { background: transparent !important; border: none !important; }
-        .info-panel { background: rgba(255,255,255,0.95); padding:8px; border-radius:6px; font-size:13px; }
+        .info-panel { background: rgba(255,255,255,0.95); padding:8px; border-radius:6px; font-size:13px; word-wrap: break-word; }
+        .leaflet-control { width: 100% !important; }
+        .leaflet-control-container .leaflet-bottom-left { width: 100% !important; }
         .leaflet-routing-container { display:none !important; }
     </style>
 </head>
@@ -407,23 +423,71 @@ export default function ManagerRealTimeMapScreen({ route }) {
         // Add routes
         ${routes}
 
-        // Add admin info control (bottom-left)
+        // Add admin info panel directly to body (bottom-left)
         try{
           var infoCount = (adminRiders && adminRiders.length) || 0;
           var ids = (adminRiders && adminRiders.slice(0,3).map(function(r){ return '#' + r.orderId; }).join(', ')) || '--';
           var orderEta = (adminRiders && adminRiders.length > 0) ? 
             (adminRiders[0].eta_minutes || '--') : '--';
           
-          var infoHtml = '<div class="info-panel"> 📦 <strong>Ordini:</strong> ' + ids + '<br/>⏱️ <strong>ETA ordine:</strong> ' + orderEta + ' min<br/></div>';
-          var infoControl = L.control({position:'bottomleft'});
-          infoControl.onAdd = function(){ 
-            var div = L.DomUtil.create('div'); 
-            div.innerHTML = infoHtml; 
-            return div; 
-          };
-          infoControl.addTo(map);
+          // Calcola distanza e ottieni indirizzo rider
+          var distance = '--';
+          var riderLocationText = '--';
+          if (adminRiders && adminRiders.length > 0) {
+            var rider = adminRiders[0];
+            var riderLat = rider.lat;
+            var riderLon = rider.lng;
+            var deliveryLat = rider.delivery_latitude || riderLat + 0.01;
+            var deliveryLon = rider.delivery_longitude || riderLon + 0.01;
+            
+            // Calcola distanza
+            if (riderLat && riderLon && deliveryLat && deliveryLon) {
+              var toRad = function(v){return v*Math.PI/180;};
+              var R = 6371;
+              var dLat = toRad(deliveryLat - riderLat);
+              var dLon = toRad(deliveryLon - riderLon);
+              var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(toRad(riderLat))*Math.cos(toRad(deliveryLat))*Math.sin(dLon/2)*Math.sin(dLon/2);
+              var c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+              distance = (R*c).toFixed(1);
+            }
+            
+            // Ottieni indirizzo rider
+            if (rider.rider_address) {
+              riderLocationText = rider.rider_address;
+            } else if (rider.restaurant_address) {
+              riderLocationText = rider.restaurant_address;
+            } else {
+              // Usa reverse geocoding Nominatim per ottenere l'indirizzo dalle coordinate
+              try {
+                fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + riderLat + '&lon=' + riderLon + '&zoom=18&addressdetails=1')
+                  .then(function(resp){ return resp.json(); })
+                  .then(function(data){
+                    if (data && data.display_name) {
+                      // Estrai solo la parte prima della prima virgola
+                      var fullAddress = data.display_name;
+                      var shortAddress = fullAddress.split(',')[0].trim();
+                      // Aggiorna il pannello con l'indirizzo abbreviato
+                      var riderDiv = document.querySelector('[data-rider-location]');
+                      if (riderDiv) {
+                        riderDiv.textContent = shortAddress;
+                      }
+                    }
+                  })
+                  .catch(function(){});
+                riderLocationText = 'Rilevamento posizione...';
+              } catch(e) {
+                riderLocationText = 'In consegna';
+              }
+            }
+          }
+          
+          var infoPanel = document.createElement('div');
+          infoPanel.className = 'info-panel';
+          infoPanel.style.cssText = 'position: absolute; bottom: 8px; left: 8px; width: 90%; max-width: 350px; background: rgba(255, 255, 255, 0.95); color: #333; padding: 10px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; z-index: 1000; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); border: 1px solid rgba(0, 0, 0, 0.1); backdrop-filter: blur(10px);';
+          infoPanel.innerHTML = '<div style="display: flex; align-items: center; margin-bottom: 12px;"><span style="font-size: 18px; margin-right: 12px;">🎯</span><strong style="font-size: 16px; letter-spacing: 0.5px;">TRACCIAMENTO ORDINE</strong></div><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><div style="display: flex; align-items: center;"><span style="font-size: 16px; margin-right: 8px;">📦</span><span>Ordine:</span></div><div style="font-weight: 700;">' + ids + '</div></div><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><div style="display: flex; align-items: center;"><span style="font-size: 16px; margin-right: 8px;">📍</span><span>Destinazione:</span></div><div style="font-weight: 700;">' + (adminRiders && adminRiders[0] ? (adminRiders[0].delivery_address || adminRiders[0].restaurant_address || 'Indirizzo destinazione non disponibile') : '--') + '</div></div><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><div style="display: flex; align-items: center;"><span style="font-size: 16px; margin-right: 8px;">🏍️</span><span>Rider:</span></div><div style="font-weight: 700;" data-rider-location>' + riderLocationText + '</div></div><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><div style="display: flex; align-items: center;"><span style="font-size: 16px; margin-right: 8px;">📏</span><span>Distanza:</span></div><div style="font-weight: 700;">' + distance + ' km</div></div><div style="display: flex; justify-content: space-between; align-items: center;"><div style="display: flex; align-items: center;"><span style="font-size: 16px; margin-right: 8px;">⏱️</span><span>ETA:</span></div><div style="font-weight: 700;">' + orderEta + ' min</div></div>';
+          document.body.appendChild(infoPanel);
           if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage('admin:info_added');
-        }catch(e){ console.warn('admin info control failed', e); }
+        }catch(e){ console.warn('admin info panel failed', e); }
         
         // Notify React Native that map is ready
         if (window.ReactNativeWebView) {
