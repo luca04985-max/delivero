@@ -286,63 +286,77 @@ export default function ManagerRealTimeMapScreen({ route }) {
       .join('\n');
 
     const html = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="utf-8" />
-                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-                <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-                <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
-                <style>
-                    body { margin:0; padding:0; }
-                    #map { position:absolute; top:0; bottom:0; width:100%; height:100%; }
-                    .debug-info {
-                        position: absolute;
-                        top: 10px;
-                        left: 10px;
-                        background: rgba(255, 255, 255, 0.9);
-                        padding: 8px 12px;
-                        border-radius: 8px;
-                        z-index: 1000;
-                        font-size: 14px;
-                        font-weight: bold;
-                        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-                    }
-                    /* Nascondi i testi delle indicazioni stradali */
-                    .leaflet-routing-container {
-                        display: none !important;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="debug-info">🏍 Riders Attivi: ${riderPositions.length}</div>
-                <div id="map"></div>
-                <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-                <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-                <script>
-                    console.log('🗺️ Admin map initializing...');
-                    var map = L.map('map').setView([${centerLat}, ${centerLon}], ${zoomLevel});
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: 'OpenStreetMap contributors'
-                    }).addTo(map);
-                    
-                    // Aggiungi marker rider (senza popup)
-                    ${riderMarkers}
-                    
-                    // Aggiungi percorsi verso destinazioni
-                    ${routes}
-                    
-                    // Debug finale
-                    console.log('🗺️ Admin map loaded with ' + ${riderPositions.length} + ' riders');
-                    
-                    // Force map refresh after 1 second
-                    setTimeout(function() {
-                        map.invalidateSize();
-                    }, 1000);
-                </script>
-            </body>
-            </html>
-        `;
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+          <style>
+            body { margin:0; padding:0; }
+            #map { position:absolute; top:0; bottom:0; width:100%; height:100%; }
+            .debug-info {
+              position: absolute;
+              top: 10px;
+              left: 10px;
+              background: rgba(255, 255, 255, 0.9);
+              padding: 8px 12px;
+              border-radius: 8px;
+              z-index: 1000;
+              font-size: 14px;
+              font-weight: bold;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            }
+            /* Nascondi i testi delle indicazioni stradali */
+            .leaflet-routing-container {
+              display: none !important;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="debug-info">🏍 Riders Attivi: ${riderPositions.length}</div>
+          <div id="map"></div>
+          <script>
+            (function(){
+              var leafletCssCandidates = ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css'];
+              var leafletJsCandidates = ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js'];
+              var routingJsCandidates = ['https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js', 'https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.min.js'];
+
+              function loadCss(url){return new Promise(function(resolve,reject){
+              if(document.querySelector('link[href="'+url+'"]')) return resolve();
+              var l=document.createElement('link'); l.rel='stylesheet'; l.href=url; l.onload=resolve; l.onerror=function(){reject(url)}; document.head.appendChild(l);
+              });}
+
+              function loadScript(url){return new Promise(function(resolve,reject){
+              if(window.L) return resolve();
+              var s=document.createElement('script'); s.src=url; s.onload=resolve; s.onerror=function(){reject(url)}; document.head.appendChild(s);
+              });}
+
+              function tryList(list, loader){
+              return list.reduce(function(p,url){
+                return p.catch(function(){return loader(url);});
+              }, Promise.reject());
+              }
+
+              Promise.resolve()
+              .then(function(){ return tryList(leafletCssCandidates, loadCss).catch(function(){console.warn('Leaflet CSS failed');}); })
+              .then(function(){ return tryList(leafletJsCandidates, loadScript); })
+              .then(function(){ return tryList(routingJsCandidates, loadScript).catch(function(){console.warn('Routing machine failed');}); })
+              .then(function(){
+                if(!window.L) { console.error('Leaflet not available'); return; }
+                console.log('🗺️ Admin map initializing...');
+                var map = L.map('map').setView([${centerLat}, ${centerLon}], ${zoomLevel});
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OpenStreetMap contributors' }).addTo(map);
+                ${riderMarkers}
+                ${routes}
+                console.log('🗺️ Admin map loaded with ' + ${riderPositions.length} + ' riders');
+                setTimeout(function(){ map.invalidateSize(); }, 1000);
+              })
+              .catch(function(err){ console.error('Map init failed', err); });
+            })();
+          </script>
+        </body>
+        </html>
+      `;
     console.log('[ManagerRealTimeMap] HTML length:', html.length);
     console.log('[ManagerRealTimeMap] HTML preview:', html.substring(0, 200) + '...');
     return html;

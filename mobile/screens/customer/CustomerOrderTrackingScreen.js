@@ -16,133 +16,186 @@ const _LeafletTrackingMap = ({ riderLocation, customerLocation, order, history =
   React.useEffect(() => {
     if (Platform.OS !== 'web') return;
 
-    // Load Leaflet CSS
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
-    document.head.appendChild(link);
+    const leafletCssCandidates = [
+      'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+      'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css',
+    ];
+    const leafletJsCandidates = [
+      'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js',
+    ];
 
-    // Load Leaflet JS
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
-    script.onload = () => {
+    const addCss = url =>
+      new Promise((resolve, reject) => {
+        const id = 'delivero-leaflet-css';
+        if (document.getElementById(id)) return resolve();
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = url;
+        link.id = id;
+        link.onload = () => resolve();
+        link.onerror = () => reject(new Error('CSS load failed: ' + url));
+        document.head.appendChild(link);
+      });
+
+    const addScript = url =>
+      new Promise((resolve, reject) => {
+        const id = 'delivero-leaflet-js';
+        if (window.L) return resolve();
+        if (document.getElementById(id)) {
+          // script already present but L not ready yet
+          const s = document.getElementById(id);
+          s.onload = () => resolve();
+          s.onerror = () => reject(new Error('Script load failed: ' + url));
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = url;
+        script.id = id;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Script load failed: ' + url));
+        document.head.appendChild(script);
+      });
+
+    const tryLoad = async () => {
+      // Load CSS try list
+      for (const css of leafletCssCandidates) {
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          await addCss(css);
+          break;
+        } catch (e) {
+          // try next
+        }
+      }
+
+      // Load JS with fallback
+      let loaded = false;
+      for (const js of leafletJsCandidates) {
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          await addScript(js);
+          loaded = true;
+          break;
+        } catch (e) {
+          // next
+        }
+      }
+
+      if (!loaded || !window.L || !document.getElementById(mapContainerId)) return;
+
       const L = window.L;
-      if (!L || !document.getElementById(mapContainerId)) return;
+
+      // Namespace maps to reuse them
+      window._deliveroMaps = window._deliveroMaps || {};
+      let state = window._deliveroMaps[mapContainerId];
 
       const riderLat = riderLocation?.latitude || 40.7128;
       const riderLng = riderLocation?.longitude || -74.006;
       const customerLat = customerLocation?.latitude || 40.71;
       const customerLng = customerLocation?.longitude || -74.007;
 
-      // Create map centered between rider and customer
       const centerLat = (riderLat + customerLat) / 2;
       const centerLng = (riderLng + customerLng) / 2;
 
-      const map = L.map(mapContainerId).setView([centerLat, centerLng], 14);
+      if (!state) {
+        const map = L.map(mapContainerId).setView([centerLat, centerLng], 14);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '© OpenStreetMap contributors',
+        }).addTo(map);
 
-      // Add OpenStreetMap tiles
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap contributors',
-      }).addTo(map);
+        state = { map, riderMarker: null, customerMarker: null, polylines: [] };
+        window._deliveroMaps[mapContainerId] = state;
+      } else {
+        try {
+          state.map.setView([centerLat, centerLng], state.map.getZoom());
+        } catch (e) {}
+      }
 
-      // Rider marker (red/orange - actively delivering)
+      // Clear previous overlays
+      state.polylines.forEach(p => {
+        try { state.map.removeLayer(p); } catch (e) {}
+      });
+      state.polylines = [];
+      if (state.riderMarker) {
+        try { state.map.removeLayer(state.riderMarker); } catch (e) {}
+        state.riderMarker = null;
+      }
+      if (state.customerMarker) {
+        try { state.map.removeLayer(state.customerMarker); } catch (e) {}
+        state.customerMarker = null;
+      }
+
+      // Rider marker
       const riderIcon = L.divIcon({
         className: 'rider-marker',
-        html: `<div style="
-          width: 40px;
-          height: 40px;
-          background: ${mobileTheme.colors.errorBg};
-          border: 3px solid ${mobileTheme.colors.error};
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 20px;
-          box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4);
-          animation: pulse 2s infinite;
-        ">🏍️</div>`,
+        html: `<div style="width:40px;height:40px;background:${mobileTheme.colors.errorBg};border:3px solid ${mobileTheme.colors.error};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 2px 8px rgba(220,38,38,0.4);animation:pulse 2s infinite;">🏍️</div>`,
         iconSize: [40, 40],
         iconAnchor: [20, 20],
         popupAnchor: [0, -20],
       });
 
-      L.marker([riderLat, riderLng], { icon: riderIcon })
+      state.riderMarker = L.marker([riderLat, riderLng], { icon: riderIcon })
         .bindPopup(`<b>🏍️ Rider in consegna</b><br>ETA: ${order?.eta_minutes || 15} min`)
-        .addTo(map)
-        .openPopup();
+        .addTo(state.map);
 
-      // Customer marker (blue - waiting for delivery)
+      // Customer marker
       const customerIcon = L.divIcon({
         className: 'customer-marker',
-        html: `<div style="
-          width: 40px;
-          height: 40px;
-          background: ${mobileTheme.colors.customer}33;
-          border: 3px solid ${mobileTheme.colors.customer};
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 20px;
-          box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
-        ">🏠</div>`,
+        html: `<div style="width:40px;height:40px;background:${mobileTheme.colors.customer}33;border:3px solid ${mobileTheme.colors.customer};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 2px 8px rgba(2,132,199,0.3);">🏠</div>`,
         iconSize: [40, 40],
         iconAnchor: [20, 20],
         popupAnchor: [0, -20],
       });
 
-      L.marker([customerLat, customerLng], { icon: customerIcon })
+      state.customerMarker = L.marker([customerLat, customerLng], { icon: customerIcon })
         .bindPopup('<b>🏠 La tua posizione</b>')
-        .addTo(map);
+        .addTo(state.map);
 
-      // Draw polyline: use history if available else draw simple line
+      // Draw polyline
       if (history && Array.isArray(history) && history.length > 0) {
         const pts = history.map(p => [parseFloat(p.latitude), parseFloat(p.longitude)]);
-        L.polyline(pts, { color: '${mobileTheme.colors.error}', weight: 3 }).addTo(map);
+        const poly = L.polyline(pts, { color: mobileTheme.colors.error, weight: 3 }).addTo(state.map);
+        state.polylines.push(poly);
       } else {
-        L.polyline(
-          [
-            [riderLat, riderLng],
-            [customerLat, customerLng],
-          ],
-            {
-            color: '${mobileTheme.colors.customer}',
-            weight: 2,
-            opacity: 0.7,
-            dashArray: '5, 5',
-          },
-        ).addTo(map);
+        const poly = L.polyline([[riderLat, riderLng], [customerLat, customerLng]], {
+          color: mobileTheme.colors.customer,
+          weight: 2,
+          opacity: 0.7,
+          dashArray: '5, 5',
+        }).addTo(state.map);
+        state.polylines.push(poly);
       }
 
-      // Fit bounds to show both
-      const bounds = L.latLngBounds([
-        [riderLat, riderLng],
-        [customerLat, customerLng],
-      ]);
-      map.fitBounds(bounds, { padding: [100, 100] });
+      const bounds = L.latLngBounds([[riderLat, riderLng], [customerLat, customerLng]]);
+      try { state.map.fitBounds(bounds, { padding: [100, 100] }); } catch (e) {}
     };
 
-    document.head.appendChild(script);
+    tryLoad();
 
-    // Add CSS for animation
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes pulse {
-        0% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.1); opacity: 0.8; }
-        100% { transform: scale(1); opacity: 1; }
-      }
-    `;
-    document.head.appendChild(style);
+    // Add CSS for animation only once
+    if (!document.getElementById('delivero-leaflet-style')) {
+      const injectedStyle = document.createElement('style');
+      injectedStyle.id = 'delivero-leaflet-style';
+      injectedStyle.textContent = `
+        @keyframes pulse {
+          0% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.1); opacity: 0.8; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+      `;
+      document.head.appendChild(injectedStyle);
+    }
 
     return () => {
-      if (document.getElementById(mapContainerId)) {
-        const mapElement = document.getElementById(mapContainerId);
-        if (mapElement._leaflet_map) {
-          mapElement._leaflet_map.remove();
+      try {
+        const s = window._deliveroMaps && window._deliveroMaps[mapContainerId];
+        if (s && s.map) {
+          s.map.remove();
+          delete window._deliveroMaps[mapContainerId];
         }
-      }
+      } catch (e) {}
     };
   }, [riderLocation, customerLocation, order?.eta_minutes, history, mapContainerId]);
 
