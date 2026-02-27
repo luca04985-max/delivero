@@ -405,6 +405,38 @@ export default function ManagerRealTimeMapScreen({ route }) {
             .leaflet-routing-container {
               display: none !important;
             }
+            /* Bottom route info panel */
+            #route-info-panel {
+              position: absolute;
+              left: 12px;
+              right: 12px;
+              bottom: 12px;
+              height: 110px;
+              background: rgba(255,255,255,0.96);
+              border-radius: 10px;
+              box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+              display: flex;
+              gap: 8px;
+              padding: 8px;
+              overflow-x: auto;
+              z-index: 1200;
+              align-items: center;
+            }
+            .route-entry {
+              min-width: 180px;
+              background: #fff;
+              border-radius: 8px;
+              padding: 8px 10px;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+              display: flex;
+              gap: 8px;
+              align-items: center;
+              cursor: pointer;
+            }
+            .route-entry .avatar { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
+            .route-entry .meta { font-size:13px; line-height:1.2; }
+            .rider-marker-icon { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; color:#fff; box-shadow:0 4px 10px rgba(0,0,0,0.2); }
+            .dest-marker-icon { width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; color:#fff; box-shadow:0 2px 6px rgba(0,0,0,0.15); }
           </style>
         </head>
         <body>
