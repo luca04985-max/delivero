@@ -275,8 +275,10 @@ export default function ManagerRealTimeMapScreen({ route }) {
                 (function(){
                   var riderLat=${r.lat}, riderLon=${r.lng};
                   var deliveryLat=${deliveryLat}, deliveryLon=${deliveryLon};
+                  try { window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:script_started:${r.orderId}'); } catch(e){}
                   try {
                     if (window.L && window.L.Routing && window.L.Routing.osrmv1) {
+                      try { window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:using_routing:${r.orderId}'); } catch(e){}
                       // Use Routing Machine to draw route along roads (OSRM)
                       var control = L.Routing.control({
                         waypoints: [L.latLng(riderLat, riderLon), L.latLng(deliveryLat, deliveryLon)],
@@ -290,17 +292,20 @@ export default function ManagerRealTimeMapScreen({ route }) {
                       }).addTo(map);
                       // When route is found, optionally post message
                       control.on('routesfound', function(e){ try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:found:${r.orderId}'); }catch(ex){} });
-                      control.on('routingerror', function(err){ console.warn('routing error', err); window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:error:${r.orderId}:'+ (err && err.message));
+                      control.on('routingerror', function(err){ console.warn('routing error', err); try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:error:${r.orderId}:'+ (err && err.message)); }catch(e){}
                         // fallback to straight polyline
                         L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.6 }).addTo(map);
+                        try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:fallback_drawn:${r.orderId}'); }catch(e){}
                       });
                     } else {
                       // Fallback simple polyline
                       L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.8 }).addTo(map);
+                      try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:fallback_drawn:${r.orderId}'); }catch(e){}
                     }
                   } catch (e) {
                     console.warn('route draw failed', e);
                     L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.8 }).addTo(map);
+                    try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:exception_fallback:${r.orderId}:'+ (e && e.message)); }catch(e){}
                   }
 
                   // Destination marker (small dot)

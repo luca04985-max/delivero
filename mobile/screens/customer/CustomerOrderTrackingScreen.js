@@ -390,92 +390,122 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
           : null;
 
     return `
+    return `
       <!DOCTYPE html>
       <html>
       <head>
           <meta charset="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-          <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
           <style>
               body { margin:0; padding:0; }
               #map { position:absolute; top:0; bottom:0; width:100%; height:100%; }
+              .info-panel { background: rgba(255,255,255,0.95); padding:8px; border-radius:6px; font-size:13px; }
+              .leaflet-routing-container { display:none !important; }
           </style>
       </head>
       <body>
           <div id="map"></div>
-          <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
           <script>
-              (function(){
-                function post(msg){ if(window.ReactNativeWebView) window.ReactNativeWebView.postMessage(JSON.stringify(msg)); else console.log('customer:web:', msg); }
-                try{
+            (function(){
+              var cssCandidates = ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css'];
+              var jsCandidates = ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js'];
+              var routingCandidates = ['https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js', 'https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.min.js'];
+
+              function loadCss(url){return new Promise(function(resolve,reject){ if(document.querySelector('link[href="'+url+'"]')) return resolve(); var l=document.createElement('link'); l.rel='stylesheet'; l.href=url; l.onload=resolve; l.onerror=function(){reject(url)}; document.head.appendChild(l); });}
+              function loadScript(url){return new Promise(function(resolve,reject){ if(window.L) return resolve(); var s=document.createElement('script'); s.src=url; s.onload=resolve; s.onerror=function(){reject(url)}; document.head.appendChild(s); });}
+              function tryList(list, loader){ return list.reduce(function(p,url){ return p.catch(function(){return loader(url);}); }, Promise.reject()); }
+
+              function post(msg){ if(window.ReactNativeWebView) window.ReactNativeWebView.postMessage(JSON.stringify(msg)); else console.log('customer:web:', msg); }
+
+              Promise.resolve()
+                .then(function(){ return tryList(cssCandidates, loadCss).then(function(){ post({type:'cdn:css:loaded'}); }).catch(function(){ post({type:'cdn:css:failed'}); }); })
+                .then(function(){ return tryList(jsCandidates, loadScript).then(function(){ post({type:'cdn:js:loaded'}); }); })
+                .then(function(){ return tryList(routingCandidates, loadScript).then(function(){ post({type:'cdn:routing:loaded'}); }).catch(function(){ post({type:'cdn:routing:failed'}); }); })
+                .then(function(){
+                  if (!window.L) { post({type:'leaflet:not_available'}); return; }
                   post({type:'map:init', center:[${centerLat}, ${centerLon}], zoom:${zoomLevel}});
-                }catch(e){}
-                var map = L.map('map').setView([${centerLat}, ${centerLon}], ${zoomLevel});
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors' }).addTo(map);
+                  var map = L.map('map').setView([${centerLat}, ${centerLon}], ${zoomLevel});
+                  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors' }).addTo(map);
 
-                // Rider marker - only if we have real location
-                ${
-                  riderLat
-                    ? `
-                L.marker([${riderLat}, ${riderLon}]).addTo(map).bindPopup('<b>🏍️ Rider</b><br/>Stato: ${order?.status || 'In viaggio'}<br/>ETA: ${order?.eta_minutes || '--'} min');
-                post({type:'marker:rider', lat:${riderLat}, lon:${riderLon}});
-                `
-                    : ''
-                }
+                  function addRiderMarker(lat, lon){
+                    try{
+                      var icon = L.divIcon({ className:'rider-marker', html: '<div style="width:40px;height:40px;background:${mobileTheme.colors.errorBg};border:3px solid ${mobileTheme.colors.error};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;">🏍️</div>', iconSize:[40,40], iconAnchor:[20,20] });
+                      var m = L.marker([lat, lon], { icon: icon }).addTo(map);
+                      try{ m.bindPopup('<b>🏍️ Rider</b><br/>ETA: ${order?.eta_minutes || '--'} min'); }catch(e){}
+                      post({type:'marker:rider', lat:lat, lon:lon});
+                      return m;
+                    }catch(e){ console.warn('rider marker failed', e); }
+                  }
 
-                // Customer marker
-                L.marker([${customerLat}, ${customerLon}]).addTo(map).bindPopup('<b>🏠 Area di consegna</b><br/>${order?.delivery_address || 'Indirizzo non disponibile'}');
-                post({type:'marker:customer', lat:${customerLat}, lon:${customerLon}});
+                  function addCustomerMarker(lat, lon){
+                    try{
+                      var icon = L.divIcon({ className:'customer-marker', html: '<div style="width:40px;height:40px;background:${mobileTheme.colors.customer}33;border:3px solid ${mobileTheme.colors.customer};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;">🏠</div>', iconSize:[40,40], iconAnchor:[20,20] });
+                      var m = L.marker([lat, lon], { icon: icon }).addTo(map);
+                      try{ m.bindPopup('<b>🏠 Area di consegna</b><br/>${order?.delivery_address || 'Indirizzo non disponibile'}'); }catch(e){}
+                      post({type:'marker:customer', lat:lat, lon:lon});
+                      return m;
+                    }catch(e){ console.warn('customer marker failed', e); }
+                  }
 
-                // Route polyline - only if we have both points
-                ${
-                  polyline
-                    ? `
-                L.polyline([${polyline}], { color: '${mobileTheme.colors.error}', weight: 3 }).addTo(map);
-                post({type:'polyline:history', points:${trackHistory.length}});
+                  var riderLat = ${riderLat || 'null'};
+                  var riderLon = ${riderLon || 'null'};
+                  var customerLat = ${customerLat};
+                  var customerLon = ${customerLon};
 
-                // Fit bounds to show both
-                var bounds = L.latLngBounds([[${riderLat}, ${riderLon}], [${customerLat}, ${customerLon}]]);
-                map.fitBounds(bounds, { padding: [50, 50] });
-                `
-                    : ''
-                }
+                  if (riderLat && riderLon) {
+                    addRiderMarker(riderLat, riderLon);
+                  }
+                  addCustomerMarker(customerLat, customerLon);
 
-                // add destination dot and info control
-                try{
-                  L.circleMarker([${customerLat}, ${customerLon}], { radius:6, color:'#ff5722', fillColor:'#ff5722', fillOpacity:1 }).addTo(map).bindPopup('<b>Destinazione</b>');
-                  post({type:'marker:destination', lat:${customerLat}, lon:${customerLon}});
-                }catch(e){ console.warn(e);} 
+                  // Routing: try routing machine if available, otherwise simple polyline
+                  try{
+                    if (window.L && window.L.Routing && riderLat && riderLon) {
+                      var control = L.Routing.control({
+                        waypoints: [L.latLng(riderLat, riderLon), L.latLng(customerLat, customerLon)],
+                        router: L.Routing.osrmv1({ serviceUrl: 'https://router.project-osrm.org/route/v1' }),
+                        createMarker: function() { return null; },
+                        addWaypoints: false,
+                        show: false,
+                        routeWhileDragging: false,
+                        fitSelectedRoute: true,
+                        lineOptions: { styles: [{ color: '${mobileTheme.colors.error}', weight: 4, opacity: 0.9 }] }
+                      }).addTo(map);
+                      control.on('routesfound', function(e){ post({type:'route:found', orderId:${order?.id || null}}); });
+                      control.on('routingerror', function(err){ post({type:'route:error', error: String(err)}); });
+                    } else {
+                      // fallback polyline
+                      if (riderLat && riderLon) {
+                        var pts = [[riderLat, riderLon], [customerLat, customerLon]];
+                        L.polyline(pts, { color: '${mobileTheme.colors.error}', weight: 3 }).addTo(map);
+                        post({type:'route:fallback', points: pts.length});
+                        var bounds = L.latLngBounds(pts);
+                        try { map.fitBounds(bounds, { padding: [50, 50] }); } catch (e) {}
+                      }
+                    }
+                  } catch (e) { console.warn('route draw failed', e); post({type:'route:failed', error:String(e)}); }
 
-                try{
-                  var infoHtml = '<div style="background:rgba(255,255,255,0.95);padding:8px;border-radius:6px;font-size:13px;">Rider: ${order?.rider_id || '--'}<br/>ETA: ${order?.eta_minutes || '--'} min<br/>Distanza: ' + (${riderLat ? `(${riderLat} && ${riderLon} ? (function(){var toRad=function(v){return v*Math.PI/180;};var R=6371;var dLat=toRad(${customerLat}-${riderLat});var dLon=toRad(${customerLon}-${riderLon});var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(toRad(${riderLat}))*Math.cos(toRad(${customerLat}))*Math.sin(dLon/2)*Math.sin(dLon/2);var c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));return (R*c).toFixed(2);})() : '--')` : `'--'` } + ' km</div>';
-                  var infoControl = L.control({position:'bottomleft'});
-                  infoControl.onAdd = function(){ var div = L.DomUtil.create('div'); div.innerHTML = infoHtml; return div; };
-                  infoControl.addTo(map);
-                  post({type:'control:info_added'});
-                }catch(e){console.warn(e);}
-              })();
-              
-              // Destination dot
-              L.circleMarker([${customerLat}, ${customerLon}], { radius:6, color:'#ff5722', fillColor:'#ff5722', fillOpacity:1 }).addTo(map).bindPopup('<b>Destinazione</b>');
+                  // Add info control (bottom-left)
+                  try{
+                    var dist = '--';
+                    if (riderLat && riderLon) {
+                      var toRad = function(v){return v*Math.PI/180;};
+                      var R = 6371;
+                      var dLat = toRad(customerLat - riderLat);
+                      var dLon = toRad(customerLon - riderLon);
+                      var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(toRad(riderLat))*Math.cos(toRad(customerLat))*Math.sin(dLon/2)*Math.sin(dLon/2);
+                      var c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                      dist = (R*c).toFixed(2);
+                    }
+                    var infoHtml = '<div class="info-panel">Rider: ${order?.rider_id || '--'}<br/>ETA: ${order?.eta_minutes || '--'} min<br/>Distanza: ' + dist + ' km</div>';
+                    var infoControl = L.control({position:'bottomleft'});
+                    infoControl.onAdd = function(){ var div = L.DomUtil.create('div'); div.innerHTML = infoHtml; return div; };
+                    infoControl.addTo(map);
+                    post({type:'control:info_added'});
+                  }catch(e){ console.warn('info control failed', e); }
 
-              // Info control bottom-left
-              (function(){
-                function haversine(lat1, lon1, lat2, lon2){
-                  var toRad = function(v){return v*Math.PI/180;};
-                  var R = 6371;
-                  var dLat = toRad(lat2-lat1);
-                  var dLon = toRad(lon2-lon1);
-                  var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)*Math.sin(dLon/2);
-                  var c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                  return R*c;
-                }
-                var dist = ${riderLat ? `(${riderLat} && ${riderLon} ? haversine(${riderLat}, ${riderLon}, ${customerLat}, ${customerLon}).toFixed(2) : '--')` : `'--'`};
-                var infoHtml = '<div style="background:rgba(255,255,255,0.95);padding:8px;border-radius:6px;font-size:13px;">Rider: ${order?.rider_id || '--'}<br/>ETA: ${order?.eta_minutes || '--'} min<br/>Distanza: ' + dist + ' km</div>';
-                var infoControl = L.control({position:'bottomleft'});
-                infoControl.onAdd = function(){ var div = L.DomUtil.create('div'); div.innerHTML = infoHtml; return div; };
-                infoControl.addTo(map);
-              })();
+                })
+                .catch(function(err){ post({type:'map:init_failed', error:String(err)}); });
+            })();
           </script>
       </body>
       </html>
