@@ -254,12 +254,17 @@ export default function ManagerRealTimeMapScreen({ route }) {
     console.log('[ManagerRealTimeMap] generating HTML with', riderPositions.length, 'riders');
     console.log('[ManagerRealTimeMap] map center:', centerLat, centerLon, 'zoom:', zoomLevel);
 
-    // Marker per ogni rider (senza popup)
+    // Marker per ogni rider (styled, senza popup)
     const riderMarkers = riderPositions
       .map(
         r => `
-            L.marker([${r.lat}, ${r.lng}])
-                .addTo(map);
+            (function(){
+              try{
+                var iconHtml = '<div style="width:40px;height:40px;background:${mobileTheme.colors.primary};color:#fff;display:flex;align-items:center;justify-content:center;border-radius:50%;font-weight:700;box-shadow:0 6px 14px rgba(0,0,0,0.18);">' + (String(${r.orderId}).slice(-2)) + '</div>';
+                var icon = L.divIcon({ className: 'rider-marker-icon', html: iconHtml, iconSize:[40,40], iconAnchor:[20,20] });
+                L.marker([${r.lat}, ${r.lng}], { icon: icon, zIndexOffset: 600 }).addTo(map);
+              }catch(e){ console.warn('rider marker render failed', e); }
+            })();
         `,
       )
       .join('\n');
@@ -292,15 +297,45 @@ export default function ManagerRealTimeMapScreen({ route }) {
                       }).addTo(map);
                       // When route is found, optionally post message
                       control.on('routesfound', function(e){ try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:found:${r.orderId}'); }catch(ex){} });
-                      control.on('routingerror', function(err){ console.warn('routing error', err); try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:error:${r.orderId}:'+ (err && err.message)); }catch(e){}
-                        // fallback to straight polyline
-                        L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.6 }).addTo(map);
-                        try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:fallback_drawn:${r.orderId}'); }catch(e){}
+                      control.on('routingerror', function(err){
+                        console.warn('routing error', err);
+                        try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:error:${r.orderId}:'+ (err && err.message)); }catch(e){}
+                        // Try OSRM HTTP fallback before straight polyline
+                        try {
+                          var osrmUrl = 'https://router.project-osrm.org/route/v1/driving/' + riderLon + ',' + riderLat + ';' + deliveryLon + ',' + deliveryLat + '?overview=full&geometries=geojson';
+                          fetch(osrmUrl).then(function(resp){ return resp.json(); }).then(function(json){
+                            if (json && json.routes && json.routes.length>0 && json.routes[0].geometry && json.routes[0].geometry.coordinates) {
+                              var coords = json.routes[0].geometry.coordinates.map(function(c){ return [c[1], c[0]]; });
+                              L.polyline(coords, { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.85 }).addTo(map);
+                              try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:osrm_drawn:${r.orderId}'); }catch(e){}
+                            } else {
+                              L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.6 }).addTo(map);
+                              try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:fallback_drawn:${r.orderId}'); }catch(e){}
+                            }
+                          }).catch(function(e2){ console.warn('osrm fetch failed', e2); L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.6 }).addTo(map); try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:osrm_error:${r.orderId}:'+String(e2)); }catch(e){} });
+                        } catch (ex) {
+                          L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.6 }).addTo(map);
+                          try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:fallback_drawn:${r.orderId}'); }catch(e){}
+                        }
                       });
                     } else {
-                      // Fallback simple polyline
-                      L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.8 }).addTo(map);
-                      try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:fallback_drawn:${r.orderId}'); }catch(e){}
+                      // Try OSRM HTTP fallback then straight polyline
+                      try {
+                        var osrmUrl2 = 'https://router.project-osrm.org/route/v1/driving/' + riderLon + ',' + riderLat + ';' + deliveryLon + ',' + deliveryLat + '?overview=full&geometries=geojson';
+                        fetch(osrmUrl2).then(function(resp){ return resp.json(); }).then(function(json){
+                          if (json && json.routes && json.routes.length>0 && json.routes[0].geometry && json.routes[0].geometry.coordinates) {
+                            var coords = json.routes[0].geometry.coordinates.map(function(c){ return [c[1], c[0]]; });
+                            L.polyline(coords, { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.85 }).addTo(map);
+                            try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:osrm_drawn:${r.orderId}'); }catch(e){}
+                          } else {
+                            L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.8 }).addTo(map);
+                            try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:fallback_drawn:${r.orderId}'); }catch(e){}
+                          }
+                        }).catch(function(e2){ console.warn('osrm fetch failed', e2); L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.8 }).addTo(map); try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:osrm_error:${r.orderId}:'+String(e2)); }catch(e){} });
+                      } catch (ex) {
+                        L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.8 }).addTo(map);
+                        try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:fallback_drawn:${r.orderId}'); }catch(e){}
+                      }
                     }
                   } catch (e) {
                     console.warn('route draw failed', e);
@@ -308,10 +343,14 @@ export default function ManagerRealTimeMapScreen({ route }) {
                     try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:exception_fallback:${r.orderId}:'+ (e && e.message)); }catch(e){}
                   }
 
-                  // Destination marker (small dot)
-                  L.circleMarker([deliveryLat, deliveryLon], { radius:6, color: '#ff5722', fillColor:'#ff5722', fillOpacity:1 }).addTo(map).bindPopup('Destinazione');
+                  // Destination marker (styled) — no popup
+                  try{
+                    var destHtml = '<div style="width:18px;height:18px;background:#ff5722;border-radius:50%;box-shadow:0 4px 10px rgba(0,0,0,0.18);"></div>';
+                    var destIcon = L.divIcon({ className: 'dest-marker-icon', html: destHtml, iconSize:[18,18], iconAnchor:[9,9] });
+                    L.marker([deliveryLat, deliveryLon], { icon: destIcon, zIndexOffset: 500 }).addTo(map);
+                  }catch(e){ try{ L.circleMarker([deliveryLat, deliveryLon], { radius:6, color: '#ff5722', fillColor:'#ff5722', fillOpacity:1 }).addTo(map); }catch(_){} }
 
-                  // Midpoint info popup with ETA, rider id and distance
+                  // Midpoint info (compute distance) and add entry to bottom panel
                   var midLat = (riderLat + deliveryLat)/2;
                   var midLon = (riderLon + deliveryLon)/2;
                   function haversine(lat1, lon1, lat2, lon2){
@@ -324,8 +363,16 @@ export default function ManagerRealTimeMapScreen({ route }) {
                     return R*c;
                   }
                   var distKm = haversine(riderLat, riderLon, deliveryLat, deliveryLon).toFixed(2);
-                  var infoHtml = '<div class="route-info-box">Rider: ${r.orderId}<br>ETA: ${r.eta_minutes || "--"} min<br>Distanza: '+distKm+' km</div>';
-                  L.popup({closeButton:false, autoClose:false, className:'route-info-popup'}).setLatLng([midLat, midLon]).setContent(infoHtml).addTo(map);
+                  try {
+                    var panel = document.getElementById('route-info-panel');
+                    if (panel) {
+                      var entry = document.createElement('div');
+                      entry.className = 'route-entry';
+                      entry.innerHTML = '<div class="avatar" style="background:'+ '${mobileTheme.colors.primary}' +'; width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;">🏍️</div><div class="meta"><b>Ordine: ${r.orderId}</b><br/>ETA: ${r.eta_minutes || "--"} min<br/>' + distKm + ' km</div>';
+                      panel.appendChild(entry);
+                      try { window.ReactNativeWebView && window.ReactNativeWebView.postMessage('panel:entry_added:${r.orderId}'); } catch(e){}
+                    }
+                  } catch (e) { console.warn('panel add failed', e); }
                 })();
             `;
       })
@@ -403,9 +450,33 @@ export default function ManagerRealTimeMapScreen({ route }) {
                                 }
                                 ${riderMarkers}
                                 ${routes}
-                                console.log('🗺️ Admin map loaded with ' + ${riderPositions.length} + ' riders');
-                                window.ReactNativeWebView && window.ReactNativeWebView.postMessage('map:loaded:${riderPositions.length}');
-                                setTimeout(function(){ map.invalidateSize(); }, 1000);
+                                // After routes and markers added, compute overall bounds and fit map to show full paths
+                                setTimeout(function(){
+                                  try{
+                                    var points = [];
+                                    map.eachLayer(function(layer){
+                                      try{
+                                        if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {
+                                          var ll = layer.getLatLng(); if (ll) points.push(ll);
+                                        } else if (layer instanceof L.Polyline) {
+                                          var latlngs = layer.getLatLngs();
+                                          if (!latlngs) return;
+                                          // handle nested arrays
+                                          var flatten = function(arr){ arr.forEach(function(i){ if (Array.isArray(i)) flatten(i); else if (i && i.lat) points.push(i); }); };
+                                          flatten(latlngs);
+                                        }
+                                      }catch(e){}
+                                    });
+                                    if (points.length>0) {
+                                      var bounds = L.latLngBounds(points);
+                                      map.fitBounds(bounds, { padding: [80,80] });
+                                      window.ReactNativeWebView && window.ReactNativeWebView.postMessage('map:fitted:'+points.length);
+                                    }
+                                  }catch(e){ console.warn('fit bounds failed', e); }
+                                  console.log('🗺️ Admin map loaded with ' + ${riderPositions.length} + ' riders');
+                                  window.ReactNativeWebView && window.ReactNativeWebView.postMessage('map:loaded:${riderPositions.length}');
+                                  setTimeout(function(){ map.invalidateSize(); }, 1000);
+                                }, 600);
                         })
                         .catch(function(err){ console.error('Map init failed', err); window.ReactNativeWebView && window.ReactNativeWebView.postMessage('map:init_failed:'+ (err && err.toString())); });
             })();
