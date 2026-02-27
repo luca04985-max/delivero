@@ -56,7 +56,7 @@ export const orderTrackingLiveScreenStyles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: BASE_SPACE * 3.125,
-    backgroundColor: mobileTheme.colors.primarySoft,
+    backgroundColor: mobileTheme.colors.secondarySoft,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: mobileTheme.spacing[4],
@@ -119,7 +119,7 @@ export const orderTrackingLiveScreenStyles = StyleSheet.create({
   etaHeader: {
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: FONT_WEIGHTS.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     marginBottom: mobileTheme.spacing[2],
   },
   // etaRow: riga dettaglio ETA

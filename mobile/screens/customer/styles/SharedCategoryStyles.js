@@ -20,8 +20,8 @@ export const sharedCategoryStyles = StyleSheet.create({
 
   // CATEGORY CARD ACTIVE - Stile per categoria selezionata
   categoryCardActive: {
-    backgroundColor: mobileTheme.colors.primary,
-    borderColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
+    borderColor: mobileTheme.colors.secondary,
   },
 
   // CATEGORY EMOJI - Stile per l'emoji della categoria
@@ -51,8 +51,8 @@ export const sharedCategoryStyles = StyleSheet.create({
 
   // CATEGORY BUTTON ACTIVE - Stile per pulsante categoria attivo
   categoryButtonActive: {
-    backgroundColor: mobileTheme.colors.primary,
-    borderColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
+    borderColor: mobileTheme.colors.secondary,
   },
 
   // CATEGORY BUTTON TEXT - Testo pulsante categoria

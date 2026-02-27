@@ -122,7 +122,7 @@ export const customerOrderTrackingScreenStyles = StyleSheet.create({
   // headerEta: ETA mostrato nell'header quando collassato (CustomerOrderTrackingScreen.js)
   headerEta: {
     fontSize: mobileTheme.typography.fontSize.sm,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: mobileTheme.typography.fontWeight.semibold,
     marginTop: 2,
   },
@@ -130,7 +130,7 @@ export const customerOrderTrackingScreenStyles = StyleSheet.create({
   // expandIcon: icona freccia per espandere/collassare (CustomerOrderTrackingScreen.js)
   expandIcon: {
     fontSize: mobileTheme.typography.fontSize.lg,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: 'bold',
   },
   // sectionTitle: titolo sezione (CustomerOrderTrackingScreen.js)
@@ -185,7 +185,7 @@ export const customerOrderTrackingScreenStyles = StyleSheet.create({
     marginHorizontal: mobileTheme.spacing[5],
     marginVertical: mobileTheme.spacing[3],
     paddingVertical: mobileTheme.spacing[4],
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     borderRadius: mobileTheme.borderRadius.lg,
     alignItems: 'center',
     ...mobileTheme.shadows.soft,

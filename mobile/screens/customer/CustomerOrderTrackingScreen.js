@@ -137,7 +137,7 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
   if (loading) {
     return (
       <View style={customerOrderTrackingScreenStyles.loadingContainer}>
-        <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
+        <ActivityIndicator size="large" color={mobileTheme.colors.secondary} />
         <Text style={customerOrderTrackingScreenStyles.loadingText}>
           Caricamento tracciamento...
         </Text>

@@ -75,10 +75,10 @@ export default function AdminDashboardUsers({ navigation: _navigation }) {
             <Text style={styles.statusSeparatorIcon}>{roleInfo.icon}</Text>
             <Text style={styles.statusSeparatorTitle}>{roleInfo.label}</Text>
           </View>
-            <View style={styles.statusSeparatorRight}>
-              <Text style={styles.statusSeparatorCount}>{count}</Text>
-              <Text style={styles.statusSeparatorToggle}>{isExpanded ? '🔼' : '🔽'}</Text>
-            </View>
+          <View style={styles.statusSeparatorRight}>
+            <Text style={styles.statusSeparatorCount}>{count}</Text>
+            <Text style={styles.statusSeparatorToggle}>{isExpanded ? '🔼' : '🔽'}</Text>
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -204,7 +204,7 @@ export default function AdminDashboardUsers({ navigation: _navigation }) {
         <Text style={styles.subtitle}>Gestione completa utenti</Text>
       </View>
       <TouchableOpacity style={{ alignSelf: 'center', marginRight: 12 }} onPress={() => setShowCreateRest(true)}>
-        <Text style={{ color: mobileTheme.colors.primary, fontWeight: '700' }}>➕ Crea ristorante</Text>
+        <Text style={{ color: mobileTheme.colors.secondary, fontWeight: '700' }}>➕ Crea ristorante</Text>
       </TouchableOpacity>
     </View>
   );
@@ -219,7 +219,7 @@ export default function AdminDashboardUsers({ navigation: _navigation }) {
       <View style={styles.container}>
         {renderHeader()}
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
+          <ActivityIndicator size="large" color={mobileTheme.colors.secondary} />
           <Text style={styles.loadingText}>Caricamento utenti...</Text>
         </View>
       </View>
@@ -250,55 +250,55 @@ export default function AdminDashboardUsers({ navigation: _navigation }) {
           <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ width: '100%', alignItems: 'center' }}>
             <ScrollView contentContainerStyle={{ width: '100%', alignItems: 'center', paddingVertical: mobileTheme.spacing[4] }} keyboardShouldPersistTaps="handled">
               <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>➕ Crea Ristorante</Text>
-            {createError ? <Text style={{ color: mobileTheme.colors.error, marginBottom: 8 }}>{createError}</Text> : null}
+                <Text style={styles.modalTitle}>➕ Crea Ristorante</Text>
+                {createError ? <Text style={{ color: mobileTheme.colors.error, marginBottom: 8 }}>{createError}</Text> : null}
 
-            <View style={styles.modalFormRow}>
-              <View style={styles.formField}>
-                <Text style={styles.inputLabel}>Email</Text>
-                <TextInput style={styles.textInput} placeholder="es. info@ristorante.it" value={newRest.email} onChangeText={t => setNewRest(p => ({ ...p, email: t }))} keyboardType="email-address" autoCapitalize="none" />
-                <Text style={styles.helperText}>Il link di onboarding verrà inviato a questa email.</Text>
-              </View>
+                <View style={styles.modalFormRow}>
+                  <View style={styles.formField}>
+                    <Text style={styles.inputLabel}>Email</Text>
+                    <TextInput style={styles.textInput} placeholder="es. info@ristorante.it" value={newRest.email} onChangeText={t => setNewRest(p => ({ ...p, email: t }))} keyboardType="email-address" autoCapitalize="none" />
+                    <Text style={styles.helperText}>Il link di onboarding verrà inviato a questa email.</Text>
+                  </View>
 
-              <View style={styles.formField}>
-                <Text style={styles.inputLabel}>Telefono</Text>
-                <TextInput style={styles.textInput} placeholder="es. +39 333 1234567" value={newRest.phone} onChangeText={t => setNewRest(p => ({ ...p, phone: t }))} keyboardType="phone-pad" />
-              </View>
-            </View>
+                  <View style={styles.formField}>
+                    <Text style={styles.inputLabel}>Telefono</Text>
+                    <TextInput style={styles.textInput} placeholder="es. +39 333 1234567" value={newRest.phone} onChangeText={t => setNewRest(p => ({ ...p, phone: t }))} keyboardType="phone-pad" />
+                  </View>
+                </View>
 
-            <View style={styles.modalFormRow}>
-              <View style={styles.formField}>
-                <Text style={styles.inputLabel}>Proprietario (nome)</Text>
-                <TextInput style={styles.textInput} placeholder="Nome del proprietario" value={newRest.ownerName} onChangeText={t => setNewRest(p => ({ ...p, ownerName: t }))} />
-              </View>
+                <View style={styles.modalFormRow}>
+                  <View style={styles.formField}>
+                    <Text style={styles.inputLabel}>Proprietario (nome)</Text>
+                    <TextInput style={styles.textInput} placeholder="Nome del proprietario" value={newRest.ownerName} onChangeText={t => setNewRest(p => ({ ...p, ownerName: t }))} />
+                  </View>
 
-              <View style={styles.formField}>
-                <Text style={styles.inputLabel}>Nome Ristorante</Text>
-                <TextInput style={styles.textInput} placeholder="Nome del ristorante" value={newRest.restaurantName} onChangeText={t => setNewRest(p => ({ ...p, restaurantName: t }))} />
-              </View>
-            </View>
+                  <View style={styles.formField}>
+                    <Text style={styles.inputLabel}>Nome Ristorante</Text>
+                    <TextInput style={styles.textInput} placeholder="Nome del ristorante" value={newRest.restaurantName} onChangeText={t => setNewRest(p => ({ ...p, restaurantName: t }))} />
+                  </View>
+                </View>
 
-            <View style={{ marginBottom: mobileTheme.spacing[2] }}>
-              <Text style={styles.inputLabel}>Indirizzo</Text>
-              <TextInput style={styles.textInput} placeholder="Via, città, CAP" value={newRest.address} onChangeText={t => setNewRest(p => ({ ...p, address: t }))} />
-            </View>
+                <View style={{ marginBottom: mobileTheme.spacing[2] }}>
+                  <Text style={styles.inputLabel}>Indirizzo</Text>
+                  <TextInput style={styles.textInput} placeholder="Via, città, CAP" value={newRest.address} onChangeText={t => setNewRest(p => ({ ...p, address: t }))} />
+                </View>
 
-            <View style={styles.editActions}>
-              <TouchableOpacity style={styles.saveButton} onPress={async () => {
-                setCreateError(null);
-                const emailRx = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-                if (!newRest.email || !emailRx.test(newRest.email)) { setCreateError('Email non valida'); return; }
-                if (!newRest.ownerName || !newRest.restaurantName) { setCreateError('Nome proprietario e nome ristorante sono obbligatori'); return; }
-                try { setCreateLoading(true); await adminAPI.createRestaurant(newRest); setShowCreateRest(false); setNewRest({ email: '', ownerName: '', restaurantName: '', phone: '', address: '' }); fetchUsers(); }
-                catch (err) { setCreateError(err.message || 'Errore'); }
-                finally { setCreateLoading(false); }
-              }}>
-                <Text style={styles.btnSaveText}>Crea</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.cancelButton} onPress={() => setShowCreateRest(false)}>
-                <Text style={styles.btnCancelText}>Annulla</Text>
-              </TouchableOpacity>
-            </View>
+                <View style={styles.editActions}>
+                  <TouchableOpacity style={styles.saveButton} onPress={async () => {
+                    setCreateError(null);
+                    const emailRx = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+                    if (!newRest.email || !emailRx.test(newRest.email)) { setCreateError('Email non valida'); return; }
+                    if (!newRest.ownerName || !newRest.restaurantName) { setCreateError('Nome proprietario e nome ristorante sono obbligatori'); return; }
+                    try { setCreateLoading(true); await adminAPI.createRestaurant(newRest); setShowCreateRest(false); setNewRest({ email: '', ownerName: '', restaurantName: '', phone: '', address: '' }); fetchUsers(); }
+                    catch (err) { setCreateError(err.message || 'Errore'); }
+                    finally { setCreateLoading(false); }
+                  }}>
+                    <Text style={styles.btnSaveText}>Crea</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.cancelButton} onPress={() => setShowCreateRest(false)}>
+                    <Text style={styles.btnCancelText}>Annulla</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </ScrollView>
           </KeyboardAvoidingView>

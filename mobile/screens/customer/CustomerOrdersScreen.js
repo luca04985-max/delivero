@@ -312,7 +312,7 @@ export default function CustomerOrdersScreen({ navigation, route: _route }) {
   if (loading)
     return (
       <View style={customerOrdersScreenStyles.loadingContainer}>
-        <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
+        <ActivityIndicator size="large" color={mobileTheme.colors.secondary} />
         <Text style={customerOrdersScreenStyles.loadingText}>Caricamento ordini...</Text>
       </View>
     );
@@ -333,8 +333,8 @@ export default function CustomerOrdersScreen({ navigation, route: _route }) {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={fetchOrders}
-              colors={[mobileTheme.colors.primary]}
-              tintColor={mobileTheme.colors.primary}
+              colors={[mobileTheme.colors.secondary]}
+              tintColor={mobileTheme.colors.secondary}
             />
           }
         >
@@ -352,8 +352,8 @@ export default function CustomerOrdersScreen({ navigation, route: _route }) {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={fetchOrders}
-              colors={[mobileTheme.colors.primary]}
-              tintColor={mobileTheme.colors.primary}
+              colors={[mobileTheme.colors.secondary]}
+              tintColor={mobileTheme.colors.secondary}
             />
           }
           contentContainerStyle={customerOrdersScreenStyles.ordersList}

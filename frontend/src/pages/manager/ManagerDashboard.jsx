@@ -167,15 +167,15 @@ export default function ManagerDashboard({ user }) {
         <p>Gestisci riders, ordini, ticket, fatture e profili dal tuo account</p>
         <div style={{ marginTop: 12 }}>
           <button className="btn btn-primary">
-          <p style={{ margin: 0, fontSize: '2rem' }}>📦</p>
-          <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.8rem' }}>
-            {stats.totalOrders}
-          </p>
-          <p style={{ margin: 0, fontSize: '0.9rem', color: theme.colors.text.secondary }}>Ordini Totali</p>
+            <p style={{ margin: 0, fontSize: '2rem' }}>📦</p>
+            <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.8rem' }}>
+              {stats.totalOrders}
+            </p>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: theme.colors.text.secondary }}>Ordini Totali</p>
           </button>
         </div>
 
-          <div className="card text-center" style={{ backgroundColor: 'var(--admin-bg, #F6F9FF)', borderLeft: '4px solid var(--admin-accent, #FF6B00)' }}>
+        <div className="card text-center" style={{ backgroundColor: 'var(--admin-bg, #F6F9FF)', borderLeft: '4px solid var(--admin-accent, #FF6B00)' }}>
           <p style={{ margin: 0, fontSize: '2rem' }}>⏳</p>
           <p style={{ margin: '0.5rem 0', fontWeight: 'bold', fontSize: '1.8rem' }}>
             {stats.pendingOrders}
@@ -381,7 +381,7 @@ export default function ManagerDashboard({ user }) {
                         margin: 0,
                         fontSize: '1.2rem',
                         fontWeight: 'bold',
-                        color: theme.colors.primary,
+                        color: theme.colors.secondary,
                       }}
                     >
                       €{(order.total_price || 0).toFixed(2)}
@@ -569,7 +569,7 @@ export default function ManagerDashboard({ user }) {
                       margin: '0.5rem 0 0 0',
                       fontSize: '1.5rem',
                       fontWeight: 'bold',
-                      color: theme.colors.primary,
+                      color: theme.colors.secondary,
                     }}
                   >
                     €{invoice.amount.toFixed(2)}

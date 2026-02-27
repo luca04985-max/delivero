@@ -5,7 +5,7 @@ import { theme as canonicalTheme } from '../theme/theme';
 export const Theme = {
   // 🎨 COLORI (sourced)
   colors: {
-    primary: canonicalTheme.colors.primary,
+    primary: canonicaltheme.colors.secondary,
     primaryDark: '#E55A00', // specific darker accent (kept as fallback)
     secondary: canonicalTheme.colors.secondary,
     success: canonicalTheme.colors.success,

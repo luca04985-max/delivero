@@ -33,7 +33,7 @@ export const adminDashboardOrderStyles = StyleSheet.create({
   },
   // tabButtonActive: tab attivo
   tabButtonActive: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
   },
   // tabText: testo tab
   tabText: {
@@ -54,13 +54,13 @@ export const adminDashboardOrderStyles = StyleSheet.create({
   },
   // statusConfirmed: stato confermato
   statusConfirmed: {
-    backgroundColor: mobileTheme.colors.primarySoft,
-    color: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondarySoft,
+    color: mobileTheme.colors.secondary,
   },
   // statusPreparing: stato in preparazione
   statusPreparing: {
-    backgroundColor: mobileTheme.colors.primarySoft,
-    color: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondarySoft,
+    color: mobileTheme.colors.secondary,
   },
   // statusReady: stato pronto
   statusReady: {
@@ -74,8 +74,8 @@ export const adminDashboardOrderStyles = StyleSheet.create({
   },
   // statusInTransit: stato in transito
   statusInTransit: {
-    backgroundColor: mobileTheme.colors.primarySoft,
-    color: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondarySoft,
+    color: mobileTheme.colors.secondary,
   },
   // statusDelivered: stato consegnato
   statusDelivered: {

@@ -58,7 +58,7 @@ export default function OrderSelectionScreen({ navigation, route: _route }) {
       case 'preparing':
         return mobileTheme.colors.manager || mobileTheme.colors.secondary;
       case 'pickup':
-        return mobileTheme.colors.primary;
+        return mobileTheme.colors.secondary;
       case 'in_transit':
         return mobileTheme.colors.success;
       case 'delivered':
@@ -107,11 +107,11 @@ export default function OrderSelectionScreen({ navigation, route: _route }) {
         <Text style={customerOrdersScreenStyles.orderDate}>
           {item.created_at
             ? new Date(item.created_at).toLocaleDateString('it-IT', {
-                day: '2-digit',
-                month: 'short',
-                hour: '2-digit',
-                minute: '2-digit',
-              })
+              day: '2-digit',
+              month: 'short',
+              hour: '2-digit',
+              minute: '2-digit',
+            })
             : 'Data non disponibile'}
         </Text>
         <Text style={customerOrdersScreenStyles.orderTotal}>

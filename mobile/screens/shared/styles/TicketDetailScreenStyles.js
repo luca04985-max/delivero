@@ -55,7 +55,7 @@ export const ticketDetailScreenStyles = StyleSheet.create({
     borderRadius: mobileTheme.borderRadius.md,
     marginBottom: mobileTheme.spacing[3],
     borderLeftWidth: 3,
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
   },
   // responseHeader: header risposta
   responseHeader: {
@@ -79,7 +79,7 @@ export const ticketDetailScreenStyles = StyleSheet.create({
   },
   // authorBadge: badge ruolo autore
   authorBadge: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     paddingHorizontal: mobileTheme.spacing[2],
     paddingVertical: mobileTheme.spacing[1],
     borderRadius: mobileTheme.borderRadius.sm,
@@ -124,7 +124,7 @@ export const ticketDetailScreenStyles = StyleSheet.create({
     padding: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.md,
     borderLeftWidth: 3,
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
   },
   // orderBox: box ordine associato
   orderBox: {
@@ -133,7 +133,7 @@ export const ticketDetailScreenStyles = StyleSheet.create({
     padding: mobileTheme.spacing[4],
     marginBottom: mobileTheme.spacing[5],
     borderLeftWidth: 4,
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
   },
   orderBoxTitle: {
     fontWeight: mobileTheme.typography.fontWeight.bold,
@@ -145,7 +145,7 @@ export const ticketDetailScreenStyles = StyleSheet.create({
     fontSize: mobileTheme.typography.fontSize.xs,
   },
   orderBoxPrice: {
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     marginTop: mobileTheme.spacing[2],
   },
@@ -231,7 +231,7 @@ export const ticketDetailScreenStyles = StyleSheet.create({
     backgroundColor: mobileTheme.colors.success,
   },
   toastInfo: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
   },
 });
 

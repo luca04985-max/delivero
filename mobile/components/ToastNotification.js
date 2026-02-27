@@ -70,7 +70,7 @@ const ToastNotification = ({ visible, message, type = 'info', onHide, duration =
         return mobileTheme.colors.warning;
       case 'info':
       default:
-        return mobileTheme.colors.primary;
+        return mobileTheme.colors.secondary;
     }
   };
 

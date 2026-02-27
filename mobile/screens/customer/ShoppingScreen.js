@@ -29,7 +29,7 @@ export default function ShoppingScreen({ navigation }) {
       // Dati realistici per supermercati e categorie
       const mockCategories = [
         { id: 1, name: 'Frutta e Verdura', emoji: '🥬', color: mobileTheme.colors.success },
-        { id: 2, name: 'Carne e Pesce', emoji: '🥩', color: mobileTheme.colors.primary },
+        { id: 2, name: 'Carne e Pesce', emoji: '🥩', color: mobileTheme.colors.secondary },
         { id: 3, name: 'Latticini', emoji: '🧀', color: mobileTheme.colors.warning },
         { id: 4, name: 'Panetteria', emoji: '🍞', color: mobileTheme.colors.text.secondary },
         { id: 5, name: 'Bevande', emoji: '🥤', color: mobileTheme.colors.customer || mobileTheme.colors.accent },
@@ -37,11 +37,11 @@ export default function ShoppingScreen({ navigation }) {
       ];
 
       const mockBrands = [
-        { id: 1, name: 'Carrefour', emoji: '🏬', color: mobileTheme.colors.primary, products: 1240, rating: 4.2 },
+        { id: 1, name: 'Carrefour', emoji: '🏬', color: mobileTheme.colors.secondary, products: 1240, rating: 4.2 },
         { id: 2, name: 'Conad', emoji: '🏪', color: mobileTheme.colors.accent || mobileTheme.colors.secondary, products: 856, rating: 4.1 },
         { id: 3, name: 'Lidl', emoji: '🏬', color: mobileTheme.colors.warning, products: 920, rating: 4.0 },
         { id: 4, name: 'Esselunga', emoji: '🏪', color: mobileTheme.colors.success, products: 1180, rating: 4.3 },
-        { id: 5, name: 'Coop', emoji: '🛒', color: mobileTheme.colors.primary, products: 980, rating: 4.1 },
+        { id: 5, name: 'Coop', emoji: '🛒', color: mobileTheme.colors.secondary, products: 980, rating: 4.1 },
         { id: 6, name: 'Pam', emoji: '🏪', color: mobileTheme.colors.secondary, products: 720, rating: 3.9 },
       ];
 
@@ -108,7 +108,7 @@ export default function ShoppingScreen({ navigation }) {
   if (loading) {
     return (
       <View style={shoppingScreenStyles.container}>
-        <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
+        <ActivityIndicator size="large" color={mobileTheme.colors.secondary} />
         <Text style={shoppingScreenStyles.loadingText}>Caricamento negozi...</Text>
       </View>
     );

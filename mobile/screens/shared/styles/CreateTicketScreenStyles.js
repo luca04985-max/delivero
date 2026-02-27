@@ -68,7 +68,7 @@ export const createTicketScreenStyles = StyleSheet.create({
     padding: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.lg,
     borderLeftWidth: 4,
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
     marginBottom: mobileTheme.spacing[4],
     ...mobileTheme.shadows.sm,
   },
@@ -76,7 +76,7 @@ export const createTicketScreenStyles = StyleSheet.create({
   orderInfoTitle: {
     fontSize: mobileTheme.typography.fontSize.base,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     marginBottom: mobileTheme.spacing[2],
   },
   // orderInfoText: testo riepilogo
@@ -122,8 +122,8 @@ export const createTicketScreenStyles = StyleSheet.create({
   },
   // ticketTypeButtonSelected: pill tipo selezionato
   ticketTypeButtonSelected: {
-    backgroundColor: mobileTheme.colors.primary,
-    borderColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
+    borderColor: mobileTheme.colors.secondary,
   },
   // ticketTypeButtonText: testo tipo ticket
   ticketTypeButtonText: {
@@ -159,7 +159,7 @@ export const createTicketScreenStyles = StyleSheet.create({
     padding: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.lg,
     borderLeftWidth: 4,
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
     marginBottom: mobileTheme.spacing[3],
   },
   // orderTitle: titolo ordine legacy
@@ -172,7 +172,7 @@ export const createTicketScreenStyles = StyleSheet.create({
   // orderStatus: stato ordine legacy
   orderStatus: {
     fontSize: mobileTheme.typography.fontSize.sm,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: mobileTheme.typography.fontWeight.medium,
   },
   // removeOrderButton: rimuovi ordine legacy
@@ -195,7 +195,7 @@ export const createTicketScreenStyles = StyleSheet.create({
     padding: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.lg,
     borderWidth: 2,
-    borderColor: mobileTheme.colors.primary,
+    borderColor: mobileTheme.colors.secondary,
     borderStyle: 'dashed',
     alignItems: 'center',
     marginBottom: mobileTheme.spacing[2],
@@ -203,7 +203,7 @@ export const createTicketScreenStyles = StyleSheet.create({
   // selectOrderText: testo selezione legacy
   selectOrderText: {
     fontSize: mobileTheme.typography.fontSize.md,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: mobileTheme.typography.fontWeight.medium,
   },
   // helperText: testo helper legacy
@@ -294,7 +294,7 @@ export const createTicketScreenStyles = StyleSheet.create({
     ...mobileTheme.shadows.md,
     elevation: 3,
     borderLeftWidth: 4,
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
   },
   // orderItemContent: contenuto ordine
   orderItemContent: {
@@ -318,7 +318,7 @@ export const createTicketScreenStyles = StyleSheet.create({
   // orderItemStatus: badge stato ordine
   orderItemStatus: {
     fontSize: mobileTheme.typography.fontSize.sm,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: mobileTheme.typography.fontWeight.medium,
     backgroundColor: mobileTheme.colors.background,
     paddingHorizontal: mobileTheme.spacing[2],
@@ -330,7 +330,7 @@ export const createTicketScreenStyles = StyleSheet.create({
   orderItemPrice: {
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     backgroundColor: mobileTheme.colors.background,
     paddingHorizontal: mobileTheme.spacing[3],
     paddingVertical: mobileTheme.spacing[2],

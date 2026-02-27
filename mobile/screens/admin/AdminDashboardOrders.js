@@ -173,7 +173,7 @@ export default function AdminDashboardOrders({ navigation }) {
       <View style={styles.container}>
         {renderHeader()}
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
+          <ActivityIndicator size="large" color={mobileTheme.colors.secondary} />
           <Text style={styles.loadingText}>Caricamento ordini...</Text>
         </View>
       </View>

@@ -62,7 +62,7 @@ export const managerRealTimeMapScreenStyles = StyleSheet.create({
   // headerEta: ETA mostrato nell'header quando collassato (ManagerRealTimeMapScreen.js)
   headerEta: {
     fontSize: mobileTheme.typography.fontSize.sm,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: mobileTheme.typography.fontWeight.semibold,
     marginTop: 2,
   },
@@ -70,7 +70,7 @@ export const managerRealTimeMapScreenStyles = StyleSheet.create({
   // Icona espansione
   expandIcon: {
     fontSize: mobileTheme.typography.fontSize.lg,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: 'bold',
   },
 
@@ -138,7 +138,7 @@ export const managerRealTimeMapScreenStyles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: BASE_SPACE * 3.125,
-    backgroundColor: mobileTheme.colors.primarySoft,
+    backgroundColor: mobileTheme.colors.secondarySoft,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: mobileTheme.spacing[4],

@@ -81,7 +81,7 @@ export default function RiderHomeScreen({ navigation }) {
   if (loading) {
     return (
       <View style={riderHomeScreenStyles.loadingContainer}>
-        <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
+        <ActivityIndicator size="large" color={mobileTheme.colors.secondary} />
       </View>
     );
   }

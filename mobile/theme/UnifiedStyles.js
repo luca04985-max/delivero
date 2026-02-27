@@ -99,7 +99,7 @@ export const unifiedStyles = StyleSheet.create({
   },
   // activeTabText: label tab attiva
   activeTabText: {
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: FONT_WEIGHTS.bold,
   },
 
@@ -115,12 +115,12 @@ export const unifiedStyles = StyleSheet.create({
 
   // card: card standard per liste (usa primarySoft per background)
   card: {
-    backgroundColor: mobileTheme.colors.primarySoft,
+    backgroundColor: mobileTheme.colors.secondarySoft,
     padding: mobileTheme.spacing[2],
     borderRadius: mobileTheme.borderRadius.md,
     marginBottom: mobileTheme.spacing[3],
     borderLeftWidth: 3,
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
   },
   // activeCard: card evidenziata/attiva
   activeCard: {
@@ -129,7 +129,7 @@ export const unifiedStyles = StyleSheet.create({
     borderRadius: mobileTheme.borderRadius.lg,
     marginBottom: mobileTheme.spacing[4],
     borderLeftWidth: 5,
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
     ...mobileTheme.shadows.sm,
   },
   // cardTitle: titolo card standard
@@ -215,7 +215,7 @@ export const unifiedStyles = StyleSheet.create({
   orderTotal: {
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: FONT_WEIGHTS.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     textAlign: 'right',
     marginTop: mobileTheme.spacing[2],
   },
@@ -253,7 +253,7 @@ export const unifiedStyles = StyleSheet.create({
     marginVertical: mobileTheme.spacing[2],
     borderRadius: mobileTheme.borderRadius.lg,
     borderLeftWidth: 4,
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
     ...mobileTheme.shadows.soft,
   },
   // statusSeparatorContent: contenuto separatore
@@ -289,7 +289,7 @@ export const unifiedStyles = StyleSheet.create({
   statusSeparatorCount: {
     fontSize: mobileTheme.typography.fontSize.md,
     fontWeight: FONT_WEIGHTS.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     marginRight: mobileTheme.spacing[2],
     backgroundColor: mobileTheme.colors.background,
     paddingHorizontal: mobileTheme.spacing[2],
@@ -307,7 +307,7 @@ export const unifiedStyles = StyleSheet.create({
 
   // button: bottone primario standard
   button: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     paddingVertical: mobileTheme.spacing[3],
     paddingHorizontal: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.md,
@@ -324,7 +324,7 @@ export const unifiedStyles = StyleSheet.create({
   },
   // trackButton: bottone tracking
   trackButton: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     paddingVertical: mobileTheme.spacing[3],
     paddingHorizontal: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.md,
@@ -342,7 +342,7 @@ export const unifiedStyles = StyleSheet.create({
   },
   // editButton: bottone azione modifica
   editButton: {
-    backgroundColor: mobileTheme.colors.primarySoft,
+    backgroundColor: mobileTheme.colors.secondarySoft,
     paddingVertical: mobileTheme.spacing[3],
     paddingHorizontal: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.md,
@@ -447,7 +447,7 @@ export const unifiedStyles = StyleSheet.create({
     marginBottom: mobileTheme.spacing[4],
     ...mobileTheme.shadows.medium,
     borderTopWidth: 4,
-    borderTopColor: mobileTheme.colors.primary,
+    borderTopColor: mobileTheme.colors.secondary,
   },
   // statValue: valore statistica
   statValue: {

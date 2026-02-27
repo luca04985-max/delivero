@@ -211,7 +211,7 @@ export default function CustomerTicketsScreen({ navigation }) {
   if (loading) {
     return (
       <View style={customerTicketsScreenStyles.container}>
-        <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
+        <ActivityIndicator size="large" color={mobileTheme.colors.secondary} />
         <Text style={customerTicketsScreenStyles.loadingText}>Caricamento ticket...</Text>
       </View>
     );

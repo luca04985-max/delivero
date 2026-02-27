@@ -14,7 +14,7 @@ export const adminDashboardUsersStyles = StyleSheet.create({
 
   // roleCustomer: bordo colore ruolo customer
   roleCustomer: {
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
   },
   // roleRider: bordo colore ruolo rider
   roleRider: {
@@ -82,9 +82,9 @@ export const adminDashboardUsersStyles = StyleSheet.create({
   // userRole: badge ruolo utente
   userRole: {
     fontSize: mobileTheme.typography.fontSize.sm,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: mobileTheme.typography.fontWeight.medium,
-    backgroundColor: mobileTheme.colors.primarySoft,
+    backgroundColor: mobileTheme.colors.secondarySoft,
     paddingHorizontal: mobileTheme.spacing[2],
     paddingVertical: mobileTheme.spacing[1],
     borderRadius: mobileTheme.borderRadius.sm,
@@ -92,7 +92,7 @@ export const adminDashboardUsersStyles = StyleSheet.create({
   },
   // userRoleInline: inline role text color
   userRoleInline: {
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
   },
   // userStatus: stato utente
   userStatus: {
@@ -118,7 +118,7 @@ export const adminDashboardUsersStyles = StyleSheet.create({
   userStatValue: {
     fontSize: mobileTheme.typography.fontSize.md,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     marginBottom: mobileTheme.spacing[1],
   },
   // userStatLabel: label statistica
@@ -138,7 +138,7 @@ export const adminDashboardUsersStyles = StyleSheet.create({
   },
   // btnEdit: bottone modifica utente
   btnEdit: {
-    backgroundColor: mobileTheme.colors.primary, // Arancione per modifica
+    backgroundColor: mobileTheme.colors.secondary, // Arancione per modifica
     paddingVertical: mobileTheme.spacing[2],
     paddingHorizontal: mobileTheme.spacing[3],
     borderRadius: mobileTheme.borderRadius.md,
@@ -148,7 +148,7 @@ export const adminDashboardUsersStyles = StyleSheet.create({
     marginRight: mobileTheme.spacing[2],
     ...mobileTheme.shadows.soft, // Ombra leggera per profondità
     borderWidth: 1,
-    borderColor: mobileTheme.colors.primaryDark,
+    borderColor: mobileTheme.colors.secondaryDark,
   },
   // btnDelete: bottone elimina utente
   btnDelete: {
@@ -194,7 +194,7 @@ export const adminDashboardUsersStyles = StyleSheet.create({
   },
   // roleBadgeCustomer: badge customer
   roleBadgeCustomer: {
-    backgroundColor: mobileTheme.colors.primarySoft,
+    backgroundColor: mobileTheme.colors.secondarySoft,
   },
   // roleBadgeRider: badge rider
   roleBadgeRider: {
@@ -330,7 +330,7 @@ export const adminDashboardUsersStyles = StyleSheet.create({
     marginBottom: mobileTheme.spacing[2],
   },
   saveButton: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     paddingVertical: mobileTheme.spacing[3],
     paddingHorizontal: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.md,
@@ -389,8 +389,8 @@ export const adminDashboardUsersStyles = StyleSheet.create({
   },
   // filterPillActive: pill filtro attiva
   filterPillActive: {
-    backgroundColor: mobileTheme.colors.primary,
-    borderColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
+    borderColor: mobileTheme.colors.secondary,
   },
   // filterText: testo filtro
   filterText: {

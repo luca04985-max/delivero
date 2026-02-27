@@ -29,8 +29,8 @@ export const adminDashboardTicketsStyles = StyleSheet.create({
   },
   // statusResolved: ticket risolto
   statusResolved: {
-    backgroundColor: mobileTheme.colors.primarySoft,
-    color: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondarySoft,
+    color: mobileTheme.colors.secondary,
   },
 
   // priorityHigh: priorità alta
@@ -45,8 +45,8 @@ export const adminDashboardTicketsStyles = StyleSheet.create({
   },
   // priorityLow: priorità bassa
   priorityLow: {
-    backgroundColor: mobileTheme.colors.primarySoft,
-    color: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondarySoft,
+    color: mobileTheme.colors.secondary,
   },
 
   // ticketMeta: riga meta (tipo/data)
@@ -70,17 +70,17 @@ export const adminDashboardTicketsStyles = StyleSheet.create({
 
   // orderInfo: riepilogo ordine nel ticket
   orderInfo: {
-    backgroundColor: mobileTheme.colors.primarySoft,
+    backgroundColor: mobileTheme.colors.secondarySoft,
     padding: mobileTheme.spacing[3],
     borderRadius: mobileTheme.borderRadius.md,
     marginBottom: mobileTheme.spacing[3],
     borderLeftWidth: 3,
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
   },
   // orderLabel: label ordine
   orderLabel: {
     fontSize: mobileTheme.typography.fontSize.sm,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: FONT_WEIGHTS.bold,
     marginBottom: mobileTheme.spacing[1],
   },
@@ -192,7 +192,7 @@ export const adminDashboardTicketsStyles = StyleSheet.create({
   },
   // statusDotResolved: pallino stato risolto
   statusDotResolved: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
   },
 
   // timestampContainer: riga timestamp

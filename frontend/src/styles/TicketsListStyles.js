@@ -49,13 +49,13 @@ export const ticketsListStyles = {
     cursor: 'pointer',
     transition: 'all 0.3s ease',
     ':hover': {
-      borderColor: theme.colors.primary,
-      boxShadow: `0 0 0 3px ${theme.colors.primary}1A`,
+      borderColor: theme.colors.secondary,
+      boxShadow: `0 0 0 3px ${theme.colors.secondary}1A`,
     },
     ':focus': {
       outline: 'none',
-      borderColor: theme.colors.primary,
-      boxShadow: `0 0 0 3px ${theme.colors.primary}1A`,
+      borderColor: theme.colors.secondary,
+      boxShadow: `0 0 0 3px ${theme.colors.secondary}1A`,
     },
   },
 
@@ -74,7 +74,7 @@ export const ticketsListStyles = {
     width: '40px',
     height: '40px',
     border: `4px solid ${theme.colors.surface}`,
-    borderTop: `4px solid ${theme.colors.primary}`,
+    borderTop: `4px solid ${theme.colors.secondary}`,
     borderRadius: '50%',
     animation: 'spin 1s linear infinite',
   },
@@ -122,7 +122,7 @@ export const ticketsListStyles = {
     ':hover': {
       transform: 'translateY(-4px)',
       boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
-      borderColor: theme.colors.primary,
+      borderColor: theme.colors.secondary,
     },
     ':before': {
       content: '""',
@@ -131,7 +131,7 @@ export const ticketsListStyles = {
       left: '0',
       width: '4px',
       height: '100%',
-      background: `linear-gradient(135deg, ${theme.colors.primary}, ${theme.colors.primary})`,
+      background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.secondary})`,
     },
   },
 
@@ -349,14 +349,14 @@ export const ticketsListStyles = {
     transition: 'all 0.3s ease',
     ':focus': {
       outline: 'none',
-      borderColor: theme.colors.primary,
+      borderColor: theme.colors.secondary,
       boxShadow: '0 0 0 3px rgba(255, 107, 0, 0.1)',
     },
   },
 
   submitComment: {
     padding: '12px 24px',
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.secondary,
     color: theme.colors.white,
     border: 'none',
     borderRadius: '8px',
@@ -366,7 +366,7 @@ export const ticketsListStyles = {
     transition: 'all 0.3s ease',
     alignSelf: 'flex-start',
     ':hover': {
-      backgroundColor: theme.colors.primaryDark,
+      backgroundColor: theme.colors.secondaryDark,
       transform: 'translateY(-2px)',
       boxShadow: '0 4px 12px rgba(255, 107, 0, 0.3)',
     },

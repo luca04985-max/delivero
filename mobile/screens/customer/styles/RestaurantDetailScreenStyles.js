@@ -10,7 +10,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
 
   // header: barra superiore dettaglio ristorante
   header: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     paddingHorizontal: mobileTheme.spacing[4],
     paddingVertical: mobileTheme.spacing[3],
     paddingTop: mobileTheme.spacing[4],
@@ -61,8 +61,8 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
   },
   // categoryTabActive: pill categoria attiva
   categoryTabActive: {
-    backgroundColor: mobileTheme.colors.primary,
-    borderColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
+    borderColor: mobileTheme.colors.secondary,
   },
   // categoryTabText: testo categoria
   categoryTabText: {
@@ -119,7 +119,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
   productPrice: {
     fontSize: mobileTheme.typography.fontSize.sm,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
   },
   // allergens: avviso allergeni
   allergens: {
@@ -200,7 +200,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
   priceValue: {
     fontSize: mobileTheme.typography.fontSize.base,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
   },
   // allergenBlock: box allergeni
   allergenBlock: {
@@ -262,8 +262,8 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
   },
   // optionButtonSelected: pill opzione selezionata
   optionButtonSelected: {
-    borderColor: mobileTheme.colors.primary,
-    backgroundColor: mobileTheme.colors.primarySoft,
+    borderColor: mobileTheme.colors.secondary,
+    backgroundColor: mobileTheme.colors.secondarySoft,
   },
   // optionText: testo opzione
   optionText: {
@@ -272,7 +272,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
   },
   // optionTextSelected: testo opzione selezionata
   optionTextSelected: {
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: mobileTheme.typography.fontWeight.semibold,
   },
   // checkboxButton: checkbox opzione
@@ -286,8 +286,8 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
   },
   // checkboxButtonSelected: checkbox selezionato
   checkboxButtonSelected: {
-    borderColor: mobileTheme.colors.primary,
-    backgroundColor: mobileTheme.colors.primarySoft,
+    borderColor: mobileTheme.colors.secondary,
+    backgroundColor: mobileTheme.colors.secondarySoft,
   },
   // checkboxText: testo checkbox
   checkboxText: {
@@ -352,7 +352,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
   quantityButtonText: {
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
   },
   // quantityValue: valore quantità
   quantityValue: {
@@ -371,7 +371,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
   },
   // addToCartButton: CTA aggiungi al carrello
   addToCartButton: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     borderRadius: mobileTheme.borderRadius.md,
     paddingVertical: mobileTheme.spacing[4],
     alignItems: 'center',
@@ -445,7 +445,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
   rating: {
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     marginLeft: BASE_SPACE * 0.500,
   },
   // deliveryInfo: info consegna
@@ -512,11 +512,11 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
   itemPrice: {
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
   },
   // addButton: bottone aggiungi item
   addButton: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     width: 30,
     height: 30,
     borderRadius: BASE_SPACE * 1.875,
@@ -575,17 +575,17 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
   totalValue: {
     fontSize: mobileTheme.typography.fontSize.xl,
     fontWeight: mobileTheme.typography.fontWeight.black,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
   },
   // checkoutButton: CTA checkout
   checkoutButton: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     paddingVertical: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.xl,
     alignItems: 'center',
     marginTop: mobileTheme.spacing[4],
     ...mobileTheme.shadows.medium,
-    shadowColor: mobileTheme.colors.primary,
+    shadowColor: mobileTheme.colors.secondary,
   },
   // checkoutButtonText: testo CTA checkout
   checkoutButtonText: {
@@ -607,7 +607,7 @@ export const restaurantDetailScreenStyles = StyleSheet.create({
   },
   // manageButton: stile pulsante gestisci inventory
   manageButton: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     paddingVertical: mobileTheme.spacing[2],
     paddingHorizontal: mobileTheme.spacing[3],
     borderRadius: mobileTheme.borderRadius.md,

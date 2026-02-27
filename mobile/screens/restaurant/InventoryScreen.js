@@ -50,7 +50,7 @@ export default function InventoryScreen({ route, navigation }) {
     <View style={styles.container}>
       <Text style={styles.headerTitle}>Inventory - Restaurant #{restaurantId}</Text>
       {loading ? (
-        <ActivityIndicator color={mobileTheme.colors.primary} />
+        <ActivityIndicator color={mobileTheme.colors.secondary} />
       ) : (
         <FlatList data={items} keyExtractor={i => String(i.id)} renderItem={renderItem} />
       )}

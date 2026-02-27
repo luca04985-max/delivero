@@ -67,7 +67,7 @@ export const customerHomeScreenStyles = StyleSheet.create({
 
   // categoryPill: pill categoria (CustomerHomeScreen.js)
   categoryPill: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     paddingHorizontal: mobileTheme.spacing[5],
     paddingVertical: mobileTheme.spacing[3],
     borderRadius: mobileTheme.borderRadius.full,
@@ -119,7 +119,7 @@ export const customerHomeScreenStyles = StyleSheet.create({
   },
   // badgeText: testo badge (CustomerHomeScreen.js)
   badgeText: {
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     fontSize: mobileTheme.typography.fontSize.sm,
   },

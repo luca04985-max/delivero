@@ -77,10 +77,10 @@ function CustomerTabs({ user }) {
     <Tab.Navigator
       screenOptions={({ navigation }) => ({
         headerShown: true,
-        tabBarActiveTintColor: mobileTheme.colors.primary,
+        tabBarActiveTintColor: mobileTheme.colors.secondary,
         tabBarInactiveTintColor: mobileTheme.colors.text.primary,
         headerStyle: {
-          backgroundColor: mobileTheme.colors.primary,
+          backgroundColor: mobileTheme.colors.secondary,
         },
         headerTintColor: mobileTheme.colors.white,
         headerTitleStyle: {
@@ -162,7 +162,7 @@ function CustomerStack({ onLogout, user }) {
         component={CustomerOrdersScreen}
         options={{
           title: 'I miei ordini',
-          headerStyle: { backgroundColor: mobileTheme.colors.primary },
+          headerStyle: { backgroundColor: mobileTheme.colors.secondary },
           headerTintColor: mobileTheme.colors.white,
           headerTitleStyle: { fontWeight: '700' },
         }}
@@ -174,7 +174,7 @@ function CustomerStack({ onLogout, user }) {
         )}
         options={{
           title: 'Profilo',
-          headerStyle: { backgroundColor: mobileTheme.colors.primary },
+          headerStyle: { backgroundColor: mobileTheme.colors.secondary },
           headerTintColor: mobileTheme.colors.white,
           headerTitleStyle: { fontWeight: '700' },
         }}
@@ -184,7 +184,7 @@ function CustomerStack({ onLogout, user }) {
         component={PaymentMethodsScreen}
         options={{
           title: 'Metodi di pagamento',
-          headerStyle: { backgroundColor: mobileTheme.colors.primary },
+          headerStyle: { backgroundColor: mobileTheme.colors.secondary },
           headerTintColor: mobileTheme.colors.white,
           headerTitleStyle: { fontWeight: '700' },
         }}
@@ -194,7 +194,7 @@ function CustomerStack({ onLogout, user }) {
         component={CustomerTicketsScreen}
         options={{
           title: '🎫 I miei ticket',
-          headerStyle: { backgroundColor: mobileTheme.colors.primary },
+          headerStyle: { backgroundColor: mobileTheme.colors.secondary },
           headerTintColor: mobileTheme.colors.white,
           headerTitleStyle: { fontWeight: '700' },
         }}
@@ -210,7 +210,7 @@ function CustomerStack({ onLogout, user }) {
         options={{
           title: '🍽️ Menu',
           headerStyle: {
-            backgroundColor: mobileTheme.colors.primary,
+            backgroundColor: mobileTheme.colors.secondary,
           },
           headerTintColor: mobileTheme.colors.white,
           headerTitleStyle: {
@@ -224,7 +224,7 @@ function CustomerStack({ onLogout, user }) {
         options={{
           title: '📍 Tracciamento Ordine',
           headerStyle: {
-            backgroundColor: mobileTheme.colors.primary,
+            backgroundColor: mobileTheme.colors.secondary,
           },
           headerTintColor: mobileTheme.colors.white,
           headerTitleStyle: {
@@ -238,7 +238,7 @@ function CustomerStack({ onLogout, user }) {
         options={{
           title: '🗺️ Tracking Live',
           headerStyle: {
-            backgroundColor: mobileTheme.colors.primary,
+            backgroundColor: mobileTheme.colors.secondary,
           },
           headerTintColor: mobileTheme.colors.white,
           headerTitleStyle: {
@@ -252,7 +252,7 @@ function CustomerStack({ onLogout, user }) {
         options={{
           title: '📋 Seleziona Ordine',
           headerStyle: {
-            backgroundColor: mobileTheme.colors.primary,
+            backgroundColor: mobileTheme.colors.secondary,
           },
           headerTintColor: mobileTheme.colors.white,
           headerTitleStyle: {
@@ -266,7 +266,7 @@ function CustomerStack({ onLogout, user }) {
         options={{
           title: '📝 Nuovo Ticket',
           headerStyle: {
-            backgroundColor: mobileTheme.colors.primary,
+            backgroundColor: mobileTheme.colors.secondary,
           },
           headerTintColor: mobileTheme.colors.white,
           headerTitleStyle: {
@@ -280,7 +280,7 @@ function CustomerStack({ onLogout, user }) {
         options={{
           title: '🎫 Dettagli Ticket',
           headerStyle: {
-            backgroundColor: mobileTheme.colors.primary,
+            backgroundColor: mobileTheme.colors.secondary,
           },
           headerTintColor: mobileTheme.colors.white,
           headerTitleStyle: {
@@ -420,7 +420,7 @@ function ManagerStack({ token, user, onLogout }) {
       screenOptions={({ navigation }) => ({
         headerShown: true,
         headerStyle: {
-          backgroundColor: mobileTheme.colors.primary,
+          backgroundColor: mobileTheme.colors.secondary,
         },
         headerTintColor: mobileTheme.colors.white,
         headerTitleStyle: {
@@ -451,7 +451,7 @@ function ManagerStack({ token, user, onLogout }) {
         )}
         options={{
           title: 'Profilo',
-          headerStyle: { backgroundColor: mobileTheme.colors.primary },
+          headerStyle: { backgroundColor: mobileTheme.colors.secondary },
           headerTintColor: mobileTheme.colors.white,
           headerTitleStyle: { fontWeight: '700' },
         }}
@@ -491,7 +491,7 @@ function RestaurantStack({ token, user, onLogout }) {
       screenOptions={({ navigation }) => ({
         headerShown: true,
         headerStyle: {
-          backgroundColor: mobileTheme.colors.primary,
+          backgroundColor: mobileTheme.colors.secondary,
         },
         headerTintColor: mobileTheme.colors.white,
         headerTitleStyle: {
@@ -526,7 +526,7 @@ function RestaurantStack({ token, user, onLogout }) {
         )}
         options={{
           title: 'Profilo',
-          headerStyle: { backgroundColor: mobileTheme.colors.primary },
+          headerStyle: { backgroundColor: mobileTheme.colors.secondary },
           headerTintColor: mobileTheme.colors.white,
           headerTitleStyle: { fontWeight: '700' },
         }}
@@ -657,7 +657,7 @@ export default function App() {
   if (state.isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
+        <ActivityIndicator size="large" color={mobileTheme.colors.secondary} />
       </View>
     );
   }

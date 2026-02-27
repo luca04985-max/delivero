@@ -18,7 +18,7 @@ import { customerHomeScreenStyles } from './styles/CustomerHomeScreenStyles';
 
 export default function CustomerHomeScreen({ navigation }) {
   const [searchText, setSearchText] = useState('');
-  
+
   const [categories, setCategories] = useState([]);
   const [viewMode, setViewMode] = useState('list'); // 'list' o 'map'
   const [userLocation, setUserLocation] = useState(null);
@@ -114,7 +114,7 @@ export default function CustomerHomeScreen({ navigation }) {
       const res = await makeRequest('/restaurants');
       if (res) setRestaurants(res);
 
-        // saved favorites not used in UI currently
+      // saved favorites not used in UI currently
     } catch (e) {
       console.error('Error loading data:', e);
     } finally {
@@ -156,7 +156,7 @@ export default function CustomerHomeScreen({ navigation }) {
                     <span style="color: ${mobileTheme.colors.text.secondary};">${rest.category}</span><br/>
                     <button 
                         onclick="window.ReactNativeWebView.postMessage('restaurant:${rest.id}')"
-                        style="margin-top: 8px; background: ${mobileTheme.colors.primary}; color: white; border: none; padding: 5px 10px; border-radius: 5px; width: 100%;"
+                        style="margin-top: 8px; background: ${mobileTheme.colors.secondary}; color: white; border: none; padding: 5px 10px; border-radius: 5px; width: 100%;"
                     >
                         Vedi Menu
                     </button>
@@ -253,7 +253,7 @@ export default function CustomerHomeScreen({ navigation }) {
           {/* 3. Categorie Food (Orizzontali) */}
           <View style={customerHomeScreenStyles.section}>
             <Text style={customerHomeScreenStyles.sectionTitle}>Categorie Food</Text>
-              <FlatList
+            <FlatList
               data={categories}
               horizontal
               showsHorizontalScrollIndicator={false}

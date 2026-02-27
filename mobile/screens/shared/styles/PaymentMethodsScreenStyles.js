@@ -58,7 +58,7 @@ export const paymentMethodsScreenStyles = StyleSheet.create({
   },
   // checkout button
   checkoutButton: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     paddingVertical: mobileTheme.spacing[3],
     paddingHorizontal: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.md,

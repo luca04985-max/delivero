@@ -681,7 +681,7 @@ export default function CartScreen({ navigation }) {
             <View style={styles.mapContainer}>
               {loadingLocation ? (
                 <View style={styles.mapLoader || { flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                  <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
+                  <ActivityIndicator size="large" color={mobileTheme.colors.secondary} />
                   <Text style={styles.mapLoadingText}>Caricamento mappa...</Text>
                 </View>
               ) : (

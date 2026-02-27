@@ -61,7 +61,7 @@ export default function AdminDashboardTickets({ navigation: _navigation }) {
       case 'closed':
         return mobileTheme.colors.text.tertiary;
       case 'resolved':
-        return mobileTheme.colors.primary;
+        return mobileTheme.colors.secondary;
       default:
         return mobileTheme.colors.text.secondary;
     }
@@ -190,7 +190,7 @@ export default function AdminDashboardTickets({ navigation: _navigation }) {
       <View style={styles.container}>
         {renderHeader()}
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
+          <ActivityIndicator size="large" color={mobileTheme.colors.secondary} />
           <Text style={styles.loadingText}>Caricamento ticket...</Text>
         </View>
       </View>
@@ -248,23 +248,23 @@ export default function AdminDashboardTickets({ navigation: _navigation }) {
                     <Text style={styles.fieldValue}>{selectedTicket?.description || '—'}</Text>
                   </View>
 
-                    <View style={styles.fieldRow}>
-                      <Text style={styles.fieldLabel}>Tipo:</Text>
-                      <View
-                        style={[
-                          styles.priorityBadge,
-                          selectedTicket?.type === 'bug'
-                            ? styles.priorityHigh
-                            : selectedTicket?.type === 'complaint'
+                  <View style={styles.fieldRow}>
+                    <Text style={styles.fieldLabel}>Tipo:</Text>
+                    <View
+                      style={[
+                        styles.priorityBadge,
+                        selectedTicket?.type === 'bug'
+                          ? styles.priorityHigh
+                          : selectedTicket?.type === 'complaint'
                             ? styles.priorityMedium
                             : styles.priorityLow,
-                        ]}
-                      >
-                        <Text style={styles.priorityText}>
-                          {selectedTicket?.type?.toUpperCase() || '—'}
-                        </Text>
-                      </View>
+                      ]}
+                    >
+                      <Text style={styles.priorityText}>
+                        {selectedTicket?.type?.toUpperCase() || '—'}
+                      </Text>
                     </View>
+                  </View>
                 </View>
 
                 <View style={styles.infoSection}>
@@ -278,8 +278,8 @@ export default function AdminDashboardTickets({ navigation: _navigation }) {
                         selectedTicket?.status === 'open'
                           ? styles.statusOpen
                           : selectedTicket?.status === 'resolved'
-                          ? styles.statusResolved
-                          : styles.statusInProgress,
+                            ? styles.statusResolved
+                            : styles.statusInProgress,
                       ]}
                     >
                       <Text style={styles.priorityText}>
@@ -296,8 +296,8 @@ export default function AdminDashboardTickets({ navigation: _navigation }) {
                         selectedTicket?.priority === 'high'
                           ? styles.priorityHigh
                           : selectedTicket?.priority === 'medium'
-                          ? styles.priorityMedium
-                          : styles.priorityLow,
+                            ? styles.priorityMedium
+                            : styles.priorityLow,
                       ]}
                     >
                       <Text style={styles.priorityText}>

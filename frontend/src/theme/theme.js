@@ -359,8 +359,8 @@ export const webStyles = {
     ...theme.forms.input.web,
     '&:focus': {
       outline: 'none',
-      borderColor: theme.colors.primary,
-      boxShadow: `0 0 0 3px ${theme.colors.primary}20`,
+      borderColor: theme.colors.secondary,
+      boxShadow: `0 0 0 3px ${theme.colors.secondary}20`,
     },
     '&:disabled': {
       backgroundColor: theme.colors.background,
@@ -450,7 +450,7 @@ export const mobileStyles = {
   buttonPrimary: {
     ...theme.buttons.base.mobile,
     ...theme.buttons.primary.mobile,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.secondary,
   },
 
   buttonSecondary: {
@@ -462,7 +462,7 @@ export const mobileStyles = {
   buttonOutline: {
     ...theme.buttons.base.mobile,
     ...theme.buttons.outline.mobile,
-    borderColor: theme.colors.primary,
+    borderColor: theme.colors.secondary,
   },
 
   buttonDanger: {

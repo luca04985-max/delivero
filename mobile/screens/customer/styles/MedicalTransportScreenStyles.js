@@ -141,14 +141,14 @@ export const medicalTransportScreenStyles = StyleSheet.create({
   optionPrice: {
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
   },
 
   // bookButton: CTA prenotazione
   bookButton: {
     ...unifiedStyles.button,
     marginTop: mobileTheme.spacing[4],
-    shadowColor: mobileTheme.colors.primary,
+    shadowColor: mobileTheme.colors.secondary,
   },
   // bookButtonText: label CTA prenotazione
   bookButtonText: unifiedStyles.buttonText,

@@ -17,7 +17,7 @@ const ownerStyles = StyleSheet.create({
   },
   statValue: { fontSize: mobileTheme.typography.fontSize.lg, fontWeight: mobileTheme.typography.fontWeight.bold, color: mobileTheme.colors.text.primary },
   statLabel: { color: mobileTheme.colors.text.secondary },
-  primaryButton: { backgroundColor: mobileTheme.colors.primary, paddingVertical: 12, paddingHorizontal: 16, borderRadius: mobileTheme.borderRadius.md, marginBottom: mobileTheme.spacing[3] },
+  primaryButton: { backgroundColor: mobileTheme.colors.secondary, paddingVertical: 12, paddingHorizontal: 16, borderRadius: mobileTheme.borderRadius.md, marginBottom: mobileTheme.spacing[3] },
   secondaryButton: { backgroundColor: mobileTheme.colors.secondary, paddingVertical: 12, paddingHorizontal: 16, borderRadius: mobileTheme.borderRadius.md },
   buttonText: { color: mobileTheme.colors.white, fontWeight: mobileTheme.typography.fontWeight.bold, textAlign: 'center' },
 });
@@ -62,7 +62,7 @@ export default function OwnerDashboard({ navigation, route }) {
         </Text>
 
         {loading ? (
-          <ActivityIndicator size="small" color={mobileTheme.colors.primary} />
+          <ActivityIndicator size="small" color={mobileTheme.colors.secondary} />
         ) : (
           <View style={ownerStyles.statsRow}>
             <View style={ownerStyles.statCard}>

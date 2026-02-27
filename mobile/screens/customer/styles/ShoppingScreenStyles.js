@@ -121,7 +121,7 @@ export const shoppingScreenStyles = StyleSheet.create({
 
   // deliveryBadge: badge consegna (ShoppingScreen.js)
   deliveryBadge: {
-    backgroundColor: mobileTheme.colors.primarySoft,
+    backgroundColor: mobileTheme.colors.secondarySoft,
     paddingHorizontal: BASE_SPACE * 1,
     paddingVertical: BASE_SPACE * 0.500,
     borderRadius: BASE_SPACE * 0.750,
@@ -130,7 +130,7 @@ export const shoppingScreenStyles = StyleSheet.create({
   },
   // deliveryText: testo badge consegna (ShoppingScreen.js)
   deliveryText: {
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontSize: FONT_SIZE_BASE * 0.625,
     fontWeight: FONT_WEIGHTS.bold,
   },
@@ -147,7 +147,7 @@ export const shoppingScreenStyles = StyleSheet.create({
     position: 'absolute',
     top: -5,
     right: -5,
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     borderRadius: 10,
     width: 20,
     height: 20,

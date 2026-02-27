@@ -36,7 +36,7 @@ export const formStyles = {
   },
 
   inputFocus: {
-    borderColor: Theme.colors.primary,
+    borderColor: theme.colors.secondary,
     boxShadow: `0 0 0 3px ${Theme.getColor('primary', 0.1)}`,
   },
 
@@ -82,7 +82,7 @@ export const formStyles = {
   submitButton: {
     width: '100%',
     padding: '14px 24px',
-    background: Theme.colors.primary,
+    background: theme.colors.secondary,
     color: 'white',
     border: 'none',
     borderRadius: Theme.borderRadius.md,
@@ -94,7 +94,7 @@ export const formStyles = {
   },
 
   submitButtonHover: {
-    background: Theme.colors.primaryDark,
+    background: theme.colors.secondaryDark,
     transform: 'translateY(-2px)',
     boxShadow: Theme.shadows.buttonHover,
   },
@@ -110,8 +110,8 @@ export const formStyles = {
     width: '100%',
     padding: '14px 24px',
     background: 'transparent',
-    color: Theme.colors.primary,
-    border: `2px solid ${Theme.colors.primary}`,
+    color: theme.colors.secondary,
+    border: `2px solid ${theme.colors.secondary}`,
     borderRadius: Theme.borderRadius.md,
     fontSize: '16px',
     fontWeight: 600,
@@ -161,7 +161,7 @@ export const formStyles = {
 
   // Link form
   formLink: {
-    color: Theme.colors.primary,
+    color: theme.colors.secondary,
     textDecoration: 'none',
     fontWeight: 500,
     transition: Theme.transitions.fast,
@@ -201,7 +201,7 @@ export const formStyles = {
   checkboxInput: {
     width: '18px',
     height: '18px',
-    accentColor: Theme.colors.primary,
+    accentColor: theme.colors.secondary,
   },
 
   checkboxLabel: {

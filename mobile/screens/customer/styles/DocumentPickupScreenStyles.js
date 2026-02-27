@@ -61,15 +61,15 @@ export const documentPickupStyles = StyleSheet.create({
     backgroundColor: mobileTheme.colors.white,
   },
   documentOptionSelected: {
-    borderColor: mobileTheme.colors.primary,
-    backgroundColor: mobileTheme.colors.primarySoft,
+    borderColor: mobileTheme.colors.secondary,
+    backgroundColor: mobileTheme.colors.secondarySoft,
   },
   documentOptionText: {
     color: mobileTheme.colors.text.primary,
     fontWeight: FONT_WEIGHTS.normal,
   },
   documentOptionTextSelected: {
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: FONT_WEIGHTS.semibold,
   },
   input: {
@@ -95,7 +95,7 @@ export const documentPickupStyles = StyleSheet.create({
   },
   submitButton: {
     padding: mobileTheme.spacing[4],
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     borderRadius: mobileTheme.borderRadius.md,
     alignItems: 'center',
     marginBottom: mobileTheme.spacing[5],
@@ -156,8 +156,8 @@ export const documentPickupScreenStyles = StyleSheet.create({
   },
   // documentTypeButtonSelected: bottone tipo selezionato (DocumentPickupScreen.js)
   documentTypeButtonSelected: {
-    backgroundColor: mobileTheme.colors.primary,
-    borderColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
+    borderColor: mobileTheme.colors.secondary,
   },
   // documentTypeButtonText: testo tipo documento (DocumentPickupScreen.js)
   documentTypeButtonText: {
@@ -214,7 +214,7 @@ export const documentPickupScreenStyles = StyleSheet.create({
   trackingNumber: {
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     marginBottom: mobileTheme.spacing[2],
   },
   // trackingLabel: label tracking (DocumentPickupScreen.js)
@@ -226,7 +226,7 @@ export const documentPickupScreenStyles = StyleSheet.create({
   // submitButton: bottone submit (DocumentPickupScreen.js)
   submitButton: {
     padding: mobileTheme.spacing[4],
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     borderRadius: mobileTheme.borderRadius.md,
     alignItems: 'center',
     marginBottom: mobileTheme.spacing[5],

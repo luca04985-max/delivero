@@ -20,7 +20,7 @@ export const smartSearchStyles = {
   },
 
   inputContainerFocus: {
-    borderColor: Theme.colors.primary,
+    borderColor: theme.colors.secondary,
     boxShadow: `0 0 0 4px ${Theme.getColor('primary', 0.1)}`,
   },
 
@@ -41,7 +41,7 @@ export const smartSearchStyles = {
 
   // Pulsante search
   searchButton: {
-    background: Theme.colors.primary,
+    background: theme.colors.secondary,
     border: 'none',
     color: 'white',
     padding: '15px 20px',
@@ -52,7 +52,7 @@ export const smartSearchStyles = {
   },
 
   searchButtonHover: {
-    background: Theme.colors.primaryDark,
+    background: theme.colors.secondaryDark,
     transform: 'scale(1.05)',
   },
 

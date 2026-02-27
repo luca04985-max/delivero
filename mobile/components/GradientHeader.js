@@ -9,7 +9,7 @@ const GradientHeader = ({ title, subtitle, rightButton, onRightPress }) => {
     <View style={gradientHeaderStyles.headerContainer}>
       {/* Gradiente moderno: usiamo Primary e PrimaryDark per più profondità */}
       <LinearGradient
-        colors={[mobileTheme.colors.primary, mobileTheme.colors.primaryDark]}
+        colors={[mobileTheme.colors.secondary, mobileTheme.colors.secondaryDark]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={StyleSheet.absoluteFill}

@@ -73,7 +73,7 @@ export const adminFinanceStyles = StyleSheet.create({
   paymentAmount: {
     fontSize: mobileTheme.typography.fontSize.base,
     fontWeight: mobileTheme.typography.fontWeight.semibold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
   },
   // paymentCount: conteggio pagamenti (AdminFinance.js)
   paymentCount: {
@@ -165,7 +165,7 @@ export const adminFinanceStyles = StyleSheet.create({
   },
   // summaryCardOrders: variante ordini (AdminFinance.js)
   summaryCardOrders: {
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
   },
   // summaryCardServices: variante servizi (AdminFinance.js)
   summaryCardServices: {

@@ -30,7 +30,7 @@ export const RegisterScreenStyles = StyleSheet.create({
   logo: {
     fontSize: mobileTheme.typography.fontSize['4xl'],
     marginBottom: mobileTheme.spacing[3],
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: FONT_WEIGHTS.black,
   },
 
@@ -89,7 +89,7 @@ export const RegisterScreenStyles = StyleSheet.create({
 
   // inputFocused: stato focus input (RegisterScreen.js)
   inputFocused: {
-    borderColor: mobileTheme.colors.primary,
+    borderColor: mobileTheme.colors.secondary,
     ...mobileTheme.shadows.md,
   },
 
@@ -128,8 +128,8 @@ export const RegisterScreenStyles = StyleSheet.create({
 
   // roleButtonSelected: bottone ruolo attivo (RegisterScreen.js)
   roleButtonSelected: {
-    backgroundColor: mobileTheme.colors.primary,
-    borderColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
+    borderColor: mobileTheme.colors.secondary,
   },
 
   // roleButtonText: testo bottone ruolo (RegisterScreen.js)
@@ -148,7 +148,7 @@ export const RegisterScreenStyles = StyleSheet.create({
 
   // button: bottone registrazione (RegisterScreen.js)
   button: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     paddingVertical: mobileTheme.spacing[4],
     paddingHorizontal: mobileTheme.spacing[6],
     borderRadius: mobileTheme.borderRadius.md,
@@ -193,13 +193,13 @@ export const RegisterScreenStyles = StyleSheet.create({
 
   // linkBold: testo link evidenziato (RegisterScreen.js)
   linkBold: {
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: FONT_WEIGHTS.bold,
   },
 
   // info: box info (RegisterScreen.js)
   info: {
-    backgroundColor: mobileTheme.colors.primarySoft,
+    backgroundColor: mobileTheme.colors.secondarySoft,
     padding: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.md,
     marginTop: mobileTheme.spacing[4],
@@ -260,7 +260,7 @@ export const RegisterScreenStyles = StyleSheet.create({
 
   // loginLink: link login evidenziato (RegisterScreen.js)
   loginLink: {
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: FONT_WEIGHTS.bold,
   },
 });

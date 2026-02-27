@@ -60,7 +60,7 @@ export const gradientHeaderStyles = StyleSheet.create({
     position: 'absolute',
     top: -5,
     right: -5,
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     borderRadius: 10,
     width: 18,
     height: 18,

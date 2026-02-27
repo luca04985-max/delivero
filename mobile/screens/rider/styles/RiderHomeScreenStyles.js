@@ -86,13 +86,13 @@ export const riderHomeScreenStyles = StyleSheet.create({
 
   // acceptBtn: bottone accetta (RiderHomeScreen.js)
   acceptBtn: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     paddingVertical: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.md,
     alignItems: 'center',
     justifyContent: 'center',
     ...mobileTheme.shadows.medium,
-    shadowColor: mobileTheme.colors.primary, // Ombra colorata per il tasto principale
+    shadowColor: mobileTheme.colors.secondary, // Ombra colorata per il tasto principale
   },
   // acceptBtnText: testo bottone accetta (RiderHomeScreen.js)
   acceptBtnText: {

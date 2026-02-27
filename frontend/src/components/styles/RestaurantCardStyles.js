@@ -83,7 +83,7 @@ export const restaurantCardStyles = {
 
   favoriteButtonHover: {
     transform: 'scale(1.2)',
-    color: Theme.colors.primary,
+    color: theme.colors.secondary,
   },
 
   // Meta informazioni
@@ -100,7 +100,7 @@ export const restaurantCardStyles = {
   },
 
   stars: {
-    color: Theme.colors.primary,
+    color: theme.colors.secondary,
     fontSize: '16px',
   },
 
@@ -171,13 +171,13 @@ export const restaurantCardStyles = {
 
   quickOrderButton: {
     ...Theme.actionButton,
-    background: Theme.colors.primary,
+    background: theme.colors.secondary,
     color: 'white',
     boxShadow: Theme.shadows.button,
   },
 
   quickOrderButtonHover: {
-    background: Theme.colors.primaryDark,
+    background: theme.colors.secondaryDark,
     transform: 'translateY(-2px)',
     boxShadow: Theme.shadows.buttonHover,
   },

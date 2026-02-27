@@ -224,7 +224,7 @@ export default function RiderTicketsScreen({ navigation }) {
   if (loading) {
     return (
       <View style={riderTicketsScreenStyles.container}>
-        <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
+        <ActivityIndicator size="large" color={mobileTheme.colors.secondary} />
         <Text style={riderTicketsScreenStyles.loadingText}>Caricamento ticket...</Text>
       </View>
     );

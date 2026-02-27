@@ -30,7 +30,7 @@ export const LoginScreenStyles = StyleSheet.create({
   logo: {
     fontSize: mobileTheme.typography.fontSize['4xl'],
     marginBottom: mobileTheme.spacing[3],
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: FONT_WEIGHTS.black,
   },
 
@@ -84,13 +84,13 @@ export const LoginScreenStyles = StyleSheet.create({
 
   // inputFocused: stato focus input (LoginScreen.js)
   inputFocused: {
-    borderColor: mobileTheme.colors.primary,
+    borderColor: mobileTheme.colors.secondary,
     ...mobileTheme.shadows.md,
   },
 
   // button: bottone login (LoginScreen.js)
   button: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     paddingVertical: mobileTheme.spacing[4],
     paddingHorizontal: mobileTheme.spacing[6],
     borderRadius: mobileTheme.borderRadius.md,
@@ -135,13 +135,13 @@ export const LoginScreenStyles = StyleSheet.create({
 
   // linkBold: testo link evidenziato (LoginScreen.js)
   linkBold: {
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: FONT_WEIGHTS.bold,
   },
 
   // info: box info (LoginScreen.js)
   info: {
-    backgroundColor: mobileTheme.colors.primarySoft,
+    backgroundColor: mobileTheme.colors.secondarySoft,
     padding: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.md,
     marginTop: mobileTheme.spacing[4],
@@ -204,7 +204,7 @@ export const LoginScreenStyles = StyleSheet.create({
 
   // forgotPasswordText: testo link password (LoginScreen.js)
   forgotPasswordText: {
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontSize: mobileTheme.typography.fontSize.sm,
     fontWeight: FONT_WEIGHTS.medium,
   },
@@ -223,7 +223,7 @@ export const LoginScreenStyles = StyleSheet.create({
 
   // signupLink: link signup evidenziato (LoginScreen.js)
   signupLink: {
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: FONT_WEIGHTS.bold,
   },
 });

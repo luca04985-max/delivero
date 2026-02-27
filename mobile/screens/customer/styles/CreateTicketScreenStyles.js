@@ -46,7 +46,7 @@ export const createTicketScreenStyles = StyleSheet.create({
     padding: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.lg,
     borderLeftWidth: 4,
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
     marginBottom: mobileTheme.spacing[3],
   },
   // orderTitle: titolo blocco ordine
@@ -65,7 +65,7 @@ export const createTicketScreenStyles = StyleSheet.create({
   // orderStatus: stato ordine
   orderStatus: {
     fontSize: mobileTheme.typography.fontSize.sm,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: mobileTheme.typography.fontWeight.medium,
   },
   // removeOrderButton: rimuovi ordine selezionato
@@ -88,7 +88,7 @@ export const createTicketScreenStyles = StyleSheet.create({
     padding: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.lg,
     borderWidth: 2,
-    borderColor: mobileTheme.colors.primary,
+    borderColor: mobileTheme.colors.secondary,
     borderStyle: 'dashed',
     alignItems: 'center',
     marginBottom: mobileTheme.spacing[2],
@@ -96,7 +96,7 @@ export const createTicketScreenStyles = StyleSheet.create({
   // selectOrderText: testo selezione ordine
   selectOrderText: {
     fontSize: mobileTheme.typography.fontSize.md,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: mobileTheme.typography.fontWeight.medium,
   },
   // helperText: testo helper
@@ -135,8 +135,8 @@ export const createTicketScreenStyles = StyleSheet.create({
   },
   // ticketTypeButtonActive: pill tipo attiva
   ticketTypeButtonActive: {
-    backgroundColor: mobileTheme.colors.primary,
-    borderColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
+    borderColor: mobileTheme.colors.secondary,
   },
   // ticketTypeText: testo tipo ticket
   ticketTypeText: {

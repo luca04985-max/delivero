@@ -137,15 +137,15 @@ export default function CreateTicketScreen({ navigation, route }) {
   // Tipi di ticket basati sul ruolo
   const ticketTypes = isRider
     ? [
-        { label: '🐛 Bug', value: 'bug' },
-        { label: '🚚 Problema Consegna', value: 'delivery_issue' },
-        { label: '🆘 Supporto', value: 'support' },
-      ]
+      { label: '🐛 Bug', value: 'bug' },
+      { label: '🚚 Problema Consegna', value: 'delivery_issue' },
+      { label: '🆘 Supporto', value: 'support' },
+    ]
     : [
-        { label: '🐛 Bug', value: 'bug' },
-        { label: '😞 Reclamo', value: 'complaint' },
-        { label: '🆘 Supporto', value: 'support' },
-      ];
+      { label: '🐛 Bug', value: 'bug' },
+      { label: '😞 Reclamo', value: 'complaint' },
+      { label: '🆘 Supporto', value: 'support' },
+    ];
 
   const createTicket = async () => {
     if (!newTicket.title.trim() || !newTicket.description.trim()) {
@@ -292,7 +292,7 @@ export default function CreateTicketScreen({ navigation, route }) {
                 style={[
                   createTicketScreenStyles.ticketTypeButton,
                   newTicket.type === type.value &&
-                    createTicketScreenStyles.ticketTypeButtonSelected,
+                  createTicketScreenStyles.ticketTypeButtonSelected,
                 ]}
                 onPress={() => setNewTicket({ ...newTicket, type: type.value })}
               >
@@ -300,7 +300,7 @@ export default function CreateTicketScreen({ navigation, route }) {
                   style={[
                     createTicketScreenStyles.ticketTypeButtonText,
                     newTicket.type === type.value &&
-                      createTicketScreenStyles.ticketTypeButtonTextSelected,
+                    createTicketScreenStyles.ticketTypeButtonTextSelected,
                   ]}
                 >
                   {type.label}
@@ -351,7 +351,7 @@ export default function CreateTicketScreen({ navigation, route }) {
               !newTicket.title.trim() ||
               !newTicket.description.trim() ||
               (isRider && newTicket.type === 'delivery_issue' && !selectedOrder)) &&
-              createTicketScreenStyles.submitButtonDisabled,
+            createTicketScreenStyles.submitButtonDisabled,
           ]}
           onPress={createTicket}
           disabled={

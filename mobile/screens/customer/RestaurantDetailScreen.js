@@ -166,7 +166,7 @@ export default function RestaurantDetailScreen({ route, navigation: _navigation 
               style={[
                 restaurantDetailScreenStyles.optionButton,
                 customizationSelections[item.id] === option.name &&
-                  restaurantDetailScreenStyles.optionButtonSelected,
+                restaurantDetailScreenStyles.optionButtonSelected,
               ]}
               onPress={() => handleCustomizationChange(item.id, option.name)}
             >
@@ -174,7 +174,7 @@ export default function RestaurantDetailScreen({ route, navigation: _navigation 
                 style={[
                   restaurantDetailScreenStyles.optionText,
                   customizationSelections[item.id] === option.name &&
-                    restaurantDetailScreenStyles.optionTextSelected,
+                  restaurantDetailScreenStyles.optionTextSelected,
                 ]}
               >
                 {option.name} {option.price > 0 && `+€${option.price.toFixed(2)}`}
@@ -192,7 +192,7 @@ export default function RestaurantDetailScreen({ route, navigation: _navigation 
               style={[
                 restaurantDetailScreenStyles.checkboxButton,
                 customizationSelections[item.id]?.includes(option.name) &&
-                  restaurantDetailScreenStyles.checkboxButtonSelected,
+                restaurantDetailScreenStyles.checkboxButtonSelected,
               ]}
               onPress={() => {
                 const selected = customizationSelections[item.id] || [];
@@ -224,7 +224,7 @@ export default function RestaurantDetailScreen({ route, navigation: _navigation 
   if (loading) {
     return (
       <View style={restaurantDetailScreenStyles.loadingContainer}>
-        <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
+        <ActivityIndicator size="large" color={mobileTheme.colors.secondary} />
         <Text style={restaurantDetailScreenStyles.loadingText}>Caricamento menu...</Text>
       </View>
     );
@@ -366,14 +366,14 @@ export default function RestaurantDetailScreen({ route, navigation: _navigation 
               {/* Notes */}
               <View style={restaurantDetailScreenStyles.notesSection}>
                 <Text style={restaurantDetailScreenStyles.notesLabel}>📝 Note (opzionale)</Text>
-                  <TextInput
+                <TextInput
                   style={restaurantDetailScreenStyles.notesInput}
                   placeholder="Aggiungi note al tuo ordine..."
                   multiline
                   numberOfLines={3}
                   value={notes}
                   onChangeText={setNotes}
-                    placeholderTextColor={mobileTheme.colors.text.secondary}
+                  placeholderTextColor={mobileTheme.colors.text.secondary}
                 />
               </View>
 

@@ -122,7 +122,7 @@ export default function TicketDetailScreen({ navigation, route }) {
   if (loading) {
     return (
       <View style={ticketDetailScreenStyles.container}>
-        <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
+        <ActivityIndicator size="large" color={mobileTheme.colors.secondary} />
         <Text style={ticketDetailScreenStyles.loadingText}>Caricamento dettagli...</Text>
       </View>
     );
@@ -242,7 +242,7 @@ export default function TicketDetailScreen({ navigation, route }) {
           </Text>
 
           {(ticket.comments || ticket.responses) &&
-          (ticket.comments || ticket.responses).length > 0 ? (
+            (ticket.comments || ticket.responses).length > 0 ? (
             (ticket.comments || ticket.responses).map((response, index) => (
               <View key={response.id || index} style={ticketDetailScreenStyles.responseCard}>
                 <View style={ticketDetailScreenStyles.responseHeader}>

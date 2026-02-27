@@ -166,7 +166,7 @@ export default function BrandProductsScreen({ route, navigation: _navigation }) 
   if (loading) {
     return (
       <View style={brandProductsScreenStyles.loadingContainer}>
-        <ActivityIndicator size="large" color={mobileTheme.colors.primary} />
+        <ActivityIndicator size="large" color={mobileTheme.colors.secondary} />
         <Text style={brandProductsScreenStyles.loadingText}>Caricamento prodotti...</Text>
       </View>
     );

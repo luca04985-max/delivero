@@ -45,13 +45,13 @@ export const customerOrdersScreenStyles = StyleSheet.create({
   },
   // statusConfirmed: stato confirmed (CustomerOrdersScreen.js)
   statusConfirmed: {
-    backgroundColor: mobileTheme.colors.primarySoft,
-    color: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondarySoft,
+    color: mobileTheme.colors.secondary,
   },
   // statusPreparing: stato preparing (CustomerOrdersScreen.js)
   statusPreparing: {
-    backgroundColor: mobileTheme.colors.primarySoft,
-    color: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondarySoft,
+    color: mobileTheme.colors.secondary,
   },
   // statusReady: stato ready (CustomerOrdersScreen.js)
   statusReady: {
@@ -65,8 +65,8 @@ export const customerOrdersScreenStyles = StyleSheet.create({
   },
   // statusInTransit: stato in transit (CustomerOrdersScreen.js)
   statusInTransit: {
-    backgroundColor: mobileTheme.colors.primarySoft,
-    color: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondarySoft,
+    color: mobileTheme.colors.secondary,
   },
   // statusDelivered: stato delivered (CustomerOrdersScreen.js)
   statusDelivered: {
@@ -81,17 +81,17 @@ export const customerOrdersScreenStyles = StyleSheet.create({
 
   // restaurantInfo: box info ristorante (CustomerOrdersScreen.js)
   restaurantInfo: {
-    backgroundColor: mobileTheme.colors.primarySoft,
+    backgroundColor: mobileTheme.colors.secondarySoft,
     padding: mobileTheme.spacing[2],
     borderRadius: mobileTheme.borderRadius.md,
     marginBottom: mobileTheme.spacing[3],
     borderLeftWidth: 3,
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
   },
   // restaurantLabel: label ristorante (CustomerOrdersScreen.js)
   restaurantLabel: {
     fontSize: mobileTheme.typography.fontSize.sm,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     marginBottom: mobileTheme.spacing[1],
   },
@@ -210,19 +210,19 @@ export const customerOrdersScreenStyles = StyleSheet.create({
 
   // orderInfo: override info ordine (CustomerOrdersScreen.js)
   orderInfo: {
-    backgroundColor: mobileTheme.colors.primarySoft,
+    backgroundColor: mobileTheme.colors.secondarySoft,
     padding: mobileTheme.spacing[2],
     borderRadius: mobileTheme.borderRadius.md,
     marginBottom: mobileTheme.spacing[3],
     borderLeftWidth: 3,
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
   },
 
   // separatorBadge: badge separatore (CustomerOrdersScreen.js)
   separatorBadge: {
     fontSize: mobileTheme.typography.fontSize.xs,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     backgroundColor: mobileTheme.colors.white,
     paddingHorizontal: mobileTheme.spacing[2],
     paddingVertical: mobileTheme.spacing[1],
@@ -237,7 +237,7 @@ export const customerOrdersScreenStyles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: mobileTheme.spacing[4],
     paddingVertical: mobileTheme.spacing[3],
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     borderBottomLeftRadius: mobileTheme.borderRadius.lg,
     borderBottomRightRadius: mobileTheme.borderRadius.lg,
   },
@@ -272,14 +272,14 @@ export const customerOrdersScreenStyles = StyleSheet.create({
     backgroundColor: mobileTheme.colors.background,
     borderRadius: mobileTheme.borderRadius.md,
     borderLeftWidth: 3,
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
   },
 
   // notesTitle: titolo note (CustomerOrdersScreen.js)
   notesTitle: {
     fontSize: mobileTheme.typography.fontSize.sm,
     fontWeight: mobileTheme.typography.fontWeight.medium,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     marginBottom: mobileTheme.spacing[1],
   },
 

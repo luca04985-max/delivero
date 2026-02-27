@@ -18,7 +18,7 @@ export const AdminDashboardScreenStyles = StyleSheet.create({
 
   // tabBar: tabbar admin (AdminDashboardScreen.js)
   tabBar: {
-    backgroundColor: mobileTheme.colors.secondary,
+    backgroundColor: mobileTheme.colors.white,
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
     paddingBottom: mobileTheme.spacing[2],
     ...mobileTheme.shadows.medium,
@@ -29,25 +29,25 @@ export const AdminDashboardScreenStyles = StyleSheet.create({
   },
   // tab: pill tab (AdminDashboardScreen.js)
   tab: {
-    alignItems: 'center',
+    backgroundColor: mobileTheme.colors.secondary,
+    paddingHorizontal: mobileTheme.spacing[5],
     paddingVertical: mobileTheme.spacing[3],
-    paddingHorizontal: mobileTheme.spacing[4],
-    marginHorizontal: BASE_SPACE * 0.500,
-    borderRadius: mobileTheme.borderRadius.md,
+    borderRadius: mobileTheme.borderRadius.full,
+    marginRight: mobileTheme.spacing[3],
   },
   // activeTab: pill tab attiva (AdminDashboardScreen.js)
   activeTab: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: 'rgba(45, 87, 177, 1)',
   },
   // tabText: testo tab (AdminDashboardScreen.js)
   tabText: {
     color: mobileTheme.colors.text.tertiary,
     fontSize: mobileTheme.typography.fontSize.sm,
-    fontWeight: mobileTheme.typography.fontWeight.semibold,
+    fontWeight: mobileTheme.typography.fontWeight.bold,
   },
   // activeTabText: testo tab attiva (AdminDashboardScreen.js)
   activeTabText: {
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: FONT_WEIGHTS.bold,
   },
 
@@ -71,7 +71,7 @@ export const AdminDashboardScreenStyles = StyleSheet.create({
   sectionValue: {
     fontSize: mobileTheme.typography.fontSize['2xl'],
     fontWeight: FONT_WEIGHTS.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     marginBottom: mobileTheme.spacing[2],
   },
   // sectionSubtext: sottotesto sezione (AdminDashboardScreen.js)
@@ -103,7 +103,7 @@ export const AdminDashboardScreenStyles = StyleSheet.create({
   // monthValue: valore mese (AdminDashboardScreen.js)
   monthValue: {
     fontSize: mobileTheme.typography.fontSize.md,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: FONT_WEIGHTS.bold,
   },
   // monthOrders: ordini mese (AdminDashboardScreen.js)
@@ -247,8 +247,8 @@ export const AdminDashboardScreenStyles = StyleSheet.create({
   },
   // roleButtonSelected: bottone ruolo selezionato (AdminDashboardScreen.js)
   roleButtonSelected: {
-    backgroundColor: mobileTheme.colors.primary,
-    borderColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
+    borderColor: mobileTheme.colors.secondary,
   },
   // roleButtonText: testo bottone ruolo (AdminDashboardScreen.js)
   roleButtonText: {
@@ -262,7 +262,7 @@ export const AdminDashboardScreenStyles = StyleSheet.create({
   },
   // roleInline: inline role text color used in list items
   roleInline: {
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
   },
 });
 

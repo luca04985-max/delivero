@@ -23,7 +23,7 @@ export const adminMetricsStyles = StyleSheet.create({
   },
   // pharmacyCard: bordo farmacia
   pharmacyCard: {
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
   },
   // transportCard: bordo trasporti
   transportCard: {
@@ -67,7 +67,7 @@ export const adminMetricsStyles = StyleSheet.create({
   serviceValue: {
     fontSize: mobileTheme.typography.fontSize['2xl'],
     fontWeight: mobileTheme.typography.fontWeight.black,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     marginBottom: mobileTheme.spacing[2],
   },
   // serviceSubtext: sottotesto servizio
@@ -117,7 +117,7 @@ export const adminMetricsStyles = StyleSheet.create({
   performanceValue: {
     fontSize: mobileTheme.typography.fontSize.xl,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     marginBottom: mobileTheme.spacing[1],
   },
   // performanceLabel: label KPI
@@ -156,7 +156,7 @@ export const adminMetricsStyles = StyleSheet.create({
   userStatValue: {
     fontSize: mobileTheme.typography.fontSize.xl,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     marginBottom: mobileTheme.spacing[1],
   },
   // userStatLabel: label statistica utente
@@ -186,7 +186,7 @@ export const adminMetricsStyles = StyleSheet.create({
   progressValue: {
     fontSize: mobileTheme.typography.fontSize.sm,
     fontWeight: mobileTheme.typography.fontWeight.semibold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
   },
   // progressBar: barra base
   progressBar: {
@@ -198,7 +198,7 @@ export const adminMetricsStyles = StyleSheet.create({
   // progressFill: riempimento barra base
   progressFill: {
     height: '100%',
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
   },
   // progressFillSuccess: riempimento successo
   progressFillSuccess: {

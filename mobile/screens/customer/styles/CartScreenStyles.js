@@ -55,7 +55,7 @@ export const cartScreenStyles = StyleSheet.create({
   itemPrice: {
     fontSize: mobileTheme.typography.fontSize.lg,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
   },
   // quantityContainer: wrapper quantità (CartScreen.js)
   quantityContainer: {
@@ -149,7 +149,7 @@ export const cartScreenStyles = StyleSheet.create({
   totalValue: {
     fontSize: mobileTheme.typography.fontSize.xl,
     fontWeight: mobileTheme.typography.fontWeight.black,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
   },
 
   // actionsContainer: wrapper bottoni (CartScreen.js)
@@ -159,12 +159,12 @@ export const cartScreenStyles = StyleSheet.create({
   },
   // checkoutButton: bottone checkout (CartScreen.js)
   checkoutButton: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     paddingVertical: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.xl,
     alignItems: 'center',
     ...mobileTheme.shadows.medium,
-    shadowColor: mobileTheme.colors.primary,
+    shadowColor: mobileTheme.colors.secondary,
   },
   // checkoutButtonText: testo checkout (CartScreen.js)
   checkoutButtonText: {
@@ -300,7 +300,7 @@ export const cartScreenStyles = StyleSheet.create({
   },
   // locationButton: pulsante usa posizione
   locationButton: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     padding: mobileTheme.spacing[3],
     borderRadius: mobileTheme.borderRadius.md,
     justifyContent: 'center',
@@ -325,8 +325,8 @@ export const cartScreenStyles = StyleSheet.create({
     marginRight: 0,
   },
   paymentOptionSelected: {
-    backgroundColor: mobileTheme.colors.primary,
-    borderColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
+    borderColor: mobileTheme.colors.secondary,
   },
   paymentEmoji: {
     fontSize: mobileTheme.typography.fontSize['2xl'],

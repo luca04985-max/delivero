@@ -85,7 +85,7 @@ export const ticketDetailScreenStyles = StyleSheet.create({
     borderRadius: mobileTheme.borderRadius.md,
     marginBottom: mobileTheme.spacing[3],
     borderLeftWidth: 3,
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
   },
   // responseHeader: header risposta
   responseHeader: {
@@ -109,7 +109,7 @@ export const ticketDetailScreenStyles = StyleSheet.create({
   },
   // authorBadge: badge ruolo autore
   authorBadge: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     paddingHorizontal: mobileTheme.spacing[2],
     paddingVertical: mobileTheme.spacing[1],
     borderRadius: mobileTheme.borderRadius.sm,
@@ -154,7 +154,7 @@ export const ticketDetailScreenStyles = StyleSheet.create({
     padding: mobileTheme.spacing[4],
     borderRadius: mobileTheme.borderRadius.md,
     borderLeftWidth: 3,
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
   },
 
   // responseForm: wrapper form risposta

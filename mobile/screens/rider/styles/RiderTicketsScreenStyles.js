@@ -142,13 +142,13 @@ export const riderTicketsScreenStyles = StyleSheet.create({
     borderRadius: mobileTheme.borderRadius.md,
     marginTop: mobileTheme.spacing[3],
     borderLeftWidth: 3,
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
   },
   // orderLabel: label ordine (RiderTicketsScreen.js)
   orderLabel: {
     fontSize: mobileTheme.typography.fontSize.xs,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     marginBottom: mobileTheme.spacing[1],
     textTransform: 'uppercase',
   },
@@ -169,7 +169,7 @@ export const riderTicketsScreenStyles = StyleSheet.create({
   orderTotal: {
     fontSize: mobileTheme.typography.fontSize.sm,
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     marginBottom: mobileTheme.spacing[1],
   },
   // orderAddress: indirizzo ordine (RiderTicketsScreen.js)
@@ -229,7 +229,7 @@ export const riderTicketsScreenStyles = StyleSheet.create({
     position: 'absolute',
     bottom: 30,
     right: 20,
-    backgroundColor: mobileTheme.colors.primary, // Usiamo l'Arancione per farlo risaltare sul Navy
+    backgroundColor: mobileTheme.colors.secondary, // Usiamo l'Arancione per farlo risaltare sul Navy
     width: 65,
     height: 65,
     borderRadius: 32.5,

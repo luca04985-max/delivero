@@ -64,10 +64,10 @@ export default function RegisterScreen({ navigation }) {
   return (
     <>
       <KeyboardAvoidingView
-            style={RegisterScreenStyles.keyboard}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          >
-            <ScrollView contentContainerStyle={RegisterScreenStyles.container}>
+        style={RegisterScreenStyles.keyboard}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView contentContainerStyle={RegisterScreenStyles.container}>
           {/* Header */}
           <View style={RegisterScreenStyles.header}>
             <Text style={RegisterScreenStyles.logo}>✍️</Text>

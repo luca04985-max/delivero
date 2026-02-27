@@ -60,7 +60,7 @@ export const navbarStyles = {
 
   navButtonActive: {
     backgroundColor: 'white',
-    color: Theme.colors.primary,
+    color: theme.colors.secondary,
     borderColor: 'white',
     fontWeight: 600,
   },

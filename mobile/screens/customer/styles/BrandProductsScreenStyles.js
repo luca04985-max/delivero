@@ -52,7 +52,7 @@ export const brandProductsScreenStyles = StyleSheet.create({
   },
   // selectedFilter: stato filtro attivo (BrandProductsScreen.js)
   selectedFilter: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
   },
   // filterText: testo filtro (BrandProductsScreen.js)
   filterText: {
@@ -159,7 +159,7 @@ export const brandProductsScreenStyles = StyleSheet.create({
   },
   // addButton: bottone aggiungi (BrandProductsScreen.js)
   addButton: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     paddingHorizontal: mobileTheme.spacing[3],
     paddingVertical: mobileTheme.spacing[2],
     borderRadius: mobileTheme.borderRadius.full,

@@ -123,7 +123,7 @@ export const restaurantsScreenStyles = StyleSheet.create({
   },
   // deliveryBadge: pill costo consegna (RestaurantsScreen.js)
   deliveryBadge: {
-    backgroundColor: mobileTheme.colors.primarySoft,
+    backgroundColor: mobileTheme.colors.secondarySoft,
     paddingHorizontal: mobileTheme.spacing[2],
     paddingVertical: BASE_SPACE * 0.250,
     borderRadius: mobileTheme.borderRadius.full,
@@ -131,7 +131,7 @@ export const restaurantsScreenStyles = StyleSheet.create({
   // deliveryText: testo badge consegna (RestaurantsScreen.js)
   deliveryText: {
     fontSize: mobileTheme.typography.fontSize.xs,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: mobileTheme.typography.fontWeight.bold,
   },
 
@@ -154,7 +154,7 @@ export const restaurantsScreenStyles = StyleSheet.create({
     position: 'absolute',
     top: -5,
     right: -5,
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     borderRadius: 10,
     width: 20,
     height: 20,

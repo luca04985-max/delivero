@@ -15,7 +15,7 @@ export const customerTicketsScreenStyles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: BASE_SPACE * 3.500,
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
     justifyContent: 'center',
     alignItems: 'center',
     ...mobileTheme.shadows.xl,
@@ -32,17 +32,17 @@ export const customerTicketsScreenStyles = StyleSheet.create({
 
   // orderInfo: box info ordine (CustomerTicketsScreen.js)
   orderInfo: {
-    backgroundColor: mobileTheme.colors.primarySoft,
+    backgroundColor: mobileTheme.colors.secondarySoft,
     padding: mobileTheme.spacing[2],
     borderRadius: mobileTheme.borderRadius.md,
     marginBottom: mobileTheme.spacing[3],
     borderLeftWidth: 3,
-    borderLeftColor: mobileTheme.colors.primary,
+    borderLeftColor: mobileTheme.colors.secondary,
   },
   // orderLabel: label info ordine (CustomerTicketsScreen.js)
   orderLabel: {
     fontSize: mobileTheme.typography.fontSize.sm,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     fontWeight: mobileTheme.typography.fontWeight.bold,
     marginBottom: mobileTheme.spacing[1],
   },

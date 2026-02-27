@@ -38,7 +38,7 @@ export const adminStatsStyles = StyleSheet.create({
   statValue: {
     fontSize: mobileTheme.typography.fontSize['2xl'],
     fontWeight: mobileTheme.typography.fontWeight.bold,
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.secondary,
     marginBottom: mobileTheme.spacing[1],
   },
   // statLabel: label statistica
@@ -58,7 +58,7 @@ export const adminStatsStyles = StyleSheet.create({
 
   // usersCard: card utenti
   usersCard: {
-    borderTopColor: mobileTheme.colors.primary,
+    borderTopColor: mobileTheme.colors.secondary,
   },
   // ordersCard: card ordini
   ordersCard: {
@@ -128,7 +128,7 @@ export const adminStatsStyles = StyleSheet.create({
   // progressFill: riempimento progresso
   progressFill: {
     height: '100%',
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.secondary,
   },
 
   // trendContainer: indicatore trend

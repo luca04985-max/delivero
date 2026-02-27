@@ -8,7 +8,7 @@ import '../../styles/adminUtilities.css';
 import { theme } from '../../theme/theme';
 
 const CATEGORIES = [
-  { id: 'food', name: '🍔 Cibo', icon: '🍕', color: theme.colors.primary },
+  { id: 'food', name: '🍔 Cibo', icon: '🍕', color: theme.colors.secondary },
   { id: 'pharmacy', name: '💊 Farmacia', icon: '⚕️', color: theme.colors.success },
   { id: 'groceries', name: '🛒 Spesa', icon: '🥬', color: theme.colors.info },
   { id: 'clothes', name: '👕 Abbigliamento', icon: '👔', color: theme.colors.warning },
@@ -25,8 +25,8 @@ export default function CustomerDashboard({ user }) {
       <div style={{ display: 'flex', gap: '1rem', borderBottom: `2px solid ${theme.colors.border}`, marginBottom: '2rem', paddingBottom: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
         <button
           onClick={() => setActiveTab('home')}
-            style={{
-            background: activeTab === 'home' ? theme.colors.primary : 'transparent',
+          style={{
+            background: activeTab === 'home' ? theme.colors.secondary : 'transparent',
             color: activeTab === 'home' ? theme.colors.white : theme.colors.text.primary,
             border: 'none',
             padding: '0.75rem 1.5rem',
@@ -41,8 +41,8 @@ export default function CustomerDashboard({ user }) {
         </button>
         <button
           onClick={() => setActiveTab('orders')}
-            style={{
-            background: activeTab === 'orders' ? theme.colors.primary : 'transparent',
+          style={{
+            background: activeTab === 'orders' ? theme.colors.secondary : 'transparent',
             color: activeTab === 'orders' ? theme.colors.white : theme.colors.text.primary,
             border: 'none',
             padding: '0.75rem 1.5rem',
@@ -57,8 +57,8 @@ export default function CustomerDashboard({ user }) {
         </button>
         <button
           onClick={() => setActiveTab('favorites')}
-            style={{
-            background: activeTab === 'favorites' ? theme.colors.primary : 'transparent',
+          style={{
+            background: activeTab === 'favorites' ? theme.colors.secondary : 'transparent',
             color: activeTab === 'favorites' ? theme.colors.white : theme.colors.text.primary,
             border: 'none',
             padding: '0.75rem 1.5rem',

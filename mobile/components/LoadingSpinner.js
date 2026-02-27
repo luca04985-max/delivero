@@ -15,7 +15,7 @@ import { loadingSpinnerStyles } from './styles/LoadingSpinnerStyles';
 const LoadingSpinner = ({
   loading = true,
   size = 'large',
-  color = mobileTheme.colors.primary,
+  color = mobileTheme.colors.secondary,
   message = '',
   style = {},
 }) => {
