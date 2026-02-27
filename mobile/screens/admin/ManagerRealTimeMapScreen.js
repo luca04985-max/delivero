@@ -265,7 +265,7 @@ export default function ManagerRealTimeMapScreen({ route }) {
       .join('\n');
 
     // Aggiungi percorsi per ogni rider verso la sua destinazione
-    const routes = riderPositions
+    var routes = riderPositions
       .map(r => {
         // Se non ci sono coordinate delivery, usa coordinate di fallback basate sulla posizione rider
         const deliveryLat = r.delivery_latitude || r.lat + 0.01;
@@ -275,9 +275,33 @@ export default function ManagerRealTimeMapScreen({ route }) {
                 (function(){
                   var riderLat=${r.lat}, riderLon=${r.lng};
                   var deliveryLat=${deliveryLat}, deliveryLon=${deliveryLon};
-                  var line = L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], {
-                    color: '${mobileTheme.colors.primary}', weight:4, opacity:0.8, smoothFactor:1
-                  }).addTo(map);
+                  try {
+                    if (window.L && window.L.Routing && window.L.Routing.osrmv1) {
+                      // Use Routing Machine to draw route along roads (OSRM)
+                      var control = L.Routing.control({
+                        waypoints: [L.latLng(riderLat, riderLon), L.latLng(deliveryLat, deliveryLon)],
+                        router: L.Routing.osrmv1({ serviceUrl: 'https://router.project-osrm.org/route/v1' }),
+                        createMarker: function() { return null; },
+                        addWaypoints: false,
+                        routeWhileDragging: false,
+                        show: false,
+                        fitSelectedRoute: false,
+                        lineOptions: { styles: [{ color: '${mobileTheme.colors.primary}', weight: 4, opacity: 0.9 }] }
+                      }).addTo(map);
+                      // When route is found, optionally post message
+                      control.on('routesfound', function(e){ try{ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:found:${r.orderId}'); }catch(ex){} });
+                      control.on('routingerror', function(err){ console.warn('routing error', err); window.ReactNativeWebView && window.ReactNativeWebView.postMessage('route:error:${r.orderId}:'+ (err && err.message));
+                        // fallback to straight polyline
+                        L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.6 }).addTo(map);
+                      });
+                    } else {
+                      // Fallback simple polyline
+                      L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.8 }).addTo(map);
+                    }
+                  } catch (e) {
+                    console.warn('route draw failed', e);
+                    L.polyline([[riderLat, riderLon],[deliveryLat, deliveryLon]], { color: '${mobileTheme.colors.primary}', weight:4, opacity:0.8 }).addTo(map);
+                  }
 
                   // Destination marker (small dot)
                   L.circleMarker([deliveryLat, deliveryLon], { radius:6, color: '#ff5722', fillColor:'#ff5722', fillOpacity:1 }).addTo(map).bindPopup('Destinazione');
@@ -361,16 +385,22 @@ export default function ManagerRealTimeMapScreen({ route }) {
                         .then(function(){ return tryList(leafletJsCandidates, loadScript).then(function(){ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('cdn:js:loaded'); }); })
                         .then(function(){ return tryList(routingJsCandidates, loadScript).then(function(){ window.ReactNativeWebView && window.ReactNativeWebView.postMessage('cdn:routing:loaded'); }).catch(function(){console.warn('Routing machine failed'); window.ReactNativeWebView && window.ReactNativeWebView.postMessage('cdn:routing:failed');}); })
                         .then(function(){
-                          if(!window.L) { console.error('Leaflet not available'); window.ReactNativeWebView && window.ReactNativeWebView.postMessage('leaflet:not_available'); return; }
-                          window.ReactNativeWebView && window.ReactNativeWebView.postMessage('map:init');
-                          console.log('🗺️ Admin map initializing...');
-                          var map = L.map('map').setView([${centerLat}, ${centerLon}], ${zoomLevel});
-                          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OpenStreetMap contributors' }).addTo(map);
-                          ${riderMarkers}
-                          ${routes}
-                          console.log('🗺️ Admin map loaded with ' + ${riderPositions.length} + ' riders');
-                          window.ReactNativeWebView && window.ReactNativeWebView.postMessage('map:loaded:${riderPositions.length}');
-                          setTimeout(function(){ map.invalidateSize(); }, 1000);
+                            if(!window.L) { console.error('Leaflet not available'); window.ReactNativeWebView && window.ReactNativeWebView.postMessage('leaflet:not_available'); return; }
+                                window.ReactNativeWebView && window.ReactNativeWebView.postMessage('map:init');
+                                console.log('🗺️ Admin map initializing...');
+                                var map = L.map('map').setView([${centerLat}, ${centerLon}], ${zoomLevel});
+                                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OpenStreetMap contributors' }).addTo(map);
+                                // create bottom panel container
+                                if (!document.getElementById('route-info-panel')) {
+                                  var panel = document.createElement('div');
+                                  panel.id = 'route-info-panel';
+                                  document.body.appendChild(panel);
+                                }
+                                ${riderMarkers}
+                                ${routes}
+                                console.log('🗺️ Admin map loaded with ' + ${riderPositions.length} + ' riders');
+                                window.ReactNativeWebView && window.ReactNativeWebView.postMessage('map:loaded:${riderPositions.length}');
+                                setTimeout(function(){ map.invalidateSize(); }, 1000);
                         })
                         .catch(function(err){ console.error('Map init failed', err); window.ReactNativeWebView && window.ReactNativeWebView.postMessage('map:init_failed:'+ (err && err.toString())); });
             })();
