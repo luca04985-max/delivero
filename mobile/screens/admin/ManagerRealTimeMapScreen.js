@@ -584,14 +584,14 @@ export default function ManagerRealTimeMapScreen({ route }) {
               </View>
 
               <View style={managerRealTimeMapScreenStyles.infoRow}>
-                <Text style={managerRealTimeMapScreenStyles.infoLabel}>📍 Destinazione:</Text>
+                <Text style={managerRealTimeMapScreenStyles.infoLabel}> Destinazione:</Text>
                 <Text style={managerRealTimeMapScreenStyles.infoValue}>
-                  {Object.values(riders)[0]?.delivery_address || Object.values(riders)[0]?.restaurant_address || 'Indirizzo non disponibile'}
+                  {(Object.values(riders)[0]?.delivery_address?.split(',')[0]?.trim()) || Object.values(riders)[0]?.restaurant_address || 'Indirizzo non disponibile'}
                 </Text>
               </View>
 
               <View style={managerRealTimeMapScreenStyles.infoRow}>
-                <Text style={managerRealTimeMapScreenStyles.infoLabel}>🏍️ Rider:</Text>
+                <Text style={managerRealTimeMapScreenStyles.infoLabel}> Rider:</Text>
                 <Text style={managerRealTimeMapScreenStyles.infoValue}>
                   {Object.values(riders)[0] && riderAddresses[Object.values(riders)[0].orderId]
                     ? riderAddresses[Object.values(riders)[0].orderId]

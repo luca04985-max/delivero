@@ -59,6 +59,14 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
     }
   }, [orderId]);
 
+  // Aggiungi questo useEffect per ricaricare quando cambia l'orderId
+  useEffect(() => {
+    if (orderId) {
+      console.log('🔄 orderId changed, reloading tracking info...');
+      loadTrackingInfo();
+    }
+  }, [orderId]);
+
   useEffect(() => {
     console.log('🔄 CustomerOrderTrackingScreen useEffect RUNNING');
     if (!orderId) {
@@ -157,8 +165,8 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
 
     const riderLat = riderLocation?.latitude;
     const riderLon = riderLocation?.longitude;
-    const customerLat = customerLocation?.latitude || 41.880025;
-    const customerLon = customerLocation?.longitude || 12.67594;
+    const customerLat = order?.delivery_latitude || customerLocation?.latitude || 41.880025;
+    const customerLon = order?.delivery_longitude || customerLocation?.longitude || 12.67594;
 
     // Center on rider location if available, otherwise on customer
     const centerLat = riderLat || customerLat;
@@ -225,7 +233,7 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
                     try{
                       var icon = L.divIcon({ className:'customer-marker', html: '<div style="width:40px;height:40px;background:${mobileTheme.colors.customer}33;border:3px solid ${mobileTheme.colors.customer};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;">🏠</div>', iconSize:[40,40], iconAnchor:[20,20] });
                       var m = L.marker([lat, lon], { icon: icon }).addTo(map);
-                      try{ m.bindPopup('<b>🏠 Area di consegna</b><br/>${order?.delivery_address || 'Indirizzo non disponibile'}'); }catch(e){}
+                      try{ m.bindPopup('<b>🏠 Area di consegna</b><br/>${(order?.delivery_address?.split(',')[0]?.trim()) || 'Indirizzo non disponibile'}'); }catch(e){}
                       post({type:'marker:customer', lat:lat, lon:lon});
                       return m;
                     }catch(e){ console.warn('customer marker failed', e); }
@@ -429,7 +437,7 @@ export default function CustomerOrderTrackingScreen({ route, navigation }) {
               <View style={customerOrderTrackingScreenStyles.detailRow}>
                 <Text style={customerOrderTrackingScreenStyles.detailLabel}>📍 Indirizzo:</Text>
                 <Text style={customerOrderTrackingScreenStyles.detailValue}>
-                  {order?.delivery_address || 'Non disponibile'}
+                  {(order?.delivery_address?.split(',')[0]?.trim()) || 'Non disponibile'}
                 </Text>
               </View>
 
