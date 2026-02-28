@@ -7,7 +7,18 @@ dotenv.config();
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 const stripeInstance = STRIPE_SECRET_KEY ? new stripe(STRIPE_SECRET_KEY) : null;
 
-export const isStripeConfigured = () => !!stripeInstance;
+export const isStripeConfigured = () => {
+  return !!stripeInstance && STRIPE_SECRET_KEY && STRIPE_SECRET_KEY.startsWith('sk_');
+};
+
+export { stripeInstance };
+
+// Logging per debug della configurazione Stripe
+console.log('🔍 Stripe Configuration Debug:');
+console.log('  - STRIPE_SECRET_KEY exists:', !!STRIPE_SECRET_KEY);
+console.log('  - STRIPE_SECRET_KEY starts with sk_:', STRIPE_SECRET_KEY?.startsWith('sk_'));
+console.log('  - stripeInstance created:', !!stripeInstance);
+console.log('  - isStripeConfigured():', isStripeConfigured());
 
 export const createPaymentIntent = async (amount, orderId, userId, email) => {
   try {

@@ -90,6 +90,21 @@ export default function CartScreen({ navigation }) {
     }
   }, [checkoutVisible, tryGetLocationWithRetry]);
 
+  // Ricarica le carte quando il screen diventa visivo (per gestire il ritorno da PaymentMethods)
+  useEffect(() => {
+    if (checkoutVisible) {
+      (async () => {
+        try {
+          const serverCards = await paymentsAPI.getSavedCards();
+          setSavedCards(serverCards || []);
+        } catch (e) {
+          console.warn('Failed to reload saved cards from server', e);
+          setSavedCards([]);
+        }
+      })();
+    }
+  }, [checkoutVisible]);
+
   // Funzione per ottenere posizione con retry
   const tryGetLocationWithRetry = useCallback(async (retryCount = 0) => {
     const maxRetries = 2;
@@ -448,11 +463,22 @@ export default function CartScreen({ navigation }) {
           }
         } catch (paymentError) {
           console.warn('⚠️ Payment error:', paymentError);
-          // Non bloccare il flusso per errori di pagamento, mostra solo un warning
+
+          // Se Stripe non è configurato o fallisce, blocca la creazione dell'ordine
           if (paymentMethod === 'card') {
             Alert.alert(
+              'Pagamento non disponibile',
+              'Il pagamento con carta di credito non è disponibile al momento. Seleziona "Contanti" per completare l\'ordine.',
+              [{ text: 'OK' }]
+            );
+            return; // Blocca la creazione dell'ordine
+          }
+
+          // Per contanti, mostra solo un warning ma continua
+          if (paymentMethod === 'cash') {
+            Alert.alert(
               'Attenzione',
-              'Il pagamento con carta non è disponibile al momento. Puoi pagare alla consegna.',
+              'Impossibile processare il pagamento contanti. Prova di nuovo.',
               [{ text: 'OK' }]
             );
           }
@@ -729,7 +755,6 @@ export default function CartScreen({ navigation }) {
                 )}
               </View>
 
-
               {/* Saved addresses (if any) */}
               {savedAddresses && savedAddresses.length > 0 && (
                 <View style={styles.expandableSection}>
@@ -865,6 +890,17 @@ export default function CartScreen({ navigation }) {
                           <Text style={styles.savedText}>{c.masked}</Text>
                         </TouchableOpacity>
                       ))}
+
+
+                      {/* Add new card button */}
+                      <TouchableOpacity
+                        style={styles.addNewCardButton}
+                        onPress={() => {
+                          navigation.navigate('PaymentMethods');
+                        }}
+                      >
+                        <Text style={styles.addNewCardButtonText}>+ Aggiungi nuova carta</Text>
+                      </TouchableOpacity>
                     </View>
                   )}
                 </View>
@@ -895,4 +931,4 @@ export default function CartScreen({ navigation }) {
       </Modal>
     </View>
   );
-}
+};

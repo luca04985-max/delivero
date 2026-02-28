@@ -317,6 +317,26 @@ export const cartScreenStyles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: mobileTheme.colors.white,
   },
+  // addNewCardButton: pulsante per aggiungere nuova carta
+  addNewCardButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: mobileTheme.spacing[3],
+    paddingHorizontal: mobileTheme.spacing[4],
+    backgroundColor: mobileTheme.colors.background,
+    borderRadius: mobileTheme.borderRadius.md,
+    borderWidth: 2,
+    borderColor: mobileTheme.colors.secondary,
+    borderStyle: 'dashed',
+    marginTop: mobileTheme.spacing[2],
+  },
+  // addNewCardButtonText: testo pulsante aggiungi carta
+  addNewCardButtonText: {
+    color: mobileTheme.colors.secondary,
+    fontSize: mobileTheme.typography.fontSize.base,
+    fontWeight: mobileTheme.typography.fontWeight.semibold,
+  },
   // centerAligned: helper to center children horizontally
   centerAligned: {
     alignItems: 'center',

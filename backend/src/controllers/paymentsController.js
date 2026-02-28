@@ -1,12 +1,9 @@
 import db from '../config/db.js';
-import { isStripeConfigured } from '../services/payment.js';
+import { isStripeConfigured, stripeInstance } from '../services/payment.js';
 import Stripe from 'stripe';
 
-// Inizializza Stripe solo se configurato correttamente
-let stripe = null;
-if (process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY.startsWith('sk_')) {
-  stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-}
+// Usa la stessa istanza di Stripe dal servizio di pagamento
+const stripe = stripeInstance;
 
 // Create cash payment record
 export const createCashPayment = async (req, res) => {
@@ -108,6 +105,12 @@ export const createPayment = async (req, res) => {
       return res.status(400).json({ error: 'Order ID is required' });
     }
 
+    console.log('🔍 createPayment Debug:');
+    console.log('  - stripe instance exists:', !!stripe);
+    console.log('  - isStripeConfigured():', isStripeConfigured());
+    console.log('  - orderId:', orderId);
+    console.log('  - payment_method_token exists:', !!payment_method_token);
+
     // Check if order exists and belongs to user
     const orderResult = await db.query(
       'SELECT o.*, u.email FROM orders o JOIN users u ON o.customer_id = u.id WHERE o.id = $1 AND o.customer_id = $2',
@@ -121,6 +124,7 @@ export const createPayment = async (req, res) => {
     const order = orderResult.rows[0];
 
     if (!stripe || !isStripeConfigured()) {
+      console.error('❌ Stripe non configurato nel controller createPayment');
       return res.status(501).json({ message: 'Stripe non configurato sul server' });
     }
 

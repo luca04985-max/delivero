@@ -1,6 +1,9 @@
+import dotenv from 'dotenv';
+// Carica le variabili d'ambiente PRIMA di tutti gli altri import
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import helmet from 'helmet';
 import http from 'http';
 import logger from './utils/logger.js';
@@ -31,8 +34,6 @@ import client from './middleware/metrics.js';
 import { metricsMiddleware } from './middleware/metrics.js';
 
 import db from './config/db.js';
-
-dotenv.config();
 
 const app = express();
 const server = http.createServer(app);

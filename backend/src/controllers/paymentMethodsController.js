@@ -1,12 +1,9 @@
 import db from '../config/db.js';
-import { isStripeConfigured } from '../services/payment.js';
+import { isStripeConfigured, stripeInstance } from '../services/payment.js';
 import Stripe from 'stripe';
 
-// Inizializza Stripe solo se configurato correttamente
-let stripe = null;
-if (process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY.startsWith('sk_')) {
-  stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-}
+// Usa la stessa istanza di Stripe dal servizio di pagamento
+const stripe = stripeInstance;
 
 // Get saved payment methods for a user
 export const getSavedPaymentMethods = async (req, res) => {
