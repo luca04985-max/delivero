@@ -1,9 +1,12 @@
 import db from '../config/db.js';
-import Stripe from 'stripe';
 import { isStripeConfigured } from '../services/payment.js';
+import Stripe from 'stripe';
 
-// Inizializza Stripe con la chiave segreta dal .env
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+// Inizializza Stripe solo se configurato correttamente
+let stripe = null;
+if (process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY.startsWith('sk_')) {
+  stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+}
 
 // Create cash payment record
 export const createCashPayment = async (req, res) => {
@@ -98,7 +101,7 @@ export const markCashCollected = async (req, res) => {
 // Create Stripe payment intent
 export const createPayment = async (req, res) => {
   try {
-    const { orderId } = req.body;
+    const { orderId, payment_method_token } = req.body;
     const userId = req.user?.userId;
     if (!userId) return res.status(401).json({ error: 'Unauthorized' });
     if (!orderId) {
@@ -116,13 +119,13 @@ export const createPayment = async (req, res) => {
     }
 
     const order = orderResult.rows[0];
-    const user = await db.query('SELECT email FROM users WHERE id = $1', [userId]);
-    if (!isStripeConfigured()) {
+
+    if (!stripe || !isStripeConfigured()) {
       return res.status(501).json({ message: 'Stripe non configurato sul server' });
     }
 
     // Crea un payment intent reale con Stripe
-    const paymentIntent = await stripe.paymentIntents.create({
+    const paymentIntentData = {
       amount: Math.round(order.total_amount * 100), // Converti in centesimi
       currency: 'eur',
       metadata: {
@@ -132,7 +135,16 @@ export const createPayment = async (req, res) => {
       automatic_payment_methods: {
         enabled: ['card'],
       },
-    });
+    };
+
+    // Se c'è un token di metodo di pagamento salvato, usalo
+    if (payment_method_token) {
+      paymentIntentData.payment_method = payment_method_token;
+      paymentIntentData.confirm = true;
+      paymentIntentData.off_session = true;
+    }
+
+    const paymentIntent = await stripe.paymentIntents.create(paymentIntentData);
 
     // Salva il payment intent nel database
     const paymentResult = await db.query(
@@ -150,6 +162,7 @@ export const createPayment = async (req, res) => {
 
     res.status(201).json(response);
   } catch (error) {
+    console.error('❌ Error creating Stripe payment:', error);
     res.status(500).json({ message: 'Error creating Stripe payment', error: error.message });
   }
 };
@@ -163,6 +176,10 @@ export const confirmStripePayment = async (req, res) => {
     const { orderId, paymentIntentId } = req.body;
     if (!orderId || !paymentIntentId) {
       return res.status(400).json({ error: 'Order ID and Payment Intent ID are required' });
+    }
+
+    if (!stripe || !isStripeConfigured()) {
+      return res.status(501).json({ message: 'Stripe non configurato sul server' });
     }
 
     // Verifica il payment intent con Stripe
@@ -192,6 +209,7 @@ export const confirmStripePayment = async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to confirm payment' });
+    console.error('❌ Error confirming Stripe payment:', error);
+    res.status(500).json({ error: 'Failed to confirm payment', message: error.message });
   }
 };

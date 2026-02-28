@@ -117,7 +117,7 @@ export const leaveOrderTracking = orderId => {
 
 // Subscribe to location updates
 export const onRiderLocationUpdate = callback => {
-  if (!socket) return () => {};
+  if (!socket) return () => { };
   socket.off('riderLocationUpdate'); // remove previous listeners
   socket.on('riderLocationUpdate', callback);
   return () => socket.off('riderLocationUpdate');
@@ -125,7 +125,7 @@ export const onRiderLocationUpdate = callback => {
 
 // Subscribe to order status updates
 export const onOrderStatusUpdate = callback => {
-  if (!socket) return () => {};
+  if (!socket) return () => { };
   socket.off('orderStatusUpdate');
   socket.on('orderStatusUpdate', callback);
   return () => socket.off('orderStatusUpdate');
@@ -133,7 +133,7 @@ export const onOrderStatusUpdate = callback => {
 
 // Subscribe to tracking stopped (after delivery)
 export const onTrackingStopped = callback => {
-  if (!socket) return () => {};
+  if (!socket) return () => { };
   socket.off('trackingStopped');
   socket.on('trackingStopped', callback);
   return () => socket.off('trackingStopped');
@@ -412,10 +412,16 @@ export const paymentsAPI = {
     });
   },
   getSavedCards: async () => {
-    return makeRequest('/payments/cards', { method: 'GET' });
+    return makeRequest('/payment-methods', { method: 'GET' });
   },
-  deleteCard: async id => {
-    return makeRequest(`/payments/cards/${id}`, { method: 'DELETE' });
+  savePaymentMethod: async (paymentMethodData) => {
+    return makeRequest('/payment-methods', {
+      method: 'POST',
+      body: JSON.stringify(paymentMethodData),
+    });
+  },
+  deletePaymentMethod: async id => {
+    return makeRequest(`/payment-methods/${id}`, { method: 'DELETE' });
   },
 };
 

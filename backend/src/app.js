@@ -22,6 +22,7 @@ import inventoryRoutes from './routes/inventory.js';
 import dispatchRoutes from './routes/dispatch.js';
 import userAddressesRoutes from './routes/userAddresses.js';
 import emailPreviewRoutes from './routes/emailPreview.js';
+import paymentMethodsRoutes from './routes/paymentMethods.js';
 // monitoring, notifications, analytics, bills and billPayments routes
 // removed: not referenced by mobile frontend
 import { initializeSocket } from './services/socket.js';
@@ -119,6 +120,7 @@ app.use('/api/pharmacies', pharmaciesRoutes);
 app.use('/api/document-pickups', documentPickupsRoutes);
 app.use('/api/tickets', ticketsRoutes);
 app.use('/api/user/addresses', userAddressesRoutes);
+app.use('/api/payment-methods', paymentMethodsRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
