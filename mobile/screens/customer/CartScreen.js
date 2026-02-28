@@ -19,6 +19,7 @@ import locationService from '../../services/locationService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useToast } from '../../hooks/useToast';
 import { mobileTheme } from '../../theme';
+import { unifiedStyles } from '../../theme/UnifiedStyles';
 // Importiamo lo stylesheet come 'styles' per brevità nel codice
 import styles from './styles/CartScreenStyles';
 
@@ -39,6 +40,8 @@ export default function CartScreen({ navigation }) {
   const [savedCards, setSavedCards] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [selectedCardId, setSelectedCardId] = useState(null);
+  const [addressesExpanded, setAddressesExpanded] = useState(false);
+  const [cardsExpanded, setCardsExpanded] = useState(false);
 
   const deliveryFee = 2.5;
   const finalTotal = cart.totalPrice + deliveryFee;
@@ -393,12 +396,81 @@ export default function CartScreen({ navigation }) {
       }
 
       // If we have coordinates and an address, ask the user if they want to save it
+      const proceedWithOrder = async () => {
+        const orderPayload = {
+          restaurantId: cart.restaurantId,
+          items: cart.items,
+          totalAmount: finalTotal,
+          deliveryAddress: deliveryAddress.trim(),
+          ...finalCoords,
+          payment_method: paymentMethod,
+          payment_method_token:
+            paymentMethod === 'card' && selectedCardId
+              ? savedCards.find(c => c.id === selectedCardId)?.token
+              : undefined,
+        };
+
+        console.log('📦 Creating order with coordinates:', finalCoords);
+
+        const created = await ordersAPI.create(orderPayload);
+        orderId = created?.order?.id;
+
+        // Se abbiamo trovato coordinate con geocoding dopo la creazione, aggiornale
+        if (
+          orderId &&
+          finalCoords &&
+          (!created?.order?.delivery_latitude || !created?.order?.delivery_longitude)
+        ) {
+          try {
+            console.log('🔄 Updating delivery coordinates for order:', orderId);
+            await ordersAPI.updateDeliveryCoordinates(
+              orderId,
+              finalCoords.delivery_latitude,
+              finalCoords.delivery_longitude,
+            );
+            console.log('✅ Delivery coordinates updated successfully');
+          } catch (updateError) {
+            console.warn('⚠️ Failed to update delivery coordinates:', updateError);
+          }
+        }
+
+        // Gestione pagamento con fallback per errore Stripe
+        try {
+          if (paymentMethod === 'cash') {
+            console.log('💰 Frontend: Creating cash payment for order:', orderId);
+            await paymentsAPI.createCashPayment(orderId);
+            console.log('✅ Frontend: Cash payment created successfully');
+          } else {
+            console.log('💳 Frontend: Creating Stripe payment for order:', orderId);
+            const token = paymentMethod === 'card' && selectedCardId ? savedCards.find(c => c.id === selectedCardId)?.token : undefined;
+            await paymentsAPI.createStripePayment(orderId, token);
+            console.log('✅ Frontend: Stripe payment created successfully');
+          }
+        } catch (paymentError) {
+          console.warn('⚠️ Payment error:', paymentError);
+          // Non bloccare il flusso per errori di pagamento, mostra solo un warning
+          if (paymentMethod === 'card') {
+            Alert.alert(
+              'Attenzione',
+              'Il pagamento con carta non è disponibile al momento. Puoi pagare alla consegna.',
+              [{ text: 'OK' }]
+            );
+          }
+        }
+
+        clearCart();
+        setCheckoutVisible(false);
+        console.log('🛒 Cart: Navigating to OrderTracking with orderId:', orderId);
+        navigation.navigate('OrderTracking', { orderId });
+      };
+
       if (finalCoords && deliveryAddress && deliveryAddress.trim()) {
         try {
           const exists = (savedAddresses || []).some(a => {
             // consider equal if same displayName or very close coordinates
             if (!a) return false;
             if (a.displayName && a.displayName === deliveryAddress.trim()) return true;
+            if (a.label && a.label === deliveryAddress.trim()) return true;
             if (a.latitude && a.longitude) {
               const latDiff = Math.abs(Number(a.latitude) - Number(finalCoords.delivery_latitude || 0));
               const lonDiff = Math.abs(Number(a.longitude) - Number(finalCoords.delivery_longitude || 0));
@@ -412,7 +484,11 @@ export default function CartScreen({ navigation }) {
               'Salvare indirizzo?',
               'Vuoi salvare questo indirizzo tra quelli utilizzati di frequente?',
               [
-                { text: 'No', style: 'cancel' },
+                {
+                  text: 'No',
+                  style: 'cancel',
+                  onPress: () => proceedWithOrder() // Continua anche se non salva
+                },
                 {
                   text: 'Sì',
                   onPress: async () => {
@@ -431,89 +507,46 @@ export default function CartScreen({ navigation }) {
                         // keep a local cache as fallback
                         await AsyncStorage.setItem('saved_addresses_v1', JSON.stringify(next));
                         showToast('Indirizzo salvato', 'success');
-                        return;
                       } catch (serverErr) {
                         console.warn('Server save failed, falling back to local storage', serverErr);
-                      }
 
-                      // Fallback: persist locally
-                      const newAddr = {
-                        id: Date.now().toString(),
-                        label: deliveryAddress.trim(),
-                        displayName: deliveryAddress.trim(),
-                        latitude: finalCoords.delivery_latitude || null,
-                        longitude: finalCoords.delivery_longitude || null,
-                      };
-                      const next = [newAddr, ...(savedAddresses || [])];
-                      setSavedAddresses(next);
-                      await AsyncStorage.setItem('saved_addresses_v1', JSON.stringify(next));
-                      showToast('Indirizzo salvato (locale)', 'success');
+                        // Fallback: persist locally
+                        const newAddr = {
+                          id: Date.now().toString(),
+                          label: deliveryAddress.trim(),
+                          displayName: deliveryAddress.trim(),
+                          latitude: finalCoords.delivery_latitude || null,
+                          longitude: finalCoords.delivery_longitude || null,
+                        };
+                        const next = [newAddr, ...(savedAddresses || [])];
+                        setSavedAddresses(next);
+                        await AsyncStorage.setItem('saved_addresses_v1', JSON.stringify(next));
+                        showToast('Indirizzo salvato (locale)', 'success');
+                      }
                     } catch (err) {
                       console.warn('Failed to persist address', err);
                       showToast('Impossibile salvare l\'indirizzo', 'error');
+                    } finally {
+                      // Procedi con l'ordine comunque
+                      proceedWithOrder();
                     }
                   },
                 },
               ],
             );
+          } else {
+            // Indirizzo già esistente, procedi direttamente
+            proceedWithOrder();
           }
         } catch (e) {
           console.warn('Error checking/saving address', e);
+          // Procedi comunque anche se c'è un errore
+          proceedWithOrder();
         }
-      }
-
-      const orderPayload = {
-        restaurantId: cart.restaurantId,
-        items: cart.items,
-        totalAmount: finalTotal,
-        deliveryAddress: deliveryAddress.trim(),
-        ...finalCoords,
-        payment_method: paymentMethod,
-        payment_method_token:
-          paymentMethod === 'card' && selectedCardId
-            ? savedCards.find(c => c.id === selectedCardId)?.token
-            : undefined,
-      };
-
-      console.log('📦 Creating order with coordinates:', finalCoords);
-
-      const created = await ordersAPI.create(orderPayload);
-      orderId = created?.order?.id;
-
-      // Se abbiamo trovato coordinate con geocoding dopo la creazione, aggiornale
-      if (
-        orderId &&
-        finalCoords &&
-        (!created?.order?.delivery_latitude || !created?.order?.delivery_longitude)
-      ) {
-        try {
-          console.log('🔄 Updating delivery coordinates for order:', orderId);
-          await ordersAPI.updateDeliveryCoordinates(
-            orderId,
-            finalCoords.delivery_latitude,
-            finalCoords.delivery_longitude,
-          );
-          console.log('✅ Delivery coordinates updated successfully');
-        } catch (updateError) {
-          console.warn('⚠️ Failed to update delivery coordinates:', updateError);
-        }
-      }
-
-      if (paymentMethod === 'cash') {
-        console.log('💰 Frontend: Creating cash payment for order:', orderId);
-        await paymentsAPI.createCashPayment(orderId);
-        console.log('✅ Frontend: Cash payment created successfully');
       } else {
-        console.log('💳 Frontend: Creating Stripe payment for order:', orderId);
-        const token = paymentMethod === 'card' && selectedCardId ? savedCards.find(c => c.id === selectedCardId)?.token : undefined;
-        await paymentsAPI.createStripePayment(orderId, token);
-        console.log('✅ Frontend: Stripe payment created successfully');
+        // Nessuna coordinate, procedi comunque
+        proceedWithOrder();
       }
-
-      clearCart();
-      setCheckoutVisible(false);
-      console.log('🛒 Cart: Navigating to OrderTracking with orderId:', orderId);
-      navigation.navigate('OrderTracking', { orderId });
     } catch (e) {
       console.error('❌ Frontend: Error during checkout:', e);
       console.error('❌ Frontend: Error details:', {
@@ -674,144 +707,190 @@ export default function CartScreen({ navigation }) {
       {/* Modal Checkout */}
       <Modal visible={checkoutVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
-            <Text style={[styles.summaryTitle, { fontSize: 22 }]}>Completa l'ordine</Text>
+          <ScrollView style={styles.modalScrollContainer} showsVerticalScrollIndicator={false}>
+            <View style={styles.modalCard}>
+              <Text style={[styles.summaryTitle, { fontSize: 22 }]}>Completa l'ordine</Text>
 
-            {/* Mappa interattiva */}
-            <View style={styles.mapContainer}>
-              {loadingLocation ? (
-                <View style={styles.mapLoader || { flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                  <ActivityIndicator size="large" color={mobileTheme.colors.secondary} />
-                  <Text style={styles.mapLoadingText}>Caricamento mappa...</Text>
-                </View>
-              ) : (
-                <WebView
-                  style={styles.webViewFlex}
-                  source={{ html: generateMapHtml() }}
-                  javaScriptEnabled={true}
-                  domStorageEnabled={true}
-                  startInLoadingState={false}
-                />
-              )}
-            </View>
-
-            <Text style={[styles.summaryLabel, { marginBottom: 10 }]}>Indirizzo di consegna</Text>
-
-            {/* Saved addresses (if any) */}
-            {savedAddresses && savedAddresses.length > 0 && (
-              <View style={styles.savedList}>
-                {savedAddresses.map(a => (
-                  <TouchableOpacity
-                    key={a.id}
-                    style={styles.savedAddressRow}
-                    onPress={() => {
-                      setDeliveryAddress(a.displayName || a.label);
-                      if (a.latitude && a.longitude) {
-                        setMapCoordinates({ latitude: a.latitude, longitude: a.longitude, displayName: a.displayName || a.label });
-                      }
-                      setSelectedAddressId(a.id);
-                    }}
-                  >
-                    <Text style={styles.savedText}>{a.displayName || a.label}</Text>
-                    <Text style={styles.savedTextSecondary}>{selectedAddressId === a.id ? '✓' : ''}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
-
-            <View style={[{ flexDirection: 'row', marginBottom: mobileTheme.spacing[3] }, styles.centerAligned]}>
-              <TextInput
-                style={styles.addressInput}
-                placeholder="Es. Via Garibaldi 12, Roma"
-                value={deliveryAddress}
-                onChangeText={handleAddressChange}
-              />
-              <TouchableOpacity
-                style={styles.locationButton}
-                onPress={useCurrentLocationAsAddress}
-                disabled={loadingLocation}
-              >
+              {/* Mappa interattiva */}
+              <View style={styles.mapContainer}>
                 {loadingLocation ? (
-                  <ActivityIndicator size="small" color="white" />
+                  <View style={styles.mapLoader || { flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <ActivityIndicator size="large" color={mobileTheme.colors.secondary} />
+                    <Text style={styles.mapLoadingText}>Caricamento mappa...</Text>
+                  </View>
                 ) : (
-                  <Text style={styles.locationButtonIcon}>📍</Text>
+                  <WebView
+                    style={styles.webViewFlex}
+                    source={{ html: generateMapHtml() }}
+                    javaScriptEnabled={true}
+                    domStorageEnabled={true}
+                    startInLoadingState={false}
+                  />
+                )}
+              </View>
+
+
+              {/* Saved addresses (if any) */}
+              {savedAddresses && savedAddresses.length > 0 && (
+                <View style={styles.expandableSection}>
+                  <TouchableOpacity
+                    style={styles.expandableHeader}
+                    onPress={() => setAddressesExpanded(!addressesExpanded)}
+                  >
+                    <Text style={styles.expandableHeaderText}>
+                      Indirizzi salvati ({savedAddresses.length})
+                    </Text>
+                    <Text style={[styles.expandableIcon, { transform: [{ rotate: addressesExpanded ? '180deg' : '0deg' }] }]}>
+                      ▼
+                    </Text>
+                  </TouchableOpacity>
+                  {addressesExpanded && (
+                    <View style={styles.expandableContent}>
+                      {savedAddresses.map(a => (
+                        <TouchableOpacity
+                          key={a.id}
+                          style={[
+                            styles.savedAddressRow,
+                            selectedAddressId === a.id && styles.savedAddressRowSelected
+                          ]}
+                          onPress={() => {
+                            setDeliveryAddress(a.displayName || a.label);
+                            if (a.latitude && a.longitude) {
+                              setMapCoordinates({ latitude: a.latitude, longitude: a.longitude, displayName: a.displayName || a.label });
+                            }
+                            setSelectedAddressId(a.id);
+                          }}
+                        >
+                          <View style={[
+                            styles.checkbox,
+                            selectedAddressId === a.id && styles.checkboxSelected
+                          ]}>
+                            {selectedAddressId === a.id && <View style={styles.checkboxInner} />}
+                          </View>
+                          <Text style={styles.savedText}>{a.displayName || a.label}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  )}
+                </View>
+              )}
+
+              <View style={[{ flexDirection: 'row', marginBottom: mobileTheme.spacing[3] }, styles.centerAligned]}>
+                <TextInput
+                  style={styles.addressInput}
+                  placeholder="Es. Via Garibaldi 12, Roma"
+                  value={deliveryAddress}
+                  onChangeText={handleAddressChange}
+                />
+                <TouchableOpacity
+                  style={styles.locationButton}
+                  onPress={useCurrentLocationAsAddress}
+                  disabled={loadingLocation}
+                >
+                  {loadingLocation ? (
+                    <ActivityIndicator size="small" color="white" />
+                  ) : (
+                    <Text style={styles.locationButtonIcon}>📍</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+
+              {/* Selezione Metodo di Pagamento */}
+              <Text style={[styles.summaryLabel, { marginBottom: 15 }]}>Metodo di Pagamento</Text>
+              <View style={styles.paymentRow}>
+                <TouchableOpacity
+                  style={[
+                    styles.paymentOption,
+                    { marginRight: mobileTheme.spacing[3] },
+                    paymentMethod === 'cash' && styles.paymentOptionSelected,
+                  ]}
+                  onPress={() => setPaymentMethod('cash')}
+                >
+                  <View style={styles.centerAligned}>
+                    <Text style={styles.paymentEmoji}>💵</Text>
+                    <Text style={paymentMethod === 'cash' ? styles.paymentOptionTextSelected : styles.paymentOptionText}>
+                      Contanti
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    styles.paymentOption,
+                    styles.paymentOptionLast,
+                    paymentMethod === 'card' && styles.paymentOptionSelected,
+                  ]}
+                  onPress={() => setPaymentMethod('card')}
+                >
+                  <View style={styles.centerAligned}>
+                    <Text style={styles.paymentEmoji}>💳</Text>
+                    <Text style={paymentMethod === 'card' ? styles.paymentOptionTextSelected : styles.paymentOptionText}>
+                      Carta di Credito
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+
+              {/* Saved cards selection when paymentMethod is card */}
+              {paymentMethod === 'card' && savedCards && savedCards.length > 0 && (
+                <View style={styles.expandableSection}>
+                  <TouchableOpacity
+                    style={styles.expandableHeader}
+                    onPress={() => setCardsExpanded(!cardsExpanded)}
+                  >
+                    <Text style={styles.expandableHeaderText}>
+                      Carte salvate ({savedCards.length})
+                    </Text>
+                    <Text style={[styles.expandableIcon, { transform: [{ rotate: cardsExpanded ? '180deg' : '0deg' }] }]}>
+                      ▼
+                    </Text>
+                  </TouchableOpacity>
+                  {cardsExpanded && (
+                    <View style={styles.expandableContent}>
+                      {savedCards.map(c => (
+                        <TouchableOpacity
+                          key={c.id}
+                          style={[
+                            styles.savedAddressRow,
+                            selectedCardId === c.id && styles.savedAddressRowSelected
+                          ]}
+                          onPress={() => setSelectedCardId(c.id)}
+                        >
+                          <View style={[
+                            styles.checkbox,
+                            selectedCardId === c.id && styles.checkboxSelected
+                          ]}>
+                            {selectedCardId === c.id && <View style={styles.checkboxInner} />}
+                          </View>
+                          <Text style={styles.savedText}>{c.masked}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  )}
+                </View>
+              )}
+
+              <Text style={styles.smallNote}>Oppure usa il pulsante 📍 per impostare la tua posizione attuale</Text>
+
+              <TouchableOpacity
+                style={[styles.checkoutButton, placingOrder && unifiedStyles.disabledButton]}
+                onPress={confirmCheckout}
+                disabled={placingOrder}
+              >
+                {placingOrder ? (
+                  <ActivityIndicator color="white" />
+                ) : paymentMethod === 'card' ? (
+                  <Text style={styles.checkoutButtonText}>Conferma e Paga</Text>
+                ) : (
+                  <Text style={styles.checkoutButtonText}>Conferma</Text>
                 )}
               </TouchableOpacity>
-            </View>
 
-            {/* Selezione Metodo di Pagamento */}
-            <Text style={[styles.summaryLabel, { marginBottom: 15 }]}>Metodo di Pagamento</Text>
-            <View style={styles.paymentRow}>
-              <TouchableOpacity
-                style={[
-                  styles.paymentOption,
-                  { marginRight: mobileTheme.spacing[3] },
-                  paymentMethod === 'cash' && styles.paymentOptionSelected,
-                ]}
-                onPress={() => setPaymentMethod('cash')}
-              >
-                <View style={styles.centerAligned}>
-                  <Text style={styles.paymentEmoji}>💵</Text>
-                  <Text style={paymentMethod === 'cash' ? styles.paymentOptionTextSelected : styles.paymentOptionText}>
-                    Contanti
-                  </Text>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.paymentOption,
-                  styles.paymentOptionLast,
-                  paymentMethod === 'card' && styles.paymentOptionSelected,
-                ]}
-                onPress={() => setPaymentMethod('card')}
-              >
-                <View style={styles.centerAligned}>
-                  <Text style={styles.paymentEmoji}>💳</Text>
-                  <Text style={paymentMethod === 'card' ? styles.paymentOptionTextSelected : styles.paymentOptionText}>
-                    Carta di Credito
-                  </Text>
-                </View>
+              <TouchableOpacity onPress={() => setCheckoutVisible(false)} style={styles.clearButtonMarginTop || { marginTop: mobileTheme.spacing[4] }}>
+                <Text style={styles.cancelText}>Annulla</Text>
               </TouchableOpacity>
             </View>
-
-            {/* Saved cards selection when paymentMethod is card */}
-            {paymentMethod === 'card' && savedCards && savedCards.length > 0 && (
-              <View style={styles.savedCardsContainer}>
-                <Text style={[styles.summaryLabel, { marginBottom: mobileTheme.spacing[2] }]}>Carte salvate</Text>
-                {savedCards.map(c => (
-                  <TouchableOpacity
-                    key={c.id}
-                    style={styles.savedAddressRow}
-                    onPress={() => setSelectedCardId(c.id)}
-                  >
-                    <Text style={styles.savedText}>{c.masked}</Text>
-                    <Text style={styles.savedTextSecondary}>{selectedCardId === c.id ? '✓' : ''}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
-
-            <Text style={styles.smallNote}>Oppure usa il pulsante 📍 per impostare la tua posizione attuale</Text>
-
-            <TouchableOpacity
-              style={[styles.checkoutButton, placingOrder && unifiedStyles.disabledButton]}
-              onPress={confirmCheckout}
-              disabled={placingOrder}
-            >
-              {placingOrder ? (
-                <ActivityIndicator color="white" />
-              ) : paymentMethod === 'card' ? (
-                <Text style={styles.checkoutButtonText}>Conferma e Paga</Text>
-              ) : (
-                <Text style={styles.checkoutButtonText}>Conferma</Text>
-              )}
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => setCheckoutVisible(false)} style={styles.clearButtonMarginTop || { marginTop: mobileTheme.spacing[4] }}>
-              <Text style={styles.cancelText}>Annulla</Text>
-            </TouchableOpacity>
-          </View>
+          </ScrollView>
         </View>
       </Modal>
     </View>

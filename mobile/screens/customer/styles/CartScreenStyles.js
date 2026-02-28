@@ -216,13 +216,16 @@ export const cartScreenStyles = StyleSheet.create({
   },
   // modalOverlay: usa unified overlay
   modalOverlay: unifiedStyles.modalOverlay,
+  // modalScrollContainer: wrapper scroll per modal checkout
+  modalScrollContainer: {
+    flex: 1,
+  },
   // modalCard: card interna del modal checkout
   modalCard: {
     backgroundColor: mobileTheme.colors.white,
     padding: mobileTheme.spacing[5],
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    maxHeight: '90%',
   },
   // mapContainer: wrapper mappa nel modal
   mapContainer: {
@@ -241,6 +244,39 @@ export const cartScreenStyles = StyleSheet.create({
   savedList: {
     marginBottom: mobileTheme.spacing[3],
   },
+  // expandableSection: sezione espandibile
+  expandableSection: {
+    marginBottom: mobileTheme.spacing[3],
+  },
+  // expandableHeader: header della sezione espandibile
+  expandableHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: mobileTheme.spacing[3],
+    paddingHorizontal: mobileTheme.spacing[4],
+    backgroundColor: mobileTheme.colors.background,
+    borderRadius: mobileTheme.borderRadius.md,
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.border,
+    marginBottom: mobileTheme.spacing[2],
+  },
+  // expandableHeaderText: testo header espandibile
+  expandableHeaderText: {
+    fontSize: mobileTheme.typography.fontSize.base,
+    fontWeight: mobileTheme.typography.fontWeight.semibold,
+    color: mobileTheme.colors.text.primary,
+  },
+  // expandableIcon: icona espansione
+  expandableIcon: {
+    fontSize: 16,
+    color: mobileTheme.colors.text.secondary,
+    transition: 'transform 0.2s',
+  },
+  // expandableContent: contenuto espanso
+  expandableContent: {
+    overflow: 'hidden',
+  },
   // shoppingSection: wrapper for shopping grouped items
   shoppingSection: {
     marginTop: mobileTheme.spacing[3],
@@ -252,10 +288,34 @@ export const cartScreenStyles = StyleSheet.create({
   // savedText: primary text for saved rows
   savedText: {
     color: mobileTheme.colors.text.primary,
+    flex: 1,
+    fontSize: mobileTheme.typography.fontSize.base,
   },
   // savedTextSecondary: secondary text for saved rows
   savedTextSecondary: {
     color: mobileTheme.colors.text.secondary,
+    fontSize: mobileTheme.typography.fontSize.sm,
+  },
+  // checkbox: checkbox per selezione indirizzo/carta
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: mobileTheme.colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: mobileTheme.spacing[3],
+  },
+  checkboxSelected: {
+    backgroundColor: mobileTheme.colors.secondary,
+    borderColor: mobileTheme.colors.secondary,
+  },
+  checkboxInner: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: mobileTheme.colors.white,
   },
   // centerAligned: helper to center children horizontally
   centerAligned: {
@@ -285,10 +345,20 @@ export const cartScreenStyles = StyleSheet.create({
   },
   // savedAddressRow: row for saved addresses/cards
   savedAddressRow: {
-    paddingVertical: mobileTheme.spacing[2],
+    paddingVertical: mobileTheme.spacing[3],
+    paddingHorizontal: mobileTheme.spacing[4],
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    backgroundColor: mobileTheme.colors.white,
+    borderRadius: mobileTheme.borderRadius.md,
+    marginBottom: mobileTheme.spacing[2],
+    borderWidth: 1,
+    borderColor: mobileTheme.colors.border,
+  },
+  savedAddressRowSelected: {
+    borderColor: mobileTheme.colors.secondary,
+    backgroundColor: mobileTheme.colors.secondary + '10',
   },
   // addressInput: input indirizzo nel modal
   addressInput: {
